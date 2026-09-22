@@ -1583,6 +1583,229 @@ function AICommandConsole() {
   );
 }
 
+/* ---------------------------- Client Impact & Testimonials Carousel ---------------------------- */
+
+function ClientTestimonials() {
+  const [slide, setSlide] = useState(0);
+
+  const testimonials = [
+    {
+      metric: "+280%",
+      label: "TRANSACTION THROUGHPUT",
+      title: "FinTech Platform Migration & Core Scaling",
+      quote: "Abhimanyu Technologies redesigned our core transaction pipeline. We scaled to 2.4 million daily transactions with zero downtime during peak load.",
+      client: "Global Banking & Payments Client",
+      stack: "Next.js · Node.js · PostgreSQL · AWS",
+    },
+    {
+      metric: "-64%",
+      label: "INFRASTRUCTURE OVERHEAD",
+      title: "Enterprise Cloud Modernization & DevOps",
+      quote: "The Abhimanyu team automated our release pipelines and cloud architecture. Our deployment cycles dropped from weeks to hours with zero unhandled incidents.",
+      client: "Enterprise Logistics Provider",
+      stack: "Kubernetes · Terraform · AWS · Docker",
+    },
+    {
+      metric: "14,000+",
+      label: "CONNECTED IoT DEVICES",
+      title: "Real-Time Fleet Telemetry & Predictive AI",
+      quote: "From sensor firmware to our executive analytics dashboard, Abhimanyu built a system that predicts equipment maintenance needs before failures occur.",
+      client: "Industrial IoT Operations Client",
+      stack: "MQTT · Python · PyTorch · Flutter",
+    },
+  ];
+
+  const curr = testimonials[slide];
+
+  return (
+    <Card style={{ position: "relative", overflow: "hidden" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "0.8fr 1.2fr", gap: 32, alignItems: "center" }} className="hero-grid">
+        <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 28, textAlign: "center" }}>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.1em" }}>
+            {curr.label}
+          </div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 48, fontWeight: 700, color: TOKENS.brassBright }}>
+            {curr.metric}
+          </div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate, marginTop: 12 }}>
+            {curr.client}
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8 }}>
+            [ CASE STORY 0{slide + 1} // 03 ]
+          </div>
+          <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: TOKENS.paper, margin: "0 0 14px" }}>
+            {curr.title}
+          </h3>
+          <p style={{ color: TOKENS.paper, fontSize: 15.5, lineHeight: 1.7, fontStyle: "italic", margin: "0 0 16px" }}>
+            "{curr.quote}"
+          </p>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, marginBottom: 20 }}>
+            TECH STACK: {curr.stack}
+          </div>
+
+          <div style={{ display: "flex", gap: 10 }}>
+            {testimonials.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSlide(idx)}
+                style={{
+                  background: slide === idx ? TOKENS.brass : "transparent",
+                  color: slide === idx ? TOKENS.ink : TOKENS.paper,
+                  border: `1px solid ${slide === idx ? TOKENS.brass : TOKENS.hair}`,
+                  borderRadius: 4,
+                  padding: "6px 14px",
+                  fontSize: 11,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: slide === idx ? 700 : 400,
+                  cursor: "pointer",
+                }}
+              >
+                0{idx + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+/* ---------------------------- Live Security & Compliance Dashboard ---------------------------- */
+
+function SecurityStatusDashboard() {
+  const securityMetrics = [
+    { title: "AES-256 ENCRYPTION", status: "100% ACTIVE", badge: "ZERO-KNOWLEDGE" },
+    { title: "THREAT MITIGATION", status: "0 INCIDENTS", badge: "REAL-TIME MONITORING" },
+    { title: "COMPLIANCE STANDARDS", status: "SOC2 & ISO READY", badge: "AUDITED ARCHITECTURE" },
+    { title: "GLOBAL EDGE SSL", status: "TLS 1.3 SECURED", badge: "AUTOMATED RENEWAL" },
+  ];
+
+  return (
+    <Card style={{ background: "rgba(9, 9, 9, 0.95)" }}>
+      <Eyebrow>Security & Compliance Dashboard</Eyebrow>
+      <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
+        Enterprise security reviewed at the architecture layer
+      </h3>
+
+      <Grid min={220}>
+        {securityMetrics.map((m) => (
+          <div key={m.title} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 20 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#27c93f", boxShadow: "0 0 8px #27c93f" }} />
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>{m.badge}</span>
+            </div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 6 }}>{m.title}</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, fontWeight: 600 }}>{m.status}</div>
+          </div>
+        ))}
+      </Grid>
+    </Card>
+  );
+}
+
+/* ---------------------------- Interactive Tech Stack Explorer ---------------------------- */
+
+function TechStackExplorer() {
+  const [filter, setFilter] = useState("All");
+
+  const categories = ["All", "Frontend", "Backend", "AI / ML", "Cloud & DevOps", "Databases"];
+
+  const techData = [
+    { name: "React / Next.js", cat: "Frontend", rating: "99.4%", desc: "SSR and edge rendering for fast enterprise web applications." },
+    { name: "Flutter", cat: "Frontend", rating: "98.9%", desc: "Multi-platform iOS and Android mobile engineering from one codebase." },
+    { name: "Node.js / Express", cat: "Backend", rating: "99.8%", desc: "Event-driven asynchronous microservices and real-time APIs." },
+    { name: "Python / FastAPI", cat: "Backend", rating: "99.6%", desc: "High-performance REST & GraphQL APIs with native ML integration." },
+    { name: "PyTorch / GenAI", cat: "AI / ML", rating: "99.2%", desc: "Autonomous agentic workflows and LLM fine-tuning on operational data." },
+    { name: "TensorFlow", cat: "AI / ML", rating: "98.7%", desc: "Predictive neural networks and computer vision classification." },
+    { name: "AWS / Azure / GCP", cat: "Cloud & DevOps", rating: "99.999%", desc: "Multi-region cloud infrastructure with automated auto-scaling." },
+    { name: "Docker & Kubernetes", cat: "Cloud & DevOps", rating: "99.9%", desc: "Container orchestration with automated zero-downtime deployments." },
+    { name: "PostgreSQL & Redis", cat: "Databases", rating: "99.95%", desc: "ACID-compliant relational storage with sub-millisecond in-memory caching." },
+  ];
+
+  const filtered = filter === "All" ? techData : techData.filter((t) => t.cat === filter);
+
+  return (
+    <Card>
+      <Eyebrow>Technology Matrix Explorer</Eyebrow>
+      <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 20px" }}>
+        Modern tech stacks chosen for maintainability & scale
+      </h3>
+
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
+        {categories.map((c) => (
+          <button
+            key={c}
+            onClick={() => setFilter(c)}
+            style={{
+              background: filter === c ? TOKENS.brass : "transparent",
+              color: filter === c ? TOKENS.ink : TOKENS.paper,
+              border: `1px solid ${filter === c ? TOKENS.brass : TOKENS.hair}`,
+              borderRadius: 999,
+              padding: "7px 16px",
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: filter === c ? 700 : 400,
+              cursor: "pointer",
+            }}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+
+      <Grid min={240}>
+        {filtered.map((t) => (
+          <div key={t.name} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 20 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>{t.cat.toUpperCase()}</span>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.brass }}>FIT SCORE: {t.rating}</span>
+            </div>
+            <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 6px" }}>{t.name}</h4>
+            <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{t.desc}</p>
+          </div>
+        ))}
+      </Grid>
+    </Card>
+  );
+}
+
+/* ---------------------------- Global Nodes & Office Map ---------------------------- */
+
+function GlobalNodeMap() {
+  const nodes = [
+    { location: "Telangana, India (HQ)", type: "HEADQUARTERS & CORE R&D", ping: "4ms", status: "PRIMARY HUB" },
+    { location: "US East (N. Virginia)", type: "MULTI-REGION CLOUD NODE", ping: "12ms", status: "ACTIVE" },
+    { location: "EU Central (Frankfurt)", type: "MULTI-REGION CLOUD NODE", ping: "16ms", status: "ACTIVE" },
+    { location: "AP South (Singapore)", type: "MULTI-REGION CLOUD NODE", ping: "18ms", status: "ACTIVE" },
+  ];
+
+  return (
+    <Card>
+      <Eyebrow>Global Network Infrastructure</Eyebrow>
+      <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
+        Abhimanyu Technologies Global Node Network
+      </h3>
+
+      <Grid min={240}>
+        {nodes.map((n) => (
+          <div key={n.location} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 20 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#4fb3ff", boxShadow: "0 0 8px #4fb3ff" }} />
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.brass }}>{n.status}</span>
+            </div>
+            <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 4px" }}>{n.location}</h4>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 8 }}>{n.type}</div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>⚡ LATENCY: {n.ping}</div>
+          </div>
+        ))}
+      </Grid>
+    </Card>
+  );
+}
+
 /* ---------------------------- pages ---------------------------- */
 
 function Hero({ go }) {
@@ -1623,23 +1846,35 @@ function HomePage({ go }) {
       <Hero go={go} />
       <ArcDivider />
 
-      <Section eyebrow="Cybernetic Media Reel" title="Watch MyVault platform in action" tight>
+      <Section eyebrow="Cybernetic Media Reel" title="Watch Abhimanyu platform in action" tight>
         <VideoShowcase3D />
       </Section>
 
-      <Section alt eyebrow="System Architecture" title="4-Layer Enterprise Stack" tight>
+      <Section alt eyebrow="Client Impact Stories" title="Quantifiable Enterprise Outcomes" tight>
+        <ClientTestimonials />
+      </Section>
+
+      <Section eyebrow="System Architecture" title="4-Layer Enterprise Stack" tight>
         <Architecture3DExplorer />
       </Section>
 
-      <Section eyebrow="3D Data Flow" title="Real-Time Data Pipeline Stream" tight>
+      <Section alt eyebrow="3D Data Flow" title="Real-Time Data Pipeline Stream" tight>
         <DataPipeline3D />
       </Section>
 
-      <Section alt eyebrow="Interactive CLI" title="AI System Command Console" tight>
+      <Section eyebrow="Interactive CLI" title="AI System Command Console" tight>
         <AICommandConsole />
       </Section>
 
-      <Section eyebrow="What We Do" title="Technology that solves a named problem" tight>
+      <Section alt eyebrow="Security & Governance" title="Audited Enterprise Security" tight>
+        <SecurityStatusDashboard />
+      </Section>
+
+      <Section eyebrow="Technology Matrix" title="Enterprise Technology Stack" tight>
+        <TechStackExplorer />
+      </Section>
+
+      <Section alt eyebrow="What We Do" title="Technology that solves a named problem" tight>
         <Grid min={250}>
           {WHAT_WE_DO.map((w) => (
             <Card key={w.title}>
@@ -1649,6 +1884,10 @@ function HomePage({ go }) {
             </Card>
           ))}
         </Grid>
+      </Section>
+
+      <Section eyebrow="Global Operations" title="Multi-Region Node Network" tight>
+        <GlobalNodeMap />
       </Section>
 
       <Section alt eyebrow="ROI & Impact" title="Quantifiable efficiency gains" tight>
