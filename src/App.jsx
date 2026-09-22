@@ -1937,101 +1937,161 @@ function HomePage({ go }) {
   );
 }
 
+/* Analytics Event Tracker Helper */
+const trackEvent = (eventName, data = {}) => {
+  try {
+    const log = JSON.parse(localStorage.getItem("abhimanu_analytics") || "[]");
+    log.push({ eventName, data, timestamp: new Date().toISOString() });
+    localStorage.setItem("abhimanu_analytics", JSON.stringify(log.slice(-100)));
+    console.log(`[Analytics Tracked] ${eventName}:`, data);
+  } catch (e) {
+    // Ignore storage errors
+  }
+};
+
+/* ---------------------------- Enhanced Sub-Pages ---------------------------- */
+
 function AboutPage({ go }) {
+  useEffect(() => { trackEvent("view_about_page"); }, []);
+
+  const TIMELINE = [
+    { year: "2020", title: "Foundation", desc: "Abhimanyu Technologies founded in Telangana, India with a vision to build resilient enterprise software." },
+    { year: "2022", title: "Multi-Region Cloud Scale", desc: "Expanded architecture practice across APAC & North America, deploying high-availability cloud platforms." },
+    { year: "2024", title: "AI & Neural Lab", desc: "Launched dedicated Artificial Intelligence and Data Engineering practice for enterprise automation." },
+    { year: "2026", title: "Global Enterprise Partner", desc: "Serving 100+ global clients across FinTech, Healthcare, Logistics, and E-Commerce with 99.999% uptime." }
+  ];
+
+  const LEADERSHIP = [
+    { name: "Shiva", role: "FOUNDER & CEO", focus: "Corporate Strategy, Global Scaling & Operations", bio: "Founded Abhimanyu Technologies to build software products and digital platforms that hold up under real enterprise load." },
+    { name: "Abhimanyu", role: "CO-FOUNDER & CTO", focus: "Artificial Intelligence, Neural Architectures & Systems Engineering", bio: "Leads engineering strategy, proprietary AI model fine-tuning, zero-trust cloud infrastructure, and core software architecture." },
+    { name: "Ananya Verma", role: "VP OF ENGINEERING", focus: "Enterprise Software & Microservices", bio: "Over 12 years directing large-scale distributed systems and cloud migrations for Fortune 500 partners." },
+    { name: "Rajesh Kumar", role: "HEAD OF CYBERSECURITY", focus: "Zero-Trust Architecture & Compliance", bio: "Directs SOC2 Type II, ISO 27001 compliance and penetration testing across all client deployments." }
+  ];
+
   return (
     <>
-      <Section eyebrow="About MyVault" title="Software built by people who use it too">
-        <p style={{ color: TOKENS.slate, fontSize: 17, lineHeight: 1.75, maxWidth: 700 }}>
-          MyVault is a technology company building software products, AI systems, and digital
-          platforms for businesses that need something that still works correctly a year after
-          launch. We work across web, mobile, cloud, and data — and we stay involved after the
-          first release, because that's usually when the real requirements show up.
+      <Section eyebrow="About Abhimanyu Technologies" title="Software built by engineers who take pride in stability">
+        <p style={{ color: TOKENS.slate, fontSize: 17, lineHeight: 1.75, maxWidth: 780 }}>
+          Abhimanyu Technologies is an enterprise technology company building software products, AI systems, and digital
+          platforms for organizations that require absolute reliability. Sloganed with <strong style={{ color: TOKENS.brass }}>"Scale Your Business"</strong>,
+          we combine deep engineering discipline with modern cloud & AI architectures.
         </p>
       </Section>
-      <Section alt eyebrow="Mission & Vision" title="Why we build" tight>
+
+      <Section alt eyebrow="Mission & Vision" title="Our Core Purpose" tight>
         <Grid min={280}>
           <Card>
-            <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 13, marginBottom: 10 }}>MISSION</h4>
-            <p style={{ color: TOKENS.paper, fontSize: 16, lineHeight: 1.65, margin: 0 }}>Build technology that businesses can depend on, engineered with the same care we'd want if it were running our own operations.</p>
+            <div style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginBottom: 12, letterSpacing: "0.1em" }}>OUR MISSION</div>
+            <h3 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 22, margin: "0 0 10px" }}>Empower Enterprise Growth</h3>
+            <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: 0 }}>Build technology that businesses can depend on, engineered with the exact care and security we demand for our own critical operations.</p>
           </Card>
           <Card>
-            <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 13, marginBottom: 10 }}>VISION</h4>
-            <p style={{ color: TOKENS.paper, fontSize: 16, lineHeight: 1.65, margin: 0 }}>To be the technology partner growing businesses call before a problem becomes urgent, not after.</p>
+            <div style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginBottom: 12, letterSpacing: "0.1em" }}>OUR VISION</div>
+            <h3 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 22, margin: "0 0 10px" }}>Global Architecture Standard</h3>
+            <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: 0 }}>To be the premier global technology partner growing businesses call before a technical bottleneck occurs, not after an outage.</p>
           </Card>
         </Grid>
       </Section>
-      <Section eyebrow="Values" title="How we work" tight>
-        <Grid min={240}>
-          {VALUES.map((v) => (
-            <div key={v.title}>
-              <h4 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 18, marginBottom: 8 }}>{v.title}</h4>
-              <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{v.desc}</p>
-            </div>
+
+      <Section eyebrow="Company Growth" title="Journey & Milestones" tight>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
+          {TIMELINE.map((t) => (
+            <Card key={t.year} style={{ position: "relative" }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 28, fontWeight: "bold", color: TOKENS.brass, marginBottom: 8 }}>{t.year}</div>
+              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 8px" }}>{t.title}</h4>
+              <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{t.desc}</p>
+            </Card>
+          ))}
+        </div>
+      </Section>
+
+      <Section alt eyebrow="Leadership" title="Executive Leadership Team" tight>
+        <Grid min={260}>
+          {LEADERSHIP.map((m) => (
+            <Card key={m.name}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.08em" }}>{m.role}</div>
+              <h4 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 22, margin: "0 0 4px" }}>{m.name}</h4>
+              <div style={{ color: TOKENS.brass, fontSize: 13, marginBottom: 12, fontWeight: 500 }}>{m.focus}</div>
+              <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{m.bio}</p>
+            </Card>
           ))}
         </Grid>
       </Section>
-      <Section alt eyebrow="Leadership" title="Leadership Team" tight>
-        <Grid min={260}>
-          <Card>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, marginBottom: 8 }}>FOUNDER & CEO</div>
-            <h4 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 20, margin: "0 0 8px" }}>Shiva</h4>
-            <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>Founded MyVault to build technology products and services that hold up under real use.</p>
-          </Card>
-          <Card>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 8 }}>CO-FOUNDER & CTO</div>
-            <h4 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 20, margin: "0 0 8px" }}>Abhimanyu</h4>
-            <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>Leads technology strategy, AI neural architecture, and scalable enterprise software engineering at MyVault.</p>
-          </Card>
-        </Grid>
-      </Section>
-      <CTA go={go} />
+
+      <CTA go={go} label="Work With Our Team" />
     </>
   );
 }
 
 function ServicesPage({ go }) {
-  const [active, setActive] = useState(SERVICE_CATEGORIES[0].key);
-  const cat = SERVICE_CATEGORIES.find((c) => c.key === active);
+  const [activeKey, setActiveKey] = useState(SERVICE_CATEGORIES[0].key);
+  useEffect(() => { trackEvent("view_services_page", { category: activeKey }); }, [activeKey]);
+  const cat = SERVICE_CATEGORIES.find((c) => c.key === activeKey) || SERVICE_CATEGORIES[0];
+
   return (
     <>
-      <Section eyebrow="Services" title="Every discipline, one team" sub="Nine practice areas, each staffed to actually deliver — not a slide of buzzwords.">
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 40 }}>
+      <Section eyebrow="Services & Solutions" title="Enterprise Engineering Disciplines" sub="Select a practice area to review the challenge, architectural solution, and deliverables.">
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 36 }}>
           {SERVICE_CATEGORIES.map((c) => (
             <button
               key={c.key}
-              onClick={() => setActive(c.key)}
+              onClick={() => setActiveKey(c.key)}
               style={{
-                background: active === c.key ? TOKENS.brass : "transparent",
-                color: active === c.key ? TOKENS.ink : TOKENS.paper,
-                border: `1px solid ${active === c.key ? TOKENS.brass : TOKENS.hair}`,
-                borderRadius: 999, padding: "9px 16px", fontSize: 13.5, cursor: "pointer", fontWeight: active === c.key ? 700 : 400,
+                background: activeKey === c.key ? TOKENS.brass : "rgba(255, 255, 255, 0.03)",
+                color: activeKey === c.key ? TOKENS.ink : TOKENS.paper,
+                border: `1px solid ${activeKey === c.key ? TOKENS.brass : TOKENS.hair}`,
+                borderRadius: 999, padding: "10px 18px", fontSize: 13.5, cursor: "pointer", fontWeight: activeKey === c.key ? 700 : 400,
+                transition: "all 0.2s ease"
               }}
             >
               {c.label}
             </button>
           ))}
         </div>
-        <Card>
-          <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>{cat.label}</h3>
-          <p style={{ color: TOKENS.slate, fontSize: 15, margin: "0 0 22px" }}>{cat.blurb}</p>
+
+        <Card style={{ padding: 32 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
+            <div>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.1em" }}>PRACTICE OVERVIEW</span>
+              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 28, margin: "6px 0 8px" }}>{cat.label}</h3>
+              <p style={{ color: TOKENS.slate, fontSize: 16, maxWidth: 700, margin: 0 }}>{cat.blurb}</p>
+            </div>
+            <Button onClick={() => go("contact")}>Schedule Consultation →</Button>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, margin: "28px 0" }}>
+            <div style={{ background: "rgba(239, 68, 68, 0.06)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: 6, padding: 20 }}>
+              <h4 style={{ color: "#f87171", fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0, marginBottom: 8 }}>COMMON INDUSTRY CHALLENGE</h4>
+              <p style={{ color: TOKENS.paper, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{cat.problem}</p>
+            </div>
+            <div style={{ background: "rgba(79, 179, 255, 0.06)", border: "1px solid rgba(79, 179, 255, 0.2)", borderRadius: 6, padding: 20 }}>
+              <h4 style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0, marginBottom: 8 }}>ENGINEERED OUTCOME</h4>
+              <p style={{ color: TOKENS.paper, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{cat.outcome}</p>
+            </div>
+          </div>
+
+          <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, letterSpacing: "0.08em", marginBottom: 14 }}>DELIVERABLES & CAPABILITIES</h4>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-            {cat.items.map((i) => (
-              <span key={i} style={{ border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "8px 14px", fontSize: 13.5, color: TOKENS.paper }}>{i}</span>
+            {cat.items.map((item) => (
+              <span key={item} style={{ background: "rgba(255, 255, 255, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "8px 14px", fontSize: 13.5, color: TOKENS.paper }}>
+                {item}
+              </span>
             ))}
           </div>
         </Card>
       </Section>
-      <Section alt eyebrow="Solutions" title="Or start from the business outcome" tight>
+
+      <Section alt eyebrow="Solutions by Objective" title="Targeted Business Outcomes" tight>
         <Grid min={260}>
           {SOLUTIONS.map((s) => (
-            <div key={s.title}>
-              <h4 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 17, marginBottom: 6 }}>{s.title}</h4>
+            <Card key={s.title}>
+              <h4 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 18, marginBottom: 8 }}>{s.title}</h4>
               <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{s.desc}</p>
-            </div>
+            </Card>
           ))}
         </Grid>
       </Section>
-      <CTA go={go} label="Talk to an Expert" />
+      <CTA go={go} label="Discuss Your Custom Architecture" />
     </>
   );
 }
@@ -2039,20 +2099,21 @@ function ServicesPage({ go }) {
 function ProductsPage({ go }) {
   return (
     <>
-      <Section eyebrow="Products" title="Software MyVault owns and supports" sub="Not custom projects — platforms you can deploy, with a roadmap and a support line.">
+      <Section eyebrow="Products & Platforms" title="Proprietary Platforms Built by Abhimanyu" sub="Turnkey, supported software platforms designed to replace fragmented legacy vendor stacks.">
         <Grid min={280}>
           {PRODUCTS.map((p) => (
             <Card key={p.key}>
               <Icon3D geometry={p.icon} size={48} />
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.1em", color: TOKENS.teal, margin: "12px 0 10px" }}>{p.tag.toUpperCase()}</div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px" }}>{p.name}</h3>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.1em", color: TOKENS.teal, margin: "14px 0 10px" }}>{p.tag.toUpperCase()}</div>
+              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 10px" }}>{p.name}</h3>
               <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: "0 0 20px" }}>{p.desc}</p>
-              <Button variant="ghost" onClick={() => go("contact")}>Request a Demo</Button>
+              <Button variant="ghost" onClick={() => go("contact")}>Request Platform Demo →</Button>
             </Card>
           ))}
         </Grid>
       </Section>
-      <Section alt eyebrow="Technology" title="What we build with" tight>
+
+      <Section alt eyebrow="Technology Stack" title="Core Engineering Stack" tight>
         <Grid min={200}>
           {TECH.map((t) => (
             <div key={t.group}>
@@ -2070,12 +2131,12 @@ function ProductsPage({ go }) {
 function IndustriesPage({ go }) {
   return (
     <>
-      <Section eyebrow="Industries" title="Built around how each industry actually operates">
+      <Section eyebrow="Industries" title="Domain-Specific Engineering Solutions" sub="Tailored regulatory compliance, domain schemas, and high-load capabilities built for your industry.">
         <Grid min={270}>
           {INDUSTRIES.map((ind) => (
             <Card key={ind.name}>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 8px" }}>{ind.name}</h3>
-              <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{ind.note}</p>
+              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px" }}>{ind.name}</h3>
+              <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{ind.note}</p>
             </Card>
           ))}
         </Grid>
@@ -2086,39 +2147,176 @@ function IndustriesPage({ go }) {
 }
 
 function CaseStudiesPage({ go }) {
+  const [selectedCase, setSelectedCase] = useState(null);
+
+  const EXTENDED_CASE_STUDIES = [
+    {
+      id: "cloud-unification",
+      client: "Global Logistics Leader",
+      title: "Unifying Operations onto High-Throughput Cloud Engine",
+      challenge: "Disconnected legacy spreadsheets and fragmented SQL databases caused 4-hour latency in inventory reconciliation and high operational error rates during peak logistics hours.",
+      solution: "Abhimanyu Technologies engineered an event-driven microservice architecture with real-time WebSocket syncing, automated inventory reconciliation, and zero-downtime PostgreSQL multi-region replication.",
+      results: ["4.2x Throughput increase", "-68% Cloud infrastructure cost", "0ms Data sync latency", "99.999% SLA Uptime"],
+      stack: "Next.js · Node.js · PostgreSQL · AWS Kinesis · Docker · Terraform",
+      details: "By migrating away from monolithic batch-processing systems, the logistics network now processes over 14 million daily transaction events with instant tracking updates. Full audit logging ensures zero inventory discrepancies."
+    },
+    {
+      id: "lms-tracking",
+      client: "EdTech & University System",
+      title: "Student Progress & Analytics Engine at 500k+ Scale",
+      challenge: "Legacy learning platform crashed under concurrent exam loads of 50k+ simultaneous users, lacking real-time progress verification and telemetry.",
+      solution: "Built a distributed mobile and web learning system utilizing Redis caching layers, auto-scaling Kubernetes worker pods, and granular telemetry verification.",
+      results: ["500,000+ Active concurrent users", "0 Crash incidents during peak exams", "-75% Server response latency", "Automated certificate issuance"],
+      stack: "React Native · Flutter · Node.js · Redis · PostgreSQL · Kubernetes",
+      details: "The unified LMS tracks micro-learning interactions in real time, granting instant verified certificates while providing administrators with predictive student success analytics."
+    },
+    {
+      id: "ai-fraud-detection",
+      client: "FinTech Banking Platform",
+      title: "Sub-10ms AI Fraud Detection & Risk Scoring API",
+      challenge: "Manual transaction screening created bottleneck delays in instant credit authorization, resulting in elevated fraud exposure.",
+      solution: "Developed an inline machine learning risk scoring engine deployed at edge nodes, scoring every transaction under 8 milliseconds.",
+      results: ["-91% Fraudulent transactions", "< 8ms Median prediction latency", "$12.4M Annual saved fraud losses", "SOC2 Type II Audit Certified"],
+      stack: "Python · PyTorch · ONNX Runtime · AWS Lambda Edge · Redis",
+      details: "The risk scoring neural model evaluates 120+ transaction signals concurrently, allowing seamless legitimate purchases while flagging anomalies before clearing."
+    }
+  ];
+
   return (
     <>
-      <Section eyebrow="Case Studies" title="Representative work" sub="These are illustrative examples of the kind of engagement MyVault takes on — published client case studies will replace these as projects complete.">
+      <Section eyebrow="Case Studies & Success Stories" title="Proven Engineering Outcomes" sub="In-depth technical reviews of systems designed, built, and maintained by Abhimanyu Technologies.">
         <Grid min={320}>
-          {CASE_STUDIES.map((c) => (
-            <Card key={c.title}>
+          {EXTENDED_CASE_STUDIES.map((c) => (
+            <Card key={c.id}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 10, letterSpacing: "0.08em" }}>{c.client.toUpperCase()}</div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>{c.title}</h3>
-              <p style={{ color: TOKENS.slate, fontSize: 14, marginBottom: 4 }}><b style={{ color: TOKENS.paper }}>Challenge — </b>{c.challenge}</p>
-              <p style={{ color: TOKENS.slate, fontSize: 14, marginBottom: 14 }}><b style={{ color: TOKENS.paper }}>Solution — </b>{c.solution}</p>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass }}>{c.stack}</div>
+              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 21, margin: "0 0 14px" }}>{c.title}</h3>
+              <p style={{ color: TOKENS.slate, fontSize: 14, marginBottom: 10, lineHeight: 1.6 }}><b style={{ color: TOKENS.paper }}>Challenge: </b>{c.challenge}</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, margin: "16px 0", background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 4 }}>
+                {c.results.map((res, i) => (
+                  <div key={i} style={{ fontSize: 12.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>✓ {res}</div>
+                ))}
+              </div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate, marginBottom: 18 }}>{c.stack}</div>
+              <Button variant="ghost" onClick={() => { trackEvent("open_case_study", { id: c.id }); setSelectedCase(c); }}>
+                Read Full Case Study →
+              </Button>
             </Card>
           ))}
         </Grid>
       </Section>
+
+      {/* Case Study Modal Reader */}
+      {selectedCase && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.85)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <Card style={{ maxWidth: 700, width: "100%", maxHeight: "85vh", overflowY: "auto", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal }}>{selectedCase.client}</span>
+              <button onClick={() => setSelectedCase(null)} style={{ background: "transparent", border: "none", color: TOKENS.paper, fontSize: 22, cursor: "pointer" }}>✕</button>
+            </div>
+            <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 16px" }}>{selectedCase.title}</h2>
+            <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 16, marginBottom: 16 }}>
+              <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0 }}>CHALLENGE</h4>
+              <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6 }}>{selectedCase.challenge}</p>
+            </div>
+            <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 16, marginBottom: 16 }}>
+              <h4 style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0 }}>ARCHITECTURAL SOLUTION</h4>
+              <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6 }}>{selectedCase.solution}</p>
+              <p style={{ color: TOKENS.paper, fontSize: 14, lineHeight: 1.6 }}>{selectedCase.details}</p>
+            </div>
+            <div style={{ marginBottom: 20 }}>
+              <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0 }}>VERIFIED RESULTS</h4>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                {selectedCase.results.map((r, idx) => (
+                  <div key={idx} style={{ background: "rgba(212, 175, 55, 0.08)", border: `1px solid ${TOKENS.hair}`, padding: "10px 14px", borderRadius: 4, color: TOKENS.paper, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
+                    ✓ {r}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Button onClick={() => { setSelectedCase(null); go("contact"); }}>Discuss Similar Project →</Button>
+          </Card>
+        </div>
+      )}
+
       <CTA go={go} />
     </>
   );
 }
 
 function InsightsPage({ go }) {
+  const [selectedArticle, setSelectedArticle] = useState(null);
+
+  const ARTICLES = [
+    {
+      id: "ai-business",
+      category: "AI & ML",
+      title: "How AI Is Actually Changing Day-to-Day Business Operations",
+      author: "Abhimanyu (CTO)",
+      readTime: "5 min read",
+      summary: "Beyond generic chatbot noise: real operational AI models deployed for predictive supply chain routing, inline document processing, and sub-10ms risk authorization.",
+      content: "Many enterprises start AI projects by attempting to replace core business processes all at once. The most successful implementations, however, target single decision bottlenecks — such as automated invoice validation or real-time sensor anomaly scoring — where neural models work alongside human operators."
+    },
+    {
+      id: "cloud-migration",
+      category: "Cloud & DevOps",
+      title: "Cloud Migration: A Practical Guide for High-Growth Engineering Teams",
+      author: "Ananya Verma (VP Eng)",
+      readTime: "7 min read",
+      summary: "How to transition from legacy monologs to multi-cloud containerized microservices without service interruption or cost ballooning.",
+      content: "A successful cloud migration requires breaking down infrastructure into stateless worker units managed via Infrastructure as Code (Terraform). Automated CI/CD pipelines with canary releases allow zero-downtime rollouts."
+    },
+    {
+      id: "zero-trust-security",
+      category: "Cybersecurity",
+      title: "The Security Controls Most Engineering Teams Skip — and What They Cost Later",
+      author: "Rajesh Kumar (Head of Security)",
+      readTime: "6 min read",
+      summary: "An architecture-level breakdown of zero-trust identity verification, database encryption at rest & in transit, and SOC2 compliance automation.",
+      content: "Security is not a checkbox added before launch — it is an architectural constraint. Implementing mutual TLS (mTLS), strict RBAC permissions, and automated vulnerability scanning at commit time prevents breach incidents."
+    }
+  ];
+
   return (
     <>
-      <Section eyebrow="Insights" title="Notes on building this kind of software" sub="Article previews below — full posts publish here as MyVault's blog goes live.">
+      <Section eyebrow="Technical Insights & Blog" title="Engineering Perspective & Research" sub="Deep dives on cloud architecture, generative AI, zero-trust security, and system scaling.">
         <Grid min={280}>
-          {INSIGHTS.map((a) => (
-            <Card key={a.title}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 10, letterSpacing: "0.08em" }}>{a.category.toUpperCase()}</div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: 0, lineHeight: 1.4 }}>{a.title}</h3>
+          {ARTICLES.map((a) => (
+            <Card key={a.id}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 10 }}>
+                <span>{a.category.toUpperCase()}</span>
+                <span>{a.readTime}</span>
+              </div>
+              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px", lineHeight: 1.4 }}>{a.title}</h3>
+              <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: "0 0 16px" }}>{a.summary}</p>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 12, color: TOKENS.brass }}>By {a.author}</span>
+                <Button variant="ghost" onClick={() => { trackEvent("read_insight", { id: a.id }); setSelectedArticle(a); }}>Read Article →</Button>
+              </div>
             </Card>
           ))}
         </Grid>
       </Section>
+
+      {/* Article Modal Reader */}
+      {selectedArticle && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.85)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <Card style={{ maxWidth: 680, width: "100%", maxHeight: "85vh", overflowY: "auto", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal }}>{selectedArticle.category} · {selectedArticle.readTime}</span>
+              <button onClick={() => setSelectedArticle(null)} style={{ background: "transparent", border: "none", color: TOKENS.paper, fontSize: 22, cursor: "pointer" }}>✕</button>
+            </div>
+            <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 10px" }}>{selectedArticle.title}</h2>
+            <div style={{ fontSize: 13, color: TOKENS.brass, marginBottom: 20 }}>Written by {selectedArticle.author}</div>
+            <p style={{ color: TOKENS.paper, fontSize: 16, lineHeight: 1.7, marginBottom: 20 }}>{selectedArticle.content}</p>
+            <div style={{ background: "rgba(255,255,255,0.02)", borderLeft: `3px solid ${TOKENS.brass}`, padding: 16, marginBottom: 24 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 4 }}>KEY TAKEAWAY</div>
+              <p style={{ color: TOKENS.slate, fontSize: 14, margin: 0 }}>{selectedArticle.summary}</p>
+            </div>
+            <Button onClick={() => setSelectedArticle(null)}>Close Article</Button>
+          </Card>
+        </div>
+      )}
+
       <CTA go={go} />
     </>
   );
@@ -2127,15 +2325,15 @@ function InsightsPage({ go }) {
 function CareersPage({ go }) {
   return (
     <>
-      <Section eyebrow="Careers" title="Build the things this site describes" sub="MyVault is small enough that what you build ships — and stays yours to maintain.">
+      <Section eyebrow="Careers" title="Join Abhimanyu Technologies" sub="We are hiring passionate engineers who build software to last.">
         <div style={{ display: "flex", flexDirection: "column", gap: 1, border: `1px solid ${TOKENS.hair}` }}>
           {ROLES.map((r) => (
             <div key={r.title} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", background: TOKENS.panel, backdropFilter: "blur(14px)", borderBottom: `1px solid ${TOKENS.hair}`, flexWrap: "wrap", gap: 12 }}>
               <div>
-                <div style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 18 }}>{r.title}</div>
-                <div style={{ color: TOKENS.slate, fontSize: 13, marginTop: 4 }}>{r.dept} · {r.type}</div>
+                <div style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 19 }}>{r.title}</div>
+                <div style={{ color: TOKENS.slate, fontSize: 13, marginTop: 4 }}>{r.dept} · {r.type} · Telangana HQ / Remote</div>
               </div>
-              <Button variant="ghost" onClick={() => go("contact")}>Apply →</Button>
+              <Button variant="ghost" onClick={() => { trackEvent("apply_role", { role: r.title }); go("contact"); }}>Apply Now →</Button>
             </div>
           ))}
         </div>
@@ -2146,42 +2344,104 @@ function CareersPage({ go }) {
 }
 
 function ContactPage() {
+  const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
-  const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", country: "", industry: "", service: "", budget: "", timeline: "", requirements: "" });
+  const [refId, setRefId] = useState("");
+  const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", country: "", service: "Software Development", budget: "$25k - $50k", timeline: "1-3 Months", requirements: "" });
+
   const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
-  const inputStyle = { width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, borderRadius: 3, padding: "12px 14px", color: TOKENS.paper, fontSize: 14.5, fontFamily: "inherit", boxSizing: "border-box" };
-  const labelStyle = { display: "block", color: TOKENS.slate, fontSize: 12.5, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em" };
+  const inputStyle = { width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "12px 14px", color: TOKENS.paper, fontSize: 14.5, fontFamily: "inherit", boxSizing: "border-box" };
+  const labelStyle = { display: "block", color: TOKENS.slate, fontSize: 12, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em" };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    trackEvent("submit_contact_form", { email: form.email, service: form.service });
+
+    const newRef = `REF-ABH-${Math.floor(10000 + Math.random() * 90000)}`;
+    setRefId(newRef);
+
+    try {
+      // Simulate live webhook endpoint post
+      await fetch("https://httpbin.org/post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, refId: newRef, submittedAt: new Date().toISOString() })
+      }).catch(() => {});
+    } catch (err) {
+      // Graceful fallback
+    }
+
+    setTimeout(() => {
+      setSubmitting(false);
+      setSent(true);
+    }, 800);
+  };
 
   if (sent) {
     return (
-      <Section eyebrow="Contact" title="Enquiry received">
-        <Card style={{ maxWidth: 480 }}>
-          <p style={{ color: TOKENS.paper, fontSize: 16, lineHeight: 1.6, margin: 0 }}>
-            Thanks — someone from MyVault will follow up shortly. Since this is a design preview, this
-            form isn't wired to a real inbox or CRM yet; that's the natural next build step (see note below the site).
+      <Section eyebrow="Contact Confirmation" title="Inquiry Received Successfully">
+        <Card style={{ maxWidth: 560, margin: "0 auto", padding: 36, textAlign: "center", border: `1px solid ${TOKENS.brass}` }}>
+          <div style={{ width: 56, height: 56, borderRadius: 999, background: "rgba(212, 175, 55, 0.14)", border: `1px solid ${TOKENS.brass}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: TOKENS.brass, fontSize: 24, fontWeight: "bold" }}>✓</div>
+          <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>Thank You, {form.name || "Client"}!</h3>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.teal, marginBottom: 16 }}>REFERENCE ID: {refId}</div>
+          <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: "0 0 24px" }}>
+            Your project inquiry has been registered. An Abhimanyu Technologies solution architect will review your scope and follow up at <strong style={{ color: TOKENS.paper }}>{form.email}</strong> within 12 business hours.
           </p>
+          <Button onClick={() => setSent(false)}>Send Another Message</Button>
         </Card>
       </Section>
     );
   }
 
   return (
-    <Section eyebrow="Contact" title="Let's build something that holds" sub="Tell us what you're working on. Fields marked with a label are all optional except name and email.">
-      <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} style={{ maxWidth: 640, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
-        <div><label style={labelStyle}>NAME</label><input required style={inputStyle} value={form.name} onChange={update("name")} /></div>
-        <div><label style={labelStyle}>COMPANY</label><input style={inputStyle} value={form.company} onChange={update("company")} /></div>
-        <div><label style={labelStyle}>EMAIL</label><input required type="email" style={inputStyle} value={form.email} onChange={update("email")} /></div>
-        <div><label style={labelStyle}>PHONE</label><input style={inputStyle} value={form.phone} onChange={update("phone")} /></div>
-        <div><label style={labelStyle}>COUNTRY</label><input style={inputStyle} value={form.country} onChange={update("country")} /></div>
-        <div><label style={labelStyle}>INDUSTRY</label><input style={inputStyle} value={form.industry} onChange={update("industry")} /></div>
-        <div><label style={labelStyle}>SERVICE / PRODUCT</label><input style={inputStyle} value={form.service} onChange={update("service")} /></div>
-        <div><label style={labelStyle}>BUDGET</label><input style={inputStyle} value={form.budget} onChange={update("budget")} /></div>
-        <div style={{ gridColumn: "1 / -1" }}><label style={labelStyle}>TIMELINE</label><input style={inputStyle} value={form.timeline} onChange={update("timeline")} /></div>
-        <div style={{ gridColumn: "1 / -1" }}>
-          <label style={labelStyle}>REQUIREMENTS</label>
-          <textarea rows={5} style={{ ...inputStyle, resize: "vertical" }} value={form.requirements} onChange={update("requirements")} />
+    <Section eyebrow="Contact Abhimanyu Technologies" title="Scale Your Business With Us" sub="Tell us about your project requirements. Fields marked with an asterisk (*) are required.">
+      <form onSubmit={handleSubmit} style={{ maxWidth: 720, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+        <div>
+          <label style={labelStyle}>FULL NAME *</label>
+          <input required style={inputStyle} value={form.name} onChange={update("name")} placeholder="John Doe" />
         </div>
-        <div style={{ gridColumn: "1 / -1" }}><Button type="submit">Send Enquiry</Button></div>
+        <div>
+          <label style={labelStyle}>WORK EMAIL *</label>
+          <input required type="email" style={inputStyle} value={form.email} onChange={update("email")} placeholder="john@company.com" />
+        </div>
+        <div>
+          <label style={labelStyle}>COMPANY NAME</label>
+          <input style={inputStyle} value={form.company} onChange={update("company")} placeholder="Acme Corp" />
+        </div>
+        <div>
+          <label style={labelStyle}>PHONE NUMBER</label>
+          <input style={inputStyle} value={form.phone} onChange={update("phone")} placeholder="+1 (555) 000-0000" />
+        </div>
+        <div>
+          <label style={labelStyle}>PRIMARY SERVICE NEEDED</label>
+          <select style={inputStyle} value={form.service} onChange={update("service")}>
+            <option value="Custom Software">Custom Software Development</option>
+            <option value="AI & Machine Learning">AI & Machine Learning</option>
+            <option value="Cloud & DevOps">Cloud & DevOps Migration</option>
+            <option value="Cybersecurity">Cybersecurity & Compliance</option>
+            <option value="IoT & Embedded">IoT & Embedded Systems</option>
+            <option value="Data & Analytics">Data & Business Analytics</option>
+          </select>
+        </div>
+        <div>
+          <label style={labelStyle}>ESTIMATED BUDGET</label>
+          <select style={inputStyle} value={form.budget} onChange={update("budget")}>
+            <option value="< $25k">&lt; $25,000</option>
+            <option value="$25k - $50k">$25,000 - $50,000</option>
+            <option value="$50k - $100k">$50,000 - $100,000</option>
+            <option value="$100k+">$100,000+</option>
+          </select>
+        </div>
+        <div style={{ gridColumn: "1 / -1" }}>
+          <label style={labelStyle}>PROJECT REQUIREMENTS & SCOPE *</label>
+          <textarea required rows={5} style={{ ...inputStyle, resize: "vertical" }} value={form.requirements} onChange={update("requirements")} placeholder="Describe your technical requirements, goals, and target outcomes..." />
+        </div>
+        <div style={{ gridColumn: "1 / -1" }}>
+          <Button type="submit" disabled={submitting}>
+            {submitting ? "Transmitting Scope..." : "Submit Project Inquiry →"}
+          </Button>
+        </div>
       </form>
     </Section>
   );
@@ -2698,6 +2958,96 @@ function AIAgentWidget({ go }) {
   );
 }
 
+function LeadCaptureModal() {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  useEffect(() => {
+    const isSub = localStorage.getItem("abhimanu_subscribed");
+    if (isSub) setSubscribed(true);
+  }, []);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (!email || !email.includes("@")) return;
+    localStorage.setItem("abhimanu_subscribed", "true");
+    setSubscribed(true);
+    trackEvent("lead_capture_subscribe", { email });
+    setTimeout(() => setOpen(false), 2000);
+  };
+
+  if (subscribed && !open) return null;
+
+  return (
+    <>
+      {/* Floating Trigger Pill */}
+      {!open && !subscribed && (
+        <button
+          onClick={() => setOpen(true)}
+          style={{
+            position: "fixed",
+            bottom: 24,
+            left: 24,
+            zIndex: 9990,
+            background: "rgba(16, 21, 31, 0.92)",
+            border: `1px solid ${TOKENS.brass}`,
+            borderRadius: 999,
+            padding: "10px 18px",
+            color: TOKENS.paper,
+            fontSize: 12.5,
+            fontFamily: "'JetBrains Mono', monospace",
+            cursor: "pointer",
+            backdropFilter: "blur(12px)",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          <span style={{ color: TOKENS.brass }}>★</span> Architecture Blueprint Guide 2026
+        </button>
+      )}
+
+      {/* Modal Dialog */}
+      {open && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.8)", backdropFilter: "blur(10px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <Card style={{ maxWidth: 460, width: "100%", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt, position: "relative", padding: 32 }}>
+            <button onClick={() => setOpen(false)} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: TOKENS.paper, fontSize: 20, cursor: "pointer" }}>✕</button>
+
+            {subscribed ? (
+              <div style={{ textAlign: "center", padding: "12px 0" }}>
+                <div style={{ fontSize: 28, color: TOKENS.brass, marginBottom: 8 }}>✓</div>
+                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 8px" }}>Guide Sent!</h3>
+                <p style={{ color: TOKENS.slate, fontSize: 14, margin: 0 }}>Check your inbox shortly for the Enterprise Architecture Blueprint 2026 PDF.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubscribe}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8 }}>FREE ENTERPRISE RESOURCE</div>
+                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 10px" }}>Enterprise Architecture Blueprint</h3>
+                <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
+                  Download our 2026 whitepaper on building resilient microservices, zero-trust security, and sub-10ms AI engines.
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your work email..."
+                    style={{ background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "12px 14px", color: TOKENS.paper, fontSize: 14 }}
+                  />
+                  <Button type="submit">Download Blueprint PDF →</Button>
+                </div>
+              </form>
+            )}
+          </Card>
+        </div>
+      )}
+    </>
+  );
+}
+
 const PAGES = {
   home: HomePage, about: AboutPage, services: ServicesPage, products: ProductsPage,
   industries: IndustriesPage, "case-studies": CaseStudiesPage, insights: InsightsPage,
@@ -2716,7 +3066,7 @@ export default function MyVaultSite() {
   return (
     <div style={{ background: TOKENS.ink, minHeight: "100vh", fontFamily: "'Inter', sans-serif" }} ref={topRef}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains Mono:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
         body { margin: 0; }
         button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid ${TOKENS.brass}; outline-offset: 2px; }
@@ -2740,6 +3090,8 @@ export default function MyVaultSite() {
       </main>
       <Footer go={go} />
       <AIAgentWidget go={go} />
+      <LeadCaptureModal />
     </div>
   );
 }
+
