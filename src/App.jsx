@@ -1772,6 +1772,176 @@ function TechStackExplorer() {
   );
 }
 
+/* ---------------------------- Global Load Balancer & Traffic Director ---------------------------- */
+
+function LoadBalancerDashboard() {
+  const [algorithm, setAlgorithm] = useState("anycast");
+  const [spike, setSpike] = useState(false);
+  const [outage, setOutage] = useState(false);
+  const [rps, setRps] = useState(142850);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const base = spike ? 195000 : 142850;
+      const jitter = Math.floor(Math.random() * 3000) - 1500;
+      setRps(base + jitter);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, [spike]);
+
+  const NODES = [
+    {
+      id: "in-telangana",
+      name: "Telangana HQ (Hyderabad)",
+      region: "ap-south-1 (Primary Hub)",
+      latency: "4 ms",
+      status: "PRIMARY HUB",
+      healthy: true,
+      share: outage ? "58%" : "40%"
+    },
+    {
+      id: "us-east",
+      name: "US East (N. Virginia)",
+      region: "us-east-1",
+      latency: "12 ms",
+      status: "ACTIVE",
+      healthy: true,
+      share: outage ? "42%" : "25%"
+    },
+    {
+      id: "eu-central",
+      name: "EU Central (Frankfurt)",
+      region: "eu-central-1",
+      latency: outage ? "OFFLINE" : "16 ms",
+      status: outage ? "FAILOVER ACTIVE" : "ACTIVE",
+      healthy: !outage,
+      share: outage ? "0%" : "20%"
+    },
+    {
+      id: "ap-east",
+      name: "APAC East (Tokyo)",
+      region: "ap-northeast-1",
+      latency: "34 ms",
+      status: "ACTIVE",
+      healthy: true,
+      share: outage ? "20%" : "15%"
+    }
+  ];
+
+  return (
+    <Card style={{ padding: 32 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 24 }}>
+        <div>
+          <Eyebrow>Edge Routing & Load Balancing Engine</Eyebrow>
+          <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "6px 0 6px" }}>
+            Abhimanyu Anycast Global Load Balancer
+          </h3>
+          <p style={{ color: TOKENS.slate, fontSize: 14.5, margin: 0, maxWidth: 680 }}>
+            Real-time traffic director distributing requests across multi-region edge nodes with sub-second health checks and automatic failover.
+          </p>
+        </div>
+        <div style={{ background: "rgba(79, 179, 255, 0.08)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 18px", textAlign: "right" }}>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, letterSpacing: "0.08em" }}>ACTIVE THROUGHPUT</div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 22, color: TOKENS.paper, fontWeight: "bold" }}>
+            {rps.toLocaleString()} <span style={{ fontSize: 12, color: TOKENS.brass }}>RPS</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Control Toolbar */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 24, padding: 16, background: "rgba(255,255,255,0.02)", borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>ALGORITHM:</span>
+          {["anycast", "weighted", "geo", "failover"].map((algo) => (
+            <button
+              key={algo}
+              onClick={() => setAlgorithm(algo)}
+              style={{
+                background: algorithm === algo ? TOKENS.brass : "transparent",
+                color: algorithm === algo ? TOKENS.ink : TOKENS.paper,
+                border: `1px solid ${algorithm === algo ? TOKENS.brass : TOKENS.hair}`,
+                borderRadius: 4,
+                padding: "6px 12px",
+                fontSize: 11.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                cursor: "pointer",
+                fontWeight: algorithm === algo ? "bold" : "normal"
+              }}
+            >
+              {algo.toUpperCase()}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+          <button
+            onClick={() => setSpike(!spike)}
+            style={{
+              background: spike ? "rgba(239, 68, 68, 0.2)" : "rgba(255,255,255,0.04)",
+              color: spike ? "#f87171" : TOKENS.paper,
+              border: `1px solid ${spike ? "#f87171" : TOKENS.hair}`,
+              borderRadius: 4,
+              padding: "6px 12px",
+              fontSize: 11.5,
+              fontFamily: "'JetBrains Mono', monospace",
+              cursor: "pointer"
+            }}
+          >
+            {spike ? "🔥 Spike Active (+50k RPS)" : "⚡ Simulate Traffic Spike"}
+          </button>
+          <button
+            onClick={() => setOutage(!outage)}
+            style={{
+              background: outage ? "rgba(239, 68, 68, 0.2)" : "rgba(255,255,255,0.04)",
+              color: outage ? "#f87171" : TOKENS.paper,
+              border: `1px solid ${outage ? "#f87171" : TOKENS.hair}`,
+              borderRadius: 4,
+              padding: "6px 12px",
+              fontSize: 11.5,
+              fontFamily: "'JetBrains Mono', monospace",
+              cursor: "pointer"
+            }}
+          >
+            {outage ? "⚠️ Failover Active (Frankfurt Out)" : "🚨 Simulate Node Outage"}
+          </button>
+        </div>
+      </div>
+
+      {/* Nodes Status Grid */}
+      <Grid min={240}>
+        {NODES.map((n) => (
+          <div
+            key={n.id}
+            style={{
+              background: TOKENS.panelAlt,
+              border: `1px solid ${n.healthy ? TOKENS.hair : "rgba(239, 68, 68, 0.5)"}`,
+              borderRadius: 6,
+              padding: 18,
+              position: "relative",
+              transition: "all 0.3s ease"
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: n.healthy ? TOKENS.teal : "#f87171", boxShadow: `0 0 8px ${n.healthy ? TOKENS.teal : "#f87171"}` }} />
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: n.healthy ? TOKENS.brass : "#f87171" }}>{n.status}</span>
+            </div>
+            <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper, margin: "0 0 4px" }}>{n.name}</h4>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 10 }}>{n.region}</div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
+              <span style={{ color: TOKENS.teal }}>LATENCY: {n.latency}</span>
+              <span style={{ color: TOKENS.brass }}>TRAFFIC SHARE: {n.share}</span>
+            </div>
+            {/* Health Bar */}
+            <div style={{ marginTop: 12, height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden" }}>
+              <div style={{ width: n.share, height: "100%", background: n.healthy ? TOKENS.brass : "#f87171", transition: "width 0.5s ease" }} />
+            </div>
+          </div>
+        ))}
+      </Grid>
+    </Card>
+  );
+}
+
 /* ---------------------------- Global Nodes & Office Map ---------------------------- */
 
 function GlobalNodeMap() {
@@ -1854,27 +2024,31 @@ function HomePage({ go }) {
         <ClientTestimonials />
       </Section>
 
-      <Section eyebrow="System Architecture" title="4-Layer Enterprise Stack" tight>
+      <Section eyebrow="Traffic Management" title="Global Edge Load Balancer & Traffic Director" tight>
+        <LoadBalancerDashboard />
+      </Section>
+
+      <Section alt eyebrow="System Architecture" title="4-Layer Enterprise Stack" tight>
         <Architecture3DExplorer />
       </Section>
 
-      <Section alt eyebrow="3D Data Flow" title="Real-Time Data Pipeline Stream" tight>
+      <Section eyebrow="3D Data Flow" title="Real-Time Data Pipeline Stream" tight>
         <DataPipeline3D />
       </Section>
 
-      <Section eyebrow="Interactive CLI" title="AI System Command Console" tight>
+      <Section alt eyebrow="Interactive CLI" title="AI System Command Console" tight>
         <AICommandConsole />
       </Section>
 
-      <Section alt eyebrow="Security & Governance" title="Audited Enterprise Security" tight>
+      <Section eyebrow="Security & Governance" title="Audited Enterprise Security" tight>
         <SecurityStatusDashboard />
       </Section>
 
-      <Section eyebrow="Technology Matrix" title="Enterprise Technology Stack" tight>
+      <Section alt eyebrow="Technology Matrix" title="Enterprise Technology Stack" tight>
         <TechStackExplorer />
       </Section>
 
-      <Section alt eyebrow="What We Do" title="Technology that solves a named problem" tight>
+      <Section eyebrow="What We Do" title="Technology that solves a named problem" tight>
         <Grid min={250}>
           {WHAT_WE_DO.map((w) => (
             <Card key={w.title}>
@@ -1886,7 +2060,7 @@ function HomePage({ go }) {
         </Grid>
       </Section>
 
-      <Section eyebrow="Global Operations" title="Multi-Region Node Network" tight>
+      <Section alt eyebrow="Global Operations" title="Multi-Region Node Network" tight>
         <GlobalNodeMap />
       </Section>
 
