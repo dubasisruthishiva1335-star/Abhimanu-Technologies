@@ -1779,6 +1779,7 @@ function LoadBalancerDashboard() {
   const [spike, setSpike] = useState(false);
   const [outage, setOutage] = useState(false);
   const [rps, setRps] = useState(142850);
+  const [inspectNode, setInspectNode] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1797,7 +1798,11 @@ function LoadBalancerDashboard() {
       latency: "4 ms",
       status: "PRIMARY HUB",
       healthy: true,
-      share: outage ? "58%" : "40%"
+      share: outage ? "58%" : "40%",
+      bgp: "103.21.244.0/24",
+      protocol: "TLS 1.3 / HTTP/3 QUIC",
+      sockets: "450,000 / 500,000 Active",
+      details: "Central R&D and Primary Anycast hub providing sub-5ms low latency connections across Indian and APAC enterprise backbones."
     },
     {
       id: "us-east",
@@ -1806,7 +1811,11 @@ function LoadBalancerDashboard() {
       latency: "12 ms",
       status: "ACTIVE",
       healthy: true,
-      share: outage ? "42%" : "25%"
+      share: outage ? "42%" : "25%",
+      bgp: "198.51.100.0/24",
+      protocol: "TLS 1.3 / HTTP/3 QUIC",
+      sockets: "310,000 / 500,000 Active",
+      details: "North American Anycast ingress edge with automated DDoS scrubbing and zero-trust API authorization filtering."
     },
     {
       id: "eu-central",
@@ -1815,7 +1824,11 @@ function LoadBalancerDashboard() {
       latency: outage ? "OFFLINE" : "16 ms",
       status: outage ? "FAILOVER ACTIVE" : "ACTIVE",
       healthy: !outage,
-      share: outage ? "0%" : "20%"
+      share: outage ? "0%" : "20%",
+      bgp: "185.230.12.0/24",
+      protocol: "TLS 1.3 / HTTP/2",
+      sockets: outage ? "0 / 500,000 Active (Drained)" : "240,000 / 500,000 Active",
+      details: "European compliance edge compliant with GDPR data residency controls and health-checked automatic failover routing."
     },
     {
       id: "ap-east",
@@ -1824,7 +1837,11 @@ function LoadBalancerDashboard() {
       latency: "34 ms",
       status: "ACTIVE",
       healthy: true,
-      share: outage ? "20%" : "15%"
+      share: outage ? "20%" : "15%",
+      bgp: "203.0.113.0/24",
+      protocol: "TLS 1.3 / HTTP/3 QUIC",
+      sockets: "180,000 / 500,000 Active",
+      details: "East Asia edge acceleration node connected via submarine optical fiber to reduce round-trip time across Pacific markets."
     }
   ];
 
@@ -1837,7 +1854,7 @@ function LoadBalancerDashboard() {
             Abhimanyu Anycast Global Load Balancer
           </h3>
           <p style={{ color: TOKENS.slate, fontSize: 14.5, margin: 0, maxWidth: 680 }}>
-            Real-time traffic director distributing requests across multi-region edge nodes with sub-second health checks and automatic failover.
+            Real-time traffic director distributing requests across multi-region edge nodes. Click any node to inspect live BGP telemetry.
           </p>
         </div>
         <div style={{ background: "rgba(79, 179, 255, 0.08)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 18px", textAlign: "right" }}>
@@ -1855,7 +1872,7 @@ function LoadBalancerDashboard() {
           {["anycast", "weighted", "geo", "failover"].map((algo) => (
             <button
               key={algo}
-              onClick={() => setAlgorithm(algo)}
+              onClick={() => { trackEvent("change_lb_algorithm", { algo }); setAlgorithm(algo); }}
               style={{
                 background: algorithm === algo ? TOKENS.brass : "transparent",
                 color: algorithm === algo ? TOKENS.ink : TOKENS.paper,
@@ -1875,7 +1892,7 @@ function LoadBalancerDashboard() {
 
         <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
           <button
-            onClick={() => setSpike(!spike)}
+            onClick={() => { trackEvent("toggle_traffic_spike"); setSpike(!spike); }}
             style={{
               background: spike ? "rgba(239, 68, 68, 0.2)" : "rgba(255,255,255,0.04)",
               color: spike ? "#f87171" : TOKENS.paper,
@@ -1890,7 +1907,7 @@ function LoadBalancerDashboard() {
             {spike ? "🔥 Spike Active (+50k RPS)" : "⚡ Simulate Traffic Spike"}
           </button>
           <button
-            onClick={() => setOutage(!outage)}
+            onClick={() => { trackEvent("toggle_node_outage"); setOutage(!outage); }}
             style={{
               background: outage ? "rgba(239, 68, 68, 0.2)" : "rgba(255,255,255,0.04)",
               color: outage ? "#f87171" : TOKENS.paper,
@@ -1912,12 +1929,14 @@ function LoadBalancerDashboard() {
         {NODES.map((n) => (
           <div
             key={n.id}
+            onClick={() => { trackEvent("inspect_node", { node: n.id }); setInspectNode(n); }}
             style={{
               background: TOKENS.panelAlt,
               border: `1px solid ${n.healthy ? TOKENS.hair : "rgba(239, 68, 68, 0.5)"}`,
               borderRadius: 6,
               padding: 18,
               position: "relative",
+              cursor: "pointer",
               transition: "all 0.3s ease"
             }}
           >
@@ -1929,15 +1948,55 @@ function LoadBalancerDashboard() {
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 10 }}>{n.region}</div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
               <span style={{ color: TOKENS.teal }}>LATENCY: {n.latency}</span>
-              <span style={{ color: TOKENS.brass }}>TRAFFIC SHARE: {n.share}</span>
+              <span style={{ color: TOKENS.brass }}>TRAFFIC: {n.share}</span>
             </div>
             {/* Health Bar */}
             <div style={{ marginTop: 12, height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden" }}>
               <div style={{ width: n.share, height: "100%", background: n.healthy ? TOKENS.brass : "#f87171", transition: "width 0.5s ease" }} />
             </div>
+            <div style={{ marginTop: 10, fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", textAlign: "right" }}>
+              Inspect Node →
+            </div>
           </div>
         ))}
       </Grid>
+
+      {/* Edge Node Telemetry Modal */}
+      {inspectNode && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.85)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <Card style={{ maxWidth: 580, width: "100%", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt, padding: 32 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal }}>NODE TELEMETRY INSPECTOR</span>
+              <button onClick={() => setInspectNode(null)} style={{ background: "transparent", border: "none", color: TOKENS.paper, fontSize: 22, cursor: "pointer" }}>✕</button>
+            </div>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 4px" }}>{inspectNode.name}</h3>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 16 }}>{inspectNode.region}</div>
+            
+            <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, marginBottom: 20 }}>{inspectNode.details}</p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, background: "rgba(255,255,255,0.02)", padding: 16, borderRadius: 6, border: `1px solid ${TOKENS.hair}`, marginBottom: 24 }}>
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>BGP ANYCAST PREFIX</div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper }}>{inspectNode.bgp}</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>SSL PROTOCOL</div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper }}>{inspectNode.protocol}</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>PING LATENCY</div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.teal }}>{inspectNode.latency}</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>SOCKET POOL</div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brass }}>{inspectNode.sockets}</div>
+              </div>
+            </div>
+
+            <Button onClick={() => setInspectNode(null)}>Close Telemetry Inspector</Button>
+          </Card>
+        </div>
+      )}
     </Card>
   );
 }
@@ -3222,6 +3281,57 @@ function LeadCaptureModal() {
   );
 }
 
+/* Dynamic Route SEO Manager */
+const PAGE_SEO = {
+  home: {
+    title: "Abhimanyu Technologies — Scale Your Business | Enterprise AI & Cloud Load Balancing",
+    description: "Next-generation enterprise software development, AI & data engineering, cloud Anycast load balancing, and cybersecurity solutions."
+  },
+  about: {
+    title: "About Us | Abhimanyu Technologies Leadership & Vision",
+    description: "Learn about Abhimanyu Technologies founder Shiva, CTO Abhimanyu, executive leadership team, company history, and engineering values."
+  },
+  services: {
+    title: "Enterprise Services & Cloud Load Balancing | Abhimanyu Technologies",
+    description: "Custom software development, AI/ML model deployment, multi-region cloud load balancing, and zero-trust cybersecurity services."
+  },
+  products: {
+    title: "Enterprise Software Platforms | Abhimanyu ERP, CRM & AI",
+    description: "Explore turnkey, supported enterprise software platforms: Abhimanyu ERP, CRM, HRMS, AI Automation, and IoT Platforms."
+  },
+  industries: {
+    title: "Industry Solutions | Banking, Healthcare, E-Commerce & Logistics",
+    description: "Domain-specific software engineering and cloud architectures for FinTech, Healthcare, Manufacturing, E-Commerce, and Logistics."
+  },
+  "case-studies": {
+    title: "Case Studies & Client ROI Outcomes | Abhimanyu Technologies",
+    description: "In-depth technical case studies on multi-region cloud load balancing, 500k user LMS, and sub-10ms AI fraud scoring."
+  },
+  insights: {
+    title: "Technical Insights & Engineering Blog | Abhimanyu Technologies",
+    description: "Read research whitepapers on cloud Anycast load balancing, generative AI business integration, and zero-trust cybersecurity."
+  },
+  careers: {
+    title: "Engineering Careers & Open Roles | Abhimanyu Technologies",
+    description: "Join Abhimanyu Technologies in Telangana HQ or remote. Hiring Flutter, Node.js, AI/ML, and DevOps Engineers."
+  },
+  contact: {
+    title: "Contact Us & Project Inquiry | Scale Your Business",
+    description: "Get in touch with an Abhimanyu Technologies solution architect. Request project scope quotes, timelines, and consultations."
+  }
+};
+
+function useRouteSEO(page) {
+  useEffect(() => {
+    const seo = PAGE_SEO[page] || PAGE_SEO.home;
+    document.title = seo.title;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", seo.description);
+    }
+  }, [page]);
+}
+
 const PAGES = {
   home: HomePage, about: AboutPage, services: ServicesPage, products: ProductsPage,
   industries: IndustriesPage, "case-studies": CaseStudiesPage, insights: InsightsPage,
@@ -3230,6 +3340,8 @@ const PAGES = {
 
 export default function MyVaultSite() {
   const [page, setPage] = useState("home");
+  useRouteSEO(page);
+
   const topRef = useRef(null);
   const go = (id) => {
     setPage(id);

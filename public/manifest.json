@@ -1,0 +1,22 @@
+{
+  "short_name": "Abhimanyu Tech",
+  "name": "Abhimanyu Technologies — Scale Your Business",
+  "description": "Enterprise Software Engineering, AI & Machine Learning, Cloud Architecture, Cybersecurity, and IoT Solutions.",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#090909",
+  "theme_color": "#090909",
+  "display": "standalone",
+  "orientation": "portrait-primary"
+}
