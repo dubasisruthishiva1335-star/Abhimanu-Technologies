@@ -3563,21 +3563,325 @@ function InsightsPage({ go }) {
 }
 
 function CareersPage({ go }) {
+  const [deptFilter, setDeptFilter] = useState("All");
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [applied, setApplied] = useState(false);
+  const [appForm, setAppForm] = useState({ name: "", email: "", portfolio: "", notice: "Immediate / 15 Days", notes: "" });
+
+  const DETAILED_ROLES = [
+    {
+      id: "backend-lead",
+      title: "Staff Backend Engineer — Distributed Systems",
+      dept: "Engineering",
+      type: "Full-time · Telangana HQ / Remote",
+      experience: "5+ Years",
+      compensation: "₹24L – ₹38L + Equity",
+      stack: "Go · Node.js · PostgreSQL · Redis · Kafka · Kubernetes",
+      overview: "Lead the architectural design of high-throughput Anycast routing APIs, event-driven microservices, and multi-tenant database clusters operating at 99.999% uptime.",
+      responsibilities: [
+        "Design sub-10ms transactional microservices with strict ACID consistency",
+        "Implement automated zero-downtime database schema migrations for multi-region clusters",
+        "Profile memory leaks and optimize gRPC network payloads under 50k+ concurrent requests",
+        "Mentor mid-level engineers and conduct deep architectural design reviews"
+      ],
+      requirements: [
+        "Strong production experience in Go, Node.js/TypeScript, or Rust",
+        "Deep familiarity with distributed consensus, PostgreSQL partitioning, and Redis caching",
+        "Hands-on expertise with Docker, Kubernetes, and Terraform infrastructure as code"
+      ]
+    },
+    {
+      id: "ai-engineer",
+      title: "Senior AI / ML Research & Deployment Engineer",
+      dept: "AI & Data",
+      type: "Full-time · Hybrid / Remote",
+      experience: "4+ Years",
+      compensation: "₹22L – ₹36L + Equity",
+      stack: "Python · PyTorch · ONNX · TensorRT · HuggingFace · FastAPI",
+      overview: "Develop and deploy production-grade computer vision, fraud scoring neural models, and fine-tuned LLM agents integrated into Abhimanyu ERP and edge telemetry nodes.",
+      responsibilities: [
+        "Train and optimize computer vision models for automated manufacturing defect inspection",
+        "Deploy low-latency (<15ms) neural inference pipelines via ONNX Runtime and TensorRT",
+        "Fine-tune open-source LLMs (Llama, Mistral) on domain-specific procurement documents",
+        "Build continuous model evaluation pipelines and drift monitoring metrics"
+      ],
+      requirements: [
+        "Master's or Bachelor's in CS, AI, or equivalent practical experience",
+        "Proven experience deploying deep learning models to production Kubernetes environments",
+        "Familiarity with CUDA kernel optimizations and distributed training (DeepSpeed / FSDP)"
+      ]
+    },
+    {
+      id: "flutter-lead",
+      title: "Senior Mobile Engineer — Flutter / React Native",
+      dept: "Engineering",
+      type: "Full-time · Telangana HQ / Remote",
+      experience: "3+ Years",
+      compensation: "₹16L – ₹26L",
+      stack: "Flutter · Dart · React Native · WebSocket · SQLite · BLE",
+      overview: "Build industrial IoT field apps, warehouse inventory scanners, and executive mobile dashboards with smooth 60fps animations and offline-first synchronization.",
+      responsibilities: [
+        "Architect cross-platform iOS and Android applications for enterprise clients",
+        "Integrate Bluetooth Low Energy (BLE) sensors and hardware barcode scanners",
+        "Implement robust offline SQLite caching with automatic cloud background reconciliation",
+        "Ensure sub-second app cold-launch times and 99.9% crash-free sessions"
+      ],
+      requirements: [
+        "3+ years shipping commercial Flutter or React Native applications to App Store / Play Store",
+        "Deep understanding of reactive state management (Riverpod, Bloc, or Zustand)",
+        "Experience interfacing with native iOS (Swift) and Android (Kotlin) bridge modules"
+      ]
+    },
+    {
+      id: "devops-sre",
+      title: "Cloud Infrastructure & SRE Architect",
+      dept: "DevOps & SRE",
+      type: "Full-time · Remote",
+      experience: "4+ Years",
+      compensation: "₹20L – ₹32L",
+      stack: "AWS · Terraform · Kubernetes · Anycast BGP · Prometheus · Cilium",
+      overview: "Maintain and expand our 12 Anycast Edge POPs, automated multi-region failovers, and defense-grade zero-trust Kubernetes clusters.",
+      responsibilities: [
+        "Manage Anycast BGP edge routing nodes and global sub-second failover automations",
+        "Maintain Infrastructure as Code (Terraform / Terragrunt) across multi-cloud environments",
+        "Establish Prometheus, Grafana, and OpenTelemetry synthetic uptime monitoring",
+        "Drive SOC2 Type II, ISO 27001, and automated penetration testing remediations"
+      ],
+      requirements: [
+        "Strong experience managing Kubernetes in production with CNI plugins (Cilium / Calico)",
+        "Deep understanding of TCP/IP, BGP Anycast, DNSSEC, and TLS termination",
+        "Proficiency in shell scripting, Python, or Go for automated operational tooling"
+      ]
+    },
+    {
+      id: "product-designer",
+      title: "Staff Product Designer — Enterprise Systems",
+      dept: "Design",
+      type: "Full-time · Hybrid / Remote",
+      experience: "4+ Years",
+      compensation: "₹18L – ₹28L",
+      stack: "Figma · Design Systems · Prototyping · Information Architecture",
+      overview: "Craft high-density enterprise software interfaces for Abhimanyu ERP, CRM, and Industrial telemetry dashboards that simplify complex multi-step workflows.",
+      responsibilities: [
+        "Design scalable, accessible design systems and component libraries in Figma",
+        "Conduct user research interviews with factory operators, procurement leads, and engineers",
+        "Prototype high-fidelity micro-interactions for complex data tables and analytics charts",
+        "Partner closely with frontend engineers to guarantee pixel-perfect production parity"
+      ],
+      requirements: [
+        "Portfolio showcasing complex B2B enterprise SaaS or developer tool interfaces",
+        "Mastery of typography, visual hierarchy, information density, and accessibility (WCAG AA)",
+        "Understanding of frontend component constraints (React / CSS Grid / Flexbox)"
+      ]
+    }
+  ];
+
+  const departments = ["All", "Engineering", "AI & Data", "DevOps & SRE", "Design"];
+
+  const filteredRoles = DETAILED_ROLES.filter((r) => {
+    return deptFilter === "All" || r.dept === deptFilter;
+  });
+
+  const handleApply = (e) => {
+    e.preventDefault();
+    trackEvent("submit_job_application", { roleId: selectedRole?.id, email: appForm.email });
+    setApplied(true);
+    setTimeout(() => {
+      setApplied(false);
+      setSelectedRole(null);
+      setAppForm({ name: "", email: "", portfolio: "", notice: "Immediate / 15 Days", notes: "" });
+    }, 2400);
+  };
+
   return (
     <>
-      <Section eyebrow="Careers" title="Join Abhimanyu Technologies" sub="We are hiring passionate engineers who build software to last.">
-        <div style={{ display: "flex", flexDirection: "column", gap: 1, border: `1px solid ${TOKENS.hair}` }}>
-          {ROLES.map((r) => (
-            <div key={r.title} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", background: TOKENS.panel, backdropFilter: "blur(14px)", borderBottom: `1px solid ${TOKENS.hair}`, flexWrap: "wrap", gap: 12 }}>
-              <div>
-                <div style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 19 }}>{r.title}</div>
-                <div style={{ color: TOKENS.slate, fontSize: 13, marginTop: 4 }}>{r.dept} · {r.type} · Telangana HQ / Remote</div>
-              </div>
-              <Button variant="ghost" onClick={() => { trackEvent("apply_role", { role: r.title }); go("contact"); }}>Apply Now →</Button>
-            </div>
+      <Section eyebrow="Careers & Culture" title="Join Abhimanyu Technologies" sub="We are hiring passionate engineers, architects, and designers who build software and hardware systems to outlast the first release.">
+        {/* Department Filters */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
+          {departments.map((d) => (
+            <button
+              key={d}
+              onClick={() => setDeptFilter(d)}
+              style={{
+                background: deptFilter === d ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                border: `1px solid ${deptFilter === d ? TOKENS.brass : TOKENS.hair}`,
+                color: deptFilter === d ? TOKENS.ink : TOKENS.slate,
+                borderRadius: 999,
+                padding: "7px 16px",
+                fontSize: 12.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: deptFilter === d ? 700 : 400,
+                cursor: "pointer",
+                transition: "all 0.15s ease"
+              }}
+            >
+              {d}
+            </button>
           ))}
         </div>
+
+        {/* Roles List */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 48 }}>
+          {filteredRoles.map((r) => (
+            <Card key={r.id} style={{ padding: "24px 28px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14 }}>
+                <div style={{ flex: "1 1 400px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                    <span style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 4 }}>
+                      {r.dept.toUpperCase()}
+                    </span>
+                    <span style={{ fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
+                      {r.compensation}
+                    </span>
+                  </div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 6px" }}>
+                    {r.title}
+                  </h3>
+                  <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 10 }}>
+                    {r.type} · Exp: {r.experience}
+                  </div>
+                  <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: "0 0 12px" }}>
+                    {r.overview}
+                  </p>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#60A5FA" }}>
+                    STACK: {r.stack}
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, alignSelf: "center" }}>
+                  <Button onClick={() => setSelectedRole(r)}>View Role & Apply →</Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        {/* Engineering Culture & Benefits */}
+        <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 20px" }}>
+          Engineering Culture & Benefits
+        </h3>
+        <Grid min={260}>
+          {[
+            { icon: "💻", title: "Top-Tier Hardware", desc: "Latest Apple M3 Max or high-spec Linux development machines, dual 4K monitors, and cloud GPU clusters." },
+            { icon: "🌐", title: "Hybrid & Remote First", desc: "Work from our state-of-the-art Telangana campus or remotely anywhere across India with home office setup stipends." },
+            { icon: "📚", title: "Annual Learning Fund", desc: "₹1,50,000 annual budget for technical certifications (AWS, CKA, OCSC), technical books, and international conferences." },
+            { icon: "🏥", title: "Comprehensive Health", desc: "Full family health and medical coverage with zero deductible, mental health support, and wellness stipends." }
+          ].map((b) => (
+            <Card key={b.title}>
+              <div style={{ fontSize: 28, marginBottom: 12 }}>{b.icon}</div>
+              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 6px" }}>{b.title}</h4>
+              <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{b.desc}</p>
+            </Card>
+          ))}
+        </Grid>
       </Section>
+
+      {/* Interactive Quick-Apply Modal */}
+      {selectedRole && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 740, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
+            {/* Header */}
+            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
+                  {selectedRole.dept.toUpperCase()} · {selectedRole.experience}
+                </span>
+                <button onClick={() => setSelectedRole(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+              </div>
+              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px" }}>
+                {selectedRole.title}
+              </h2>
+              <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
+                Compensation: {selectedRole.compensation} · {selectedRole.type}
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: 32 }}>
+              {applied ? (
+                <div style={{ textAlign: "center", padding: "40px 0" }}>
+                  <div style={{ fontSize: 48, marginBottom: 14 }}>🎉</div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>
+                    Application Transmitted!
+                  </h3>
+                  <p style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }}>
+                    Our engineering leadership team will review your profile and reach out within 3 business days.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div style={{ marginBottom: 24 }}>
+                    <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 10px" }}>
+                      Key Responsibilities
+                    </h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {selectedRole.responsibilities.map((resp, i) => (
+                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13.5, color: TOKENS.slate }}>
+                          <span style={{ color: TOKENS.teal }}>●</span>
+                          <span>{resp}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: 28 }}>
+                    <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 10px" }}>
+                      Mandatory Requirements
+                    </h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {selectedRole.requirements.map((req, i) => (
+                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13.5, color: TOKENS.slate }}>
+                          <span style={{ color: TOKENS.brass }}>✓</span>
+                          <span>{req}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Application Form */}
+                  <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 24 }}>
+                    <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 16px" }}>
+                      Submit Direct Application
+                    </h4>
+                    <form onSubmit={handleApply} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                      <div>
+                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>FULL NAME *</label>
+                        <input required value={appForm.name} onChange={(e) => setAppForm({ ...appForm, name: e.target.value })} placeholder="John Doe" style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
+                      </div>
+                      <div>
+                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>EMAIL ADDRESS *</label>
+                        <input required type="email" value={appForm.email} onChange={(e) => setAppForm({ ...appForm, email: e.target.value })} placeholder="john@domain.com" style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
+                      </div>
+                      <div>
+                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>LINKEDIN / GITHUB / PORTFOLIO *</label>
+                        <input required value={appForm.portfolio} onChange={(e) => setAppForm({ ...appForm, portfolio: e.target.value })} placeholder="https://github.com/..." style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
+                      </div>
+                      <div>
+                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>NOTICE PERIOD</label>
+                        <select value={appForm.notice} onChange={(e) => setAppForm({ ...appForm, notice: e.target.value })} style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }}>
+                          <option value="Immediate">Immediate</option>
+                          <option value="15 Days">15 Days</option>
+                          <option value="30 Days">30 Days</option>
+                          <option value="60+ Days">60+ Days</option>
+                        </select>
+                      </div>
+                      <div style={{ gridColumn: "1 / -1" }}>
+                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>BRIEF NOTE OR RECENT ARCHITECTURAL ACCOMPLISHMENT</label>
+                        <textarea rows={3} value={appForm.notes} onChange={(e) => setAppForm({ ...appForm, notes: e.target.value })} placeholder="Tell us about a distributed system or challenging technical problem you solved..." style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5, resize: "vertical" }} />
+                      </div>
+                      <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
+                        <span style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>Direct review by Shiva & Abhimanyu</span>
+                        <Button type="submit">Submit Application →</Button>
+                      </div>
+                    </form>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <CTA go={go} label="Ask About Openings" />
     </>
   );
