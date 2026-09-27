@@ -4565,12 +4565,20 @@ function RFQWizardPage({ go, openTracker }) {
 }
 
 
-function ManufacturersPage({ go, openSupplierOnboarding }) {
+function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare }) {
   const [selectedMfr, setSelectedMfr] = useState(null);
   const [quoteForm, setQuoteForm] = useState({ material: "", qty: "", timeline: "", email: "" });
   const [quoteSent, setQuoteSent] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [compareIds, setCompareIds] = useState(["mfr-1", "mfr-2"]);
 
   const updateQuote = (k, v) => setQuoteForm({ ...quoteForm, [k]: v });
+
+  const toggleCompare = (id) => {
+    setCompareIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
 
   const handleQuoteSubmit = (e) => {
     e.preventDefault();
@@ -4607,6 +4615,19 @@ function ManufacturersPage({ go, openSupplierOnboarding }) {
   ];
 
   const allManufacturers = [...B2B_MANUFACTURERS, ...EXTRA_MANUFACTURERS];
+
+  const categories = ["All Categories", "CNC Machining", "Sheet Metal", "Electronics", "Rubber & Sealing", "Castings"];
+
+  const filteredManufacturers = allManufacturers.filter((m) => {
+    if (selectedCategory === "All Categories") return true;
+    const cat = selectedCategory.toLowerCase();
+    if (cat.includes("cnc")) return m.category.toLowerCase().includes("cnc") || m.capabilities.some((c) => c.toLowerCase().includes("cnc") || c.toLowerCase().includes("turn") || c.toLowerCase().includes("mill"));
+    if (cat.includes("sheet")) return m.category.toLowerCase().includes("sheet") || m.capabilities.some((c) => c.toLowerCase().includes("laser") || c.toLowerCase().includes("sheet"));
+    if (cat.includes("electron")) return m.category.toLowerCase().includes("electron") || m.capabilities.some((c) => c.toLowerCase().includes("pcb") || c.toLowerCase().includes("smt"));
+    if (cat.includes("rubber")) return m.category.toLowerCase().includes("rubber") || m.capabilities.some((c) => c.toLowerCase().includes("gasket") || c.toLowerCase().includes("seal"));
+    if (cat.includes("cast")) return m.category.toLowerCase().includes("cast") || m.capabilities.some((c) => c.toLowerCase().includes("cast") || c.toLowerCase().includes("foundry"));
+    return true;
+  });
 
   return (
     <>
@@ -4662,49 +4683,162 @@ function ManufacturersPage({ go, openSupplierOnboarding }) {
         </div>
 
         {/* Filter Bar */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
-          {["All Categories", "CNC Machining", "Sheet Metal", "Electronics", "Rubber & Sealing", "Castings"].map((cat) => (
-            <button key={cat} style={{ background: cat === "All Categories" ? TOKENS.brass : "rgba(255,255,255,0.04)", border: `1px solid ${cat === "All Categories" ? TOKENS.brass : TOKENS.hair}`, color: cat === "All Categories" ? TOKENS.ink : TOKENS.slate, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, cursor: "pointer", fontFamily: "'JetBrains Mono', monospace", fontWeight: cat === "All Categories" ? 700 : 400 }}>
-              {cat}
-            </button>
-          ))}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                style={{
+                  background: selectedCategory === cat ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                  border: `1px solid ${selectedCategory === cat ? TOKENS.brass : TOKENS.hair}`,
+                  color: selectedCategory === cat ? TOKENS.ink : TOKENS.slate,
+                  borderRadius: 999,
+                  padding: "7px 16px",
+                  fontSize: 12.5,
+                  cursor: "pointer",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: selectedCategory === cat ? 700 : 400
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => openVendorCompare?.(compareIds.length >= 2 ? compareIds : ["mfr-1", "mfr-2", "mfr-3"])}
+            style={{
+              background: "rgba(212,175,55,0.12)",
+              border: `1px solid ${TOKENS.brass}`,
+              color: TOKENS.brass,
+              borderRadius: 8,
+              padding: "7px 16px",
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: 700,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 6
+            }}
+          >
+            <span>⚖️ Open Vendor Compare Matrix ({compareIds.length}) →</span>
+          </button>
         </div>
 
         <Grid min={300}>
-          {allManufacturers.map((m) => (
-            <Card key={m.id}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span style={{ background: "rgba(212, 175, 55, 0.12)", border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 4, padding: "4px 10px", fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>✓ VERIFIED SUPPLIER</span>
-                <span style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>{m.rating.split(" ")[0]}</span>
-              </div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 4px" }}>{m.name}</h3>
-              <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 6 }}>📍 {m.location}</div>
-              <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 12 }}>{m.category}</div>
-
-              <div style={{ borderTop: `1px solid ${TOKENS.hair}`, borderBottom: `1px solid ${TOKENS.hair}`, padding: "10px 0", margin: "10px 0" }}>
-                <div style={{ fontSize: 11, color: TOKENS.paper, fontWeight: 600, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace" }}>CAPABILITIES</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                  {m.capabilities.map((c) => (
-                    <span key={c} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: "3px 7px", borderRadius: 3, fontSize: 11, color: TOKENS.slate }}>{c}</span>
-                  ))}
+          {filteredManufacturers.map((m) => {
+            const isCompared = compareIds.includes(m.id);
+            return (
+              <Card key={m.id} style={{ border: isCompared ? `1px solid ${TOKENS.brass}` : undefined }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <span style={{ background: "rgba(212, 175, 55, 0.12)", border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 4, padding: "4px 10px", fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>✓ VERIFIED SUPPLIER</span>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    <button
+                      type="button"
+                      onClick={() => toggleCompare(m.id)}
+                      style={{
+                        background: isCompared ? "rgba(212,175,55,0.2)" : "rgba(255,255,255,0.04)",
+                        border: `1px solid ${isCompared ? TOKENS.brass : TOKENS.hair}`,
+                        color: isCompared ? TOKENS.brass : TOKENS.slate,
+                        padding: "3px 8px",
+                        borderRadius: 4,
+                        fontSize: 10.5,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {isCompared ? "✓ Compared" : "⚖️ Compare"}
+                    </button>
+                    <span style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>{m.rating.split(" ")[0]}</span>
+                  </div>
                 </div>
-              </div>
+                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 4px" }}>{m.name}</h3>
+                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 6 }}>📍 {m.location}</div>
+                <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 12 }}>{m.category}</div>
 
-              {m.moq && (
-                <div style={{ display: "flex", gap: 16, marginBottom: 8, fontFamily: "'JetBrains Mono', monospace", fontSize: 11 }}>
-                  <span style={{ color: TOKENS.slate }}>MOQ: <span style={{ color: TOKENS.paper }}>{m.moq}</span></span>
-                  <span style={{ color: TOKENS.slate }}>CAP: <span style={{ color: TOKENS.paper }}>{m.capacity}</span></span>
+                <div style={{ borderTop: `1px solid ${TOKENS.hair}`, borderBottom: `1px solid ${TOKENS.hair}`, padding: "10px 0", margin: "10px 0" }}>
+                  <div style={{ fontSize: 11, color: TOKENS.paper, fontWeight: 600, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace" }}>CAPABILITIES</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                    {m.capabilities.map((c) => (
+                      <span key={c} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: "3px 7px", borderRadius: 3, fontSize: 11, color: TOKENS.slate }}>{c}</span>
+                    ))}
+                  </div>
                 </div>
-              )}
 
-              <div style={{ fontSize: 11.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 16 }}>{m.responseRate}</div>
-              <div style={{ display: "flex", gap: 10 }}>
-                <Button onClick={() => { setSelectedMfr(m); setQuoteSent(false); }}>Request Quote →</Button>
-                <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post RFQ</Button>
-              </div>
-            </Card>
-          ))}
+                {m.moq && (
+                  <div style={{ display: "flex", gap: 16, marginBottom: 8, fontFamily: "'JetBrains Mono', monospace", fontSize: 11 }}>
+                    <span style={{ color: TOKENS.slate }}>MOQ: <span style={{ color: TOKENS.paper }}>{m.moq}</span></span>
+                    <span style={{ color: TOKENS.slate }}>CAP: <span style={{ color: TOKENS.paper }}>{m.capacity}</span></span>
+                  </div>
+                )}
+
+                <div style={{ fontSize: 11.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 16 }}>{m.responseRate}</div>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <Button onClick={() => { setSelectedMfr(m); setQuoteSent(false); }}>Request Quote →</Button>
+                  <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post RFQ</Button>
+                </div>
+              </Card>
+            );
+          })}
         </Grid>
+
+        {/* Floating Compare Dock */}
+        {compareIds.length > 0 && (
+          <div style={{
+            position: "fixed",
+            bottom: 24,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 8900,
+            background: "rgba(11, 31, 58, 0.96)",
+            border: `1px solid ${TOKENS.brass}`,
+            borderRadius: 999,
+            padding: "10px 24px",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            boxShadow: "0 16px 40px rgba(0,0,0,0.85)",
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+          }}>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper }}>
+              ⚖️ <strong>{compareIds.length}</strong> {compareIds.length === 1 ? "Plant" : "Plants"} Selected
+            </span>
+            <button
+              onClick={() => openVendorCompare?.(compareIds)}
+              style={{
+                background: `linear-gradient(135deg, ${TOKENS.brass}, #F59E0B)`,
+                color: "#080E1A",
+                border: "none",
+                borderRadius: 999,
+                padding: "7px 18px",
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 12,
+                fontWeight: 800,
+                cursor: "pointer",
+              }}
+            >
+              Compare Side-by-Side →
+            </button>
+            <button
+              onClick={() => setCompareIds([])}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: TOKENS.slate,
+                fontSize: 12,
+                fontFamily: "'JetBrains Mono', monospace",
+                cursor: "pointer",
+                textDecoration: "underline",
+              }}
+            >
+              Clear
+            </button>
+          </div>
+        )}
       </Section>
 
       {/* Manufacturer Quick-Quote Modal */}
@@ -7170,7 +7304,7 @@ function LeadCaptureModal() {
 
 /* ---------------------------- Interactive B2B RFQ & PO Lifecycle Inspector Modal ---------------------------- */
 
-function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD, openEscrow, openTraceability }) {
+function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD, openEscrow, openTraceability, openFreight }) {
   const [activeId, setActiveId] = useState(rfqId || "RFQ-2026-9041");
   const [customInput, setCustomInput] = useState("");
   const [acceptedBid, setAcceptedBid] = useState(null);
@@ -7491,6 +7625,22 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
                   🔐 Escrow Ledger & Releases →
                 </button>
                 <button
+                  onClick={() => openFreight?.(knownRfq.id, acceptedBid.poNumber)}
+                  style={{
+                    background: "rgba(21,101,192,0.25)",
+                    border: `1px solid ${TOKENS.blue}`,
+                    color: "#93C5FD",
+                    borderRadius: 6,
+                    padding: "8px 18px",
+                    fontSize: 12,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  🚚 Track Live Freight →
+                </button>
+                <button
                   onClick={() => alert(`Simulating Secure PDF Download for Purchase Order ${acceptedBid.poNumber} (Includes Digital Escrow & CMM GD&T Inspection Report)...`)}
                   style={{
                     background: TOKENS.teal,
@@ -7698,6 +7848,22 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
                 }}
               >
                 🔐 Escrow Vault & Terms →
+              </button>
+              <button
+                onClick={() => openFreight?.(knownRfq.id, acceptedBid ? acceptedBid.poNumber : "PO-2026-9041")}
+                style={{
+                  background: "rgba(21,101,192,0.12)",
+                  border: `1px solid rgba(21,101,192,0.4)`,
+                  color: "#93C5FD",
+                  borderRadius: 4,
+                  padding: "8px 14px",
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
+              >
+                🚚 Live Freight Tracking →
               </button>
             </div>
             <div style={{ display: "flex", gap: 10 }}>
@@ -9805,9 +9971,603 @@ function TraceabilityModal({
   );
 }
 
+/* ---------------------------- Interactive Vendor & Machine Shop Comparison Matrix Modal ---------------------------- */
+
+function VendorComparisonModal({
+  isOpen,
+  onClose,
+  initialSupplierIds = ["mfr-1", "mfr-2"],
+  allManufacturers = [],
+  go,
+}) {
+  const [selectedIds, setSelectedIds] = useState(
+    initialSupplierIds.length >= 2 ? initialSupplierIds : ["mfr-1", "mfr-2", "mfr-3"]
+  );
+
+  useEffect(() => {
+    if (initialSupplierIds && initialSupplierIds.length > 0) {
+      setSelectedIds(initialSupplierIds);
+    }
+  }, [initialSupplierIds]);
+
+  if (!isOpen) return null;
+
+  const mfrPool = allManufacturers.length > 0 ? allManufacturers : [
+    {
+      id: "mfr-1",
+      name: "Apex Precision Engineering Ltd.",
+      category: "CNC Machining & Turning",
+      location: "Ambattur Corridor, Chennai, Tamil Nadu",
+      rating: "★ 4.9 (94 reviews)",
+      spindles: "18x DMG MORI 5-Axis (20,000 RPM) + Mazak Integrex",
+      tolerance: "±0.002 mm (Ultra-Precision Aerospace)",
+      certifications: ["ISO 9001:2015", "AS9100D (Aerospace)", "IATF 16949"],
+      metrology: "Zeiss Contura 3D Optical CMM + Ra 0.2µm Profilometer",
+      escrow: "✓ 100% Milestone Escrow Accepted",
+      otif: "98.6% On-Time In-Full",
+      turnaround: "⚡ 4 Hours Avg. Quote",
+      moq: "100 pieces",
+      capacity: "1,50,000 units/mo",
+    },
+    {
+      id: "mfr-2",
+      name: "Deccan High-Precision Tooling",
+      category: "Aerospace 5-Axis Milling",
+      location: "Adibatla Aerospace SEZ, Hyderabad, Telangana",
+      rating: "★ 4.8 (82 reviews)",
+      spindles: "12x Hermle 5-Axis Milling + Makino Wire EDM",
+      tolerance: "±0.003 mm (Precision Defense)",
+      certifications: ["ISO 9001:2015", "AS9100D", "ISO 13485 (Medical)"],
+      metrology: "Mitutoyo Crysta-Apex S9106 CMM + Hexagon Laser Arm",
+      escrow: "✓ 100% Milestone Escrow Accepted",
+      otif: "96.8% On-Time In-Full",
+      turnaround: "⚡ 6 Hours Avg. Quote",
+      moq: "50 pieces",
+      capacity: "80,000 units/mo",
+    },
+    {
+      id: "mfr-3",
+      name: "Bangalore Micro-Machining Systems",
+      category: "Micro-Turning & Swiss Machining",
+      location: "Peenya Industrial Area, Bengaluru, Karnataka",
+      rating: "★ 4.7 (54 reviews)",
+      spindles: "14x Citizen Cincom Swiss Lathes (Ø0.5 - 32mm)",
+      tolerance: "±0.001 mm (Sub-Micron Swiss)",
+      certifications: ["ISO 9001:2015", "ISO 13485"],
+      metrology: "Keyence IM-8000 Image Dimension Measurement",
+      escrow: "✓ 100% Milestone Escrow Accepted",
+      otif: "97.4% On-Time In-Full",
+      turnaround: "⚡ 8 Hours Avg. Quote",
+      moq: "250 pieces",
+      capacity: "5,00,000 units/mo",
+    },
+    {
+      id: "mfr-4",
+      name: "Bharat Rubber & Sealing Systems",
+      category: "Rubber & Gasket Manufacturing",
+      location: "Bhosari Industrial Estate, Pune, Maharashtra",
+      rating: "★ 4.6 (38 reviews)",
+      spindles: "10x Vacuum Compression Presses + Cryo Deflashing",
+      tolerance: "±0.015 mm (Elastomer Precision)",
+      certifications: ["ISO 9001:2015", "IATF 16949"],
+      metrology: "Micro-Vu Optical Comparator + Rheometer MDR",
+      escrow: "✓ 100% Milestone Escrow Accepted",
+      otif: "95.2% On-Time In-Full",
+      turnaround: "⚡ 10 Hours Avg. Quote",
+      moq: "500 pieces",
+      capacity: "2,00,000 units/mo",
+    },
+    {
+      id: "mfr-5",
+      name: "Skylark Precision Castings",
+      category: "Investment Casting & Foundry",
+      location: "Coimbatore Industrial Corridor, Tamil Nadu",
+      rating: "★ 4.8 (61 reviews)",
+      spindles: "Induction Melting Furnaces + Haas VF-4 CNC",
+      tolerance: "±0.010 mm (Investment Cast + Post CNC)",
+      certifications: ["ISO 9001:2015", "AS9100D (Aerospace)"],
+      metrology: "100-Ton Universal Tensile Machine + Optical Spectrometer",
+      escrow: "✓ 100% Milestone Escrow Accepted",
+      otif: "97.1% On-Time In-Full",
+      turnaround: "⚡ 6 Hours Avg. Quote",
+      moq: "200 pieces",
+      capacity: "50 tons/mo",
+    },
+  ];
+
+  const activeMfrs = mfrPool.filter((m) => selectedIds.includes(m.id));
+
+  const removeMfr = (id) => {
+    if (selectedIds.length <= 1) return;
+    setSelectedIds((prev) => prev.filter((x) => x !== id));
+  };
+
+  const addMfr = (id) => {
+    if (!selectedIds.includes(id)) {
+      setSelectedIds((prev) => [...prev, id]);
+    }
+  };
+
+  const unselectedMfrs = mfrPool.filter((m) => !selectedIds.includes(m.id));
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(7, 16, 32, 0.92)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        zIndex: 10000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: 960,
+          width: "100%",
+          maxHeight: "90vh",
+          background: TOKENS.panelAlt,
+          border: `1px solid rgba(212,175,55,0.45)`,
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 28px 70px rgba(0,0,0,0.85)",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* Header */}
+        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 22 }}>⚖️</span>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
+                  Supplier & Machine Shop Comparison Matrix
+                </h3>
+                <span style={{ background: "rgba(212,175,55,0.18)", color: TOKENS.brass, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                  {activeMfrs.length} PLANTS COMPARED
+                </span>
+              </div>
+              <div style={{ fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginTop: 2 }}>
+                Side-by-side audit of machining tolerances, AS9100D credentials, and SLA lead times
+              </div>
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: "transparent", border: "none", color: TOKENS.slate, fontSize: 20, cursor: "pointer" }}>✕</button>
+        </div>
+
+        {/* Quick Add Bar */}
+        {unselectedMfrs.length > 0 && (
+          <div style={{ padding: "10px 24px", background: "rgba(0,0,0,0.25)", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>+ Add to comparison:</span>
+            {unselectedMfrs.map((m) => (
+              <button
+                key={m.id}
+                onClick={() => addMfr(m.id)}
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: `1px solid ${TOKENS.hair}`,
+                  color: TOKENS.paper,
+                  padding: "4px 10px",
+                  borderRadius: 4,
+                  fontSize: 11,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  cursor: "pointer",
+                }}
+              >
+                + {m.name.split(" ")[0]}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Comparison Table */}
+        <div style={{ overflowX: "auto", overflowY: "auto", flex: 1, padding: "20px 24px" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
+            <thead>
+              <tr style={{ borderBottom: `2px solid ${TOKENS.hair}` }}>
+                <th style={{ textAlign: "left", padding: "12px 14px", width: "22%", color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", fontSize: 11 }}>
+                  METRICS / CRITERIA
+                </th>
+                {activeMfrs.map((m) => (
+                  <th key={m.id} style={{ textAlign: "left", padding: "12px 14px", width: `${78 / activeMfrs.length}%` }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper }}>{m.name}</div>
+                        <div style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{m.category}</div>
+                        <div style={{ fontSize: 11, color: TOKENS.slate, marginTop: 2 }}>📍 {m.location.split(",")[0]}</div>
+                      </div>
+                      {activeMfrs.length > 1 && (
+                        <button
+                          onClick={() => removeMfr(m.id)}
+                          style={{ background: "transparent", border: "none", color: TOKENS.slate, cursor: "pointer", fontSize: 14 }}
+                          title="Remove from comparison"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody style={{ fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
+              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)" }}>
+                <td style={{ padding: "12px 14px", color: TOKENS.brass, fontWeight: 700 }}>Tolerance Repeatability</td>
+                {activeMfrs.map((m) => (
+                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.paper, fontWeight: 600 }}>
+                    {m.tolerance}
+                  </td>
+                ))}
+              </tr>
+              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
+                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Primary Spindle / Machine Fleet</td>
+                {activeMfrs.map((m) => (
+                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.paper }}>
+                    {m.spindles}
+                  </td>
+                ))}
+              </tr>
+              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)" }}>
+                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Quality Accreditations</td>
+                {activeMfrs.map((m) => (
+                  <td key={m.id} style={{ padding: "12px 14px" }}>
+                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                      {m.certifications.map((c) => (
+                        <span key={c} style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 6px", borderRadius: 3, fontSize: 10 }}>
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
+                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Metrology & Inspection Labs</td>
+                {activeMfrs.map((m) => (
+                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.slate }}>
+                    {m.metrology}
+                  </td>
+                ))}
+              </tr>
+              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)" }}>
+                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>On-Time Delivery (OTIF)</td>
+                {activeMfrs.map((m) => (
+                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.teal, fontWeight: 700 }}>
+                    {m.otif}
+                  </td>
+                ))}
+              </tr>
+              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
+                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Avg. RFQ Turnaround</td>
+                {activeMfrs.map((m) => (
+                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.brass }}>
+                    {m.turnaround}
+                  </td>
+                ))}
+              </tr>
+              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)" }}>
+                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>MOQ & Capacity</td>
+                {activeMfrs.map((m) => (
+                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.paper }}>
+                    MOQ: {m.moq} · Cap: {m.capacity}
+                  </td>
+                ))}
+              </tr>
+              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
+                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Escrow Protection</td>
+                {activeMfrs.map((m) => (
+                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.teal }}>
+                    {m.escrow}
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td style={{ padding: "16px 14px", color: TOKENS.slate }}>Procurement Action</td>
+                {activeMfrs.map((m) => (
+                  <td key={m.id} style={{ padding: "16px 14px" }}>
+                    <button
+                      onClick={() => {
+                        onClose();
+                        go?.("rfq-wizard");
+                      }}
+                      style={{
+                        background: TOKENS.brass,
+                        color: TOKENS.ink,
+                        border: "none",
+                        borderRadius: 4,
+                        padding: "8px 12px",
+                        fontSize: 11.5,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        width: "100%",
+                      }}
+                    >
+                      Dispatch RFQ →
+                    </button>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer */}
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+          <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+            All compared facilities are ISO/AS9100D audited by Abhimanyu Technologies Engineering Operations.
+          </span>
+          <Button onClick={onClose}>Done</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Supply Chain Logistics & Live Freight Tracking Modal ---------------------------- */
+
+function FreightTrackerModal({
+  isOpen,
+  onClose,
+  rfqId = "RFQ-2026-9041",
+  poNumber = "PO-2026-9041",
+}) {
+  if (!isOpen) return null;
+
+  const telemetry = {
+    consignmentId: "CN-ABH-882190",
+    carrier: "Abhimanyu Express Logistics (BlueDart Aviation Cargo)",
+    origin: "Apex Precision Machining Hub, Ambattur Corridor, Chennai (MAA)",
+    destination: "Bharat Aerospace & Dynamics Dock #4, Adibatla Aerospace Hub, Telangana (HYD)",
+    status: "IN-TRANSIT · AIR & HIGHWAY CORRIDOR",
+    eta: "Today at 18:30 IST (On Schedule)",
+    currentLocation: "NH-44 Expressway Corridor (14°18'N, 79°41'E)",
+    speed: "68 km/h",
+    temp: "21.8°C",
+    tempStatus: "NORMAL (15°C - 28°C allowable)",
+    humidity: "38% RH",
+    humidityStatus: "DRY PASS (< 55% RH rust prevention)",
+    shock: "0.14 G",
+    shockStatus: "ZERO DROP / SHOCK (Max threshold: 1.5 G)",
+    battery: "94%",
+    eWayBill: "EWAY-GST-362026-89104",
+  };
+
+  const stages = [
+    {
+      step: 1,
+      title: "Factory Gate Pack & Nitrogen Purged Crating",
+      location: "Ambattur Machining Facility, Chennai",
+      time: "27 Sep 2026, 16:00 IST",
+      done: true,
+      desc: "Machined parts cleaned, VCI rust inhibitor applied, wooden crates sealed.",
+    },
+    {
+      step: 2,
+      title: "E-Way Bill Generation & Commercial Customs Seal",
+      location: "Chennai Air Cargo Logistics Hub",
+      time: "27 Sep 2026, 18:45 IST",
+      done: true,
+      desc: "Official GST e-way bill #362026-89104 verified with commercial tax clearance.",
+    },
+    {
+      step: 3,
+      title: "Climate-Controlled Air & Dedicated Ground Freight",
+      location: "En Route to Hyderabad Aerospace Hub",
+      time: "In-Transit (Live Telemetry Active)",
+      current: true,
+      desc: "GPS node tracking active. Environmental and 3-axis accelerometer sensors streaming.",
+    },
+    {
+      step: 4,
+      title: "Destination Receiving Dock & CMM Verification",
+      location: "Bharat Aerospace Dock #4, Telangana",
+      time: "Est. 18:30 IST",
+      pending: true,
+      desc: "Incoming Goods Receipt Note (GRN) inspection and final 10% retention release.",
+    },
+  ];
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(7, 16, 32, 0.92)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        zIndex: 10000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: 820,
+          width: "100%",
+          maxHeight: "90vh",
+          background: TOKENS.panelAlt,
+          border: `1px solid rgba(21,101,192,0.45)`,
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 28px 70px rgba(0,0,0,0.85)",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* Header */}
+        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 22 }}>🚚</span>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
+                  Consignment GPS & Environmental Telemetry
+                </h3>
+                <span style={{ background: "rgba(0,168,150,0.18)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                  LIVE SENSORS STREAMING
+                </span>
+              </div>
+              <div style={{ fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginTop: 2 }}>
+                Consignment #{telemetry.consignmentId} · PO #{poNumber} · {telemetry.carrier}
+              </div>
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: "transparent", border: "none", color: TOKENS.slate, fontSize: 20, cursor: "pointer" }}>✕</button>
+        </div>
+
+        {/* Live Status Strip */}
+        <div style={{ padding: "16px 24px", background: "rgba(0,0,0,0.25)", borderBottom: `1px solid ${TOKENS.hair}`, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
+          <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CONSIGNMENT STATUS</div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>
+              ● {telemetry.status}
+            </div>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CORRIDOR SPEED & GPS</div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.paper, fontWeight: 600, marginTop: 4 }}>
+              {telemetry.speed} · {telemetry.currentLocation.split("(")[0]}
+            </div>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>ESTIMATED DOCK ARRIVAL</div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.brassBright, fontWeight: 700, marginTop: 4 }}>
+              {telemetry.eta}
+            </div>
+          </div>
+        </div>
+
+        {/* Sensor Gauges Grid */}
+        <div style={{ padding: "16px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+          <div style={{ background: "rgba(0,168,150,0.05)", border: `1px solid rgba(0,168,150,0.3)`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+              <span>INTERNAL TEMP</span>
+              <span style={{ color: TOKENS.teal }}>PASS ✓</span>
+            </div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: TOKENS.teal, margin: "4px 0" }}>
+              {telemetry.temp}
+            </div>
+            <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{telemetry.tempStatus}</div>
+          </div>
+
+          <div style={{ background: "rgba(21,101,192,0.05)", border: `1px solid rgba(21,101,192,0.3)`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+              <span>RELATIVE HUMIDITY</span>
+              <span style={{ color: "#60A5FA" }}>PASS ✓</span>
+            </div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: "#60A5FA", margin: "4px 0" }}>
+              {telemetry.humidity}
+            </div>
+            <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{telemetry.humidityStatus}</div>
+          </div>
+
+          <div style={{ background: "rgba(212,175,55,0.05)", border: `1px solid rgba(212,175,55,0.3)`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+              <span>3-AXIS SHOCK SENSOR</span>
+              <span style={{ color: TOKENS.brass }}>ZERO SHOCK ✓</span>
+            </div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: TOKENS.brassBright, margin: "4px 0" }}>
+              {telemetry.shock}
+            </div>
+            <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{telemetry.shockStatus}</div>
+          </div>
+        </div>
+
+        {/* Stepper Content */}
+        <div style={{ overflowY: "auto", padding: "20px 24px", flex: 1 }}>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 14 }}>
+            CORRIDOR TRANSIT MILESTONES (CHENNAI ➔ HYDERABAD AEROSPACE SEZ)
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {stages.map((s) => (
+              <div
+                key={s.step}
+                style={{
+                  background: s.done ? "rgba(0,168,150,0.06)" : s.current ? "rgba(21,101,192,0.12)" : "rgba(255,255,255,0.02)",
+                  border: `1px solid ${s.done ? TOKENS.teal : s.current ? TOKENS.blue : TOKENS.hair}`,
+                  borderRadius: 8,
+                  padding: "14px 18px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 12,
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{
+                      background: s.done ? TOKENS.teal : s.current ? TOKENS.blue : "rgba(255,255,255,0.06)",
+                      color: s.done || s.current ? TOKENS.ink : TOKENS.paper,
+                      width: 20,
+                      height: 20,
+                      borderRadius: 3,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 10.5,
+                      fontWeight: 700,
+                      fontFamily: "'JetBrains Mono', monospace",
+                    }}>
+                      {s.done ? "✓" : s.step}
+                    </span>
+                    <span style={{ fontFamily: "'Fraunces', serif", fontSize: 15, color: TOKENS.paper }}>{s.title}</span>
+                    <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: s.done ? TOKENS.teal : s.current ? "#60A5FA" : TOKENS.slate }}>
+                      {s.time}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, color: TOKENS.slate, marginLeft: 28 }}>{s.desc}</div>
+                </div>
+                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+                  📍 {s.location}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+          <button
+            onClick={() => {
+              trackEvent("download_eway_bill");
+              alert(`Downloading GST E-Way Bill & Delivery Challan for Consignment ${telemetry.consignmentId} (PDF)...`);
+            }}
+            style={{
+              background: "transparent",
+              border: `1px solid ${TOKENS.hair}`,
+              color: TOKENS.paper,
+              borderRadius: 4,
+              padding: "7px 12px",
+              fontSize: 11.5,
+              fontFamily: "'JetBrains Mono', monospace",
+              cursor: "pointer",
+            }}
+          >
+            📄 Download E-Way Bill ({telemetry.eWayBill})
+          </button>
+          <Button onClick={onClose}>Close Tracker</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------------------------- Universal Command Palette (Ctrl+K) ---------------------------- */
 
-function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, openCAD, openEscrow, openTraceability, openSupplierOnboarding }) {
+function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, openCAD, openEscrow, openTraceability, openSupplierOnboarding, openVendorCompare, openFreight }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
 
@@ -9825,6 +10585,8 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
     { type: "Tool", title: "3D CAD & GD&T Mesh Viewer", id: "cad", action: "openCAD", icon: "📐", sub: "Inspect STEP file, CMM deviations, X-ray fluid bores" },
     { type: "Tool", title: "Industrial Escrow & Milestone Vault", id: "escrow", action: "openEscrow", icon: "🔐", sub: "SBI/ICICI gateway, stage-gate 2FA releases" },
     { type: "Tool", title: "Material Test Report (MTR) & Melt Traceability", id: "traceability", action: "openTraceability", icon: "🔬", sub: "AS9100D spectroscopy, tensile yield, NDT" },
+    { type: "Tool", title: "Supplier & Machine Shop Comparison Matrix", id: "compare", action: "openVendorCompare", icon: "⚖️", sub: "Side-by-side 5-axis CNC tolerance and OTIF audit" },
+    { type: "Tool", title: "Consignment GPS & Live Freight Telemetry", id: "freight", action: "openFreight", icon: "🚚", sub: "Live temperature, humidity, shock G-force, and E-Way bills" },
     { type: "Tool", title: "OEM Supplier Plant Verification Wizard", id: "onboarding", action: "openSupplierOnboarding", icon: "🏭", sub: "Register machine shop & get verified" },
     { type: "Page", title: "Products & Software Platforms", id: "products", icon: "🛒", sub: "ERP, CRM, HRMS, AI, IoT" },
     { type: "Page", title: "Engineering Services & Pod Calculator", id: "services", icon: "🛠", sub: "Software, Cloud, AI, Security" },
@@ -9867,6 +10629,10 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
       openTraceability?.();
     } else if (item.action === "openSupplierOnboarding") {
       openSupplierOnboarding?.();
+    } else if (item.action === "openVendorCompare") {
+      openVendorCompare?.();
+    } else if (item.action === "openFreight") {
+      openFreight?.();
     } else if (item.rfqId) {
       openTracker?.(item.rfqId);
     } else {
@@ -10099,6 +10865,10 @@ export default function MyVaultSite() {
     material: "SS 316L Stainless Steel",
     heatNumber: "HT-316L-98421",
   });
+  const [compareModalOpen, setCompareModalOpen] = useState(false);
+  const [compareSupplierIds, setCompareSupplierIds] = useState(["mfr-1", "mfr-2", "mfr-3"]);
+  const [freightModalOpen, setFreightModalOpen] = useState(false);
+  const [freightRfqId, setFreightRfqId] = useState("RFQ-2026-9041");
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -10148,6 +10918,16 @@ export default function MyVaultSite() {
       heatNumber: heatNumber || "HT-316L-98421",
     });
     setTraceModalOpen(true);
+  };
+
+  const openVendorCompare = (ids) => {
+    if (ids && ids.length > 0) setCompareSupplierIds(ids);
+    setCompareModalOpen(true);
+  };
+
+  const openFreight = (id) => {
+    if (id) setFreightRfqId(id);
+    setFreightModalOpen(true);
   };
 
   const Page = PAGES[page] || HomePage;
@@ -10206,6 +10986,8 @@ export default function MyVaultSite() {
           openSpotlight={openSpotlight}
           openEscrow={openEscrow}
           openTraceability={openTraceability}
+          openVendorCompare={openVendorCompare}
+          openFreight={openFreight}
         />
       </main>
       <Footer go={go} />
@@ -10219,6 +11001,7 @@ export default function MyVaultSite() {
         openCAD={openCAD}
         openEscrow={openEscrow}
         openTraceability={openTraceability}
+        openFreight={openFreight}
       />
       <AuthModal
         isOpen={authModalOpen}
@@ -10248,6 +11031,8 @@ export default function MyVaultSite() {
         openEscrow={openEscrow}
         openTraceability={openTraceability}
         openSupplierOnboarding={openSupplierOnboarding}
+        openVendorCompare={openVendorCompare}
+        openFreight={openFreight}
       />
       <EscrowSettlementModal
         isOpen={escrowModalOpen}
@@ -10263,6 +11048,18 @@ export default function MyVaultSite() {
         rfqId={tracePart.rfqId}
         material={tracePart.material}
         heatNumber={tracePart.heatNumber}
+      />
+      <VendorComparisonModal
+        isOpen={compareModalOpen}
+        onClose={() => setCompareModalOpen(false)}
+        initialSupplierIds={compareSupplierIds}
+        go={go}
+      />
+      <FreightTrackerModal
+        isOpen={freightModalOpen}
+        onClose={() => setFreightModalOpen(false)}
+        rfqId={freightRfqId}
+        poNumber="PO-2026-9041"
       />
       {/* Mobile Bottom Navigation Bar */}
       <nav
