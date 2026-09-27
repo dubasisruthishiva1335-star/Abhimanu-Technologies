@@ -3388,58 +3388,140 @@ function IndustriesPage({ go }) {
 
 function CaseStudiesPage({ go }) {
   const [selectedCase, setSelectedCase] = useState(null);
+  const [indFilter, setIndFilter] = useState("All");
 
   const EXTENDED_CASE_STUDIES = [
     {
       id: "cloud-unification",
       client: "Global Logistics Leader",
-      title: "Unifying Operations onto High-Throughput Cloud Engine",
+      industry: "Logistics",
+      title: "Unifying Pan-India Operations onto High-Throughput Event-Driven Cloud Engine",
       challenge: "Disconnected legacy spreadsheets and fragmented SQL databases caused 4-hour latency in inventory reconciliation and high operational error rates during peak logistics hours.",
       solution: "Abhimanyu Technologies engineered an event-driven microservice architecture with real-time WebSocket syncing, automated inventory reconciliation, and zero-downtime PostgreSQL multi-region replication.",
       results: ["4.2x Throughput increase", "-68% Cloud infrastructure cost", "0ms Data sync latency", "99.999% SLA Uptime"],
       stack: "Next.js · Node.js · PostgreSQL · AWS Kinesis · Docker · Terraform",
-      details: "By migrating away from monolithic batch-processing systems, the logistics network now processes over 14 million daily transaction events with instant tracking updates. Full audit logging ensures zero inventory discrepancies."
+      details: "By migrating away from monolithic batch-processing systems, the logistics network now processes over 14 million daily transaction events with instant tracking updates. Full audit logging ensures zero inventory discrepancies across 120 distribution warehouses.",
+      roi: "$1.4M Annual saved compute & labor overhead"
     },
     {
       id: "lms-tracking",
       client: "EdTech & University System",
-      title: "Student Progress & Analytics Engine at 500k+ Scale",
+      industry: "EdTech",
+      title: "Student Progress & High-Concurrency Analytics Engine at 500k+ Scale",
       challenge: "Legacy learning platform crashed under concurrent exam loads of 50k+ simultaneous users, lacking real-time progress verification and telemetry.",
       solution: "Built a distributed mobile and web learning system utilizing Redis caching layers, auto-scaling Kubernetes worker pods, and granular telemetry verification.",
-      results: ["500,000+ Active concurrent users", "0 Crash incidents during peak exams", "-75% Server response latency", "Automated certificate issuance"],
+      results: ["500,000+ Active concurrent users", "0 Crash incidents during peak exams", "-75% Server response latency", "Automated verified certificates"],
       stack: "React Native · Flutter · Node.js · Redis · PostgreSQL · Kubernetes",
-      details: "The unified LMS tracks micro-learning interactions in real time, granting instant verified certificates while providing administrators with predictive student success analytics."
+      details: "The unified LMS tracks micro-learning interactions in real time, granting instant verified certificates while providing administrators with predictive student success analytics with sub-second response times.",
+      roi: "Zero exam downtime across 3 consecutive academic years"
     },
     {
       id: "ai-fraud-detection",
       client: "FinTech Banking Platform",
-      title: "Sub-10ms AI Fraud Detection & Risk Scoring API",
+      industry: "FinTech",
+      title: "Sub-10ms AI Fraud Detection & Risk Scoring API Deployed at Edge Nodes",
       challenge: "Manual transaction screening created bottleneck delays in instant credit authorization, resulting in elevated fraud exposure.",
       solution: "Developed an inline machine learning risk scoring engine deployed at edge nodes, scoring every transaction under 8 milliseconds.",
       results: ["-91% Fraudulent transactions", "< 8ms Median prediction latency", "$12.4M Annual saved fraud losses", "SOC2 Type II Audit Certified"],
       stack: "Python · PyTorch · ONNX Runtime · AWS Lambda Edge · Redis",
-      details: "The risk scoring neural model evaluates 120+ transaction signals concurrently, allowing seamless legitimate purchases while flagging anomalies before clearing."
+      details: "The risk scoring neural model evaluates 120+ transaction signals concurrently, allowing seamless legitimate purchases while flagging anomalies before clearing.",
+      roi: "$12.4M Direct capital fraud preservation"
+    },
+    {
+      id: "industrial-iot-scada",
+      client: "Heavy Foundry & OEM Conglomerate",
+      industry: "Industry 4.0",
+      title: "IoT Edge Telemetry & Predictive Spindle Maintenance Across 14 Factories",
+      challenge: "Spindle bearing failures on CNC machining lines caused unscheduled assembly halts costing over $45,000 per hour of factory downtime.",
+      solution: "Deployed ruggedized ARM edge micro-gateways collecting vibrational and thermal telemetry over Modbus/OPC-UA, feeding into an inline ONNX anomaly detection engine.",
+      results: ["-78% Unplanned line downtime", "36 Hours advance bearing seizure warning", "100% Automated work-order dispatch", "ISO 9001 Audited"],
+      stack: "Raspberry Pi CM4 · TimescaleDB · ONNX · Modbus TCP · Grafana · Docker",
+      details: "Real-time edge compute monitors harmonics across 240 CNC machines, alerting maintenance supervisors via WhatsApp and Abhimanyu ERP hours before physical tolerance degradation occurs.",
+      roi: "$3.8M Annual avoidance of line halt losses"
+    },
+    {
+      id: "medtech-telemetry",
+      client: "Global MedTech Network",
+      industry: "Healthcare",
+      title: "HIPAA-Compliant Patient Telemetry Gateway with Field-Level Encryption",
+      challenge: "Hospital patient vitals monitors were isolated on legacy serial networks, delaying clinical response times during post-operative patient cardiac distress.",
+      solution: "Architected an end-to-end encrypted WebSocket telemetry bridge with AES-256 field-level encryption, FHIR v4 resource adapters, and sub-200ms vital sign alarm dispatch.",
+      results: ["Sub-200ms Vitals alarm latency", "100% HIPAA & HL7 FHIR v4 compliance", "Zero unencrypted data in transit", "FDA 21 CFR Part 11 Certified"],
+      stack: "Go · Kafka · React Native · PostgreSQL Citus · AWS MedTech VPC",
+      details: "Over 8,000 connected hospital patient beds stream real-time ECG and oxygen saturation data directly to central nursing stations with sub-second failover redundancy.",
+      roi: "Sub-200ms emergency alarm response across 18 regional hospital facilities"
     }
   ];
 
+  const industries = ["All", "Logistics", "EdTech", "FinTech", "Industry 4.0", "Healthcare"];
+
+  const filteredCases = EXTENDED_CASE_STUDIES.filter((c) => {
+    return indFilter === "All" || c.industry === indFilter;
+  });
+
   return (
     <>
-      <Section eyebrow="Case Studies & Success Stories" title="Proven Engineering Outcomes" sub="In-depth technical reviews of systems designed, built, and maintained by Abhimanyu Technologies.">
+      <Section eyebrow="Case Studies & Success Stories" title="Proven Engineering Outcomes" sub="In-depth technical reviews of systems designed, built, and maintained by Abhimanyu Technologies across enterprise domains.">
+        {/* Industry Filter Pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
+          {industries.map((ind) => (
+            <button
+              key={ind}
+              onClick={() => setIndFilter(ind)}
+              style={{
+                background: indFilter === ind ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                border: `1px solid ${indFilter === ind ? TOKENS.brass : TOKENS.hair}`,
+                color: indFilter === ind ? TOKENS.ink : TOKENS.slate,
+                borderRadius: 999,
+                padding: "7px 16px",
+                fontSize: 12.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: indFilter === ind ? 700 : 400,
+                cursor: "pointer",
+                transition: "all 0.15s ease"
+              }}
+            >
+              {ind}
+            </button>
+          ))}
+        </div>
+
+        {/* Case Studies Grid */}
         <Grid min={320}>
-          {EXTENDED_CASE_STUDIES.map((c) => (
-            <Card key={c.id}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 10, letterSpacing: "0.08em" }}>{c.client.toUpperCase()}</div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 21, margin: "0 0 14px" }}>{c.title}</h3>
-              <p style={{ color: TOKENS.slate, fontSize: 14, marginBottom: 10, lineHeight: 1.6 }}><b style={{ color: TOKENS.paper }}>Challenge: </b>{c.challenge}</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, margin: "16px 0", background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 4 }}>
-                {c.results.map((res, i) => (
-                  <div key={i} style={{ fontSize: 12.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>✓ {res}</div>
-                ))}
+          {filteredCases.map((c) => (
+            <Card key={c.id} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 4 }}>
+                    {c.client.toUpperCase()}
+                  </span>
+                  <span style={{ fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
+                    {c.industry}
+                  </span>
+                </div>
+                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 12px", lineHeight: 1.35 }}>
+                  {c.title}
+                </h3>
+                <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 12, lineHeight: 1.6 }}>
+                  <b style={{ color: TOKENS.paper }}>Challenge: </b>{c.challenge}
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, margin: "14px 0", background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 6 }}>
+                  {c.results.map((res, i) => (
+                    <div key={i} style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
+                      ✓ {res}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate, marginBottom: 18 }}>{c.stack}</div>
-              <Button variant="ghost" onClick={() => { trackEvent("open_case_study", { id: c.id }); setSelectedCase(c); }}>
-                Read Full Case Study →
-              </Button>
+
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11.5, color: "#60A5FA", marginBottom: 16 }}>
+                  {c.stack}
+                </div>
+                <Button onClick={() => { trackEvent("open_case_study", { id: c.id }); setSelectedCase(c); }}>
+                  Read Full Case Study →
+                </Button>
+              </div>
             </Card>
           ))}
         </Grid>
@@ -3447,34 +3529,73 @@ function CaseStudiesPage({ go }) {
 
       {/* Case Study Modal Reader */}
       {selectedCase && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.85)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <Card style={{ maxWidth: 700, width: "100%", maxHeight: "85vh", overflowY: "auto", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal }}>{selectedCase.client}</span>
-              <button onClick={() => setSelectedCase(null)} style={{ background: "transparent", border: "none", color: TOKENS.paper, fontSize: 22, cursor: "pointer" }}>✕</button>
-            </div>
-            <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 16px" }}>{selectedCase.title}</h2>
-            <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 16, marginBottom: 16 }}>
-              <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0 }}>CHALLENGE</h4>
-              <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6 }}>{selectedCase.challenge}</p>
-            </div>
-            <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 16, marginBottom: 16 }}>
-              <h4 style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0 }}>ARCHITECTURAL SOLUTION</h4>
-              <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6 }}>{selectedCase.solution}</p>
-              <p style={{ color: TOKENS.paper, fontSize: 14, lineHeight: 1.6 }}>{selectedCase.details}</p>
-            </div>
-            <div style={{ marginBottom: 20 }}>
-              <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0 }}>VERIFIED RESULTS</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                {selectedCase.results.map((r, idx) => (
-                  <div key={idx} style={{ background: "rgba(212, 175, 55, 0.08)", border: `1px solid ${TOKENS.hair}`, padding: "10px 14px", borderRadius: 4, color: TOKENS.paper, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
-                    ✓ {r}
-                  </div>
-                ))}
+        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 740, width: "100%", maxHeight: "90vh", overflowY: "auto", border: `1px solid rgba(212, 175, 55, 0.4)`, background: TOKENS.panelAlt, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
+            {/* Header */}
+            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
+                  {selectedCase.client.toUpperCase()} · {selectedCase.industry}
+                </span>
+                <button onClick={() => setSelectedCase(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+              </div>
+              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
+                {selectedCase.title}
+              </h2>
+              <div style={{ fontSize: 12.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
+                ROI OUTCOME: {selectedCase.roi}
               </div>
             </div>
-            <Button onClick={() => { setSelectedCase(null); go("contact"); }}>Discuss Similar Project →</Button>
-          </Card>
+
+            {/* Body */}
+            <div style={{ padding: 32 }}>
+              <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 18, marginBottom: 18 }}>
+                <h4 style={{ color: "#f87171", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginTop: 0, marginBottom: 6 }}>
+                  OPERATIONAL CHALLENGE
+                </h4>
+                <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.65, margin: 0 }}>
+                  {selectedCase.challenge}
+                </p>
+              </div>
+
+              <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 18, marginBottom: 18 }}>
+                <h4 style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginTop: 0, marginBottom: 6 }}>
+                  ARCHITECTURAL SOLUTION
+                </h4>
+                <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.65, marginBottom: 10 }}>
+                  {selectedCase.solution}
+                </p>
+                <p style={{ color: TOKENS.paper, fontSize: 14, lineHeight: 1.65, margin: 0 }}>
+                  {selectedCase.details}
+                </p>
+              </div>
+
+              <div style={{ marginBottom: 24 }}>
+                <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginTop: 0, marginBottom: 10 }}>
+                  VERIFIED PRODUCTION METRICS
+                </h4>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  {selectedCase.results.map((r, idx) => (
+                    <div key={idx} style={{ background: "rgba(212, 175, 55, 0.08)", border: `1px solid ${TOKENS.hair}`, padding: "10px 14px", borderRadius: 6, color: TOKENS.paper, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
+                      ✓ {r}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 20 }}>
+                <span style={{ fontSize: 12, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
+                  Stack: {selectedCase.stack}
+                </span>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <Button variant="ghost" onClick={() => setSelectedCase(null)}>Close</Button>
+                  <Button onClick={() => { setSelectedCase(null); go("contact"); }}>
+                    Discuss Similar Architecture →
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
