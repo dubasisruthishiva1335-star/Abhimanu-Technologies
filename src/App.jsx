@@ -11,7 +11,7 @@ import * as THREE from "three";
    Text: Crisp White (#F8FAFC) / Muted Slate (#94A3B8)
    ============================================================ */
 
-const TOKENS = {
+const LIGHT_TOKENS = {
   ink: "#F8FAFC",
   panel: "#FFFFFF",
   panelAlt: "#F1F5F9",
@@ -22,7 +22,24 @@ const TOKENS = {
   teal: "#0D9488",
   blue: "#1D4ED8",
   hair: "#E2E8F0",
+  white: "#0F172A",
 };
+
+const DARK_TOKENS = {
+  ink: "#0B1F3A",
+  panel: "#102A4C",
+  panelAlt: "#163761",
+  brass: "#D4AF37",
+  brassBright: "#F59E0B",
+  paper: "#F8FAFC",
+  slate: "#94A3B8",
+  teal: "#00A896",
+  blue: "#38BDF8",
+  hair: "rgba(255, 255, 255, 0.12)",
+  white: "#FFFFFF",
+};
+
+const TOKENS = { ...LIGHT_TOKENS };
 
 /* ---------------------------- Multi-Currency Engine ---------------------------- */
 
@@ -4599,7 +4616,7 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
 }
 
 
-function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, openRiskHeatmap, openContractVault }) {
+function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, openRiskHeatmap, openContractVault, openQuoter }) {
   const [selectedMfr, setSelectedMfr] = useState(null);
   const [quoteForm, setQuoteForm] = useState({ material: "", qty: "", timeline: "", email: "" });
   const [quoteSent, setQuoteSent] = useState(false);
@@ -4694,6 +4711,26 @@ function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, open
             </p>
           </div>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <button
+              onClick={() => openQuoter && openQuoter()}
+              style={{
+                background: "rgba(217,119,6,0.18)",
+                border: `1px solid ${TOKENS.brass}`,
+                color: TOKENS.brass,
+                borderRadius: 8,
+                padding: "11px 18px",
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 12.5,
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                whiteSpace: "nowrap"
+              }}
+            >
+              <span>⚡ Instant Pricing Calculator →</span>
+            </button>
             <button
               onClick={() => openRiskHeatmap && openRiskHeatmap()}
               style={{
@@ -6275,7 +6312,7 @@ function TransparentLogo({ src, height = 40, alt = "MyVault Logo" }) {
   );
 }
 
-function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setCurrentUser, openAuth, openTracker, openSpotlight }) {
+function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setCurrentUser, openAuth, openTracker, openSpotlight, openQuoter, theme = "light", setTheme }) {
   const [open, setOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
@@ -6498,6 +6535,28 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
 
         {/* Desktop CTA & Controls */}
         <div className="desktop-nav" style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {/* Theme Switcher */}
+          <button
+            onClick={() => setTheme?.((prev) => (prev === "light" ? "dark" : "light"))}
+            style={{
+              background: "rgba(15, 23, 42, 0.045)",
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              color: TOKENS.paper,
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              padding: "6px 10px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              transition: "all 0.15s ease",
+            }}
+            title={`Switch to ${theme === "light" ? "Dark (Deep Navy)" : "Light (Clean White)"} Theme`}
+          >
+            <span>{theme === "light" ? "🌙 Dark" : "☀️ Light"}</span>
+          </button>
+
           {/* Currency Switcher */}
           <div style={{ position: "relative" }}>
             <button
@@ -6526,12 +6585,12 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                   position: "absolute",
                   top: "calc(100% + 6px)",
                   right: 0,
-                  background: "rgba(11, 31, 58, 0.98)",
+                  background: TOKENS.panel,
                   border: `1px solid ${TOKENS.hair}`,
                   borderRadius: 6,
                   padding: 4,
                   zIndex: 100,
-                  boxShadow: "0 12px 32px rgba(0,0,0,0.6)",
+                  boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
                   minWidth: 140,
                 }}
               >
@@ -6541,7 +6600,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                     onClick={() => { setCurrency?.(cKey); setCurrencyOpen(false); }}
                     style={{
                       width: "100%",
-                      background: currency === cKey ? "rgba(212,175,55,0.15)" : "transparent",
+                      background: currency === cKey ? "rgba(217,119,6,0.15)" : "transparent",
                       border: "none",
                       color: currency === cKey ? TOKENS.brass : TOKENS.paper,
                       padding: "7px 10px",
@@ -6558,6 +6617,29 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
               </div>
             )}
           </div>
+
+          {/* Instant Quote Button */}
+          <button
+            onClick={openQuoter}
+            style={{
+              background: "rgba(217, 119, 6, 0.12)",
+              border: "1px solid rgba(217, 119, 6, 0.35)",
+              borderRadius: 6,
+              color: TOKENS.brass,
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: 600,
+              padding: "6px 11px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              transition: "all 0.15s ease",
+            }}
+            title="Parametric Instant Manufacturing Quoting Calculator"
+          >
+            <span>⚡</span> Instant Quote
+          </button>
 
           {/* Track RFQ Button */}
           <button
@@ -6613,12 +6695,12 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                     top: "calc(100% + 6px)",
                     right: 0,
                     width: 250,
-                    background: "rgba(11, 31, 58, 0.98)",
+                    background: TOKENS.panel,
                     border: `1px solid ${TOKENS.hair}`,
                     borderRadius: 8,
                     padding: 12,
                     zIndex: 100,
-                    boxShadow: "0 16px 40px rgba(0,0,0,0.7)",
+                    boxShadow: "0 16px 40px rgba(0,0,0,0.18)",
                   }}
                 >
                   <div style={{ paddingBottom: 8, borderBottom: `1px solid ${TOKENS.hair}`, marginBottom: 8 }}>
@@ -6699,7 +6781,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
 
       {/* Mobile Menu */}
       {open && (
-        <div className="mobile-menu" style={{ padding: "0 20px 20px", display: "flex", flexDirection: "column", gap: 4, background: `rgba(11, 31, 58, 0.98)`, borderTop: `1px solid ${TOKENS.hair}`, maxHeight: "75vh", overflowY: "auto" }}>
+        <div className="mobile-menu" style={{ padding: "0 20px 20px", display: "flex", flexDirection: "column", gap: 4, background: TOKENS.panel, borderTop: `1px solid ${TOKENS.hair}`, maxHeight: "75vh", overflowY: "auto" }}>
           {/* Mobile Search Button */}
           <button
             onClick={() => { openSpotlight?.(); setOpen(false); }}
@@ -6724,16 +6806,28 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
           </button>
 
           {/* Quick Mobile Action Bar */}
-          <div style={{ display: "flex", gap: 8, padding: "12px 0 8px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, padding: "10px 0", borderBottom: `1px solid ${TOKENS.hair}` }}>
+            <button
+              onClick={() => { openQuoter?.(); setOpen(false); }}
+              style={{ background: "rgba(217,119,6,0.12)", border: `1px solid ${TOKENS.brass}`, color: TOKENS.brass, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", fontWeight: 700 }}
+            >
+              ⚡ Instant Quote
+            </button>
+            <button
+              onClick={() => setTheme?.((prev) => (prev === "light" ? "dark" : "light"))}
+              style={{ background: "rgba(15,23,42,0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
+            >
+              {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+            </button>
             <button
               onClick={() => { openTracker?.("RFQ-2026-9041"); setOpen(false); }}
-              style={{ flex: 1, background: "rgba(0,168,150,0.15)", border: `1px solid ${TOKENS.teal}`, color: TOKENS.teal, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
+              style={{ background: "rgba(0,168,150,0.15)", border: `1px solid ${TOKENS.teal}`, color: TOKENS.teal, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
             >
               🔍 Track RFQ
             </button>
             <button
               onClick={() => { openAuth?.(); setOpen(false); }}
-              style={{ flex: 1, background: "rgba(21,101,192,0.15)", border: `1px solid ${TOKENS.blue}`, color: TOKENS.paper, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
+              style={{ background: "rgba(21,101,192,0.15)", border: `1px solid ${TOKENS.blue}`, color: TOKENS.paper, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
             >
               {currentUser ? `👤 ${currentUser.company.split(" ")[0]}` : "🔑 Sign In"}
             </button>
@@ -7380,7 +7474,7 @@ function LeadCaptureModal() {
 
 /* ---------------------------- Interactive B2B RFQ & PO Lifecycle Inspector Modal ---------------------------- */
 
-function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD, openEscrow, openTraceability, openFreight, openDFM, openContractVault, openRiskHeatmap }) {
+function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD, openEscrow, openTraceability, openFreight, openDFM, openContractVault, openRiskHeatmap, openAudit }) {
   const [activeId, setActiveId] = useState(rfqId || "RFQ-2026-9041");
   const [customInput, setCustomInput] = useState("");
   const [acceptedBid, setAcceptedBid] = useState(null);
@@ -7750,22 +7844,40 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CERTIFIED MATERIAL</div>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4, flexWrap: "wrap", gap: 6 }}>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brass, fontWeight: 600 }}>{knownRfq.material}</span>
-                <button
-                  onClick={() => openTraceability?.(knownRfq.id, knownRfq.material)}
-                  style={{
-                    background: "rgba(0,168,150,0.15)",
-                    border: `1px solid ${TOKENS.teal}`,
-                    color: TOKENS.teal,
-                    borderRadius: 4,
-                    padding: "3px 8px",
-                    fontSize: 10.5,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    cursor: "pointer",
-                    fontWeight: 700,
-                  }}
-                >
-                  🔬 View MTR & Heat # →
-                </button>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => openAudit?.(knownRfq.id, knownRfq.title, knownRfq.material)}
+                    style={{
+                      background: "rgba(29,78,216,0.12)",
+                      border: `1px solid ${TOKENS.blue}`,
+                      color: TOKENS.blue,
+                      borderRadius: 4,
+                      padding: "3px 8px",
+                      fontSize: 10.5,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      cursor: "pointer",
+                      fontWeight: 700,
+                    }}
+                  >
+                    🛡️ AS9102 FAI Dossier →
+                  </button>
+                  <button
+                    onClick={() => openTraceability?.(knownRfq.id, knownRfq.material)}
+                    style={{
+                      background: "rgba(0,168,150,0.15)",
+                      border: `1px solid ${TOKENS.teal}`,
+                      color: TOKENS.teal,
+                      borderRadius: 4,
+                      padding: "3px 8px",
+                      fontSize: 10.5,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      cursor: "pointer",
+                      fontWeight: 700,
+                    }}
+                  >
+                    🔬 View MTR & Heat # →
+                  </button>
+                </div>
               </div>
             </div>
             <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
@@ -10699,7 +10811,7 @@ function FreightTrackerModal({
 
 /* ---------------------------- Automated AI Design for Manufacturability (DFM) Diagnostic Engine ---------------------------- */
 
-function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "SS316 Multi-Port Valve Manifold", material = "SS 316L Stainless Steel", openCAD, openTracker }) {
+function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "SS316 Multi-Port Valve Manifold", material = "SS 316L Stainless Steel", openCAD, openTracker, openQuoter }) {
   const [optimized, setOptimized] = useState(false);
   const [activeRule, setActiveRule] = useState("wall_thickness");
   const [activeTab, setActiveTab] = useState("rules");
@@ -11188,7 +11300,26 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
             📥 Download DFM Audit Certificate (PDF)
           </button>
 
-          <div style={{ display: "flex", gap: 10 }}>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <button
+              onClick={() => {
+                onClose();
+                openQuoter?.();
+              }}
+              style={{
+                background: "rgba(217,119,6,0.18)",
+                border: `1px solid ${TOKENS.brass}`,
+                color: TOKENS.brass,
+                borderRadius: 6,
+                padding: "8px 16px",
+                fontSize: 12,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              ⚡ Calculate Instant Machining Cost →
+            </button>
             <button
               onClick={() => {
                 onClose();
@@ -12018,9 +12149,1103 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
   );
 }
 
+/* ---------------------------- Parametric Instant Quoting Modal ---------------------------- */
+
+function InstantQuoterModal({ isOpen, onClose, currency = "INR", openCAD, openDFM, go }) {
+  const [process, setProcess] = useState("cnc");
+  const [material, setMaterial] = useState("al6061");
+  const [quantity, setQuantity] = useState(100);
+  const [lengthMm, setLengthMm] = useState(120);
+  const [widthMm, setWidthMm] = useState(80);
+  const [heightMm, setHeightMm] = useState(45);
+  const [tolerance, setTolerance] = useState("precision");
+  const [finish, setFinish] = useState("anodize");
+  const [leadTime, setLeadTime] = useState("standard");
+  const [activeTab, setActiveTab] = useState("calculator");
+  const [copied, setCopied] = useState(false);
+
+  if (!isOpen) return null;
+
+  const PROCESS_OPTIONS = [
+    { id: "cnc", label: "CNC Machining", sub: "3/4/5-Axis Milling & Turning", icon: "⚙️", baseRate: 1400, setup: 8500 },
+    { id: "sheet_metal", label: "Sheet Metal Fab", sub: "Fiber Laser & CNC Bending", icon: "✂️", baseRate: 950, setup: 4500 },
+    { id: "injection", label: "Injection Molding", sub: "Rapid Tooling & Part Run", icon: "💉", baseRate: 650, setup: 125000 },
+    { id: "3d_print", label: "Industrial 3D Print", sub: "DMLS Metal & SLS Nylon", icon: "🖨️", baseRate: 2200, setup: 3000 },
+  ];
+
+  const MATERIAL_OPTIONS = [
+    { id: "al6061", label: "Aluminum 6061-T6", density: 2.70, pricePerKg: 420, machinability: 1.0, icon: "🛡️", desc: "Aerospace & structural" },
+    { id: "ss316", label: "Stainless Steel 316L", density: 8.00, pricePerKg: 680, machinability: 1.85, icon: "⚓", desc: "Marine, medical valves" },
+    { id: "ti_gr5", label: "Titanium Gr. 5 (Ti-6Al-4V)", density: 4.43, pricePerKg: 4800, machinability: 3.2, icon: "🚀", desc: "Flight-critical aerospace" },
+    { id: "brass_c360", label: "Brass C360", density: 8.50, pricePerKg: 720, machinability: 0.7, icon: "✨", desc: "High machinability, fittings" },
+    { id: "delrin", label: "POM Delrin / Acetal", density: 1.41, pricePerKg: 550, machinability: 0.65, icon: "🧪", desc: "Low friction polymer" },
+    { id: "ms2062", label: "Mild Steel IS 2062", density: 7.85, pricePerKg: 95, machinability: 1.15, icon: "🏗️", desc: "Structural & heavy weldments" },
+  ];
+
+  const TOLERANCE_OPTIONS = [
+    { id: "standard", label: "ISO 2768-m (±0.1 mm)", mult: 1.0, sub: "General commercial machining" },
+    { id: "precision", label: "ISO 2768-f (±0.05 mm)", mult: 1.25, sub: "Precision machine interfaces" },
+    { id: "aerospace", label: "AS9100 / GD&T (±0.01 mm)", mult: 1.65, sub: "Aerospace CMM 100% verified" },
+  ];
+
+  const FINISH_OPTIONS = [
+    { id: "as_machined", label: "As-Machined (Ra 3.2µm)", pricePerUnit: 0 },
+    { id: "bead_blast", label: "Bead Blasted (Ra 1.6µm)", pricePerUnit: 120 },
+    { id: "anodize", label: "Anodized Type II/III Hardcoat", pricePerUnit: 340 },
+    { id: "electropolish", label: "Electropolished (Pharma Ra 0.4µm)", pricePerUnit: 580 },
+    { id: "plating", label: "Zinc / Nickel Flash Plating", pricePerUnit: 260 },
+  ];
+
+  const LEAD_OPTIONS = [
+    { id: "standard", label: "Standard (12-15 Business Days)", mult: 1.0, tag: "Standard Rate" },
+    { id: "expedited", label: "Expedited (5-7 Business Days)", mult: 1.25, tag: "+25% Priority" },
+    { id: "rush", label: "Rapid Prototype (72 Hours)", mult: 1.50, tag: "+50% Express" },
+  ];
+
+  const curProc = PROCESS_OPTIONS.find((p) => p.id === process) || PROCESS_OPTIONS[0];
+  const curMat = MATERIAL_OPTIONS.find((m) => m.id === material) || MATERIAL_OPTIONS[0];
+  const curTol = TOLERANCE_OPTIONS.find((t) => t.id === tolerance) || TOLERANCE_OPTIONS[1];
+  const curFin = FINISH_OPTIONS.find((f) => f.id === finish) || FINISH_OPTIONS[2];
+  const curLead = LEAD_OPTIONS.find((l) => l.id === leadTime) || LEAD_OPTIONS[0];
+
+  // Engineering calculations
+  const volumeCm3 = (lengthMm * widthMm * heightMm) / 1000;
+  const rawWeightKg = Math.max(0.05, (volumeCm3 * curMat.density * 1.25) / 1000);
+  const rawMaterialUnitInr = Math.round(rawWeightKg * curMat.pricePerKg);
+  
+  const baseCycleHours = Math.max(0.2, Math.min(3.5, volumeCm3 * 0.0016));
+  const machineUnitInr = Math.round(baseCycleHours * curMat.machinability * (curProc.baseRate / 2) * curTol.mult);
+  const setupUnitInr = Math.round(curProc.setup / Math.max(1, quantity));
+  const finishUnitInr = curFin.pricePerUnit;
+  const qcUnitInr = Math.round((rawMaterialUnitInr + machineUnitInr) * (curTol.id === "aerospace" ? 0.22 : 0.08));
+
+  const unitCostInr = Math.round((rawMaterialUnitInr + machineUnitInr + setupUnitInr + finishUnitInr + qcUnitInr) * curLead.mult);
+  const totalBatchInr = unitCostInr * quantity;
+
+  // Percentage cost breakdown
+  const totalCalc = Math.max(1, rawMaterialUnitInr + machineUnitInr + setupUnitInr + finishUnitInr + qcUnitInr);
+  const matPct = Math.round((rawMaterialUnitInr / totalCalc) * 100);
+  const machPct = Math.round((machineUnitInr / totalCalc) * 100);
+  const setupPct = Math.round((setupUnitInr / totalCalc) * 100);
+  const finishQcPct = Math.max(0, 100 - matPct - machPct - setupPct);
+
+  const handleCopySpec = () => {
+    const text = `Abhimanyu Technologies - Parametric Instant Quote\nProcess: ${curProc.label}\nMaterial: ${curMat.label}\nEnvelope: ${lengthMm}x${widthMm}x${heightMm} mm (Billet: ${rawWeightKg.toFixed(2)} kg)\nTolerance: ${curTol.label}\nFinish: ${curFin.label}\nQuantity: ${quantity} units\nEst. Unit Cost: ${formatPrice(unitCostInr, currency)}\nEst. Batch Total: ${formatPrice(totalBatchInr, currency)}\nLead Time: ${curLead.label}`;
+    navigator.clipboard?.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2200);
+  };
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15, 23, 42, 0.65)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        zIndex: 10000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px 16px",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: 960,
+          maxHeight: "92vh",
+          overflowY: "auto",
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 12,
+          boxShadow: "0 24px 64px rgba(0,0,0,0.22), 0 0 0 1px rgba(217,119,6,0.2)",
+          display: "flex",
+          flexDirection: "column",
+          color: TOKENS.paper,
+          fontFamily: "'Inter', sans-serif",
+        }}
+      >
+        {/* Header */}
+        <div style={{ padding: "20px 24px", borderBottom: `1px solid ${TOKENS.hair}`, background: "linear-gradient(135deg, rgba(217,119,6,0.08) 0%, rgba(29,78,216,0.06) 100%)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <span style={{ fontSize: 20 }}>⚡</span>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 700, color: TOKENS.paper, letterSpacing: "-0.01em" }}>
+                Parametric Instant Sourcing & Manufacturing Quoter
+              </span>
+              <span style={{ background: "rgba(217,119,6,0.14)", border: "1px solid rgba(217,119,6,0.35)", color: TOKENS.brass, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                BENCHMARK ENGINE v4.2
+              </span>
+            </div>
+            <div style={{ fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.4 }}>
+              Real-time algorithmic unit cost & batch amortization curve based on active machine shop telemetry in Chennai, Coimbatore, and Pune.
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "rgba(15,23,42,0.05)",
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              color: TOKENS.slate,
+              width: 32,
+              height: 32,
+              fontSize: 18,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Tab Navigation */}
+        <div style={{ display: "flex", borderBottom: `1px solid ${TOKENS.hair}`, padding: "0 24px", background: "rgba(15,23,42,0.02)" }}>
+          {[
+            { id: "calculator", label: "⚡ Parametric Calculator", icon: "⚙️" },
+            { id: "breakdown", label: "📊 Cost Distribution & Amortization", icon: "📈" },
+            { id: "hubs", label: "🏭 Matched Industrial Clusters", icon: "📍" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              style={{
+                background: "transparent",
+                border: "none",
+                borderBottom: activeTab === t.id ? `2px solid ${TOKENS.brass}` : "2px solid transparent",
+                padding: "12px 16px",
+                color: activeTab === t.id ? TOKENS.brass : TOKENS.slate,
+                fontSize: 13,
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: activeTab === t.id ? 700 : 500,
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Modal Body */}
+        <div style={{ padding: 24, flex: 1 }}>
+          {activeTab === "calculator" && (
+            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 24 }}>
+              {/* Left Controls */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                {/* Process Selection */}
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 8, fontWeight: 700 }}>
+                    1. MANUFACTURING PROCESS
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    {PROCESS_OPTIONS.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => setProcess(p.id)}
+                        style={{
+                          background: process === p.id ? "rgba(217,119,6,0.12)" : "rgba(15,23,42,0.03)",
+                          border: `1px solid ${process === p.id ? TOKENS.brass : TOKENS.hair}`,
+                          borderRadius: 8,
+                          padding: "10px 12px",
+                          textAlign: "left",
+                          cursor: "pointer",
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span>{p.icon}</span>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: process === p.id ? TOKENS.brass : TOKENS.paper }}>{p.label}</span>
+                        </div>
+                        <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 4 }}>{p.sub}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Material Selection */}
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 8, fontWeight: 700 }}>
+                    2. CERTIFIED RAW STOCK ALLOY
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
+                    {MATERIAL_OPTIONS.map((m) => (
+                      <button
+                        key={m.id}
+                        onClick={() => setMaterial(m.id)}
+                        style={{
+                          background: material === m.id ? "rgba(29,78,216,0.12)" : "rgba(15,23,42,0.03)",
+                          border: `1px solid ${material === m.id ? TOKENS.blue : TOKENS.hair}`,
+                          borderRadius: 6,
+                          padding: "8px 10px",
+                          textAlign: "left",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <div style={{ fontSize: 12, fontWeight: 600, color: material === m.id ? TOKENS.blue : TOKENS.paper }}>{m.label}</div>
+                        <div style={{ fontSize: 10, color: TOKENS.slate, marginTop: 2 }}>{m.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Part Envelope Dimensions */}
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
+                      3. PART ENVELOPE (L × W × H in mm)
+                    </span>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 600 }}>
+                      Vol: {volumeCm3.toFixed(1)} cm³ • Billet: {rawWeightKg.toFixed(2)} kg
+                    </span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                    {[
+                      { label: "Length (L)", val: lengthMm, set: setLengthMm, min: 10, max: 800 },
+                      { label: "Width (W)", val: widthMm, set: setWidthMm, min: 10, max: 600 },
+                      { label: "Height (H)", val: heightMm, set: setHeightMm, min: 5, max: 300 },
+                    ].map((d, di) => (
+                      <div key={di} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "8px 10px" }}>
+                        <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{d.label}</div>
+                        <input
+                          type="number"
+                          value={d.val}
+                          onChange={(e) => d.set(Math.max(d.min, Math.min(d.max, Number(e.target.value) || d.min)))}
+                          style={{
+                            width: "100%",
+                            background: "transparent",
+                            border: "none",
+                            fontSize: 14,
+                            fontWeight: 700,
+                            color: TOKENS.paper,
+                            marginTop: 4,
+                            outline: "none",
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Quantity & Amortization Slider */}
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
+                      4. BATCH RUN QUANTITY
+                    </span>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brass, fontWeight: 700 }}>
+                      {quantity.toLocaleString()} units
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="2000"
+                    step="5"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    style={{ width: "100%", accentColor: TOKENS.brass, cursor: "pointer" }}
+                  />
+                  <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+                    {[10, 50, 100, 250, 500, 1000].map((q) => (
+                      <button
+                        key={q}
+                        onClick={() => setQuantity(q)}
+                        style={{
+                          flex: 1,
+                          background: quantity === q ? TOKENS.brass : "rgba(15,23,42,0.04)",
+                          color: quantity === q ? "#FFFFFF" : TOKENS.slate,
+                          border: `1px solid ${quantity === q ? TOKENS.brass : TOKENS.hair}`,
+                          borderRadius: 4,
+                          padding: "4px 0",
+                          fontSize: 11,
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                        }}
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tolerance & Surface Finish */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, fontWeight: 700 }}>
+                      TOLERANCE TIER
+                    </div>
+                    <select
+                      value={tolerance}
+                      onChange={(e) => setTolerance(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "8px 10px",
+                        borderRadius: 6,
+                        border: `1px solid ${TOKENS.hair}`,
+                        fontSize: 12,
+                        background: TOKENS.panel,
+                        color: TOKENS.paper,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {TOLERANCE_OPTIONS.map((t) => (
+                        <option key={t.id} value={t.id}>{t.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, fontWeight: 700 }}>
+                      SURFACE FINISH
+                    </div>
+                    <select
+                      value={finish}
+                      onChange={(e) => setFinish(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "8px 10px",
+                        borderRadius: 6,
+                        border: `1px solid ${TOKENS.hair}`,
+                        fontSize: 12,
+                        background: TOKENS.panel,
+                        color: TOKENS.paper,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {FINISH_OPTIONS.map((f) => (
+                        <option key={f.id} value={f.id}>{f.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Output Panel */}
+              <div style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 20, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 12, marginBottom: 16 }}>
+                    <div>
+                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>ESTIMATED UNIT PRICE</div>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, fontWeight: 800, color: TOKENS.paper, marginTop: 2 }}>
+                        {formatPrice(unitCostInr, currency)}
+                        <span style={{ fontSize: 13, fontWeight: 400, color: TOKENS.slate }}> / unit</span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>BATCH TOTAL ({quantity} PCS)</div>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 700, color: TOKENS.brass, marginTop: 2 }}>
+                        {formatPrice(totalBatchInr, currency)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Amortization Breakdown */}
+                  <div style={{ marginBottom: 16 }}>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate, marginBottom: 6 }}>
+                      COST PROPORTION BREAKDOWN
+                    </div>
+                    <div style={{ height: 10, borderRadius: 999, overflow: "hidden", display: "flex", width: "100%", background: "#E2E8F0" }}>
+                      <div style={{ width: `${matPct}%`, background: TOKENS.blue }} title={`Raw Material: ${matPct}%`} />
+                      <div style={{ width: `${machPct}%`, background: TOKENS.brass }} title={`Machine Time: ${machPct}%`} />
+                      <div style={{ width: `${setupPct}%`, background: TOKENS.teal }} title={`Setup Amortization: ${setupPct}%`} />
+                      <div style={{ width: `${finishQcPct}%`, background: "#9333EA" }} title={`Finish & Quality: ${finishQcPct}%`} />
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginTop: 10, fontSize: 11 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: TOKENS.blue }} />
+                        <span style={{ color: TOKENS.slate }}>Raw Stock:</span>
+                        <span style={{ fontWeight: 600, color: TOKENS.paper }}>{formatPrice(rawMaterialUnitInr, currency)}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: TOKENS.brass }} />
+                        <span style={{ color: TOKENS.slate }}>Machine Runtime:</span>
+                        <span style={{ fontWeight: 600, color: TOKENS.paper }}>{formatPrice(machineUnitInr, currency)}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: TOKENS.teal }} />
+                        <span style={{ color: TOKENS.slate }}>Tooling Amort.:</span>
+                        <span style={{ fontWeight: 600, color: TOKENS.paper }}>{formatPrice(setupUnitInr, currency)}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#9333EA" }} />
+                        <span style={{ color: TOKENS.slate }}>Finishing & QC:</span>
+                        <span style={{ fontWeight: 600, color: TOKENS.paper }}>{formatPrice(finishUnitInr + qcUnitInr, currency)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Production Lead Time */}
+                  <div style={{ background: "rgba(15,23,42,0.04)", borderRadius: 6, padding: "10px 12px", marginBottom: 16 }}>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>SELECT PRODUCTION SCHEDULE</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 6 }}>
+                      {LEAD_OPTIONS.map((l) => (
+                        <label key={l.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", fontSize: 12 }}>
+                          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <input
+                              type="radio"
+                              name="leadTimeRadio"
+                              checked={leadTime === l.id}
+                              onChange={() => setLeadTime(l.id)}
+                              style={{ accentColor: TOKENS.brass }}
+                            />
+                            <span style={{ color: leadTime === l.id ? TOKENS.paper : TOKENS.slate, fontWeight: leadTime === l.id ? 600 : 400 }}>{l.label}</span>
+                          </span>
+                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: leadTime === l.id ? TOKENS.brass : TOKENS.slate }}>{l.tag}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Hub Availability Tag */}
+                  <div style={{ borderLeft: `3px solid ${TOKENS.teal}`, paddingLeft: 10, fontSize: 11.5, color: TOKENS.slate, lineHeight: 1.4 }}>
+                    📍 <strong style={{ color: TOKENS.paper }}>Matched Capacity:</strong> 4 verified Tier-1 machine shops in <em>Chennai & Coimbatore</em> are currently equipped for this alloy and tolerance class.
+                  </div>
+                </div>
+
+                {/* Primary Actions */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 18 }}>
+                  <button
+                    onClick={() => { go?.("rfq-wizard"); onClose(); }}
+                    style={{
+                      width: "100%",
+                      background: TOKENS.brass,
+                      color: "#FFFFFF",
+                      border: "none",
+                      borderRadius: 6,
+                      padding: "11px 16px",
+                      fontSize: 13,
+                      fontFamily: "'Inter', sans-serif",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 6,
+                    }}
+                  >
+                    <span>➕ Convert to Official RFQ Requirement →</span>
+                  </button>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      onClick={() => { openCAD?.(); onClose(); }}
+                      style={{
+                        flex: 1,
+                        background: "rgba(29,78,216,0.12)",
+                        border: `1px solid ${TOKENS.blue}`,
+                        color: TOKENS.blue,
+                        borderRadius: 6,
+                        padding: "8px 10px",
+                        fontSize: 11.5,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      📐 Open 3D CAD
+                    </button>
+                    <button
+                      onClick={() => { openDFM?.(); onClose(); }}
+                      style={{
+                        flex: 1,
+                        background: "rgba(0,168,150,0.12)",
+                        border: `1px solid ${TOKENS.teal}`,
+                        color: TOKENS.teal,
+                        borderRadius: 6,
+                        padding: "8px 10px",
+                        fontSize: 11.5,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      🛠 DFM Feasibility
+                    </button>
+                    <button
+                      onClick={handleCopySpec}
+                      style={{
+                        background: "rgba(15,23,42,0.05)",
+                        border: `1px solid ${TOKENS.hair}`,
+                        color: TOKENS.paper,
+                        borderRadius: 6,
+                        padding: "8px 12px",
+                        fontSize: 11.5,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        cursor: "pointer",
+                      }}
+                      title="Copy Quote Spec to Clipboard"
+                    >
+                      {copied ? "✓ Copied" : "📋 Copy"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "breakdown" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.5 }}>
+                Industrial amortization curves illustrate why unit prices decrease substantially at scale. Setup costs (CAM programming, CNC fixture machining, tooling offsets) are fixed per batch and divide evenly across higher order volumes.
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12 }}>
+                {[10, 50, 100, 500, 1000].map((qtyTier) => {
+                  const sUnit = Math.round(curProc.setup / qtyTier);
+                  const uCost = Math.round((rawMaterialUnitInr + machineUnitInr + sUnit + finishUnitInr + qcUnitInr) * curLead.mult);
+                  const bTotal = uCost * qtyTier;
+                  return (
+                    <div
+                      key={qtyTier}
+                      style={{
+                        background: quantity === qtyTier ? "rgba(217,119,6,0.1)" : "rgba(15,23,42,0.03)",
+                        border: `1px solid ${quantity === qtyTier ? TOKENS.brass : TOKENS.hair}`,
+                        borderRadius: 8,
+                        padding: 14,
+                        textAlign: "center",
+                      }}
+                    >
+                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.paper }}>
+                        {qtyTier} Units
+                      </div>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: TOKENS.brass, margin: "6px 0 2px" }}>
+                        {formatPrice(uCost, currency)}
+                      </div>
+                      <div style={{ fontSize: 10, color: TOKENS.slate }}>per part</div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: TOKENS.paper, marginTop: 8, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 6 }}>
+                        {formatPrice(bTotal, currency)} total
+                      </div>
+                      <button
+                        onClick={() => { setQuantity(qtyTier); setActiveTab("calculator"); }}
+                        style={{
+                          marginTop: 8,
+                          width: "100%",
+                          background: "transparent",
+                          border: `1px solid ${TOKENS.hair}`,
+                          borderRadius: 4,
+                          fontSize: 10.5,
+                          fontFamily: "'JetBrains Mono', monospace",
+                          color: TOKENS.paper,
+                          cursor: "pointer",
+                          padding: "3px 0",
+                        }}
+                      >
+                        Select Tier
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ background: "rgba(15,23,42,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 16 }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
+                  PARAMETRIC COST FORMULA (INDIAN METROLOGY BENCHMARK)
+                </div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper, lineHeight: 1.6 }}>
+                  UnitCost = [ RawStockWeight × RatePerKg + CycleHours × Machinability × MachineHourRate + (ToolingSetup / Qty) + FinishingCost + QCCost ] × LeadTimeMultiplier
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "hubs" && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+              {[
+                { name: "Chennai Guindy & Ambattur Industrial Cluster", plants: "14 Verified OEM Shops", certs: "AS9100D, ISO 9001:2015", special: "5-Axis DMG Mori Milling, Titanium Turning", lead: "3-5 days delivery in South Hub" },
+                { name: "Coimbatore Precision Engineering Belt", plants: "22 Verified CNC/VMC Shops", certs: "ISO 9001:2015, IATF 16949", special: "High-volume Aluminum & Steel Castings", lead: "4-6 days delivery pan-India" },
+                { name: "Pune Bhosari & Chakan Auto/Aero Corridor", plants: "18 Verified Fabricators", certs: "AS9100D, Nadcap Heat Treat", special: "Laser Sheet Metal & Aircraft Structural Bores", lead: "3-5 days delivery in West Hub" },
+              ].map((hub, hi) => (
+                <div key={hi} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                    <span>🏭</span>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>{hub.name}</span>
+                  </div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 600 }}>{hub.plants}</div>
+                  <div style={{ fontSize: 11.5, color: TOKENS.slate, marginTop: 8 }}><strong>Certs:</strong> {hub.certs}</div>
+                  <div style={{ fontSize: 11.5, color: TOKENS.slate, marginTop: 4 }}><strong>Capabilities:</strong> {hub.special}</div>
+                  <div style={{ fontSize: 11, color: TOKENS.brass, marginTop: 8 }}>⚡ {hub.lead}</div>
+                  <button
+                    onClick={() => { go?.("manufacturers"); onClose(); }}
+                    style={{
+                      marginTop: 12,
+                      width: "100%",
+                      background: "transparent",
+                      border: `1px solid ${TOKENS.hair}`,
+                      borderRadius: 4,
+                      padding: "6px 0",
+                      fontSize: 11,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      cursor: "pointer",
+                      color: TOKENS.paper,
+                    }}
+                  >
+                    View Cluster Directory →
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{ padding: "14px 24px", borderTop: `1px solid ${TOKENS.hair}`, background: "rgba(15,23,42,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
+            🔒 All pricing estimates conform to bilateral NDA privacy protocols.
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "transparent",
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              color: TOKENS.paper,
+              padding: "7px 16px",
+              fontSize: 12,
+              fontFamily: "'Inter', sans-serif",
+              cursor: "pointer",
+            }}
+          >
+            Close Calculator
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- AS9102 Quality Compliance & FAI Vault Modal ---------------------------- */
+
+function AuditComplianceModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "SS316 Multi-Port Valve Manifold", material = "SS 316L Stainless Steel", openTraceability, openCAD }) {
+  const [activeForm, setActiveForm] = useState("form3");
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
+
+  if (!isOpen) return null;
+
+  const FAI_CHARACTERISTICS = [
+    { charNo: "01", desc: "Overall Length (OAL)", nominal: "120.00 mm", tol: "±0.05", min: "119.95", max: "120.05", measured: "120.014 mm", dev: "+0.014", tool: "Zeiss Prismo CMM", status: "PASS" },
+    { charNo: "02", desc: "Main Bore Diameter", nominal: "Ø 25.000 mm", tol: "+0.020 / -0.000", min: "25.000", max: "25.020", measured: "25.008 mm", dev: "+0.008", tool: "Zeiss Air Gage Spindle", status: "PASS" },
+    { charNo: "03", desc: "Port Center Pitch", nominal: "45.00 mm", tol: "±0.02", min: "44.98", max: "45.02", measured: "44.996 mm", dev: "-0.004", tool: "Mitutoyo Linear Height", status: "PASS" },
+    { charNo: "04", desc: "Internal Thread M16x1.5-6H", nominal: "M16x1.5", tol: "6H Class", min: "Pitch 15.026", max: "15.216", measured: "Go Gauge Passes / No-Go Stops", dev: "0.000", tool: "NABL Plug Thread Gauge", status: "PASS" },
+    { charNo: "05", desc: "Flange Perpendicularity (⟂)", nominal: "0.020 mm", tol: "To Datum [A]", min: "0.000", max: "0.020", measured: "0.009 mm", dev: "-0.011", tool: "Zeiss VAST Gold Probe", status: "PASS" },
+    { charNo: "06", desc: "Cross-Port True Position (⌖)", nominal: "Ø 0.05 mm MMC", tol: "To Datums [A|B|C]", min: "0.00", max: "0.05", measured: "Ø 0.018 mm", dev: "-0.032", tool: "Zeiss 3D Spatial Algorithm", status: "PASS" },
+    { charNo: "07", desc: "Internal Bore Surface Finish Ra", nominal: "Ra 0.8 µm Max", tol: "DIN EN ISO 4287", min: "0.00", max: "0.80", measured: "Ra 0.58 µm", dev: "-0.22", tool: "Mitutoyo Surftest SJ-410", status: "PASS" },
+    { charNo: "08", desc: "Minimum Wall Thickness", nominal: "3.50 mm", tol: "±0.15", min: "3.35", max: "3.65", measured: "3.53 mm", dev: "+0.03", tool: "Olympus Ultrasonic Gauge", status: "PASS" },
+  ];
+
+  const CMM_MACHINES = [
+    { name: "Zeiss Prismo 7/10/5 VAST Gold", serial: "PR-89104", type: "Bridge CMM (0.9 + L/350 µm)", calDate: "2026-01-14", dueDate: "2027-01-14", lab: "Carl Zeiss India NABL CC-1102", certNo: "CZI-CAL-2026-0491", status: "ACTIVE / VERIFIED" },
+    { name: "Mitutoyo Crysta-Apex S9106 CNC", serial: "CA-44219", type: "CNC Coordinate Measuring Machine", calDate: "2025-11-20", dueDate: "2026-11-20", lab: "Mitutoyo Metrology Lab CC-2901", certNo: "MIT-2025-8821", status: "ACTIVE / VERIFIED" },
+    { name: "Mitutoyo Surftest SJ-410", serial: "SJ-10928", type: "Precision Stylus Surface Roughness Tester", calDate: "2026-02-05", dueDate: "2027-02-05", lab: "Apex Quality Metrology Hub", certNo: "AQM-2026-0112", status: "ACTIVE / VERIFIED" },
+    { name: "Olympus 38DL Plus", serial: "OLY-7721", type: "Ultrasonic Precision Thickness Gauge", calDate: "2025-12-10", dueDate: "2026-12-10", lab: "NDT Systems Bangalore", certNo: "NDT-2025-4491", status: "ACTIVE / VERIFIED" },
+  ];
+
+  const handleDownload = () => {
+    setDownloadSuccess(true);
+    setTimeout(() => setDownloadSuccess(false), 4000);
+  };
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15, 23, 42, 0.65)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        zIndex: 10000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px 16px",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: 980,
+          maxHeight: "92vh",
+          overflowY: "auto",
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 12,
+          boxShadow: "0 24px 64px rgba(0,0,0,0.22), 0 0 0 1px rgba(29,78,216,0.25)",
+          display: "flex",
+          flexDirection: "column",
+          color: TOKENS.paper,
+          fontFamily: "'Inter', sans-serif",
+        }}
+      >
+        {/* Header */}
+        <div style={{ padding: "20px 24px", borderBottom: `1px solid ${TOKENS.hair}`, background: "linear-gradient(135deg, rgba(29,78,216,0.08) 0%, rgba(0,168,150,0.06) 100%)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 20 }}>🛡️</span>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 700, color: TOKENS.paper, letterSpacing: "-0.01em" }}>
+                AS9102 Rev C Quality & FAI Compliance Dossier
+              </span>
+              <span style={{ background: "rgba(0,168,150,0.15)", border: `1px solid ${TOKENS.teal}`, color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                ● 100% CONFORMING (8/8 VERIFIED)
+              </span>
+            </div>
+            <div style={{ fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.4 }}>
+              Part: <strong>{partName}</strong> • RFQ: <span style={{ fontFamily: "'JetBrains Mono', monospace" }}>{rfqId}</span> • Certified Alloy: <strong>{material}</strong>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "rgba(15,23,42,0.05)",
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              color: TOKENS.slate,
+              width: 32,
+              height: 32,
+              fontSize: 18,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Tab Navigation */}
+        <div style={{ display: "flex", borderBottom: `1px solid ${TOKENS.hair}`, padding: "0 24px", background: "rgba(15,23,42,0.02)", overflowX: "auto" }}>
+          {[
+            { id: "form3", label: "📐 Form 3: CMM Balloon Matrix", icon: "📐" },
+            { id: "form1", label: "📋 Form 1: Part Accountability", icon: "📋" },
+            { id: "form2", label: "🧪 Form 2: Materials & Processes", icon: "🧪" },
+            { id: "cmm", label: "🔬 Metrology Calibration Log", icon: "🔬" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setActiveForm(t.id)}
+              style={{
+                background: "transparent",
+                border: "none",
+                borderBottom: activeForm === t.id ? `2px solid ${TOKENS.blue}` : "2px solid transparent",
+                padding: "12px 16px",
+                color: activeForm === t.id ? TOKENS.blue : TOKENS.slate,
+                fontSize: 13,
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: activeForm === t.id ? 700 : 500,
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                transition: "all 0.15s ease",
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div style={{ padding: 24, flex: 1 }}>
+          {/* Form 3: CMM Characteristic Matrix */}
+          {activeForm === "form3" && (
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
+                    AS9102 REV C — FORM 3: CHARACTERISTIC ACCOUNTABILITY, VERIFICATION & COMPATIBILITY
+                  </div>
+                  <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 2 }}>
+                    CMM probe inspection calibrated against Datum Reference Frame [A|B|C] at 20.0°C ± 0.5°C ambient.
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button
+                    onClick={() => openCAD?.(rfqId, partName)}
+                    style={{
+                      background: "rgba(217,119,6,0.12)",
+                      border: `1px solid ${TOKENS.brass}`,
+                      color: TOKENS.brass,
+                      borderRadius: 6,
+                      padding: "6px 12px",
+                      fontSize: 11.5,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                    }}
+                  >
+                    📐 View Ballooned CAD
+                  </button>
+                </div>
+              </div>
+
+              {/* Table */}
+              <div style={{ overflowX: "auto", border: `1px solid ${TOKENS.hair}`, borderRadius: 8 }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, textAlign: "left" }}>
+                  <thead>
+                    <tr style={{ background: "rgba(15,23,42,0.04)", borderBottom: `1px solid ${TOKENS.hair}`, fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>
+                      <th style={{ padding: "10px 12px" }}>#</th>
+                      <th style={{ padding: "10px 12px" }}>Characteristic Description</th>
+                      <th style={{ padding: "10px 12px" }}>Nominal</th>
+                      <th style={{ padding: "10px 12px" }}>Tolerance</th>
+                      <th style={{ padding: "10px 12px" }}>Actual CMM Reading</th>
+                      <th style={{ padding: "10px 12px" }}>Deviation</th>
+                      <th style={{ padding: "10px 12px" }}>Inspection Tool</th>
+                      <th style={{ padding: "10px 12px" }}>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {FAI_CHARACTERISTICS.map((c, ci) => (
+                      <tr key={ci} style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: ci % 2 === 0 ? "transparent" : "rgba(15,23,42,0.015)" }}>
+                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.blue }}>{c.charNo}</td>
+                        <td style={{ padding: "10px 12px", fontWeight: 600, color: TOKENS.paper }}>{c.desc}</td>
+                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{c.nominal}</td>
+                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{c.tol}</td>
+                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.paper }}>{c.measured}</td>
+                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", color: c.dev.startsWith("+") ? TOKENS.teal : TOKENS.blue }}>{c.dev}</td>
+                        <td style={{ padding: "10px 12px", fontSize: 11, color: TOKENS.slate }}>{c.tool}</td>
+                        <td style={{ padding: "10px 12px" }}>
+                          <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                            {c.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Form 1: Part Number Accountability */}
+          {activeForm === "form1" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
+                AS9102 REV C — FORM 1: PART NUMBER ACCOUNTABILITY & ORGANIZATIONAL CLEARANCE
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                {[
+                  { label: "1. Part Number", val: "BAL-316L-V9041" },
+                  { label: "2. Part Name", val: partName },
+                  { label: "3. Serial Number / Lot", val: "SN-2026-0001 thru SN-2026-0010 (Batch 01)" },
+                  { label: "4. FAI Report Number", val: `FAIR-${rfqId}-REV-C` },
+                  { label: "5. Drawing Number & Revision", val: "DWG-BAL-9041-Aero, Rev D (ECO-4419)" },
+                  { label: "6. Organization Name & Location", val: "Apex Precision Engineering Ltd., Chennai Hub" },
+                  { label: "7. Supplier CAGE Code", val: "1A94F (Ministry of Defence Approved)" },
+                  { label: "8. Purchase Order Number", val: "PO-2026-9041-DEF" },
+                  { label: "9. Customer Clearance Lead", val: "Dr. K. S. Rao (Bharat Aerospace & Dynamics)" },
+                  { label: "10. Baseline Reason for FAI", val: "Initial Production Run (Clause 4.1.a)" },
+                ].map((item, idx) => (
+                  <div key={idx} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px" }}>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>{item.label}</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper, marginTop: 4 }}>{item.val}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Digital Signature Card */}
+              <div style={{ background: "rgba(0,168,150,0.06)", border: `1px solid ${TOKENS.teal}`, borderRadius: 8, padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 700 }}>
+                    CERTIFIED QUALITY INSPECTOR DIGITAL SIGNATURE
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>
+                    Er. R. Sundaram • ASQ-CQI Certified Metrologist (#88419)
+                  </div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate, marginTop: 2 }}>
+                    SHA-256 Stamp: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08
+                  </div>
+                </div>
+                <span style={{ fontSize: 32 }}>✍️</span>
+              </div>
+            </div>
+          )}
+
+          {/* Form 2: Product & Special Process Accountability */}
+          {activeForm === "form2" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
+                    AS9102 REV C — FORM 2: PRODUCT ACCOUNTABILITY (RAW MATERIALS & SPECIAL PROCESSES)
+                  </div>
+                  <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 2 }}>
+                    Full chemical spectroscopy, mechanical tension, and Nadcap-certified special surface treatments.
+                  </div>
+                </div>
+                <button
+                  onClick={() => openTraceability?.(rfqId, material)}
+                  style={{
+                    background: "rgba(0,168,150,0.12)",
+                    border: `1px solid ${TOKENS.teal}`,
+                    color: TOKENS.teal,
+                    borderRadius: 6,
+                    padding: "6px 12px",
+                    fontSize: 11.5,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  🔬 View Mill Test Report (MTR) →
+                </button>
+              </div>
+
+              {/* Material Spec Table */}
+              <div style={{ border: `1px solid ${TOKENS.hair}`, borderRadius: 8, overflow: "hidden" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                  <thead>
+                    <tr style={{ background: "rgba(15,23,42,0.04)", borderBottom: `1px solid ${TOKENS.hair}`, fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate, textAlign: "left" }}>
+                      <th style={{ padding: "10px 12px" }}>Material / Spec</th>
+                      <th style={{ padding: "10px 12px" }}>Supplier / Mill Source</th>
+                      <th style={{ padding: "10px 12px" }}>Heat / Melt #</th>
+                      <th style={{ padding: "10px 12px" }}>Cert Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
+                      <td style={{ padding: "10px 12px", fontWeight: 600, color: TOKENS.paper }}>AMS 5648 / ASTM A276 SS 316L</td>
+                      <td style={{ padding: "10px 12px", color: TOKENS.slate }}>Mishra Dhatu Nigam (MIDHANI) Hyderabad</td>
+                      <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", color: TOKENS.blue, fontWeight: 700 }}>HT-316L-98421</td>
+                      <td style={{ padding: "10px 12px" }}>
+                        <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                          CONFORMING
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Special Processes */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                {[
+                  { name: "Solution Annealing", spec: "AMS 2759/4 (1065°C Rapid Water Quench)", lab: "Apex Thermal Facility (Nadcap #1902)", status: "COMPLIANT" },
+                  { name: "Citric Passivation", spec: "ASTM A967 Citric-4 (Zero Free Iron)", lab: "Midwest Chemical Finishing Lab", status: "COMPLIANT" },
+                  { name: "Fluorescent Penetrant NDT", spec: "ASTM E1417 Level 2 Sensitivity", lab: "NABL Certified NDT Lab #CC-2901", status: "ZERO DEFECTS" },
+                ].map((p, pi) => (
+                  <div key={pi} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14 }}>
+                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>{p.name}</div>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>{p.spec}</div>
+                    <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 4 }}>{p.lab}</div>
+                    <div style={{ marginTop: 8 }}>
+                      <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                        {p.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* CMM Metrology Calibration Log */}
+          {activeForm === "cmm" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
+                NABL & ISO/IEC 17025 ACCREDITED METROLOGY INSTRUMENT CALIBRATION LOG
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                {CMM_MACHINES.map((m, mi) => (
+                  <div key={mi} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>{m.name}</div>
+                        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.blue, marginTop: 2 }}>SN: {m.serial}</div>
+                      </div>
+                      <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                        {m.status}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 11.5, color: TOKENS.slate, marginTop: 8 }}>
+                      <strong>Classification:</strong> {m.type}
+                    </div>
+                    <div style={{ fontSize: 11.5, color: TOKENS.slate, marginTop: 4 }}>
+                      <strong>Calibration Lab:</strong> {m.lab}
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, paddingTop: 8, borderTop: `1px solid ${TOKENS.hair}`, fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>
+                      <span>Cal: {m.calDate}</span>
+                      <span style={{ color: TOKENS.teal }}>Valid Thru: {m.dueDate}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer Actions */}
+        <div style={{ padding: "14px 24px", borderTop: `1px solid ${TOKENS.hair}`, background: "rgba(15,23,42,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button
+              onClick={handleDownload}
+              style={{
+                background: TOKENS.blue,
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 16px",
+                fontSize: 12.5,
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 600,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <span>📥</span> Download AS9102 Digital Quality Pack (PDF)
+            </button>
+            {downloadSuccess && (
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 700 }}>
+                ✓ Generated AS9102-FAIR-{rfqId}.pdf successfully!
+              </span>
+            )}
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => openTraceability?.(rfqId, material)}
+              style={{
+                background: "rgba(0,168,150,0.12)",
+                border: `1px solid ${TOKENS.teal}`,
+                color: TOKENS.teal,
+                borderRadius: 6,
+                padding: "8px 12px",
+                fontSize: 11.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              🔬 Material Traceability
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                background: "transparent",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 6,
+                color: TOKENS.paper,
+                padding: "8px 14px",
+                fontSize: 12,
+                fontFamily: "'Inter', sans-serif",
+                cursor: "pointer",
+              }}
+            >
+              Close Dossier
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------------------------- Universal Command Palette (Ctrl+K) ---------------------------- */
 
-function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, openCAD, openEscrow, openTraceability, openSupplierOnboarding, openVendorCompare, openFreight, openDFM, openRiskHeatmap, openContractVault }) {
+function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, openCAD, openEscrow, openTraceability, openSupplierOnboarding, openVendorCompare, openFreight, openDFM, openRiskHeatmap, openContractVault, openQuoter, openAudit }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
 
@@ -12035,6 +13260,8 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
   if (!isOpen) return null;
 
   const catalog = [
+    { type: "Tool", title: "Parametric Instant Sourcing & Manufacturing Quoter", id: "quoter", action: "openQuoter", icon: "⚡", sub: "Parametric CNC, Sheet Metal, Injection Molding unit cost & batch amortization" },
+    { type: "Tool", title: "AS9102 Quality Compliance & FAI Vault", id: "audit", action: "openAudit", icon: "🛡️", sub: "AS9102 Forms 1/2/3, Zeiss Prismo CMM calibration records, FAI PDF pack" },
     { type: "Tool", title: "Automated AI DFM Feasibility & CAD Rule Audit", id: "dfm", action: "openDFM", icon: "🛠️", sub: "Wall thickness, tool access radii, aspect ratio, GD&T multiplier" },
     { type: "Tool", title: "Multi-Tier Supply Chain Digital Twin & Risk Heatmap", id: "risk", action: "openRiskHeatmap", icon: "🌐", sub: "Hub telemetry, commodity price ticker, failover reroute simulator" },
     { type: "Tool", title: "Bilateral Enterprise NDA & Cryptographic IP Vault", id: "contract", action: "openContractVault", icon: "📜", sub: "Bilateral NDA generator, SHA-256 e-signature, ITAR/EAR compliance" },
@@ -12077,7 +13304,11 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
 
   const handleSelect = (item) => {
     onClose();
-    if (item.action === "openCAD") {
+    if (item.action === "openQuoter") {
+      openQuoter?.();
+    } else if (item.action === "openAudit") {
+      openAudit?.();
+    } else if (item.action === "openCAD") {
       openCAD?.();
     } else if (item.action === "openDFM") {
       openDFM?.();
@@ -12336,6 +13567,33 @@ export default function MyVaultSite() {
   const [riskModalOpen, setRiskModalOpen] = useState(false);
   const [contractModalOpen, setContractModalOpen] = useState(false);
   const [contractData, setContractData] = useState({ buyer: "Bharat Aerospace & Dynamics", supplier: "Apex Precision Engineering Ltd.", rfqId: "RFQ-2026-9041" });
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem("abhimanyu_theme") || "light";
+    } catch {
+      return "light";
+    }
+  });
+  const [quoterOpen, setQuoterOpen] = useState(false);
+  const [auditOpen, setAuditOpen] = useState(false);
+  const [auditPart, setAuditPart] = useState({
+    rfqId: "RFQ-2026-9041",
+    partName: "SS316 Multi-Port Valve Manifold",
+    material: "SS 316L Stainless Steel",
+  });
+
+  useEffect(() => {
+    const isDark = theme === "dark";
+    Object.assign(TOKENS, isDark ? DARK_TOKENS : LIGHT_TOKENS);
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.style.setProperty("--bg", isDark ? "#0B1F3A" : "#F8FAFC");
+    document.documentElement.style.setProperty("--text", isDark ? "#F8FAFC" : "#0F172A");
+    document.body.style.background = isDark ? "#0B1F3A" : "#F8FAFC";
+    document.body.style.color = isDark ? "#F8FAFC" : "#0F172A";
+    try {
+      localStorage.setItem("abhimanyu_theme", theme);
+    } catch (_) {}
+  }, [theme]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -12368,6 +13626,16 @@ export default function MyVaultSite() {
 
   const openSupplierOnboarding = () => setSupplierOnboardingOpen(true);
   const openSpotlight = () => setSpotlightOpen(true);
+  const openQuoter = () => setQuoterOpen(true);
+
+  const openAudit = (rfqId, partName, material) => {
+    setAuditPart({
+      rfqId: rfqId || "RFQ-2026-9041",
+      partName: partName || "SS316 Multi-Port Valve Manifold",
+      material: material || "SS 316L Stainless Steel",
+    });
+    setAuditOpen(true);
+  };
 
   const openEscrow = (poNumber, supplier, inr) => {
     setEscrowOrder({
@@ -12420,22 +13688,22 @@ export default function MyVaultSite() {
   const Page = PAGES[page] || HomePage;
 
   return (
-    <div style={{ background: TOKENS.ink, minHeight: "100vh", fontFamily: "'Inter', sans-serif" }} ref={topRef}>
+    <div style={{ background: theme === "dark" ? DARK_TOKENS.ink : LIGHT_TOKENS.ink, color: theme === "dark" ? DARK_TOKENS.paper : LIGHT_TOKENS.paper, minHeight: "100vh", fontFamily: "'Inter', sans-serif" }} ref={topRef}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
-        body { margin: 0; background: #F8FAFC; color: #0F172A; }
-        input, select, textarea, option { color-scheme: light; }
+        body { margin: 0; background: ${theme === "dark" ? "#0B1F3A" : "#F8FAFC"}; color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"}; }
+        input, select, textarea, option { color-scheme: ${theme === "dark" ? "dark" : "light"}; }
         input, select, textarea {
-          background: #FFFFFF !important;
-          color: #0F172A !important;
-          border-color: #CBD5E1 !important;
+          background: ${theme === "dark" ? "#102A4C" : "#FFFFFF"} !important;
+          color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"} !important;
+          border-color: ${theme === "dark" ? "rgba(255,255,255,0.18)" : "#CBD5E1"} !important;
         }
         input::placeholder, textarea::placeholder {
-          color: #94A3B8 !important;
+          color: ${theme === "dark" ? "#64748B" : "#94A3B8"} !important;
         }
         button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid ${TOKENS.blue}; outline-offset: 2px; }
-        select option { background: #FFFFFF !important; color: #0F172A !important; }
+        select option { background: ${theme === "dark" ? "#102A4C" : "#FFFFFF"} !important; color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"} !important; }
         @keyframes marquee {
           0% { transform: translateX(0%); }
           100% { transform: translateX(-33.33%); }
@@ -12468,6 +13736,9 @@ export default function MyVaultSite() {
         openAuth={() => setAuthModalOpen(true)}
         openTracker={openTracker}
         openSpotlight={openSpotlight}
+        openQuoter={openQuoter}
+        theme={theme}
+        setTheme={setTheme}
       />
       <main style={{ paddingTop: 64 }}>
         <Page
@@ -12486,6 +13757,8 @@ export default function MyVaultSite() {
           openDFM={openDFM}
           openRiskHeatmap={openRiskHeatmap}
           openContractVault={openContractVault}
+          openQuoter={openQuoter}
+          openAudit={openAudit}
         />
       </main>
       <Footer go={go} />
@@ -12503,6 +13776,7 @@ export default function MyVaultSite() {
         openDFM={openDFM}
         openContractVault={openContractVault}
         openRiskHeatmap={openRiskHeatmap}
+        openAudit={openAudit}
       />
       <AuthModal
         isOpen={authModalOpen}
@@ -12538,6 +13812,8 @@ export default function MyVaultSite() {
         openDFM={openDFM}
         openRiskHeatmap={openRiskHeatmap}
         openContractVault={openContractVault}
+        openQuoter={openQuoter}
+        openAudit={openAudit}
       />
       <EscrowSettlementModal
         isOpen={escrowModalOpen}
@@ -12574,6 +13850,7 @@ export default function MyVaultSite() {
         material={dfmPart.material}
         openCAD={openCAD}
         openTracker={openTracker}
+        openQuoter={openQuoter}
       />
       <SupplyChainRiskModal
         isOpen={riskModalOpen}
@@ -12589,6 +13866,23 @@ export default function MyVaultSite() {
         supplierName={contractData.supplier}
         rfqId={contractData.rfqId}
       />
+      <InstantQuoterModal
+        isOpen={quoterOpen}
+        onClose={() => setQuoterOpen(false)}
+        currency={currency}
+        openCAD={openCAD}
+        openDFM={openDFM}
+        go={go}
+      />
+      <AuditComplianceModal
+        isOpen={auditOpen}
+        onClose={() => setAuditOpen(false)}
+        rfqId={auditPart.rfqId}
+        partName={auditPart.partName}
+        material={auditPart.material}
+        openTraceability={openTraceability}
+        openCAD={openCAD}
+      />
       {/* Mobile Bottom Navigation Bar */}
       <nav
         className="mobile-bottom-nav"
@@ -12598,10 +13892,10 @@ export default function MyVaultSite() {
           left: 0,
           right: 0,
           zIndex: 9000,
-          background: `rgba(255, 255, 255, 0.96)`,
+          background: theme === "dark" ? "rgba(11, 31, 58, 0.96)" : "rgba(255, 255, 255, 0.96)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          borderTop: `1px solid rgba(255,255,255,0.1)`,
+          borderTop: `1px solid ${TOKENS.hair}`,
           display: "flex",
           justifyContent: "space-around",
           alignItems: "center",
