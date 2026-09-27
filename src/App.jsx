@@ -12,16 +12,16 @@ import * as THREE from "three";
    ============================================================ */
 
 const TOKENS = {
-  ink: "#0B1F3A",
-  panel: "rgba(16, 24, 40, 0.75)",
-  panelAlt: "#101828",
-  brass: "#D4AF37",
-  brassBright: "#F3E5AB",
-  paper: "#F8FAFC",
-  slate: "#94A3B8",
-  teal: "#00A896",
-  blue: "#1565C0",
-  hair: "rgba(255, 255, 255, 0.10)",
+  ink: "#F8FAFC",
+  panel: "#FFFFFF",
+  panelAlt: "#F1F5F9",
+  brass: "#D97706",
+  brassBright: "#B45309",
+  paper: "#0F172A",
+  slate: "#475569",
+  teal: "#0D9488",
+  blue: "#1D4ED8",
+  hair: "#E2E8F0",
 };
 
 /* ---------------------------- Multi-Currency Engine ---------------------------- */
@@ -354,7 +354,7 @@ function Section({ id, eyebrow, title, sub, children, alt, tight }) {
           <div style={{ marginBottom: 48, maxWidth: 640 }}>
             {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
             {title && (
-              <h2 style={{ fontFamily: "'Fraunces', serif", fontWeight: 500, fontSize: "clamp(28px, 4vw, 40px)", color: TOKENS.paper, margin: 0, lineHeight: 1.15 }}>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: "clamp(28px, 4vw, 40px)", color: TOKENS.paper, margin: 0, lineHeight: 1.15 }}>
                 {title}
               </h2>
             )}
@@ -403,7 +403,7 @@ function Card({ children, style }) {
         padding: 28,
         transition: "transform 0.18s cubic-bezier(0.16,1,0.3,1), border-color 0.2s ease, box-shadow 0.2s ease",
         transformStyle: "preserve-3d",
-        boxShadow: "0 1px 0 rgba(0,0,0,0.4)",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
         willChange: "transform",
         ...style,
       }}
@@ -436,8 +436,8 @@ function Button({ children, onClick, variant = "brass", type = "button", full })
     transform: "translateY(0)",
   };
   const styles = {
-    brass: { ...base, background: TOKENS.brass, color: TOKENS.ink, fontWeight: 700, boxShadow: BRASS_SHADOW_UP },
-    ghost: { ...base, background: "transparent", color: TOKENS.paper, borderColor: TOKENS.hair },
+    brass: { ...base, background: TOKENS.brass, color: "#FFFFFF", fontWeight: 700, borderRadius: 6, boxShadow: "0 2px 8px rgba(217,119,6,0.25)" },
+    ghost: { ...base, background: "#FFFFFF", color: TOKENS.paper, borderColor: TOKENS.hair, borderRadius: 6, boxShadow: "0 1px 3px rgba(0,0,0,0.04)" },
   };
   return (
     <button
@@ -957,7 +957,7 @@ function Hero3DStage() {
         style={{
           display: "inline-flex",
           gap: 6,
-          background: "rgba(16, 24, 40, 0.85)",
+          background: "rgba(255, 255, 255, 0.92)",
           backdropFilter: "blur(12px)",
           padding: "8px 12px",
           borderRadius: 999,
@@ -967,7 +967,7 @@ function Hero3DStage() {
           position: "relative",
           flexWrap: "wrap",
           justifyContent: "center",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
         }}
       >
         {modes.map((m) => {
@@ -1130,7 +1130,7 @@ function ProcessSection() {
         {PROCESS.map((p) => (
           <div key={p.step}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 36, fontWeight: 700, color: "rgba(212,175,55,0.35)", marginBottom: 8 }}>{p.step}</div>
-            <h4 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 18, margin: "0 0 8px" }}>{p.title}</h4>
+            <h4 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 18, margin: "0 0 8px" }}>{p.title}</h4>
             <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.65, margin: 0 }}>{p.desc}</p>
           </div>
         ))}
@@ -1145,7 +1145,7 @@ function EngagementSection({ go }) {
       <Grid min={260}>
         {ENGAGEMENT.map((e) => (
           <Card key={e.title}>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px" }}>{e.title}</h3>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px" }}>{e.title}</h3>
             <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>{e.desc}</p>
             <ul style={{ margin: 0, paddingLeft: 18, color: TOKENS.paper, fontSize: 13.5, lineHeight: 1.9 }}>
               {e.bullets.map((b) => <li key={b}>{b}</li>)}
@@ -1173,7 +1173,7 @@ function FAQSection() {
                 onClick={() => setOpenIdx(open ? null : i)}
                 style={{ width: "100%", background: "none", border: "none", textAlign: "left", padding: "18px 0", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", gap: 16 }}
               >
-                <span style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 16 }}>{f.q}</span>
+                <span style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 16 }}>{f.q}</span>
                 <span style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 20, flexShrink: 0 }}>{open ? "−" : "+"}</span>
               </button>
               {open && <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.7, margin: "0 0 20px", maxWidth: 640 }}>{f.a}</p>}
@@ -1326,7 +1326,7 @@ function VideoShowcase3D() {
 
   return (
     <Card style={{ padding: 0, overflow: "hidden", border: `1px solid ${TOKENS.hair}` }}>
-      <div style={{ position: "relative", background: "#070E1A" }}>
+      <div style={{ position: "relative", background: "#F8FAFC" }}>
         <canvas ref={canvasRef} width={800} height={420} style={{ width: "100%", height: "auto", display: "block" }} />
 
         {/* Video HUD Overlay Header */}
@@ -1417,7 +1417,7 @@ function VideoShowcase3D() {
               {playing ? "❚❚" : "▶"}
             </button>
             <div>
-              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 15, color: TOKENS.paper }}>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: TOKENS.paper }}>
                 {chapters[chapter].title}
               </div>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
@@ -1472,7 +1472,7 @@ function Architecture3DExplorer() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, alignItems: "center" }} className="hero-grid">
         <div>
           <Eyebrow>System Architecture Explorer</Eyebrow>
-          <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 16px" }}>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 16px" }}>
             Inspect the 4-layer MyVault Stack
           </h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
@@ -1493,7 +1493,7 @@ function Architecture3DExplorer() {
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: active ? TOKENS.brass : TOKENS.paper }}>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: active ? TOKENS.brass : TOKENS.paper }}>
                       0{idx + 1}. {l.title}
                     </span>
                     <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
@@ -1510,7 +1510,7 @@ function Architecture3DExplorer() {
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 12 }}>
             [ LAYER INSPECTION // 0{activeLayer + 1} ]
           </div>
-          <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 22, color: TOKENS.paper, margin: "0 0 8px" }}>
+          <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, color: TOKENS.paper, margin: "0 0 8px" }}>
             {layers[activeLayer].title}
           </h4>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, marginBottom: 16 }}>
@@ -1537,7 +1537,7 @@ function ROICalculator() {
   return (
     <Card>
       <Eyebrow>Interactive ROI Calculator</Eyebrow>
-      <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
+      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
         Calculate your annual operational savings
       </h3>
 
@@ -1584,7 +1584,7 @@ function ROICalculator() {
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8 }}>
             ESTIMATED ANNUAL SAVINGS
           </div>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 38, color: TOKENS.brassBright, fontWeight: "bold" }}>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 38, color: TOKENS.brassBright, fontWeight: "bold" }}>
             ${annualSavings.toLocaleString()}
           </div>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, marginTop: 12 }}>
@@ -1611,7 +1611,7 @@ function DataPipeline3D() {
   return (
     <Card>
       <Eyebrow>3D Data Pipeline Visualizer</Eyebrow>
-      <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 20px" }}>
+      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 20px" }}>
         Live streaming telemetry & transformation flow
       </h3>
 
@@ -1635,7 +1635,7 @@ function DataPipeline3D() {
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 6 }}>
                 {s.rate}
               </div>
-              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: active ? TOKENS.brassBright : TOKENS.paper }}>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: active ? TOKENS.brassBright : TOKENS.paper }}>
                 {s.title}
               </div>
             </button>
@@ -1720,7 +1720,7 @@ function AICommandConsole() {
       {/* Console History Output */}
       <div
         style={{
-          background: "#070E1A",
+          background: "#F8FAFC",
           border: `1px solid ${TOKENS.hair}`,
           borderRadius: 4,
           padding: 16,
@@ -1790,7 +1790,7 @@ function ClientTestimonials() {
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.1em" }}>
             {curr.label}
           </div>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 48, fontWeight: 700, color: TOKENS.brassBright }}>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 48, fontWeight: 700, color: TOKENS.brassBright }}>
             {curr.metric}
           </div>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate, marginTop: 12 }}>
@@ -1802,7 +1802,7 @@ function ClientTestimonials() {
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8 }}>
             [ CASE STORY 0{slide + 1} // 03 ]
           </div>
-          <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: TOKENS.paper, margin: "0 0 14px" }}>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.paper, margin: "0 0 14px" }}>
             {curr.title}
           </h3>
           <p style={{ color: TOKENS.paper, fontSize: 15.5, lineHeight: 1.7, fontStyle: "italic", margin: "0 0 16px" }}>
@@ -1852,7 +1852,7 @@ function SecurityStatusDashboard() {
   return (
     <Card style={{ background: TOKENS.panel }}>
       <Eyebrow>Security & Compliance Dashboard</Eyebrow>
-      <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
+      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
         Enterprise security reviewed at the architecture layer
       </h3>
 
@@ -1864,7 +1864,7 @@ function SecurityStatusDashboard() {
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>{m.badge}</span>
             </div>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 6 }}>{m.title}</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, fontWeight: 600 }}>{m.status}</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, fontWeight: 600 }}>{m.status}</div>
           </div>
         ))}
       </Grid>
@@ -1896,7 +1896,7 @@ function TechStackExplorer() {
   return (
     <Card>
       <Eyebrow>Technology Matrix Explorer</Eyebrow>
-      <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 20px" }}>
+      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 20px" }}>
         Modern tech stacks chosen for maintainability & scale
       </h3>
 
@@ -1929,7 +1929,7 @@ function TechStackExplorer() {
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>{t.cat.toUpperCase()}</span>
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.brass }}>FIT SCORE: {t.rating}</span>
             </div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 6px" }}>{t.name}</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 6px" }}>{t.name}</h4>
             <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{t.desc}</p>
           </div>
         ))}
@@ -2016,7 +2016,7 @@ function LoadBalancerDashboard() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 24 }}>
         <div>
           <Eyebrow>Edge Routing & Load Balancing Engine</Eyebrow>
-          <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "6px 0 6px" }}>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "6px 0 6px" }}>
             Abhimanyu Anycast Global Load Balancer
           </h3>
           <p style={{ color: TOKENS.slate, fontSize: 14.5, margin: 0, maxWidth: 680 }}>
@@ -2032,7 +2032,7 @@ function LoadBalancerDashboard() {
       </div>
 
       {/* Control Toolbar */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 24, padding: 16, background: "rgba(255,255,255,0.02)", borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 24, padding: 16, background: "rgba(15, 23, 42, 0.03)", borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>ALGORITHM:</span>
           {["anycast", "weighted", "geo", "failover"].map((algo) => (
@@ -2060,7 +2060,7 @@ function LoadBalancerDashboard() {
           <button
             onClick={() => { trackEvent("toggle_traffic_spike"); setSpike(!spike); }}
             style={{
-              background: spike ? "rgba(239, 68, 68, 0.2)" : "rgba(255,255,255,0.04)",
+              background: spike ? "rgba(239, 68, 68, 0.2)" : "rgba(15, 23, 42, 0.04)",
               color: spike ? "#f87171" : TOKENS.paper,
               border: `1px solid ${spike ? "#f87171" : TOKENS.hair}`,
               borderRadius: 4,
@@ -2075,7 +2075,7 @@ function LoadBalancerDashboard() {
           <button
             onClick={() => { trackEvent("toggle_node_outage"); setOutage(!outage); }}
             style={{
-              background: outage ? "rgba(239, 68, 68, 0.2)" : "rgba(255,255,255,0.04)",
+              background: outage ? "rgba(239, 68, 68, 0.2)" : "rgba(15, 23, 42, 0.04)",
               color: outage ? "#f87171" : TOKENS.paper,
               border: `1px solid ${outage ? "#f87171" : TOKENS.hair}`,
               borderRadius: 4,
@@ -2110,14 +2110,14 @@ function LoadBalancerDashboard() {
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: n.healthy ? TOKENS.teal : "#f87171", boxShadow: `0 0 8px ${n.healthy ? TOKENS.teal : "#f87171"}` }} />
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: n.healthy ? TOKENS.brass : "#f87171" }}>{n.status}</span>
             </div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper, margin: "0 0 4px" }}>{n.name}</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, margin: "0 0 4px" }}>{n.name}</h4>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 10 }}>{n.region}</div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
               <span style={{ color: TOKENS.teal }}>LATENCY: {n.latency}</span>
               <span style={{ color: TOKENS.brass }}>TRAFFIC: {n.share}</span>
             </div>
             {/* Health Bar */}
-            <div style={{ marginTop: 12, height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden" }}>
+            <div style={{ marginTop: 12, height: 4, background: "rgba(15, 23, 42, 0.06)", borderRadius: 2, overflow: "hidden" }}>
               <div style={{ width: n.share, height: "100%", background: n.healthy ? TOKENS.brass : "#f87171", transition: "width 0.5s ease" }} />
             </div>
             <div style={{ marginTop: 10, fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", textAlign: "right" }}>
@@ -2129,18 +2129,18 @@ function LoadBalancerDashboard() {
 
       {/* Edge Node Telemetry Modal */}
       {inspectNode && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
           <Card style={{ maxWidth: 580, width: "100%", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt, padding: 32 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal }}>NODE TELEMETRY INSPECTOR</span>
               <button onClick={() => setInspectNode(null)} style={{ background: "transparent", border: "none", color: TOKENS.paper, fontSize: 22, cursor: "pointer" }}>✕</button>
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 4px" }}>{inspectNode.name}</h3>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 4px" }}>{inspectNode.name}</h3>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 16 }}>{inspectNode.region}</div>
             
             <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, marginBottom: 20 }}>{inspectNode.details}</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, background: "rgba(255,255,255,0.02)", padding: 16, borderRadius: 6, border: `1px solid ${TOKENS.hair}`, marginBottom: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, background: "rgba(15, 23, 42, 0.03)", padding: 16, borderRadius: 6, border: `1px solid ${TOKENS.hair}`, marginBottom: 24 }}>
               <div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>BGP ANYCAST PREFIX</div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper }}>{inspectNode.bgp}</div>
@@ -2180,7 +2180,7 @@ function GlobalNodeMap() {
   return (
     <Card>
       <Eyebrow>Global Network Infrastructure</Eyebrow>
-      <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
+      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
         Abhimanyu Technologies Global Node Network
       </h3>
 
@@ -2191,7 +2191,7 @@ function GlobalNodeMap() {
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#4fb3ff", boxShadow: "0 0 8px #4fb3ff" }} />
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.brass }}>{n.status}</span>
             </div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 4px" }}>{n.location}</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 4px" }}>{n.location}</h4>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 8 }}>{n.type}</div>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>⚡ LATENCY: {n.ping}</div>
           </div>
@@ -2270,7 +2270,7 @@ function Hero({ go }) {
 
         {/* Main Headline */}
         <h1 style={{
-          fontFamily: "'Fraunces', serif",
+          fontFamily: "'Inter', sans-serif",
           fontWeight: 600,
           fontSize: "clamp(40px, 7vw, 72px)",
           color: TOKENS.paper,
@@ -2282,7 +2282,7 @@ function Hero({ go }) {
           ONE PLATFORM.
         </h1>
         <h1 style={{
-          fontFamily: "'Fraunces', serif",
+          fontFamily: "'Inter', sans-serif",
           fontWeight: 600,
           fontSize: "clamp(40px, 7vw, 72px)",
           lineHeight: 1.0,
@@ -2333,7 +2333,7 @@ function Hero({ go }) {
                 key={tab.id}
                 onClick={() => setSearchTab(tab.id)}
                 style={{
-                  background: searchTab === tab.id ? TOKENS.brass : "rgba(255,255,255,0.05)",
+                  background: searchTab === tab.id ? TOKENS.brass : "rgba(15, 23, 42, 0.045)",
                   color: searchTab === tab.id ? TOKENS.ink : TOKENS.slate,
                   border: `1px solid ${searchTab === tab.id ? TOKENS.brass : TOKENS.hair}`,
                   borderRadius: 6,
@@ -2358,7 +2358,7 @@ function Hero({ go }) {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               style={{
-                background: "rgba(255,255,255,0.06)",
+                background: "rgba(15, 23, 42, 0.05)",
                 border: `1px solid ${TOKENS.hair}`,
                 borderRadius: 8,
                 padding: "10px 12px",
@@ -2382,7 +2382,7 @@ function Hero({ go }) {
               placeholder='e.g., "I need 10,000 stainless steel CNC parts in Chennai"'
               style={{
                 flex: 1,
-                background: "rgba(255,255,255,0.06)",
+                background: "rgba(15, 23, 42, 0.05)",
                 border: `1px solid ${TOKENS.hair}`,
                 borderRadius: 8,
                 padding: "10px 16px",
@@ -2415,9 +2415,9 @@ function Hero({ go }) {
             <div style={{ marginTop: 14, background: "rgba(0, 168, 150, 0.08)", border: `1px solid rgba(0, 168, 150, 0.35)`, borderRadius: 6, padding: "10px 14px" }}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 6 }}>🤖 AI INTENT EXTRACTED</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 12, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
-                <span style={{ background: "rgba(255,255,255,0.06)", padding: "3px 8px", borderRadius: 4 }}>SPEC: {parsedIntent.material}</span>
-                <span style={{ background: "rgba(255,255,255,0.06)", padding: "3px 8px", borderRadius: 4 }}>QTY: {parsedIntent.qty}</span>
-                <span style={{ background: "rgba(255,255,255,0.06)", padding: "3px 8px", borderRadius: 4 }}>📍 {parsedIntent.location}</span>
+                <span style={{ background: "rgba(15, 23, 42, 0.05)", padding: "3px 8px", borderRadius: 4 }}>SPEC: {parsedIntent.material}</span>
+                <span style={{ background: "rgba(15, 23, 42, 0.05)", padding: "3px 8px", borderRadius: 4 }}>QTY: {parsedIntent.qty}</span>
+                <span style={{ background: "rgba(15, 23, 42, 0.05)", padding: "3px 8px", borderRadius: 4 }}>📍 {parsedIntent.location}</span>
               </div>
               <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
                 <button onClick={() => go("manufacturers")} style={{ background: TOKENS.brass, color: TOKENS.ink, border: "none", borderRadius: 4, padding: "6px 12px", fontSize: 11.5, cursor: "pointer", fontWeight: "bold" }}>Find Matching Manufacturers →</button>
@@ -2507,7 +2507,7 @@ function B2BPlatformMetricsStrip({ go }) {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20, marginBottom: 24 }}>
           {stats.map((s, i) => (
             <div key={i} style={{ borderLeft: `2px solid ${s.color}`, paddingLeft: 14 }}>
-              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 32, fontWeight: 600, color: s.color, lineHeight: 1.1 }}>{s.num}</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 600, color: s.color, lineHeight: 1.1 }}>{s.num}</div>
               <div style={{ fontSize: 13.5, color: TOKENS.paper, fontWeight: 500, marginTop: 4 }}>{s.label}</div>
               <div style={{ fontSize: 11.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{s.note}</div>
             </div>
@@ -2522,7 +2522,7 @@ function B2BPlatformMetricsStrip({ go }) {
               key={p.label}
               onClick={() => go(p.id)}
               style={{
-                background: "rgba(255,255,255,0.03)",
+                background: "rgba(15, 23, 42, 0.04)",
                 border: `1px solid ${TOKENS.hair}`,
                 borderRadius: 999,
                 padding: "6px 14px",
@@ -2540,7 +2540,7 @@ function B2BPlatformMetricsStrip({ go }) {
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = TOKENS.hair;
-                e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                e.currentTarget.style.background = "rgba(15, 23, 42, 0.04)";
               }}
             >
               <span>{p.icon}</span>
@@ -2598,7 +2598,7 @@ function HomePage({ go }) {
           {WHAT_WE_DO.map((w) => (
             <Card key={w.title}>
               <Icon3D geometry={w.icon} size={48} />
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "14px 0 10px" }}>{w.title}</h3>
+              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "14px 0 10px" }}>{w.title}</h3>
               <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6, margin: 0 }}>{w.desc}</p>
             </Card>
           ))}
@@ -2619,7 +2619,7 @@ function HomePage({ go }) {
             <Card key={p.key}>
               <Icon3D geometry={p.icon} size={44} />
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.1em", color: TOKENS.teal, margin: "12px 0 10px" }}>{p.tag.toUpperCase()}</div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 8px" }}>{p.name}</h3>
+              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 8px" }}>{p.name}</h3>
               <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{p.desc}</p>
             </Card>
           ))}
@@ -2701,12 +2701,12 @@ function AboutPage({ go }) {
         <Grid min={280}>
           <Card>
             <div style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginBottom: 12, letterSpacing: "0.1em" }}>OUR MISSION</div>
-            <h3 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 22, margin: "0 0 10px" }}>Empower Enterprise Growth</h3>
+            <h3 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 22, margin: "0 0 10px" }}>Empower Enterprise Growth</h3>
             <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: 0 }}>Build technology that businesses can depend on, engineered with the exact care and security we demand for our own critical operations.</p>
           </Card>
           <Card>
             <div style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginBottom: 12, letterSpacing: "0.1em" }}>OUR VISION</div>
-            <h3 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 22, margin: "0 0 10px" }}>Global Architecture Standard</h3>
+            <h3 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 22, margin: "0 0 10px" }}>Global Architecture Standard</h3>
             <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: 0 }}>To be the premier global technology partner growing businesses call before a technical bottleneck occurs, not after an outage.</p>
           </Card>
         </Grid>
@@ -2717,7 +2717,7 @@ function AboutPage({ go }) {
           {TIMELINE.map((t) => (
             <Card key={t.year} style={{ position: "relative" }}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 28, fontWeight: "bold", color: TOKENS.brass, marginBottom: 8 }}>{t.year}</div>
-              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 8px" }}>{t.title}</h4>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 8px" }}>{t.title}</h4>
               <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{t.desc}</p>
             </Card>
           ))}
@@ -2729,7 +2729,7 @@ function AboutPage({ go }) {
           {LEADERSHIP.map((m) => (
             <Card key={m.name}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.08em" }}>{m.role}</div>
-              <h4 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 22, margin: "0 0 4px" }}>{m.name}</h4>
+              <h4 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 22, margin: "0 0 4px" }}>{m.name}</h4>
               <div style={{ color: TOKENS.brass, fontSize: 13, marginBottom: 12, fontWeight: 500 }}>{m.focus}</div>
               <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{m.bio}</p>
             </Card>
@@ -2747,7 +2747,7 @@ function AboutPage({ go }) {
           ].map((v) => (
             <Card key={v.title}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.08em" }}>{v.badge}</div>
-              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 8px" }}>{v.title}</h4>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 8px" }}>{v.title}</h4>
               <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{v.desc}</p>
             </Card>
           ))}
@@ -2757,17 +2757,17 @@ function AboutPage({ go }) {
       <Section alt eyebrow="Global Infrastructure" title="12 Anycast Edge POPs Across 4 Continents" tight>
         <div style={{ background: "rgba(16, 24, 40, 0.8)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 28, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20 }}>
           <div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.brass }}>Telangana HQ</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.brass }}>Telangana HQ</div>
             <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>PRIMARY R&D & SYSTEM NOC</div>
             <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>Core microservices engineering, neural AI lab, and tier-1 multi-cloud routing orchestrator.</p>
           </div>
           <div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: "#60A5FA" }}>APAC Core</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: "#60A5FA" }}>APAC Core</div>
             <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>SINGAPORE · CHENNAI · TOKYO</div>
             <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>Sub-8ms regional Edge POPs serving Southeast Asia, Indian industrial corridors, and East Asia.</p>
           </div>
           <div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper }}>EMEA & Americas</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper }}>EMEA & Americas</div>
             <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>FRANKFURT · LONDON · N. VIRGINIA</div>
             <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>High-throughput transatlantic transit nodes with full SOC2 Type II and GDPR data boundary compliance.</p>
           </div>
@@ -2809,7 +2809,7 @@ function ServicesPage({ go }) {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
             <div>
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.1em" }}>PRACTICE OVERVIEW</span>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 28, margin: "6px 0 8px" }}>{cat.label}</h3>
+              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 28, margin: "6px 0 8px" }}>{cat.label}</h3>
               <p style={{ color: TOKENS.slate, fontSize: 16, maxWidth: 700, margin: 0 }}>{cat.blurb}</p>
             </div>
             <Button onClick={() => go("contact")}>Schedule Consultation →</Button>
@@ -2845,7 +2845,7 @@ function ServicesPage({ go }) {
         <Grid min={260}>
           {SOLUTIONS.map((s) => (
             <Card key={s.title}>
-              <h4 style={{ color: TOKENS.paper, fontFamily: "'Fraunces', serif", fontSize: 18, marginBottom: 8 }}>{s.title}</h4>
+              <h4 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 18, marginBottom: 8 }}>{s.title}</h4>
               <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{s.desc}</p>
             </Card>
           ))}
@@ -2885,7 +2885,7 @@ function InteractiveScopingEstimator({ go }) {
                 onClick={() => setScopeType(k)}
                 style={{
                   textAlign: "left",
-                  background: scopeType === k ? "rgba(21, 101, 192, 0.15)" : "rgba(255,255,255,0.02)",
+                  background: scopeType === k ? "rgba(21, 101, 192, 0.15)" : "rgba(15, 23, 42, 0.03)",
                   border: `1px solid ${scopeType === k ? TOKENS.blue : TOKENS.hair}`,
                   borderRadius: 6,
                   padding: "10px 14px",
@@ -2917,7 +2917,7 @@ function InteractiveScopingEstimator({ go }) {
                 onClick={() => setTier(t.id)}
                 style={{
                   flex: 1,
-                  background: tier === t.id ? "rgba(0,168,150,0.12)" : "rgba(255,255,255,0.02)",
+                  background: tier === t.id ? "rgba(0,168,150,0.12)" : "rgba(15, 23, 42, 0.03)",
                   border: `1px solid ${tier === t.id ? TOKENS.teal : TOKENS.hair}`,
                   borderRadius: 6,
                   padding: "8px 10px",
@@ -2939,7 +2939,7 @@ function InteractiveScopingEstimator({ go }) {
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 6 }}>
               ESTIMATED SCOPE ENVELOPE
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 16px" }}>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 16px" }}>
               {selected.title}
             </h3>
 
@@ -3108,7 +3108,7 @@ function ProductsPage({ go, currency = "INR" }) {
             <Card key={p.key} style={{ cursor: "pointer", transition: "all 0.2s ease" }}>
               <Icon3D geometry={p.icon} size={48} />
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.1em", color: TOKENS.teal, margin: "14px 0 10px" }}>{p.tag.toUpperCase()}</div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 10px" }}>{p.name}</h3>
+              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 10px" }}>{p.name}</h3>
               <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: "0 0 20px" }}>{p.desc}</p>
               <div style={{ display: "flex", gap: 10 }}>
                 <Button onClick={() => { setSelectedProduct(p); setProductTab("overview"); }}>View Details →</Button>
@@ -3121,7 +3121,7 @@ function ProductsPage({ go, currency = "INR" }) {
 
       {/* Product Detail Modal */}
       {selectedProduct && detail && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.93)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
           <div style={{ maxWidth: 780, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(21,101,192,0.4)`, borderRadius: 12, boxShadow: "0 32px 80px rgba(0,0,0,0.8)" }}>
             {/* Header */}
             <div style={{ background: `linear-gradient(135deg, #0a1929 0%, ${TOKENS.panelAlt} 100%)`, padding: "28px 32px 0", borderBottom: `1px solid ${TOKENS.hair}`, borderRadius: "12px 12px 0 0" }}>
@@ -3130,11 +3130,11 @@ function ProductsPage({ go, currency = "INR" }) {
                   <div style={{ width: 52, height: 52, borderRadius: 10, background: "rgba(21,101,192,0.15)", border: `1px solid rgba(21,101,192,0.3)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📦</div>
                   <div>
                     <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 4, letterSpacing: "0.1em" }}>{selectedProduct.tag.toUpperCase()}</div>
-                    <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 4px" }}>{selectedProduct.name}</h2>
+                    <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 4px" }}>{selectedProduct.name}</h2>
                     <div style={{ fontSize: 13.5, color: TOKENS.slate }}>{detail.tagline}</div>
                   </div>
                 </div>
-                <button onClick={() => setSelectedProduct(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
+                <button onClick={() => setSelectedProduct(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
               </div>
 
               {/* Tab Bar */}
@@ -3174,10 +3174,10 @@ function ProductsPage({ go, currency = "INR" }) {
 
               {productTab === "features" && (
                 <div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Full Feature Set</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Full Feature Set</h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {detail.features.map((f, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
                         <span style={{ color: TOKENS.teal, fontSize: 16, flexShrink: 0 }}>✓</span>
                         <span style={{ color: TOKENS.paper, fontSize: 14 }}>{f}</span>
                       </div>
@@ -3188,7 +3188,7 @@ function ProductsPage({ go, currency = "INR" }) {
 
               {productTab === "specs" && (
                 <div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Technical Specifications</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Technical Specifications</h3>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                     {detail.specs.map((s, i) => {
                       const [label, val] = s.includes(":") ? s.split(":") : [s, ""];
@@ -3205,18 +3205,18 @@ function ProductsPage({ go, currency = "INR" }) {
 
               {productTab === "pricing" && (
                 <div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Pricing Plans</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Pricing Plans</h3>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
                     {detail.pricing.map((plan, i) => (
                       <div key={i} style={{
-                        background: i === 1 ? "rgba(21,101,192,0.12)" : "rgba(255,255,255,0.03)",
+                        background: i === 1 ? "rgba(21,101,192,0.12)" : "rgba(15, 23, 42, 0.04)",
                         border: `1px solid ${i === 1 ? "rgba(21,101,192,0.4)" : TOKENS.hair}`,
                         borderRadius: 8, padding: 20,
                         boxShadow: i === 1 ? "0 0 0 1px rgba(21,101,192,0.2), 0 8px 24px rgba(0,0,0,0.3)" : "none"
                       }}>
                         {i === 1 && <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.1em" }}>MOST POPULAR</div>}
-                        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, marginBottom: 4 }}>{plan.plan}</div>
-                        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.brass, marginBottom: 8, fontWeight: 600 }}>{renderPlanPrice(plan.price)}</div>
+                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, marginBottom: 4 }}>{plan.plan}</div>
+                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.brass, marginBottom: 8, fontWeight: 600 }}>{renderPlanPrice(plan.price)}</div>
                         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 10 }}>{plan.users}</div>
                         <div style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5 }}>{plan.notes}</div>
                       </div>
@@ -3342,7 +3342,7 @@ function IndustriesPage({ go }) {
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.1em" }}>
                 ARCHITECTURAL BLUEPRINT
               </span>
-              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 26, margin: "6px 0 6px" }}>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 26, margin: "6px 0 6px" }}>
                 {selected.name}
               </h2>
               <div style={{ color: TOKENS.slate, fontSize: 14 }}>{selected.tagline}</div>
@@ -3398,13 +3398,13 @@ function IndustriesPage({ go }) {
         </Card>
 
         {/* All Industries Directory Overview Grid */}
-        <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 18px" }}>
+        <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 18px" }}>
           All 10 Specialized Industry Coverage Areas
         </h3>
         <Grid min={260}>
           {INDUSTRIES.map((ind) => (
             <Card key={ind.name}>
-              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 8px" }}>{ind.name}</h4>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 8px" }}>{ind.name}</h4>
               <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{ind.note}</p>
             </Card>
           ))}
@@ -3498,7 +3498,7 @@ function CaseStudiesPage({ go }) {
               key={ind}
               onClick={() => setIndFilter(ind)}
               style={{
-                background: indFilter === ind ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                background: indFilter === ind ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
                 border: `1px solid ${indFilter === ind ? TOKENS.brass : TOKENS.hair}`,
                 color: indFilter === ind ? TOKENS.ink : TOKENS.slate,
                 borderRadius: 999,
@@ -3528,13 +3528,13 @@ function CaseStudiesPage({ go }) {
                     {c.industry}
                   </span>
                 </div>
-                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 12px", lineHeight: 1.35 }}>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 12px", lineHeight: 1.35 }}>
                   {c.title}
                 </h3>
                 <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 12, lineHeight: 1.6 }}>
                   <b style={{ color: TOKENS.paper }}>Challenge: </b>{c.challenge}
                 </p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, margin: "14px 0", background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 6 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, margin: "14px 0", background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6 }}>
                   {c.results.map((res, i) => (
                     <div key={i} style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
                       ✓ {res}
@@ -3558,17 +3558,17 @@ function CaseStudiesPage({ go }) {
 
       {/* Case Study Modal Reader */}
       {selectedCase && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 740, width: "100%", maxHeight: "90vh", overflowY: "auto", border: `1px solid rgba(212, 175, 55, 0.4)`, background: TOKENS.panelAlt, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 740, width: "100%", maxHeight: "90vh", overflowY: "auto", border: `1px solid rgba(212, 175, 55, 0.4)`, background: TOKENS.panelAlt, borderRadius: 12, overflow: "hidden", boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
             {/* Header */}
-            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
                   {selectedCase.client.toUpperCase()} · {selectedCase.industry}
                 </span>
-                <button onClick={() => setSelectedCase(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+                <button onClick={() => setSelectedCase(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
               </div>
-              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
                 {selectedCase.title}
               </h2>
               <div style={{ fontSize: 12.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
@@ -3785,7 +3785,7 @@ CREATE TABLE audit_telemetry_2026_09 PARTITION OF audit_telemetry
               key={t}
               onClick={() => setSelectedTopic(t)}
               style={{
-                background: selectedTopic === t ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                background: selectedTopic === t ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
                 border: `1px solid ${selectedTopic === t ? TOKENS.brass : TOKENS.hair}`,
                 color: selectedTopic === t ? TOKENS.ink : TOKENS.slate,
                 borderRadius: 999,
@@ -3811,7 +3811,7 @@ CREATE TABLE audit_telemetry_2026_09 PARTITION OF audit_telemetry
                   <span style={{ background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 4 }}>{a.category.toUpperCase()}</span>
                   <span>{a.readTime} · {a.date}</span>
                 </div>
-                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>
                   {a.title}
                 </h3>
                 <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 16px" }}>
@@ -3834,17 +3834,17 @@ CREATE TABLE audit_telemetry_2026_09 PARTITION OF audit_telemetry
 
       {/* Deep Navy Technical Reader Modal */}
       {selectedArticle && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
             {/* Header */}
-            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
                   {selectedArticle.category.toUpperCase()} · {selectedArticle.readTime} · {selectedArticle.date}
                 </span>
-                <button onClick={() => setSelectedArticle(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+                <button onClick={() => setSelectedArticle(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
               </div>
-              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
                 {selectedArticle.title}
               </h2>
               <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
@@ -3860,7 +3860,7 @@ CREATE TABLE audit_telemetry_2026_09 PARTITION OF audit_telemetry
 
               {/* Code Snippet Blueprint */}
               {selectedArticle.codeSnippet && (
-                <div style={{ background: "#070E1A", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 18, marginBottom: 24, overflowX: "auto" }}>
+                <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 18, marginBottom: 24, overflowX: "auto" }}>
                   <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal, marginBottom: 8 }}>
                     ARCHITECTURAL IMPLEMENTATION BLUEPRINT
                   </div>
@@ -3877,7 +3877,7 @@ CREATE TABLE audit_telemetry_2026_09 PARTITION OF audit_telemetry
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 10 }}>
                   {selectedArticle.outcomes.map((o, idx) => (
-                    <div key={idx} style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", fontSize: 12.5, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <div key={idx} style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", fontSize: 12.5, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
                       ✓ {o}
                     </div>
                   ))}
@@ -4072,7 +4072,7 @@ function CareersPage({ go }) {
               key={d}
               onClick={() => setDeptFilter(d)}
               style={{
-                background: deptFilter === d ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                background: deptFilter === d ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
                 border: `1px solid ${deptFilter === d ? TOKENS.brass : TOKENS.hair}`,
                 color: deptFilter === d ? TOKENS.ink : TOKENS.slate,
                 borderRadius: 999,
@@ -4103,7 +4103,7 @@ function CareersPage({ go }) {
                       {r.compensation}
                     </span>
                   </div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 6px" }}>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 6px" }}>
                     {r.title}
                   </h3>
                   <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 10 }}>
@@ -4126,7 +4126,7 @@ function CareersPage({ go }) {
         </div>
 
         {/* Engineering Culture & Benefits */}
-        <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 20px" }}>
+        <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 20px" }}>
           Engineering Culture & Benefits
         </h3>
         <Grid min={260}>
@@ -4138,7 +4138,7 @@ function CareersPage({ go }) {
           ].map((b) => (
             <Card key={b.title}>
               <div style={{ fontSize: 28, marginBottom: 12 }}>{b.icon}</div>
-              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 6px" }}>{b.title}</h4>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 6px" }}>{b.title}</h4>
               <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{b.desc}</p>
             </Card>
           ))}
@@ -4147,17 +4147,17 @@ function CareersPage({ go }) {
 
       {/* Interactive Quick-Apply Modal */}
       {selectedRole && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 740, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 740, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
             {/* Header */}
-            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
                   {selectedRole.dept.toUpperCase()} · {selectedRole.experience}
                 </span>
-                <button onClick={() => setSelectedRole(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+                <button onClick={() => setSelectedRole(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
               </div>
-              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px" }}>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px" }}>
                 {selectedRole.title}
               </h2>
               <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
@@ -4170,7 +4170,7 @@ function CareersPage({ go }) {
               {applied ? (
                 <div style={{ textAlign: "center", padding: "40px 0" }}>
                   <div style={{ fontSize: 48, marginBottom: 14 }}>🎉</div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>
                     Application Transmitted!
                   </h3>
                   <p style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }}>
@@ -4180,7 +4180,7 @@ function CareersPage({ go }) {
               ) : (
                 <>
                   <div style={{ marginBottom: 24 }}>
-                    <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 10px" }}>
+                    <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 10px" }}>
                       Key Responsibilities
                     </h4>
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -4194,7 +4194,7 @@ function CareersPage({ go }) {
                   </div>
 
                   <div style={{ marginBottom: 28 }}>
-                    <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 10px" }}>
+                    <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 10px" }}>
                       Mandatory Requirements
                     </h4>
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -4209,21 +4209,21 @@ function CareersPage({ go }) {
 
                   {/* Application Form */}
                   <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 24 }}>
-                    <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 16px" }}>
+                    <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 16px" }}>
                       Submit Direct Application
                     </h4>
                     <form onSubmit={handleApply} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                       <div>
                         <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>FULL NAME *</label>
-                        <input required value={appForm.name} onChange={(e) => setAppForm({ ...appForm, name: e.target.value })} placeholder="John Doe" style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
+                        <input required value={appForm.name} onChange={(e) => setAppForm({ ...appForm, name: e.target.value })} placeholder="John Doe" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
                       </div>
                       <div>
                         <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>EMAIL ADDRESS *</label>
-                        <input required type="email" value={appForm.email} onChange={(e) => setAppForm({ ...appForm, email: e.target.value })} placeholder="john@domain.com" style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
+                        <input required type="email" value={appForm.email} onChange={(e) => setAppForm({ ...appForm, email: e.target.value })} placeholder="john@domain.com" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
                       </div>
                       <div>
                         <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>LINKEDIN / GITHUB / PORTFOLIO *</label>
-                        <input required value={appForm.portfolio} onChange={(e) => setAppForm({ ...appForm, portfolio: e.target.value })} placeholder="https://github.com/..." style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
+                        <input required value={appForm.portfolio} onChange={(e) => setAppForm({ ...appForm, portfolio: e.target.value })} placeholder="https://github.com/..." style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
                       </div>
                       <div>
                         <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>NOTICE PERIOD</label>
@@ -4236,7 +4236,7 @@ function CareersPage({ go }) {
                       </div>
                       <div style={{ gridColumn: "1 / -1" }}>
                         <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>BRIEF NOTE OR RECENT ARCHITECTURAL ACCOMPLISHMENT</label>
-                        <textarea rows={3} value={appForm.notes} onChange={(e) => setAppForm({ ...appForm, notes: e.target.value })} placeholder="Tell us about a distributed system or challenging technical problem you solved..." style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5, resize: "vertical" }} />
+                        <textarea rows={3} value={appForm.notes} onChange={(e) => setAppForm({ ...appForm, notes: e.target.value })} placeholder="Tell us about a distributed system or challenging technical problem you solved..." style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5, resize: "vertical" }} />
                       </div>
                       <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
                         <span style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>Direct review by Shiva & Abhimanyu</span>
@@ -4297,7 +4297,7 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
       <Section eyebrow="RFQ Confirmation" title="Requirement Posted & Broadcasted">
         <Card style={{ maxWidth: 580, margin: "0 auto", padding: 36, textAlign: "center", border: `1px solid ${TOKENS.brass}` }}>
           <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(0, 168, 150, 0.15)", border: `1px solid ${TOKENS.teal}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", color: TOKENS.teal, fontSize: 28, fontWeight: "bold" }}>✓</div>
-          <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 8px" }}>RFQ {submittedId} Live</h3>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 8px" }}>RFQ {submittedId} Live</h3>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 16 }}>BROADCASTED TO 42 MATCHED SUPPLIERS</div>
           <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6, marginBottom: 8 }}>
             Your requirement for <strong style={{ color: TOKENS.paper }}>{rfq.category} ({rfq.qty})</strong> has been verified and broadcasted instantly.
@@ -4365,7 +4365,7 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
                 <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
                   <div style={{
                     width: 28, height: 28, borderRadius: "50%",
-                    background: done ? TOKENS.teal : active ? TOKENS.brass : "rgba(255,255,255,0.06)",
+                    background: done ? TOKENS.teal : active ? TOKENS.brass : "rgba(15, 23, 42, 0.05)",
                     color: done || active ? TOKENS.ink : TOKENS.slate,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 12, fontWeight: "bold", fontFamily: "'JetBrains Mono', monospace",
@@ -4385,14 +4385,14 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
         {/* Step 1: Category */}
         {step === 1 && (
           <div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 1: Select Sourcing Category</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 1: Select Sourcing Category</h4>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               {["Custom CNC Machining", "Sheet Metal Fabrication", "Electronics & SMT Assembly", "AI & Software Development", "Industrial Automation", "Custom Plastic Injection"].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => update("category", cat)}
                   style={{
-                    background: rfq.category === cat ? "rgba(212, 175, 55, 0.12)" : "rgba(255,255,255,0.03)",
+                    background: rfq.category === cat ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.04)",
                     border: `1px solid ${rfq.category === cat ? TOKENS.brass : TOKENS.hair}`,
                     color: rfq.category === cat ? TOKENS.brass : TOKENS.paper,
                     padding: "14px 16px", borderRadius: 6, textAlign: "left", cursor: "pointer", fontSize: 13.5, transition: "all 0.15s ease"
@@ -4409,17 +4409,17 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
         {/* Step 2: Quantity */}
         {step === 2 && (
           <div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 2: Production Quantity & Batch Size</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 2: Production Quantity & Batch Size</h4>
             <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 16 }}>Enter the total quantity required. You may also specify prototype/sample quantities.</p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
               {["100 Units (Sample)", "500 Units", "1,000 Units", "5,000 Units", "10,000 Units", "50,000+ Units"].map((qty) => (
-                <button key={qty} onClick={() => update("qty", qty)} style={{ background: rfq.qty === qty ? "rgba(212,175,55,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${rfq.qty === qty ? TOKENS.brass : TOKENS.hair}`, color: rfq.qty === qty ? TOKENS.brass : TOKENS.paper, borderRadius: 6, padding: "8px 14px", fontSize: 13, cursor: "pointer" }}>
+                <button key={qty} onClick={() => update("qty", qty)} style={{ background: rfq.qty === qty ? "rgba(212,175,55,0.12)" : "rgba(15, 23, 42, 0.04)", border: `1px solid ${rfq.qty === qty ? TOKENS.brass : TOKENS.hair}`, color: rfq.qty === qty ? TOKENS.brass : TOKENS.paper, borderRadius: 6, padding: "8px 14px", fontSize: 13, cursor: "pointer" }}>
                   {qty}
                 </button>
               ))}
             </div>
             <input
-              style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14 }}
+              style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14 }}
               value={rfq.qty}
               onChange={(e) => update("qty", e.target.value)}
               placeholder="Or type custom quantity / Prototype Run"
@@ -4434,17 +4434,17 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
         {/* Step 3: Location */}
         {step === 3 && (
           <div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 3: Target Delivery Location</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 3: Target Delivery Location</h4>
             <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 16 }}>Select your preferred delivery destination or type a custom location.</p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
               {["Telangana", "Chennai", "Bengaluru", "Hyderabad", "Mumbai", "Delhi NCR", "Pan-India", "Global Export"].map((loc) => (
-                <button key={loc} onClick={() => update("location", loc)} style={{ background: rfq.location === loc ? "rgba(0,168,150,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${rfq.location === loc ? TOKENS.teal : TOKENS.hair}`, color: rfq.location === loc ? TOKENS.teal : TOKENS.paper, borderRadius: 6, padding: "8px 14px", fontSize: 13, cursor: "pointer" }}>
+                <button key={loc} onClick={() => update("location", loc)} style={{ background: rfq.location === loc ? "rgba(0,168,150,0.12)" : "rgba(15, 23, 42, 0.04)", border: `1px solid ${rfq.location === loc ? TOKENS.teal : TOKENS.hair}`, color: rfq.location === loc ? TOKENS.teal : TOKENS.paper, borderRadius: 6, padding: "8px 14px", fontSize: 13, cursor: "pointer" }}>
                   📍 {loc}
                 </button>
               ))}
             </div>
             <input
-              style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14 }}
+              style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14 }}
               value={rfq.location}
               onChange={(e) => update("location", e.target.value)}
               placeholder="Or type custom city / region"
@@ -4459,18 +4459,18 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
         {/* Step 4: Specs */}
         {step === 4 && (
           <div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 4: Technical Specifications</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 4: Technical Specifications</h4>
             <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 16 }}>Describe material grades, tolerances, surface finish, and any special requirements.</p>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
               {["Stainless Steel 316", "Aluminium 6061", "Mild Steel", "HDPE Plastic", "PCB FR4", "Titanium Grade 5"].map((mat) => (
-                <button key={mat} onClick={() => update("specs", rfq.specs ? rfq.specs + ", " + mat : mat)} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.slate, borderRadius: 4, padding: "5px 10px", fontSize: 11.5, cursor: "pointer" }}>
+                <button key={mat} onClick={() => update("specs", rfq.specs ? rfq.specs + ", " + mat : mat)} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.slate, borderRadius: 4, padding: "5px 10px", fontSize: 11.5, cursor: "pointer" }}>
                   + {mat}
                 </button>
               ))}
             </div>
             <textarea
               rows={5}
-              style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14, resize: "vertical" }}
+              style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14, resize: "vertical" }}
               value={rfq.specs}
               onChange={(e) => update("specs", e.target.value)}
               placeholder="e.g. Stainless Steel 316, ±0.01mm tolerance, Ra 1.6 µm surface finish, anodized..."
@@ -4485,7 +4485,7 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
         {/* Step 5: CAD/File Upload Simulation */}
         {step === 5 && (
           <div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 5: Upload CAD / Technical Drawing</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 5: Upload CAD / Technical Drawing</h4>
             <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 20 }}>Attach your CAD files, DXF drawings, PDF specs, or reference images. Supported: .STEP · .DXF · .PDF · .PNG · .DWG</p>
 
             {/* Drag & Drop zone (simulated) */}
@@ -4496,7 +4496,7 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
                 padding: "40px 24px",
                 textAlign: "center",
                 cursor: "pointer",
-                background: rfq.cadFileName ? "rgba(0, 168, 150, 0.06)" : "rgba(255,255,255,0.02)",
+                background: rfq.cadFileName ? "rgba(0, 168, 150, 0.06)" : "rgba(15, 23, 42, 0.03)",
                 transition: "all 0.2s ease",
                 marginBottom: 16,
               }}
@@ -4518,7 +4518,7 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
                 <>
                   <div style={{ fontSize: 28, marginBottom: 10 }}>⏳</div>
                   <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper, marginBottom: 12 }}>Uploading {rfq.cadFileName || "file"}...</div>
-                  <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 999, height: 6, overflow: "hidden", maxWidth: 240, margin: "0 auto" }}>
+                  <div style={{ background: "rgba(15, 23, 42, 0.06)", borderRadius: 999, height: 6, overflow: "hidden", maxWidth: 240, margin: "0 auto" }}>
                     <div style={{ height: "100%", width: `${uploadProgress}%`, background: `linear-gradient(90deg, ${TOKENS.teal}, ${TOKENS.blue})`, borderRadius: 999, transition: "width 0.2s ease" }} />
                   </div>
                   <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginTop: 8 }}>{uploadProgress}% UPLOADING</div>
@@ -4526,7 +4526,7 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
               ) : (
                 <>
                   <div style={{ fontSize: 36, marginBottom: 12 }}>📁</div>
-                  <div style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper, marginBottom: 6 }}>Click to Upload CAD / Drawing</div>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, marginBottom: 6 }}>Click to Upload CAD / Drawing</div>
                   <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>STEP · DXF · PDF · DWG · PNG — max 50MB</div>
                 </>
               )}
@@ -4549,10 +4549,10 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
         {/* Step 6: Review & Broadcast */}
         {step === 6 && (
           <form onSubmit={handleFinish}>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 6: Review & Broadcast RFQ</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 6: Review & Broadcast RFQ</h4>
 
             {/* Summary table */}
-            <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 8, marginBottom: 16 }}>
+            <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 8, marginBottom: 16 }}>
               <div style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: "10px 16px", fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>
                 <span style={{ color: TOKENS.slate }}>CATEGORY</span>
                 <span style={{ color: TOKENS.paper }}>{rfq.category}</span>
@@ -4576,7 +4576,7 @@ function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
               <input
                 type="email"
                 required
-                style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, fontSize: 14 }}
+                style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, fontSize: 14 }}
                 value={rfq.contactEmail}
                 onChange={(e) => update("contactEmail", e.target.value)}
                 placeholder="you@company.com"
@@ -4682,7 +4682,7 @@ function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, open
           <div style={{ maxWidth: 720 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
               <span style={{ fontSize: 20 }}>🏭</span>
-              <span style={{ fontFamily: "'Cinzel', serif", fontSize: 16, fontWeight: 700, color: TOKENS.white, letterSpacing: "0.03em" }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, fontWeight: 700, color: TOKENS.white, letterSpacing: "0.03em" }}>
                 Are you an OEM Manufacturer or Precision Machine Shop?
               </span>
               <span style={{ background: `${TOKENS.teal}22`, border: `1px solid ${TOKENS.teal}55`, color: TOKENS.teal, padding: "2px 8px", borderRadius: 999, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
@@ -4766,7 +4766,7 @@ function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, open
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 style={{
-                  background: selectedCategory === cat ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                  background: selectedCategory === cat ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
                   border: `1px solid ${selectedCategory === cat ? TOKENS.brass : TOKENS.hair}`,
                   color: selectedCategory === cat ? TOKENS.ink : TOKENS.slate,
                   borderRadius: 999,
@@ -4815,7 +4815,7 @@ function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, open
                       type="button"
                       onClick={() => toggleCompare(m.id)}
                       style={{
-                        background: isCompared ? "rgba(212,175,55,0.2)" : "rgba(255,255,255,0.04)",
+                        background: isCompared ? "rgba(212,175,55,0.2)" : "rgba(15, 23, 42, 0.04)",
                         border: `1px solid ${isCompared ? TOKENS.brass : TOKENS.hair}`,
                         color: isCompared ? TOKENS.brass : TOKENS.slate,
                         padding: "3px 8px",
@@ -4831,7 +4831,7 @@ function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, open
                     <span style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>{m.rating.split(" ")[0]}</span>
                   </div>
                 </div>
-                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 4px" }}>{m.name}</h3>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 4px" }}>{m.name}</h3>
                 <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 6 }}>📍 {m.location}</div>
                 <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 12 }}>{m.category}</div>
 
@@ -4839,7 +4839,7 @@ function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, open
                   <div style={{ fontSize: 11, color: TOKENS.paper, fontWeight: 600, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace" }}>CAPABILITIES</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                     {m.capabilities.map((c) => (
-                      <span key={c} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: "3px 7px", borderRadius: 3, fontSize: 11, color: TOKENS.slate }}>{c}</span>
+                      <span key={c} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: "3px 7px", borderRadius: 3, fontSize: 11, color: TOKENS.slate }}>{c}</span>
                     ))}
                   </div>
                 </div>
@@ -4919,17 +4919,17 @@ function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, open
 
       {/* Manufacturer Quick-Quote Modal */}
       {selectedMfr && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.92)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
           <div style={{ maxWidth: 600, width: "100%", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.3)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}>
             {/* Header */}
-            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "24px 28px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "24px 28px", borderBottom: `1px solid ${TOKENS.hair}` }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div>
                   <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.brass, marginBottom: 6, letterSpacing: "0.1em" }}>✓ VERIFIED MANUFACTURER</div>
-                  <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 4px" }}>{selectedMfr.name}</h2>
+                  <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 4px" }}>{selectedMfr.name}</h2>
                   <div style={{ fontSize: 13, color: TOKENS.slate }}>📍 {selectedMfr.location} · {selectedMfr.category}</div>
                 </div>
-                <button onClick={() => setSelectedMfr(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 16, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+                <button onClick={() => setSelectedMfr(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 16, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
               </div>
             </div>
 
@@ -4937,21 +4937,21 @@ function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, open
               {quoteSent ? (
                 <div style={{ textAlign: "center", padding: "32px 0" }}>
                   <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 8px" }}>Quote Request Sent!</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 8px" }}>Quote Request Sent!</h3>
                   <p style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>Expect response within {selectedMfr.responseRate?.split(": ")[1] || "24 hours"}</p>
                 </div>
               ) : (
                 <form onSubmit={handleQuoteSubmit}>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 20px" }}>Request Direct Quote from {selectedMfr.name.split(" ")[0]}</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 20px" }}>Request Direct Quote from {selectedMfr.name.split(" ")[0]}</h3>
 
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
                     <div>
                       <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, letterSpacing: "0.04em" }}>MATERIAL / PRODUCT *</label>
-                      <input required value={quoteForm.material} onChange={(e) => updateQuote("material", e.target.value)} placeholder="e.g. SS316 CNC Part" style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }} />
+                      <input required value={quoteForm.material} onChange={(e) => updateQuote("material", e.target.value)} placeholder="e.g. SS316 CNC Part" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }} />
                     </div>
                     <div>
                       <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, letterSpacing: "0.04em" }}>QUANTITY *</label>
-                      <input required value={quoteForm.qty} onChange={(e) => updateQuote("qty", e.target.value)} placeholder="e.g. 5,000 units" style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }} />
+                      <input required value={quoteForm.qty} onChange={(e) => updateQuote("qty", e.target.value)} placeholder="e.g. 5,000 units" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }} />
                     </div>
                   </div>
 
@@ -4968,7 +4968,7 @@ function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, open
 
                   <div style={{ marginBottom: 20 }}>
                     <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, letterSpacing: "0.04em" }}>YOUR WORK EMAIL *</label>
-                    <input required type="email" value={quoteForm.email} onChange={(e) => updateQuote("email", e.target.value)} placeholder="you@company.com" style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }} />
+                    <input required type="email" value={quoteForm.email} onChange={(e) => updateQuote("email", e.target.value)} placeholder="you@company.com" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }} />
                   </div>
 
                   <div style={{ display: "flex", gap: 12 }}>
@@ -5037,12 +5037,12 @@ function BusinessesPage({ go }) {
                 <span style={{ background: "rgba(21,101,192,0.12)", border: `1px solid rgba(21,101,192,0.3)`, borderRadius: 4, padding: "4px 10px", fontSize: 11, color: "#60A5FA", fontFamily: "'JetBrains Mono', monospace" }}>{b.type.toUpperCase()}</span>
                 <span style={{ color: TOKENS.brass, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>✓ VERIFIED</span>
               </div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 6px" }}>{b.name}</h3>
+              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 6px" }}>{b.name}</h3>
               <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 8 }}>📍 {b.location} · Est. {b.established}</div>
               <div style={{ fontSize: 12.5, color: TOKENS.teal, marginBottom: 14 }}>{b.rating} · {b.employees}</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
                 {b.specialties.map((s) => (
-                  <span key={s} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: "4px 8px", borderRadius: 4, fontSize: 11, color: TOKENS.slate }}>{s}</span>
+                  <span key={s} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: "4px 8px", borderRadius: 4, fontSize: 11, color: TOKENS.slate }}>{s}</span>
                 ))}
               </div>
               <Button variant="ghost" onClick={() => { setSelectedBiz(b); setProfileTab("about"); }}>View Company Profile →</Button>
@@ -5053,14 +5053,14 @@ function BusinessesPage({ go }) {
 
       {/* Business Full Mini-Website Profile Modal */}
       {selectedBiz && profile && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.92)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
           <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.3)`, borderRadius: 12, boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}>
             {/* Profile Header */}
             <div style={{ background: `linear-gradient(135deg, #0d2040 0%, ${TOKENS.panelAlt} 100%)`, padding: "28px 32px 0", borderBottom: `1px solid ${TOKENS.hair}`, borderRadius: "12px 12px 0 0" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
                 <div>
                   <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8, letterSpacing: "0.1em" }}>✓ VERIFIED BUSINESS PROFILE</div>
-                  <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 6px" }}>{selectedBiz.name}</h2>
+                  <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 6px" }}>{selectedBiz.name}</h2>
                   <div style={{ fontSize: 14, color: TOKENS.teal, marginBottom: 8 }}>{selectedBiz.type}</div>
                   <div style={{ display: "flex", gap: 16, fontSize: 13, color: TOKENS.slate }}>
                     <span>📍 {selectedBiz.location}</span>
@@ -5068,7 +5068,7 @@ function BusinessesPage({ go }) {
                     <span>👥 {selectedBiz.employees}</span>
                   </div>
                 </div>
-                <button onClick={() => setSelectedBiz(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+                <button onClick={() => setSelectedBiz(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
               </div>
               <div style={{ fontSize: 12.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 16 }}>{selectedBiz.rating}</div>
 
@@ -5102,7 +5102,7 @@ function BusinessesPage({ go }) {
             <div style={{ padding: 32 }}>
               {profileTab === "about" && (
                 <div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 14px" }}>About {selectedBiz.name}</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 14px" }}>About {selectedBiz.name}</h3>
                   <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.75, marginBottom: 24 }}>{profile.about}</p>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                     {[
@@ -5111,7 +5111,7 @@ function BusinessesPage({ go }) {
                       { label: "Location", value: selectedBiz.location },
                       { label: "Rating", value: selectedBiz.rating },
                     ].map((item) => (
-                      <div key={item.label} style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
+                      <div key={item.label} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
                         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate, marginBottom: 4 }}>{item.label.toUpperCase()}</div>
                         <div style={{ color: TOKENS.paper, fontSize: 14, fontWeight: 500 }}>{item.value}</div>
                       </div>
@@ -5122,10 +5122,10 @@ function BusinessesPage({ go }) {
 
               {profileTab === "products" && (
                 <div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Products & Platforms</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Products & Platforms</h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {profile.products.map((p, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
                         <span style={{ color: TOKENS.brass, fontSize: 16 }}>📦</span>
                         <span style={{ color: TOKENS.paper, fontSize: 14 }}>{p}</span>
                       </div>
@@ -5136,7 +5136,7 @@ function BusinessesPage({ go }) {
 
               {profileTab === "services" && (
                 <div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Services Offered</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Services Offered</h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {profile.services.map((s, i) => (
                       <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(0,168,150,0.05)", border: `1px solid rgba(0,168,150,0.2)`, borderRadius: 6, padding: "12px 16px" }}>
@@ -5150,14 +5150,14 @@ function BusinessesPage({ go }) {
 
               {profileTab === "manufacturing" && (
                 <div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 14px" }}>Manufacturing Capabilities</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 14px" }}>Manufacturing Capabilities</h3>
                   <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.7 }}>{profile.manufacturing}</p>
                 </div>
               )}
 
               {profileTab === "certifications" && (
                 <div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Certifications & Compliance</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Certifications & Compliance</h3>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                     {profile.certifications.map((cert, i) => (
                       <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(212,175,55,0.06)", border: `1px solid rgba(212,175,55,0.25)`, borderRadius: 6, padding: "12px 16px" }}>
@@ -5171,12 +5171,12 @@ function BusinessesPage({ go }) {
 
               {profileTab === "reviews" && (
                 <div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Client Reviews</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Client Reviews</h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                     {profile.reviews.map((r, i) => (
-                      <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 20 }}>
+                      <div key={i} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 20 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                          <span style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper }}>{r.client}</span>
+                          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper }}>{r.client}</span>
                           <span style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }}>{r.rating}</span>
                         </div>
                         <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>"{r.text}"</p>
@@ -5255,7 +5255,7 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span style={{ fontSize: 24 }}>🛰️</span>
             <div>
-              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper, fontWeight: 600 }}>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, fontWeight: 600 }}>
                 Live RFQ Procurement & PO Status Tracker
               </div>
               <div style={{ fontSize: 12.5, color: TOKENS.slate }}>
@@ -5289,7 +5289,7 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
                 key={cat}
                 onClick={() => setSelectedCat(cat)}
                 style={{
-                  background: selectedCat === cat ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                  background: selectedCat === cat ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
                   border: `1px solid ${selectedCat === cat ? TOKENS.brass : TOKENS.hair}`,
                   color: selectedCat === cat ? TOKENS.ink : TOKENS.slate,
                   borderRadius: 999,
@@ -5338,7 +5338,7 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
                     ● {rfq.status}
                   </span>
                 </div>
-                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>{rfq.title}</h3>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>{rfq.title}</h3>
                 
                 <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 5 }}>
                   <b style={{ color: TOKENS.paper }}>Category:</b> {rfq.category}
@@ -5364,7 +5364,7 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
                     <button
                       onClick={() => openTracker?.(rfq.id)}
                       style={{
-                        background: "rgba(255,255,255,0.04)",
+                        background: "rgba(15, 23, 42, 0.04)",
                         border: `1px solid ${TOKENS.hair}`,
                         color: TOKENS.paper,
                         padding: "7px 12px",
@@ -5387,15 +5387,15 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
 
       {/* Interactive Quotation Submission Modal */}
       {quotingRfq && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.92)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
           <div style={{ maxWidth: 620, width: "100%", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.8)" }}>
-            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "20px 28px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "20px 28px", borderBottom: `1px solid ${TOKENS.hair}` }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div>
                   <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 4, letterSpacing: "0.1em" }}>OFFICIAL QUOTATION SUBMISSION</div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: 0 }}>{quotingRfq.id}: {quotingRfq.title}</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: 0 }}>{quotingRfq.id}: {quotingRfq.title}</h3>
                 </div>
-                <button onClick={() => setQuotingRfq(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 16, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+                <button onClick={() => setQuotingRfq(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 16, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
               </div>
             </div>
 
@@ -5403,7 +5403,7 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
               {submittedBid ? (
                 <div style={{ textAlign: "center", padding: "32px 0" }}>
                   <div style={{ fontSize: 44, marginBottom: 12 }}>🚀</div>
-                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 8px" }}>Quotation Broadcasted Successfully!</h3>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 8px" }}>Quotation Broadcasted Successfully!</h3>
                   <p style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>
                     Your proposal for {quotingRfq.id} has been transmitted to buyer "{quotingRfq.buyer || "Enterprise Buyer"}".
                   </p>
@@ -5418,7 +5418,7 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
                         placeholder="e.g. $48,500 USD or ₹38,00,000"
                         value={quoteForm.price}
                         onChange={(e) => setQuoteForm({ ...quoteForm, price: e.target.value })}
-                        style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                        style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                       />
                     </div>
                     <div>
@@ -5444,7 +5444,7 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
                         placeholder="Your Enterprise Name"
                         value={quoteForm.company}
                         onChange={(e) => setQuoteForm({ ...quoteForm, company: e.target.value })}
-                        style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                        style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                       />
                     </div>
                     <div>
@@ -5455,7 +5455,7 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
                         placeholder="sales@yourcompany.com"
                         value={quoteForm.email}
                         onChange={(e) => setQuoteForm({ ...quoteForm, email: e.target.value })}
-                        style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                        style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                       />
                     </div>
                   </div>
@@ -5467,7 +5467,7 @@ function RequirementsPage({ go, openTracker, currency = "INR" }) {
                       placeholder="Specify CNC machines, material traceability certificates (MTR), surface coating tolerances..."
                       value={quoteForm.notes}
                       onChange={(e) => setQuoteForm({ ...quoteForm, notes: e.target.value })}
-                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13, resize: "vertical" }}
+                      style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13, resize: "vertical" }}
                     />
                   </div>
 
@@ -5529,7 +5529,7 @@ function BusinessDashboardPage({ go, currency = "INR", currentUser, openTracker,
                 key={t}
                 onClick={() => setTimeframe(t)}
                 style={{
-                  background: timeframe === t ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                  background: timeframe === t ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
                   border: `1px solid ${timeframe === t ? TOKENS.brass : TOKENS.hair}`,
                   color: timeframe === t ? TOKENS.ink : TOKENS.paper,
                   padding: "5px 12px",
@@ -5570,25 +5570,25 @@ function BusinessDashboardPage({ go, currency = "INR", currentUser, openTracker,
 
         {/* KPI Metrics Strip */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 14, marginBottom: 32 }}>
-          <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 6 }}>
+          <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 6 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>PROFILE VIEWS ({timeframe})</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, marginTop: 6 }}>{metrics.views}</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, marginTop: 6 }}>{metrics.views}</div>
           </div>
           <div style={{ background: "rgba(0,168,150,0.06)", border: `1px solid rgba(0,168,150,0.25)`, padding: 18, borderRadius: 6 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal }}>INBOUND LEADS</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.teal, marginTop: 6 }}>{metrics.leads}</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.teal, marginTop: 6 }}>{metrics.leads}</div>
           </div>
           <div style={{ background: "rgba(212,175,55,0.06)", border: `1px solid rgba(212,175,55,0.25)`, padding: 18, borderRadius: 6 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass }}>SUBMITTED QUOTES</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.brass, marginTop: 6 }}>{metrics.quotes}</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.brass, marginTop: 6 }}>{metrics.quotes}</div>
           </div>
           <div style={{ background: "rgba(21,101,192,0.08)", border: `1px solid rgba(21,101,192,0.3)`, padding: 18, borderRadius: 6 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: "#60A5FA" }}>PIPELINE VALUE</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: "#60A5FA", marginTop: 6 }}>{metrics.pipeline}</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: "#60A5FA", marginTop: 6 }}>{metrics.pipeline}</div>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 6 }}>
+          <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 6 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>WIN RATIO</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, marginTop: 6 }}>{metrics.winRate}</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, marginTop: 6 }}>{metrics.winRate}</div>
           </div>
         </div>
 
@@ -5656,9 +5656,9 @@ function BusinessDashboardPage({ go, currency = "INR", currentUser, openTracker,
         </div>
 
         {/* Visual Pipeline Funnel Telemetry */}
-        <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 18, marginBottom: 32 }}>
+        <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 18, marginBottom: 32 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 12 }}>DEAL PIPELINE CONVERSION FUNNEL</div>
-          <div style={{ display: "flex", height: 16, borderRadius: 8, overflow: "hidden", background: "rgba(255,255,255,0.05)" }}>
+          <div style={{ display: "flex", height: 16, borderRadius: 8, overflow: "hidden", background: "rgba(15, 23, 42, 0.045)" }}>
             <div style={{ width: "45%", background: TOKENS.blue, title: "Initial Scope" }} />
             <div style={{ width: "30%", background: TOKENS.teal, title: "Tech Spec Review" }} />
             <div style={{ width: "18%", background: TOKENS.brass, title: "Negotiation" }} />
@@ -5674,7 +5674,7 @@ function BusinessDashboardPage({ go, currency = "INR", currentUser, openTracker,
 
         {/* Live Inbound RFQ Leads Table */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: 0 }}>
+          <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: 0 }}>
             Matched Inbound Buyer RFQs ({activeLeads.length})
           </h4>
           <span style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>⚡ AI Match Engine Active</span>
@@ -5689,7 +5689,7 @@ function BusinessDashboardPage({ go, currency = "INR", currentUser, openTracker,
                 justifyContent: "space-between",
                 alignItems: "center",
                 padding: "16px 20px",
-                background: item.quoted ? "rgba(0,168,150,0.08)" : "rgba(255,255,255,0.02)",
+                background: item.quoted ? "rgba(0,168,150,0.08)" : "rgba(15, 23, 42, 0.03)",
                 border: `1px solid ${item.quoted ? TOKENS.teal : TOKENS.hair}`,
                 borderRadius: 6,
                 flexWrap: "wrap",
@@ -5711,7 +5711,7 @@ function BusinessDashboardPage({ go, currency = "INR", currentUser, openTracker,
                 <button
                   onClick={() => openTracker?.(item.id)}
                   style={{
-                    background: "rgba(255,255,255,0.05)",
+                    background: "rgba(15, 23, 42, 0.045)",
                     border: `1px solid ${TOKENS.hair}`,
                     color: TOKENS.paper,
                     padding: "7px 12px",
@@ -5874,7 +5874,7 @@ function KnowledgePage({ go }) {
               key={d}
               onClick={() => setDomainFilter(d)}
               style={{
-                background: domainFilter === d ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                background: domainFilter === d ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
                 border: `1px solid ${domainFilter === d ? TOKENS.brass : TOKENS.hair}`,
                 color: domainFilter === d ? TOKENS.ink : TOKENS.slate,
                 borderRadius: 999,
@@ -5904,7 +5904,7 @@ function KnowledgePage({ go }) {
                     {guide.readTime}
                   </span>
                 </div>
-                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>
                   {guide.title}
                 </h3>
                 <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 16px" }}>
@@ -5928,17 +5928,17 @@ function KnowledgePage({ go }) {
 
       {/* In-Depth Technical Guide Reader Modal */}
       {selectedGuide && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
             {/* Modal Header */}
-            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
                   {selectedGuide.domain.toUpperCase()} · {selectedGuide.readTime}
                 </span>
-                <button onClick={() => setSelectedGuide(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+                <button onClick={() => setSelectedGuide(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
               </div>
-              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
                 {selectedGuide.title}
               </h2>
               <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
@@ -5955,19 +5955,19 @@ function KnowledgePage({ go }) {
                 </p>
               </div>
 
-              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 12px" }}>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 12px" }}>
                 Engineering Deep-Dive & Methodologies
               </h4>
               <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.8, marginBottom: 28 }}>
                 {selectedGuide.content}
               </p>
 
-              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.brass, fontSize: 18, margin: "0 0 14px" }}>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.brass, fontSize: 18, margin: "0 0 14px" }}>
                 Key Technical Takeaways & Quality Checklist
               </h4>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
                 {selectedGuide.takeaways.map((t, idx) => (
-                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, padding: "12px 16px", borderRadius: 6 }}>
+                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, padding: "12px 16px", borderRadius: 6 }}>
                     <span style={{ color: TOKENS.teal, fontSize: 14, fontWeight: "bold", flexShrink: 0 }}>✓</span>
                     <span style={{ color: TOKENS.paper, fontSize: 13.5, lineHeight: 1.5 }}>{t}</span>
                   </div>
@@ -6018,7 +6018,7 @@ function ContactPage({ go }) {
   const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", country: "", service: "Custom CNC Machining & Manufacturing", budget: "$25k - $50k", timeline: "1-3 Months", requirements: "" });
 
   const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
-  const inputStyle = { width: "100%", background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", color: TOKENS.paper, fontSize: 14.5, fontFamily: "inherit", boxSizing: "border-box" };
+  const inputStyle = { width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", color: TOKENS.paper, fontSize: 14.5, fontFamily: "inherit", boxSizing: "border-box" };
   const labelStyle = { display: "block", color: TOKENS.slate, fontSize: 11.5, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em" };
 
   const handleSubmit = async (e) => {
@@ -6048,7 +6048,7 @@ function ContactPage({ go }) {
       <Section eyebrow="Contact Confirmation" title="Inquiry Received Successfully">
         <Card style={{ maxWidth: 580, margin: "0 auto", padding: 40, textAlign: "center", border: `1px solid ${TOKENS.brass}` }}>
           <div style={{ width: 60, height: 60, borderRadius: 999, background: "rgba(0, 168, 150, 0.15)", border: `1px solid ${TOKENS.teal}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 18px", color: TOKENS.teal, fontSize: 26, fontWeight: "bold" }}>✓</div>
-          <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>Thank You, {form.name || "Client"}!</h3>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>Thank You, {form.name || "Client"}!</h3>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.teal, marginBottom: 16 }}>OFFICIAL INTAKE REF: {refId}</div>
           <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: "0 0 24px" }}>
             Your scope inquiry has been assigned to an Abhimanyu Technologies solution architect. We will follow up at <strong style={{ color: TOKENS.paper }}>{form.email}</strong> within 12 business hours.
@@ -6109,7 +6109,7 @@ function ContactPage({ go }) {
         <div style={{ maxWidth: 960, margin: "0 auto", display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 36 }} className="contact-grid">
           {/* Main Inquiry Form */}
           <Card style={{ padding: 32 }}>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 20px" }}>Project Scope Intake Form</h3>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 20px" }}>Project Scope Intake Form</h3>
             <form onSubmit={handleSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <div>
                 <label style={labelStyle}>FULL NAME *</label>
@@ -6175,7 +6175,7 @@ function ContactPage({ go }) {
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass, marginBottom: 8, letterSpacing: "0.08em" }}>
                 HEADQUARTERS & R&D LAB
               </div>
-              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 6px" }}>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 6px" }}>
                 Telangana Enterprise Campus
               </h4>
               <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 12px" }}>
@@ -6225,7 +6225,7 @@ function CTA({ go, label = "Contact Us" }) {
         <Vault3D size={280} variant="ring" />
       </div>
       <div style={{ position: "relative" }}>
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: "clamp(26px,4vw,36px)", color: TOKENS.paper, margin: "0 0 28px" }}>
+        <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(26px,4vw,36px)", color: TOKENS.paper, margin: "0 0 28px" }}>
           Let's build the thing you keep meaning to build.
         </h2>
         <Button onClick={() => go("contact")}>{label} →</Button>
@@ -6338,13 +6338,13 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
   ];
 
   return (
-    <header style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: `rgba(11, 31, 58, 0.95)`, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderBottom: `1px solid ${TOKENS.hair}` }}>
+    <header style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: `rgba(255, 255, 255, 0.94)`, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderBottom: `1px solid ${TOKENS.hair}`, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
         {/* Logo */}
         <button onClick={() => go("home")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 12, padding: 0, flexShrink: 0 }}>
           <TransparentLogo src="/logo.png" height={36} />
           <div style={{ textAlign: "left" }}>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600, color: TOKENS.paper, letterSpacing: "0.01em", lineHeight: 1.1 }}>Abhimanyu</div>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 600, color: TOKENS.paper, letterSpacing: "0.01em", lineHeight: 1.1 }}>Abhimanyu</div>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 8, color: TOKENS.teal, letterSpacing: "0.20em", textTransform: "uppercase" }}>SCALE YOUR BUSINESS</div>
           </div>
         </button>
@@ -6385,12 +6385,12 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                   top: "calc(100% + 6px)",
                   left: "-20px",
                   width: 760,
-                  background: `rgba(11, 31, 58, 0.98)`,
+                  background: `#FFFFFF`,
                   backdropFilter: "blur(20px)",
                   WebkitBackdropFilter: "blur(20px)",
                   border: `1px solid ${TOKENS.hair}`,
                   borderRadius: 10,
-                  boxShadow: "0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,55,0.1)",
+                  boxShadow: "0 20px 50px rgba(0,0,0,0.10), 0 0 0 1px rgba(217,119,6,0.15)",
                   display: "grid",
                   gridTemplateColumns: "repeat(4, 1fr)",
                   gap: 0,
@@ -6420,7 +6420,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                             transition: "all 0.15s ease",
                             fontFamily: "'Inter', sans-serif",
                           }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = TOKENS.paper; }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "#F1F5F9"; e.currentTarget.style.color = TOKENS.paper; }}
                           onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = TOKENS.slate; }}
                         >
                           {lnk.label}
@@ -6449,7 +6449,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
           <button
             onClick={openSpotlight}
             style={{
-              background: "rgba(255,255,255,0.04)",
+              background: "rgba(15, 23, 42, 0.04)",
               border: `1px solid ${TOKENS.hair}`,
               borderRadius: 6,
               color: TOKENS.slate,
@@ -6467,7 +6467,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
             title="Press Ctrl+K or ⌘K to search anywhere"
           >
             <span>🔍 Search</span>
-            <kbd style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${TOKENS.hair}`, borderRadius: 3, padding: "1px 5px", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper }}>
+            <kbd style={{ background: "rgba(15, 23, 42, 0.06)", border: `1px solid ${TOKENS.hair}`, borderRadius: 3, padding: "1px 5px", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper }}>
               Ctrl+K
             </kbd>
           </button>
@@ -6488,7 +6488,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                 padding: "7px 12px",
                 transition: "all 0.15s ease",
               }}
-              onMouseEnter={(e) => { if (page !== n.id) { e.currentTarget.style.color = TOKENS.paper; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; } }}
+              onMouseEnter={(e) => { if (page !== n.id) { e.currentTarget.style.color = TOKENS.paper; e.currentTarget.style.background = "rgba(15, 23, 42, 0.045)"; } }}
               onMouseLeave={(e) => { if (page !== n.id) { e.currentTarget.style.color = TOKENS.slate; e.currentTarget.style.background = "transparent"; } }}
             >
               {n.label}
@@ -6503,7 +6503,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
             <button
               onClick={() => setCurrencyOpen(!currencyOpen)}
               style={{
-                background: "rgba(255,255,255,0.04)",
+                background: "rgba(15, 23, 42, 0.04)",
                 border: `1px solid ${TOKENS.hair}`,
                 borderRadius: 6,
                 color: TOKENS.paper,
@@ -6622,7 +6622,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                   }}
                 >
                   <div style={{ paddingBottom: 8, borderBottom: `1px solid ${TOKENS.hair}`, marginBottom: 8 }}>
-                    <div style={{ fontFamily: "'Fraunces', serif", fontSize: 14, color: TOKENS.paper }}>{currentUser.name}</div>
+                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: TOKENS.paper }}>{currentUser.name}</div>
                     <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass }}>{currentUser.company}</div>
                     <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginTop: 2 }}>{currentUser.badge}</div>
                   </div>
@@ -6630,7 +6630,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                     <button
                       onClick={() => { go("dashboard"); setUserMenuOpen(false); }}
                       style={{ background: "transparent", border: "none", color: TOKENS.paper, textAlign: "left", padding: "6px 8px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", borderRadius: 4 }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42, 0.05)")}
                       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                     >
                       📊 Seller & Buyer Dashboard
@@ -6638,7 +6638,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                     <button
                       onClick={() => { openTracker?.("RFQ-2026-9041"); setUserMenuOpen(false); }}
                       style={{ background: "transparent", border: "none", color: TOKENS.paper, textAlign: "left", padding: "6px 8px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", borderRadius: 4 }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42, 0.05)")}
                       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                     >
                       📋 Track Live RFQs ({currentUser.activeRFQs})
@@ -6646,7 +6646,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
                     <button
                       onClick={() => { openAuth?.(); setUserMenuOpen(false); }}
                       style={{ background: "transparent", border: "none", color: TOKENS.teal, textAlign: "left", padding: "6px 8px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", borderRadius: 4 }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42, 0.05)")}
                       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                     >
                       ⚙️ Manage Account / Switch Role
@@ -6659,7 +6659,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
             <button
               onClick={openAuth}
               style={{
-                background: "rgba(255,255,255,0.05)",
+                background: "rgba(15, 23, 42, 0.045)",
                 border: `1px solid ${TOKENS.hair}`,
                 borderRadius: 6,
                 color: TOKENS.paper,
@@ -6704,7 +6704,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
           <button
             onClick={() => { openSpotlight?.(); setOpen(false); }}
             style={{
-              background: "rgba(255,255,255,0.05)",
+              background: "rgba(15, 23, 42, 0.045)",
               border: `1px solid ${TOKENS.hair}`,
               borderRadius: 6,
               color: TOKENS.paper,
@@ -6720,7 +6720,7 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
             }}
           >
             <span>🔍 Search Entire Platform</span>
-            <kbd style={{ background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: 3, fontSize: 10 }}>Ctrl+K</kbd>
+            <kbd style={{ background: "rgba(15, 23, 42, 0.06)", padding: "2px 6px", borderRadius: 3, fontSize: 10 }}>Ctrl+K</kbd>
           </button>
 
           {/* Quick Mobile Action Bar */}
@@ -6825,7 +6825,7 @@ function Footer({ go }) {
   ];
 
   return (
-    <footer style={{ borderTop: `1px solid ${TOKENS.hair}`, background: "rgba(11, 31, 58, 0.98)", padding: "70px 24px 36px" }}>
+    <footer style={{ borderTop: `1px solid ${TOKENS.hair}`, background: "#F1F5F9", padding: "70px 24px 36px" }}>
       <div style={{ maxWidth: 1240, margin: "0 auto" }}>
         {/* Pre-footer Callout Banner */}
         <div style={{
@@ -6834,14 +6834,14 @@ function Footer({ go }) {
           alignItems: "center",
           flexWrap: "wrap",
           gap: 16,
-          background: "linear-gradient(135deg, rgba(21,101,192,0.18) 0%, rgba(0,168,150,0.1) 100%)",
-          border: `1px solid rgba(212,175,55,0.25)`,
+          background: "linear-gradient(135deg, rgba(29,78,216,0.06) 0%, rgba(13,148,136,0.06) 100%)",
+          border: `1px solid ${TOKENS.hair}`,
           borderRadius: 8,
           padding: "24px 30px",
           marginBottom: 48
         }}>
           <div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, color: TOKENS.paper, marginBottom: 4 }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, color: TOKENS.paper, marginBottom: 4 }}>
               Scale Your Sourcing & Manufacturing Operations
             </div>
             <div style={{ fontSize: 13.5, color: TOKENS.slate }}>
@@ -6859,7 +6859,7 @@ function Footer({ go }) {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
               <TransparentLogo src="/logo.png" height={32} />
-              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, fontWeight: 600 }}>Abhimanyu</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, fontWeight: 600 }}>Abhimanyu</div>
             </div>
             <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 16px", maxWidth: 240 }}>
               One Platform. Every Industry. Sloganed to <b style={{ color: TOKENS.brass }}>"Scale Your Business"</b>.
@@ -7007,7 +7007,7 @@ function AIAgent3DAvatarIcon({ onClick }) {
       <button
         onClick={onClick}
         style={{
-          background: "rgba(16, 24, 40, 0.9)",
+          background: "#F1F5F9",
           backdropFilter: "blur(12px)",
           border: "1px solid rgba(212, 175, 55, 0.5)",
           borderRadius: "50%",
@@ -7153,7 +7153,7 @@ function AIAgentWidget({ go }) {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: TOKENS.teal }} />
               <div>
-                <div style={{ fontFamily: "'Fraunces', serif", fontSize: 15, color: TOKENS.paper, fontWeight: 600 }}>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: TOKENS.paper, fontWeight: 600 }}>
                   MyVault AI Agent
                 </div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>
@@ -7177,7 +7177,7 @@ function AIAgentWidget({ go }) {
                 style={{
                   alignSelf: m.sender === "user" ? "flex-end" : "flex-start",
                   maxWidth: "85%",
-                  background: m.sender === "user" ? TOKENS.brass : "rgba(255,255,255,0.05)",
+                  background: m.sender === "user" ? TOKENS.brass : "rgba(15, 23, 42, 0.045)",
                   color: m.sender === "user" ? TOKENS.ink : TOKENS.paper,
                   border: m.sender === "user" ? "none" : `1px solid ${TOKENS.hair}`,
                   borderRadius: 6,
@@ -7341,20 +7341,20 @@ function LeadCaptureModal() {
 
       {/* Modal Dialog */}
       {open && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 480, width: "100%", border: `1px solid rgba(212,175,55,0.4)`, background: TOKENS.panelAlt, borderRadius: 12, overflow: "hidden", position: "relative", padding: 36, boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
-            <button onClick={() => setOpen(false)} style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 480, width: "100%", border: `1px solid rgba(212,175,55,0.4)`, background: TOKENS.panelAlt, borderRadius: 12, overflow: "hidden", position: "relative", padding: 36, boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
+            <button onClick={() => setOpen(false)} style={{ position: "absolute", top: 16, right: 16, background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
 
             {subscribed ? (
               <div style={{ textAlign: "center", padding: "16px 0" }}>
                 <div style={{ fontSize: 36, color: TOKENS.teal, marginBottom: 12 }}>✓</div>
-                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>Blueprint Dispatched!</h3>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>Blueprint Dispatched!</h3>
                 <p style={{ color: TOKENS.slate, fontSize: 14, margin: 0, lineHeight: 1.6 }}>Check your inbox shortly for the Enterprise Architecture Blueprint 2026 PDF.</p>
               </div>
             ) : (
               <form onSubmit={handleSubscribe}>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.08em" }}>FREE ENTERPRISE WHITEPAPER</div>
-                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 10px" }}>Enterprise Architecture Blueprint</h3>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 10px" }}>Enterprise Architecture Blueprint</h3>
                 <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
                   Download our 2026 whitepaper on building resilient microservices, zero-trust security, and sub-10ms AI engines.
                 </p>
@@ -7365,7 +7365,7 @@ function LeadCaptureModal() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your work email..."
-                    style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", color: TOKENS.paper, fontSize: 14 }}
+                    style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", color: TOKENS.paper, fontSize: 14 }}
                   />
                   <Button type="submit">Download Blueprint PDF →</Button>
                 </div>
@@ -7469,7 +7469,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.94)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
         zIndex: 9999,
@@ -7489,13 +7489,13 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
           border: `1px solid rgba(212,175,55,0.4)`,
           borderRadius: 12,
           overflow: "hidden",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
         }}
       >
         {/* Modal Top Header */}
         <div
           style={{
-            background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)",
+            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
             padding: "24px 28px",
             borderBottom: `1px solid ${TOKENS.hair}`,
             display: "flex",
@@ -7524,7 +7524,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
                 {acceptedBid ? `● ${acceptedBid.poNumber} ISSUED` : `● ${knownRfq.status}`}
               </span>
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
               {knownRfq.id}: {knownRfq.title}
             </h3>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate, marginTop: 4 }}>
@@ -7534,7 +7534,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
           <button
             onClick={onClose}
             style={{
-              background: "rgba(255,255,255,0.06)",
+              background: "rgba(0,0,0,0.04)",
               border: `1px solid ${TOKENS.hair}`,
               color: TOKENS.paper,
               fontSize: 18,
@@ -7553,7 +7553,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
         </div>
 
         {/* Quick Switcher & Lookup */}
-        <div style={{ padding: "14px 28px", background: "rgba(255,255,255,0.02)", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "space-between" }}>
+        <div style={{ padding: "14px 28px", background: "rgba(15, 23, 42, 0.03)", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>Switch RFQ:</span>
             {PUBLIC_RFQS.map((r) => (
@@ -7593,7 +7593,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
               value={customInput}
               onChange={(e) => setCustomInput(e.target.value)}
               style={{
-                background: "rgba(255,255,255,0.04)",
+                background: "rgba(15, 23, 42, 0.04)",
                 border: `1px solid ${TOKENS.hair}`,
                 borderRadius: 4,
                 padding: "4px 10px",
@@ -7624,7 +7624,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
         {/* Modal Body */}
         <div style={{ padding: "24px 28px" }}>
           {/* Milestone Stepper */}
-          <div style={{ marginBottom: 28, background: "rgba(255,255,255,0.02)", padding: "18px 20px", borderRadius: 8, border: `1px solid ${TOKENS.hair}` }}>
+          <div style={{ marginBottom: 28, background: "rgba(15, 23, 42, 0.03)", padding: "18px 20px", borderRadius: 8, border: `1px solid ${TOKENS.hair}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
               {milestones.map((m, idx) => (
                 <div key={idx} style={{ flex: 1, minWidth: 120, position: "relative" }}>
@@ -7634,7 +7634,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
                         width: 24,
                         height: 24,
                         borderRadius: "50%",
-                        background: m.done ? TOKENS.teal : m.current ? TOKENS.brass : "rgba(255,255,255,0.08)",
+                        background: m.done ? TOKENS.teal : m.current ? TOKENS.brass : "rgba(15, 23, 42, 0.06)",
                         color: m.done || m.current ? TOKENS.ink : TOKENS.slate,
                         display: "flex",
                         alignItems: "center",
@@ -7738,15 +7738,15 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
 
           {/* RFQ Specs Grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 28 }}>
-            <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>BATCH QUANTITY</div>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: TOKENS.paper, fontWeight: 600, marginTop: 4 }}>{knownRfq.quantity}</div>
             </div>
-            <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>REQUIRED TOLERANCE</div>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: TOKENS.teal, fontWeight: 600, marginTop: 4 }}>{knownRfq.tolerance}</div>
             </div>
-            <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CERTIFIED MATERIAL</div>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4, flexWrap: "wrap", gap: 6 }}>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brass, fontWeight: 600 }}>{knownRfq.material}</span>
@@ -7768,7 +7768,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
                 </button>
               </div>
             </div>
-            <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+            <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CAD MESH ATTACHMENT</div>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4, flexWrap: "wrap", gap: 6 }}>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper }}>
@@ -7797,7 +7797,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
           {/* Competing Vetted Supplier Quotes */}
           <div style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
                 Competing Supplier Bids ({sampleBids.length})
               </h4>
               <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
@@ -7812,7 +7812,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
                   <div
                     key={bid.id}
                     style={{
-                      background: isAwarded ? "rgba(0,168,150,0.08)" : "rgba(255,255,255,0.025)",
+                      background: isAwarded ? "rgba(0,168,150,0.08)" : "rgba(15, 23, 42, 0.035)",
                       border: `1px solid ${isAwarded ? TOKENS.teal : TOKENS.hair}`,
                       borderRadius: 8,
                       padding: "16px 20px",
@@ -7826,7 +7826,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
                   >
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper, fontWeight: 600 }}>
+                        <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, fontWeight: 600 }}>
                           {bid.supplier}
                         </span>
                         <span style={{ background: "rgba(21,101,192,0.15)", color: TOKENS.teal, fontSize: 10, padding: "2px 6px", borderRadius: 4, fontFamily: "'JetBrains Mono', monospace" }}>
@@ -7838,7 +7838,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
                       </div>
                       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                         {bid.certs.map((c) => (
-                          <span key={c} style={{ background: "rgba(255,255,255,0.05)", color: TOKENS.slate, fontSize: 10, padding: "2px 6px", borderRadius: 3, fontFamily: "'JetBrains Mono', monospace" }}>
+                          <span key={c} style={{ background: "rgba(15, 23, 42, 0.045)", color: TOKENS.slate, fontSize: 10, padding: "2px 6px", borderRadius: 3, fontFamily: "'JetBrains Mono', monospace" }}>
                             {c}
                           </span>
                         ))}
@@ -7847,7 +7847,7 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD
 
                     <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                       <div>
-                        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, color: TOKENS.brassBright, fontWeight: 700 }}>
+                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, color: TOKENS.brassBright, fontWeight: 700 }}>
                           {formatPrice(bid.inrPrice, currency)}
                         </div>
                         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
@@ -8064,7 +8064,7 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.94)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
         zIndex: 9999,
@@ -8084,14 +8084,14 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
           border: `1px solid rgba(212,175,55,0.4)`,
           borderRadius: 12,
           overflow: "hidden",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
           position: "relative",
         }}
       >
         {/* Header */}
         <div
           style={{
-            background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)",
+            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
             padding: "24px 28px",
             borderBottom: `1px solid ${TOKENS.hair}`,
             display: "flex",
@@ -8103,14 +8103,14 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", marginBottom: 4 }}>
               ENTERPRISE ACCESS PORTAL
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
               {currentUser ? "Manage Enterprise Profile" : tab === "signin" ? "Sign In to Your Workspace" : "Register Enterprise Account"}
             </h3>
           </div>
           <button
             onClick={onClose}
             style={{
-              background: "rgba(255,255,255,0.06)",
+              background: "rgba(0,0,0,0.04)",
               border: `1px solid ${TOKENS.hair}`,
               color: TOKENS.paper,
               fontSize: 18,
@@ -8137,21 +8137,21 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
         {currentUser ? (
           /* Active Account State */
           <div style={{ padding: "28px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 18, marginBottom: 20 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 18, marginBottom: 20 }}>
               <div style={{ fontSize: 36 }}>{currentUser.avatar}</div>
               <div>
-                <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper }}>{currentUser.company}</div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>{currentUser.company}</div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass }}>{currentUser.badge} ({currentUser.role.toUpperCase()})</div>
                 <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 4 }}>📍 {currentUser.location} • {currentUser.email}</div>
               </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 24 }}>
-              <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, padding: 12, borderRadius: 6, textAlign: "center" }}>
+              <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, padding: 12, borderRadius: 6, textAlign: "center" }}>
                 <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>ACTIVE RFQs</div>
-                <div style={{ fontSize: 20, fontFamily: "'Fraunces', serif", color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>{currentUser.activeRFQs} Live</div>
+                <div style={{ fontSize: 20, fontFamily: "'Inter', sans-serif", color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>{currentUser.activeRFQs} Live</div>
               </div>
-              <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, padding: 12, borderRadius: 6, textAlign: "center" }}>
+              <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, padding: 12, borderRadius: 6, textAlign: "center" }}>
                 <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>SECURITY STATUS</div>
                 <div style={{ fontSize: 13, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginTop: 8 }}>✓ MFA VERIFIED</div>
               </div>
@@ -8213,7 +8213,7 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
                   onClick={() => handleDemoLogin("buyer")}
                   style={{
                     flex: 1,
-                    background: "rgba(255,255,255,0.06)",
+                    background: "rgba(15, 23, 42, 0.05)",
                     border: `1px solid ${TOKENS.hair}`,
                     color: TOKENS.paper,
                     padding: "8px 12px",
@@ -8230,7 +8230,7 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
                   onClick={() => handleDemoLogin("supplier")}
                   style={{
                     flex: 1,
-                    background: "rgba(255,255,255,0.06)",
+                    background: "rgba(15, 23, 42, 0.05)",
                     border: `1px solid ${TOKENS.hair}`,
                     color: TOKENS.paper,
                     padding: "8px 12px",
@@ -8294,7 +8294,7 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
                   type="button"
                   onClick={() => setRole("buyer")}
                   style={{
-                    background: role === "buyer" ? "rgba(21, 101, 192, 0.2)" : "rgba(255,255,255,0.03)",
+                    background: role === "buyer" ? "rgba(21, 101, 192, 0.2)" : "rgba(15, 23, 42, 0.04)",
                     border: `1px solid ${role === "buyer" ? TOKENS.blue : TOKENS.hair}`,
                     color: role === "buyer" ? TOKENS.paper : TOKENS.slate,
                     padding: "10px",
@@ -8311,7 +8311,7 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
                   type="button"
                   onClick={() => setRole("supplier")}
                   style={{
-                    background: role === "supplier" ? "rgba(0, 168, 150, 0.2)" : "rgba(255,255,255,0.03)",
+                    background: role === "supplier" ? "rgba(0, 168, 150, 0.2)" : "rgba(15, 23, 42, 0.04)",
                     border: `1px solid ${role === "supplier" ? TOKENS.teal : TOKENS.hair}`,
                     color: role === "supplier" ? TOKENS.paper : TOKENS.slate,
                     padding: "10px",
@@ -8340,7 +8340,7 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
                     placeholder="e.g. Ramesh Chandra"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                    style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                   />
                 </div>
               )}
@@ -8355,7 +8355,7 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
                   placeholder="name@company.com"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                  style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                 />
               </div>
 
@@ -8371,7 +8371,7 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
                       placeholder="e.g. Apex Industrial Solutions Ltd."
                       value={form.company}
                       onChange={(e) => setForm({ ...form, company: e.target.value })}
-                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                      style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                     />
                   </div>
                   <div>
@@ -8584,7 +8584,7 @@ function CADViewerModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.95)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         zIndex: 10000,
@@ -8604,13 +8604,13 @@ function CADViewerModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "
           border: `1px solid rgba(212,175,55,0.4)`,
           borderRadius: 12,
           overflow: "hidden",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
         }}
       >
         {/* Header */}
         <div
           style={{
-            background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)",
+            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
             padding: "20px 24px",
             borderBottom: `1px solid ${TOKENS.hair}`,
             display: "flex",
@@ -8622,14 +8622,14 @@ function CADViewerModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", marginBottom: 4 }}>
               3D CAD MESH & GD&T TOLERANCE INSPECTOR · WEBGL ENGINE
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
               {rfqId}: {partName}
             </h3>
           </div>
           <button
             onClick={onClose}
             style={{
-              background: "rgba(255,255,255,0.06)",
+              background: "rgba(0,0,0,0.04)",
               border: `1px solid ${TOKENS.hair}`,
               color: TOKENS.paper,
               fontSize: 18,
@@ -8649,7 +8649,7 @@ function CADViewerModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "
         {/* CAD Canvas + Sidebar */}
         <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", minHeight: 440 }} className="hero-grid">
           {/* Left Canvas Viewport */}
-          <div style={{ position: "relative", background: "#070E1A", display: "flex", flexDirection: "column" }}>
+          <div style={{ position: "relative", background: "#F8FAFC", display: "flex", flexDirection: "column" }}>
             <div ref={mountRef} style={{ width: "100%", height: 420, cursor: "grab" }} />
 
             {/* Viewport Control Overlay */}
@@ -8710,7 +8710,7 @@ function CADViewerModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "
               </div>
             </div>
 
-            <div style={{ padding: "8px 16px", background: "rgba(16,24,40,0.9)", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+            <div style={{ padding: "8px 16px", background: "#F1F5F9", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
               <span>🖱 Drag to rotate · Scroll to zoom</span>
               <span style={{ color: TOKENS.teal }}>● 3D Mesh Integrity: 100% Manifold</span>
             </div>
@@ -8734,7 +8734,7 @@ function CADViewerModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "
                       key={d.id}
                       onClick={() => setActiveDatum(d.id)}
                       style={{
-                        background: isSelected ? "rgba(21,101,192,0.15)" : "rgba(255,255,255,0.025)",
+                        background: isSelected ? "rgba(21,101,192,0.15)" : "rgba(15, 23, 42, 0.035)",
                         border: `1px solid ${isSelected ? TOKENS.blue : TOKENS.hair}`,
                         borderRadius: 6,
                         padding: "10px 12px",
@@ -8760,7 +8760,7 @@ function CADViewerModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "
               </div>
 
               {/* Inspection Box */}
-              <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px", marginBottom: 20 }}>
+              <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px", marginBottom: 20 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>MATERIAL TEST REPORT (MTR)</div>
                   <button
@@ -8909,7 +8909,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.94)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
         zIndex: 9999,
@@ -8929,13 +8929,13 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
           border: `1px solid rgba(212,175,55,0.4)`,
           borderRadius: 12,
           overflow: "hidden",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
         }}
       >
         {/* Header */}
         <div
           style={{
-            background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)",
+            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
             padding: "24px 28px",
             borderBottom: `1px solid ${TOKENS.hair}`,
             display: "flex",
@@ -8947,14 +8947,14 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", marginBottom: 4 }}>
               SUPPLIER ONBOARDING & SHOP FLOOR VERIFICATION
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
               {verifiedBadge ? "Plant Verified & Onboarded" : "4-Stage Factory Verification Wizard"}
             </h3>
           </div>
           <button
             onClick={onClose}
             style={{
-              background: "rgba(255,255,255,0.06)",
+              background: "rgba(0,0,0,0.04)",
               border: `1px solid ${TOKENS.hair}`,
               color: TOKENS.paper,
               fontSize: 18,
@@ -8980,7 +8980,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 6 }}>
               OFFICIAL VERIFICATION CERTIFICATE ISSUED
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 10px" }}>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 10px" }}>
               {form.companyName || "Your Manufacturing Plant"}
             </h3>
             <div style={{ display: "inline-block", background: "rgba(212,175,55,0.12)", border: `1px solid ${TOKENS.brass}`, borderRadius: 6, padding: "8px 18px", fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brassBright, marginBottom: 20 }}>
@@ -9028,7 +9028,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
                       width: 24,
                       height: 24,
                       borderRadius: "50%",
-                      background: step > st.s ? TOKENS.teal : step === st.s ? TOKENS.brass : "rgba(255,255,255,0.06)",
+                      background: step > st.s ? TOKENS.teal : step === st.s ? TOKENS.brass : "rgba(15, 23, 42, 0.05)",
                       color: step >= st.s ? TOKENS.ink : TOKENS.slate,
                       display: "flex",
                       alignItems: "center",
@@ -9050,7 +9050,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
             {/* Step 1: Plant Identity */}
             {step === 1 && (
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
+                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
                   Step 1: Facility Identity & Industrial Corridor
                 </h4>
                 <div>
@@ -9063,7 +9063,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
                     placeholder="e.g. Precision CNC Works Pvt. Ltd."
                     value={form.companyName}
                     onChange={(e) => setForm({ ...form, companyName: e.target.value })}
-                    style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                    style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                   />
                 </div>
                 <div>
@@ -9092,7 +9092,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
                       type="text"
                       value={form.yearEstablished}
                       onChange={(e) => setForm({ ...form, yearEstablished: e.target.value })}
-                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                      style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                     />
                   </div>
                   <div>
@@ -9103,7 +9103,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
                       type="text"
                       value={form.floorArea}
                       onChange={(e) => setForm({ ...form, floorArea: e.target.value })}
-                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                      style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                     />
                   </div>
                 </div>
@@ -9116,7 +9116,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
             {/* Step 2: Machinery */}
             {step === 2 && (
               <div>
-                <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
+                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
                   Step 2: Machine Shop Capabilities
                 </h4>
                 <p style={{ color: TOKENS.slate, fontSize: 13, marginBottom: 16 }}>
@@ -9131,7 +9131,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
                         type="button"
                         onClick={() => toggleItem("machines", opt)}
                         style={{
-                          background: active ? "rgba(0,168,150,0.15)" : "rgba(255,255,255,0.03)",
+                          background: active ? "rgba(0,168,150,0.15)" : "rgba(15, 23, 42, 0.04)",
                           border: `1px solid ${active ? TOKENS.teal : TOKENS.hair}`,
                           color: active ? TOKENS.teal : TOKENS.paper,
                           padding: "10px 12px",
@@ -9157,7 +9157,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
             {/* Step 3: Certifications */}
             {step === 3 && (
               <div>
-                <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
+                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
                   Step 3: Quality Standards & Audited Tolerances
                 </h4>
                 <p style={{ color: TOKENS.slate, fontSize: 13, marginBottom: 16 }}>
@@ -9172,7 +9172,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
                         type="button"
                         onClick={() => toggleItem("certifications", opt.split(" ")[0])}
                         style={{
-                          background: active ? "rgba(212,175,55,0.12)" : "rgba(255,255,255,0.03)",
+                          background: active ? "rgba(212,175,55,0.12)" : "rgba(15, 23, 42, 0.04)",
                           border: `1px solid ${active ? TOKENS.brass : TOKENS.hair}`,
                           color: active ? TOKENS.brass : TOKENS.paper,
                           padding: "10px 14px",
@@ -9213,7 +9213,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
             {/* Step 4: Contact & Review */}
             {step === 4 && (
               <form onSubmit={handleFinish} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
+                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
                   Step 4: Contact & Verification Review
                 </h4>
                 <div>
@@ -9226,7 +9226,7 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
                     placeholder="tooling@precisioncnc.in"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                    style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                   />
                 </div>
                 <div>
@@ -9239,11 +9239,11 @@ function SupplierOnboardingModal({ isOpen, onClose }) {
                     placeholder="+91 98400 12345"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                    style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
                   />
                 </div>
 
-                <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, padding: 14, borderRadius: 6, fontSize: 12 }}>
+                <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, padding: 14, borderRadius: 6, fontSize: 12 }}>
                   <div style={{ fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, marginBottom: 4 }}>
                     PLANT SUMMARY TO BE VERIFIED:
                   </div>
@@ -9388,7 +9388,7 @@ function EscrowSettlementModal({
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.92)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
         zIndex: 10000,
@@ -9414,12 +9414,12 @@ function EscrowSettlementModal({
         }}
       >
         {/* Header */}
-        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span style={{ fontSize: 22 }}>🔐</span>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
                   Industrial Escrow Vault & Settlement Ledger
                 </h3>
                 <span style={{ background: "rgba(0,168,150,0.18)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
@@ -9436,25 +9436,25 @@ function EscrowSettlementModal({
 
         {/* Telemetry Metrics Cards */}
         <div style={{ padding: "16px 24px", background: "rgba(0,0,0,0.25)", borderBottom: `1px solid ${TOKENS.hair}`, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
-          <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>TOTAL CONTRACT VALUE</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.brassBright, marginTop: 4 }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.brassBright, marginTop: 4 }}>
               {formatPrice(totalInr, currency)}
             </div>
           </div>
           <div style={{ background: "rgba(0,168,150,0.05)", border: `1px solid rgba(0,168,150,0.3)`, borderRadius: 6, padding: "12px 14px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>DISBURSED TO PLANT</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.teal, marginTop: 4 }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.teal, marginTop: 4 }}>
               {formatPrice(totalDisbursed, currency)}
             </div>
           </div>
           <div style={{ background: "rgba(21,101,192,0.08)", border: `1px solid rgba(21,101,192,0.35)`, borderRadius: 6, padding: "12px 14px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#60A5FA" }}>LOCKED IN ESCROW</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: "#60A5FA", marginTop: 4 }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: "#60A5FA", marginTop: 4 }}>
               {formatPrice(lockedBalance, currency)}
             </div>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>SETTLEMENT CLAUSE</div>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper, marginTop: 6 }}>
               Reverse Charge: No · HSN 8481
@@ -9500,7 +9500,7 @@ function EscrowSettlementModal({
                   <div
                     key={m.id}
                     style={{
-                      background: isReleased ? "rgba(0,168,150,0.06)" : isReady ? "rgba(212,175,55,0.08)" : "rgba(255,255,255,0.02)",
+                      background: isReleased ? "rgba(0,168,150,0.06)" : isReady ? "rgba(212,175,55,0.08)" : "rgba(15, 23, 42, 0.03)",
                       border: `1px solid ${isReleased ? TOKENS.teal : isReady ? TOKENS.brass : TOKENS.hair}`,
                       borderRadius: 8,
                       padding: "16px 20px",
@@ -9514,7 +9514,7 @@ function EscrowSettlementModal({
                     <div style={{ flex: "1 1 340px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
                         <span style={{
-                          background: isReleased ? TOKENS.teal : isReady ? TOKENS.brass : "rgba(255,255,255,0.08)",
+                          background: isReleased ? TOKENS.teal : isReady ? TOKENS.brass : "rgba(15, 23, 42, 0.06)",
                           color: isReleased || isReady ? TOKENS.ink : TOKENS.paper,
                           width: 24,
                           height: 24,
@@ -9528,11 +9528,11 @@ function EscrowSettlementModal({
                         }}>
                           {isReleased ? "✓" : m.step}
                         </span>
-                        <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper, margin: 0 }}>
+                        <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, margin: 0 }}>
                           {m.title}
                         </h4>
                         <span style={{
-                          background: isReleased ? "rgba(0,168,150,0.2)" : isReady ? "rgba(212,175,55,0.2)" : "rgba(255,255,255,0.05)",
+                          background: isReleased ? "rgba(0,168,150,0.2)" : isReady ? "rgba(212,175,55,0.2)" : "rgba(15, 23, 42, 0.045)",
                           color: isReleased ? TOKENS.teal : isReady ? TOKENS.brass : TOKENS.slate,
                           fontSize: 10.5,
                           fontFamily: "'JetBrains Mono', monospace",
@@ -9554,7 +9554,7 @@ function EscrowSettlementModal({
                     </div>
 
                     <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
-                      <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, fontWeight: 700 }}>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, fontWeight: 700 }}>
                         {formatPrice(m.amount, currency)} <span style={{ fontSize: 12, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>({m.pct}%)</span>
                       </div>
                       {isReleased ? (
@@ -9592,9 +9592,9 @@ function EscrowSettlementModal({
           )}
 
           {activeTab === "tax" && (
-            <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 24px" }}>
+            <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 24px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper, margin: 0 }}>
+                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper, margin: 0 }}>
                   Official B2B Tax Invoice Spec (GST Act Compliant)
                 </h4>
                 <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass }}>
@@ -9653,7 +9653,7 @@ function EscrowSettlementModal({
                   { time: "24 Sep 2026 14:32:01 IST", event: "Milestone 1 (20% Advance) Released to Apex Precision", actor: "Dr. K. S. Rao (Auth Token #8849)", hash: "0x78ab4...99c1" },
                   { time: "26 Sep 2026 11:20:44 IST", event: "Zeiss CMM FAI Telemetry Deviation Log Ingested", actor: "Apex Precision Quality Lab", hash: "0x90f1c...4432" },
                 ].map((log, idx) => (
-                  <div key={idx} style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace" }}>
+                  <div key={idx} style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", color: TOKENS.slate }}>
                       <span>{log.time}</span>
                       <span style={{ color: TOKENS.teal }}>{log.actor}</span>
@@ -9668,7 +9668,7 @@ function EscrowSettlementModal({
         </div>
 
         {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
           <button
             onClick={() => {
               trackEvent("export_escrow_ledger");
@@ -9718,7 +9718,7 @@ function EscrowSettlementModal({
                 boxShadow: "0 20px 50px rgba(0,0,0,0.9)",
               }}
             >
-              <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
                 Authorize Milestone Disbursal
               </h4>
               <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, margin: "0 0 16px" }}>
@@ -9747,7 +9747,7 @@ function EscrowSettlementModal({
                       placeholder="e.g. 849201"
                       style={{
                         width: "100%",
-                        background: "rgba(255,255,255,0.05)",
+                        background: "rgba(15, 23, 42, 0.045)",
                         border: `1px solid ${TOKENS.hair}`,
                         borderRadius: 6,
                         padding: "10px 12px",
@@ -9849,7 +9849,7 @@ function TraceabilityModal({
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.92)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
         zIndex: 10000,
@@ -9875,12 +9875,12 @@ function TraceabilityModal({
         }}
       >
         {/* Header */}
-        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span style={{ fontSize: 22 }}>🔬</span>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
                   Raw Material Test Report (MTR) & Traceability
                 </h3>
                 <span style={{ background: "rgba(0,168,150,0.18)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
@@ -9957,7 +9957,7 @@ function TraceabilityModal({
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 10 }}>
                 {chemElements.map((item) => (
-                  <div key={item.element} style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px" }}>
+                  <div key={item.element} style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                       <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, fontWeight: 700, color: TOKENS.paper }}>
                         {item.element}
@@ -9983,7 +9983,7 @@ function TraceabilityModal({
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {mechProperties.map((p) => (
-                  <div key={p.prop} style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+                  <div key={p.prop} style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
                     <div>
                       <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>
                         {p.prop}
@@ -10035,8 +10035,8 @@ function TraceabilityModal({
           )}
 
           {activeTab === "custody" && (
-            <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 24px" }}>
-              <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 14px" }}>
+            <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 24px" }}>
+              <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 14px" }}>
                 Digital Twin Chain of Custody & Circular Metallurgy
               </h4>
               <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
@@ -10076,7 +10076,7 @@ function TraceabilityModal({
         </div>
 
         {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
           <button
             onClick={() => {
               trackEvent("download_mtr_pdf");
@@ -10228,7 +10228,7 @@ function VendorComparisonModal({
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.92)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
         zIndex: 10000,
@@ -10254,12 +10254,12 @@ function VendorComparisonModal({
         }}
       >
         {/* Header */}
-        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span style={{ fontSize: 22 }}>⚖️</span>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
                   Supplier & Machine Shop Comparison Matrix
                 </h3>
                 <span style={{ background: "rgba(212,175,55,0.18)", color: TOKENS.brass, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
@@ -10283,7 +10283,7 @@ function VendorComparisonModal({
                 key={m.id}
                 onClick={() => addMfr(m.id)}
                 style={{
-                  background: "rgba(255,255,255,0.04)",
+                  background: "rgba(15, 23, 42, 0.04)",
                   border: `1px solid ${TOKENS.hair}`,
                   color: TOKENS.paper,
                   padding: "4px 10px",
@@ -10311,7 +10311,7 @@ function VendorComparisonModal({
                   <th key={m.id} style={{ textAlign: "left", padding: "12px 14px", width: `${78 / activeMfrs.length}%` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                       <div>
-                        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper }}>{m.name}</div>
+                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper }}>{m.name}</div>
                         <div style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{m.category}</div>
                         <div style={{ fontSize: 11, color: TOKENS.slate, marginTop: 2 }}>📍 {m.location.split(",")[0]}</div>
                       </div>
@@ -10432,7 +10432,7 @@ function VendorComparisonModal({
         </div>
 
         {/* Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
           <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
             All compared facilities are ISO/AS9100D audited by Abhimanyu Technologies Engineering Operations.
           </span>
@@ -10513,7 +10513,7 @@ function FreightTrackerModal({
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.92)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
         zIndex: 10000,
@@ -10539,12 +10539,12 @@ function FreightTrackerModal({
         }}
       >
         {/* Header */}
-        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span style={{ fontSize: 22 }}>🚚</span>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
                   Consignment GPS & Environmental Telemetry
                 </h3>
                 <span style={{ background: "rgba(0,168,150,0.18)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
@@ -10561,19 +10561,19 @@ function FreightTrackerModal({
 
         {/* Live Status Strip */}
         <div style={{ padding: "16px 24px", background: "rgba(0,0,0,0.25)", borderBottom: `1px solid ${TOKENS.hair}`, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
-          <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CONSIGNMENT STATUS</div>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>
               ● {telemetry.status}
             </div>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CORRIDOR SPEED & GPS</div>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.paper, fontWeight: 600, marginTop: 4 }}>
               {telemetry.speed} · {telemetry.currentLocation.split("(")[0]}
             </div>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>ESTIMATED DOCK ARRIVAL</div>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.brassBright, fontWeight: 700, marginTop: 4 }}>
               {telemetry.eta}
@@ -10588,7 +10588,7 @@ function FreightTrackerModal({
               <span>INTERNAL TEMP</span>
               <span style={{ color: TOKENS.teal }}>PASS ✓</span>
             </div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: TOKENS.teal, margin: "4px 0" }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.teal, margin: "4px 0" }}>
               {telemetry.temp}
             </div>
             <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{telemetry.tempStatus}</div>
@@ -10599,7 +10599,7 @@ function FreightTrackerModal({
               <span>RELATIVE HUMIDITY</span>
               <span style={{ color: "#60A5FA" }}>PASS ✓</span>
             </div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: "#60A5FA", margin: "4px 0" }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: "#60A5FA", margin: "4px 0" }}>
               {telemetry.humidity}
             </div>
             <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{telemetry.humidityStatus}</div>
@@ -10610,7 +10610,7 @@ function FreightTrackerModal({
               <span>3-AXIS SHOCK SENSOR</span>
               <span style={{ color: TOKENS.brass }}>ZERO SHOCK ✓</span>
             </div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: TOKENS.brassBright, margin: "4px 0" }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.brassBright, margin: "4px 0" }}>
               {telemetry.shock}
             </div>
             <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{telemetry.shockStatus}</div>
@@ -10627,7 +10627,7 @@ function FreightTrackerModal({
               <div
                 key={s.step}
                 style={{
-                  background: s.done ? "rgba(0,168,150,0.06)" : s.current ? "rgba(21,101,192,0.12)" : "rgba(255,255,255,0.02)",
+                  background: s.done ? "rgba(0,168,150,0.06)" : s.current ? "rgba(21,101,192,0.12)" : "rgba(15, 23, 42, 0.03)",
                   border: `1px solid ${s.done ? TOKENS.teal : s.current ? TOKENS.blue : TOKENS.hair}`,
                   borderRadius: 8,
                   padding: "14px 18px",
@@ -10641,7 +10641,7 @@ function FreightTrackerModal({
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                     <span style={{
-                      background: s.done ? TOKENS.teal : s.current ? TOKENS.blue : "rgba(255,255,255,0.06)",
+                      background: s.done ? TOKENS.teal : s.current ? TOKENS.blue : "rgba(15, 23, 42, 0.05)",
                       color: s.done || s.current ? TOKENS.ink : TOKENS.paper,
                       width: 20,
                       height: 20,
@@ -10655,7 +10655,7 @@ function FreightTrackerModal({
                     }}>
                       {s.done ? "✓" : s.step}
                     </span>
-                    <span style={{ fontFamily: "'Fraunces', serif", fontSize: 15, color: TOKENS.paper }}>{s.title}</span>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: TOKENS.paper }}>{s.title}</span>
                     <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: s.done ? TOKENS.teal : s.current ? "#60A5FA" : TOKENS.slate }}>
                       {s.time}
                     </span>
@@ -10671,7 +10671,7 @@ function FreightTrackerModal({
         </div>
 
         {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
           <button
             onClick={() => {
               trackEvent("download_eway_bill");
@@ -10784,7 +10784,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.95)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         zIndex: 10000,
@@ -10804,7 +10804,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
           border: `1px solid rgba(0, 168, 150, 0.4)`,
           borderRadius: 12,
           overflow: "hidden",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
           display: "flex",
           flexDirection: "column",
         }}
@@ -10812,7 +10812,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
         {/* Header */}
         <div
           style={{
-            background: "linear-gradient(135deg, #071526 0%, #101828 100%)",
+            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
             padding: "20px 24px",
             borderBottom: `1px solid ${TOKENS.hair}`,
             display: "flex",
@@ -10832,7 +10832,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
                 {grade}
               </span>
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
               {rfqId}: {partName}
             </h3>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>
@@ -10849,7 +10849,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
               style={{
                 background: optimized
                   ? `linear-gradient(135deg, ${TOKENS.teal}, #00897B)`
-                  : "rgba(255,255,255,0.06)",
+                  : "rgba(15, 23, 42, 0.05)",
                 border: `1px solid ${optimized ? TOKENS.teal : TOKENS.brass}`,
                 color: optimized ? "#080E1A" : TOKENS.brass,
                 borderRadius: 8,
@@ -10870,7 +10870,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
             <button
               onClick={onClose}
               style={{
-                background: "rgba(255,255,255,0.06)",
+                background: "rgba(15, 23, 42, 0.05)",
                 border: `1px solid ${TOKENS.hair}`,
                 color: TOKENS.paper,
                 fontSize: 18,
@@ -10889,11 +10889,11 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
         </div>
 
         {/* Telemetry KPI Cards Bar */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, padding: "16px 24px", background: "rgba(255,255,255,0.02)", borderBottom: `1px solid ${TOKENS.hair}` }}>
-          <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, padding: "16px 24px", background: "rgba(15, 23, 42, 0.03)", borderBottom: `1px solid ${TOKENS.hair}` }}>
+          <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>DFM READINESS SCORE</div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
-              <span style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: optimized ? TOKENS.teal : TOKENS.brass, fontWeight: 700 }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: optimized ? TOKENS.teal : TOKENS.brass, fontWeight: 700 }}>
                 {dfmScore}
               </span>
               <span style={{ fontSize: 13, color: TOKENS.slate }}>/ 100</span>
@@ -10901,29 +10901,29 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
             </div>
           </div>
 
-          <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
+          <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>ESTIMATED UNIT MACHINING</div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
-              <span style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: TOKENS.paper, fontWeight: 700 }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.paper, fontWeight: 700 }}>
                 ₹{unitCost.toLocaleString("en-IN")}
               </span>
               {optimized && <span style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>(-22%)</span>}
             </div>
           </div>
 
-          <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
+          <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>SPINDLE CYCLE TIME / PART</div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
-              <span style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: TOKENS.brassBright, fontWeight: 700 }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.brassBright, fontWeight: 700 }}>
                 {cycleTime} mins
               </span>
               {optimized && <span style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>(-31%)</span>}
             </div>
           </div>
 
-          <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
+          <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>BATCH (5K UNITS) SAVINGS</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>
               {optimized ? `₹${(batchSavings / 100000).toFixed(1)} Lakhs` : "₹0.0"}
             </div>
           </div>
@@ -10975,7 +10975,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
                       key={rule.id}
                       onClick={() => setActiveRule(rule.id)}
                       style={{
-                        background: isSelected ? "rgba(21,101,192,0.18)" : "rgba(255,255,255,0.02)",
+                        background: isSelected ? "rgba(21,101,192,0.18)" : "rgba(15, 23, 42, 0.03)",
                         border: `1px solid ${isSelected ? TOKENS.teal : TOKENS.hair}`,
                         borderRadius: 8,
                         padding: "12px 14px",
@@ -11018,10 +11018,10 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
               </div>
 
               {/* Inspector Detail Box */}
-              <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 22px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 22px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <h4 style={{ margin: 0, fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper }}>
+                    <h4 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>
                       {currentRuleObj.name}
                     </h4>
                     <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
@@ -11033,7 +11033,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
                     {currentRuleObj.description}
                   </p>
 
-                  <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", marginBottom: 14 }}>
+                  <div style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", marginBottom: 14 }}>
                     <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginBottom: 4 }}>
                       ⚠️ MANUFACTURING RISK ANALYSIS
                     </div>
@@ -11099,8 +11099,8 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
 
           {activeTab === "cost" && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-                <h4 style={{ margin: "0 0 14px", fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper }}>
+              <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
+                <h4 style={{ margin: "0 0 14px", fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper }}>
                   Machining Cycle Time Breakdown (Per Part)
                 </h4>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -11111,7 +11111,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
                     { op: "4. Fine Contour Finish & De-burr", before: "6.0 min", after: "4.5 min", change: "-25%" },
                     { op: "5. In-Machine CMM Probe & Wash", before: "4.0 min", after: "3.2 min", change: "-20%" },
                   ].map((row, i) => (
-                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 10px", background: "rgba(255,255,255,0.02)", borderRadius: 6, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 10px", background: "rgba(15, 23, 42, 0.03)", borderRadius: 6, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
                       <span style={{ color: TOKENS.paper }}>{row.op}</span>
                       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
                         <span style={{ color: TOKENS.slate, textDecoration: optimized ? "line-through" : "none" }}>{row.before}</span>
@@ -11123,19 +11123,19 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
                 </div>
               </div>
 
-              <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-                <h4 style={{ margin: "0 0 14px", fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper }}>
+              <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
+                <h4 style={{ margin: "0 0 14px", fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper }}>
                   Tooling & Wear Optimization
                 </h4>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 12.5, lineHeight: 1.6, color: TOKENS.slate }}>
                   <p style={{ margin: 0 }}>
                     By eliminating micro-tooling (replacing Ø0.8mm with Ø3.0mm endmills) and relaxing non-contact exterior tolerances, tool changeover downtime drops by <strong style={{ color: TOKENS.teal }}>74%</strong>.
                   </p>
-                  <div style={{ background: "rgba(255,255,255,0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                  <div style={{ background: "rgba(15, 23, 42, 0.04)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                     <div style={{ color: TOKENS.paper, fontWeight: 600, marginBottom: 4 }}>Alloy Scrap & Defect Rate:</div>
                     <div style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>Estimated Scrap: 0.2% (Optimized) vs. 4.8% (Unoptimized)</div>
                   </div>
-                  <div style={{ background: "rgba(255,255,255,0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                  <div style={{ background: "rgba(15, 23, 42, 0.04)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                     <div style={{ color: TOKENS.paper, fontWeight: 600, marginBottom: 4 }}>Batch Scale Economy:</div>
                     <div style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>At 5,000 units, production timeline accelerates from 38 calendar days to 26 days.</div>
                   </div>
@@ -11145,8 +11145,8 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
           )}
 
           {activeTab === "notes" && (
-            <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-              <h4 style={{ margin: "0 0 12px", fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper }}>
+            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
+              <h4 style={{ margin: "0 0 12px", fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper }}>
                 Machining Playbook & Metrology Instructions
               </h4>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.6 }}>
@@ -11168,7 +11168,7 @@ function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName =
         </div>
 
         {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)", flexWrap: "wrap", gap: 12 }}>
           <button
             onClick={() => {
               trackEvent("download_dfm_report", { rfqId, score: dfmScore });
@@ -11312,7 +11312,7 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.95)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         zIndex: 10000,
@@ -11332,7 +11332,7 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
           border: `1px solid rgba(21, 101, 192, 0.45)`,
           borderRadius: 12,
           overflow: "hidden",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
           display: "flex",
           flexDirection: "column",
         }}
@@ -11340,7 +11340,7 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
         {/* Header */}
         <div
           style={{
-            background: "linear-gradient(135deg, #071526 0%, #101828 100%)",
+            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
             padding: "20px 24px",
             borderBottom: `1px solid ${TOKENS.hair}`,
             display: "flex",
@@ -11360,7 +11360,7 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
                 {simulatedDisruption ? "FAILOVER REROUTE ACTIVE" : "NETWORK HEALTH: 98.2%"}
               </span>
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
               National Industrial Corridors & Dual-Sourcing Telemetry
             </h3>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>
@@ -11397,7 +11397,7 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
             <button
               onClick={onClose}
               style={{
-                background: "rgba(255,255,255,0.06)",
+                background: "rgba(15, 23, 42, 0.05)",
                 border: `1px solid ${TOKENS.hair}`,
                 color: TOKENS.paper,
                 fontSize: 18,
@@ -11493,7 +11493,7 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
                       key={hub.id}
                       onClick={() => setActiveHub(hub.id)}
                       style={{
-                        background: isSelected ? "rgba(21,101,192,0.18)" : "rgba(255,255,255,0.02)",
+                        background: isSelected ? "rgba(21,101,192,0.18)" : "rgba(15, 23, 42, 0.03)",
                         border: `1px solid ${isSelected ? (isDisrupted ? "#EF4444" : TOKENS.teal) : TOKENS.hair}`,
                         borderRadius: 8,
                         padding: "12px 14px",
@@ -11529,11 +11529,11 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
               </div>
 
               {/* Hub Inspector Panel */}
-              <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 22px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 22px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                     <div>
-                      <h4 style={{ margin: 0, fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper }}>
+                      <h4 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>
                         {currentHubObj.name}
                       </h4>
                       <div style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>
@@ -11543,25 +11543,25 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
                   </div>
 
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, margin: "14px 0" }}>
-                    <div style={{ background: "rgba(255,255,255,0.025)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                    <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                       <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>POWER GRID UPTIME</div>
                       <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 700, marginTop: 2 }}>{currentHubObj.powerUptime}</div>
                     </div>
-                    <div style={{ background: "rgba(255,255,255,0.025)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                    <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                       <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>PORT / LOGISTICS DWELL</div>
                       <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: currentHubObj.riskStatus === "ALERT" ? "#F87171" : TOKENS.paper, fontWeight: 700, marginTop: 2 }}>{currentHubObj.portDwell}</div>
                     </div>
-                    <div style={{ background: "rgba(255,255,255,0.025)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                    <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                       <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>CLIMATE & MONSOON RISK</div>
                       <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 2 }}>{currentHubObj.weather}</div>
                     </div>
-                    <div style={{ background: "rgba(255,255,255,0.025)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                    <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                       <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>CURRENT PO ALLOCATION</div>
                       <div style={{ fontSize: 13, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginTop: 2 }}>{currentHubObj.allocation}</div>
                     </div>
                   </div>
 
-                  <div style={{ background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                  <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                     <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginBottom: 6 }}>
                       VERIFIED PLANTS IN THIS CORRIDOR
                     </div>
@@ -11618,12 +11618,12 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
                 {commodities.map((c, i) => (
-                  <div key={i} style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "16px" }}>
+                  <div key={i} style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "16px" }}>
                     <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600, color: TOKENS.paper, marginBottom: 4 }}>
                       {c.name}
                     </div>
                     <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: 8 }}>
-                      <span style={{ fontFamily: "'Fraunces', serif", fontSize: 22, color: TOKENS.paper, fontWeight: 700 }}>
+                      <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, color: TOKENS.paper, fontWeight: 700 }}>
                         {c.price}
                       </span>
                       <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: c.status === "UP" ? "#F87171" : TOKENS.teal }}>
@@ -11637,7 +11637,7 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
                 ))}
               </div>
 
-              <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "16px 20px" }}>
+              <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "16px 20px" }}>
                 <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 700, marginBottom: 4 }}>
                   AUTOMATED RAW ALLOY INDEX LOCK-IN (SBI / ICICI ESCROW VAULT)
                 </div>
@@ -11649,22 +11649,22 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
           )}
 
           {activeTab === "esg" && (
-            <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-              <h4 style={{ margin: "0 0 12px", fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper }}>
+            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
+              <h4 style={{ margin: "0 0 12px", fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>
                 ESG Scope 1, 2, and 3 Carbon Intensity Tracking
               </h4>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 16 }}>
-                <div style={{ background: "rgba(255,255,255,0.025)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                   <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>SCOPE 1 (DIRECT SMELT/EAF)</div>
                   <div style={{ fontSize: 18, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>0.38 kg CO₂e / kg</div>
                   <div style={{ fontSize: 10.5, color: TOKENS.teal, marginTop: 2 }}>-42% vs Blast Furnace Avg</div>
                 </div>
-                <div style={{ background: "rgba(255,255,255,0.025)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                   <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>SCOPE 2 (SHOP FLOOR GRID)</div>
                   <div style={{ fontSize: 18, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>0.62 kg CO₂e / kg</div>
                   <div style={{ fontSize: 10.5, color: TOKENS.teal, marginTop: 2 }}>42% Rooftop Solar Offset</div>
                 </div>
-                <div style={{ background: "rgba(255,255,255,0.025)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                   <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>SCOPE 3 (FREIGHT LOGISTICS)</div>
                   <div style={{ fontSize: 18, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>0.42 kg CO₂e / kg</div>
                   <div style={{ fontSize: 10.5, color: TOKENS.teal, marginTop: 2 }}>Dedicated Electric Corridors</div>
@@ -11683,7 +11683,7 @@ function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorComp
         </div>
 
         {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)", flexWrap: "wrap", gap: 12 }}>
           <button
             onClick={() => {
               trackEvent("export_risk_dossier");
@@ -11735,7 +11735,7 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.95)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         zIndex: 10000,
@@ -11755,7 +11755,7 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
           border: `1px solid rgba(212, 175, 55, 0.4)`,
           borderRadius: 12,
           overflow: "hidden",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
           display: "flex",
           flexDirection: "column",
         }}
@@ -11763,7 +11763,7 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
         {/* Header */}
         <div
           style={{
-            background: "linear-gradient(135deg, #071526 0%, #101828 100%)",
+            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
             padding: "20px 24px",
             borderBottom: `1px solid ${TOKENS.hair}`,
             display: "flex",
@@ -11783,7 +11783,7 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
                 {isFullyExecuted ? "FULLY EXECUTED & COUNTERSIGNED ✓" : "PENDING SUPPLIER COUNTERSIGNATURE"}
               </span>
             </div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
               Agreement Ref: #NDA-2026-9041 · {rfqId}
             </h3>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>
@@ -11794,7 +11794,7 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
           <button
             onClick={onClose}
             style={{
-              background: "rgba(255,255,255,0.06)",
+              background: "rgba(0,0,0,0.04)",
               border: `1px solid ${TOKENS.hair}`,
               color: TOKENS.paper,
               fontSize: 18,
@@ -11812,7 +11812,7 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
         </div>
 
         {/* Signature Status Stepper Bar */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, padding: "16px 24px", background: "rgba(255,255,255,0.02)", borderBottom: `1px solid ${TOKENS.hair}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, padding: "16px 24px", background: "rgba(15, 23, 42, 0.03)", borderBottom: `1px solid ${TOKENS.hair}` }}>
           {/* Buyer Signature Box */}
           <div style={{ background: "rgba(0,168,150,0.08)", border: `1px solid ${TOKENS.teal}55`, borderRadius: 8, padding: "14px 16px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -11901,9 +11901,9 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
         {/* Body Content */}
         <div style={{ padding: "20px 24px", flex: 1 }}>
           {activeTab === "agreement" && (
-            <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px", display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px", display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <h4 style={{ margin: "0 0 8px", fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper }}>
+                <h4 style={{ margin: "0 0 8px", fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>
                   Mutual Non-Disclosure & Technical IP Covenant
                 </h4>
                 <p style={{ margin: 0, fontSize: 13, color: TOKENS.slate, lineHeight: 1.6 }}>
@@ -11912,25 +11912,25 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                   <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>CONFIDENTIALITY TERM</div>
                   <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>36 Months (3 Years)</div>
                   <div style={{ fontSize: 11, color: TOKENS.teal, marginTop: 2 }}>Survives RFQ completion</div>
                 </div>
 
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                   <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>PROTECTED ASSETS</div>
                   <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>3D CAD & Tooling G-Code</div>
                   <div style={{ fontSize: 11, color: TOKENS.teal, marginTop: 2 }}>Zero-knowledge encrypted</div>
                 </div>
 
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                   <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>ARBITRATION JURISDICTION</div>
                   <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>High Court Bench (Chennai)</div>
                   <div style={{ fontSize: 11, color: TOKENS.teal, marginTop: 2 }}>Indian Arbitration Act 1996</div>
                 </div>
 
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                   <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>LIQUIDATED DAMAGES CAP</div>
                   <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginTop: 4 }}>₹5,00,00,000 INR</div>
                   <div style={{ fontSize: 11, color: TOKENS.slate, marginTop: 2 }}>Pre-agreed breach liability</div>
@@ -11949,7 +11949,7 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
           )}
 
           {activeTab === "terms" && (
-            <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px", display: "flex", flexDirection: "column", gap: 14 }}>
               {[
                 { title: "Clause 1: Non-Disclosure & Zero-Dissemination", text: "Neither party shall disclose, transmit, publish, or duplicate any 3D Solid Model, DXF blueprint, or bill of materials to third-party sub-contractors without prior written consent from the Disclosing Enterprise." },
                 { title: "Clause 2: Prohibition on Reverse Engineering & Scanning", text: "The Receiving Party expressly covenants that it shall not use 3D laser optical scanning, destructive CMM reverse engineering, or chemical assay reconstruction to replicate proprietary geometrical contours." },
@@ -11969,8 +11969,8 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
           )}
 
           {activeTab === "hash" && (
-            <div style={{ background: "rgba(11,31,58,0.5)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-              <h4 style={{ margin: "0 0 14px", fontFamily: "'Fraunces', serif", fontSize: 17, color: TOKENS.paper }}>
+            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
+              <h4 style={{ margin: "0 0 14px", fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper }}>
                 Cryptographic Audit Ledger & Legal Signatures
               </h4>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -11980,7 +11980,7 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
                   { label: "Supplier Signer Public Key", hash: supplierSigned ? "0xE4C99A81B209148E2819024D98014E0918239014" : "Awaiting signature verification token..." },
                   { label: "Blockchain Verification Block", hash: "Polygon POS Block #61829041 · Timestamped" },
                 ].map((row, i) => (
-                  <div key={i} style={{ padding: "10px 12px", background: "rgba(255,255,255,0.02)", borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
+                  <div key={i} style={{ padding: "10px 12px", background: "rgba(15, 23, 42, 0.03)", borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
                     <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{row.label}</div>
                     <div style={{ fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, wordBreak: "break-all", marginTop: 2 }}>{row.hash}</div>
                   </div>
@@ -11991,7 +11991,7 @@ function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & D
         </div>
 
         {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)", flexWrap: "wrap", gap: 12 }}>
           <button
             onClick={() => {
               trackEvent("download_signed_nda", { rfqId });
@@ -12108,7 +12108,7 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(7, 16, 32, 0.88)",
+        background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
         zIndex: 10000,
@@ -12127,14 +12127,14 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
           border: `1px solid rgba(21,101,192,0.45)`,
           borderRadius: 12,
           overflow: "hidden",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.85)",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
           display: "flex",
           flexDirection: "column",
           maxHeight: "75vh",
         }}
       >
         {/* Search Input Bar */}
-        <div style={{ display: "flex", alignItems: "center", padding: "16px 20px", borderBottom: `1px solid ${TOKENS.hair}`, gap: 12, background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ display: "flex", alignItems: "center", padding: "16px 20px", borderBottom: `1px solid ${TOKENS.hair}`, gap: 12, background: "rgba(15, 23, 42, 0.03)" }}>
           <span style={{ fontSize: 18, color: TOKENS.teal }}>🔍</span>
           <input
             ref={inputRef}
@@ -12152,7 +12152,7 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
               fontFamily: "'Inter', sans-serif",
             }}
           />
-          <kbd style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+          <kbd style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
             ESC
           </kbd>
         </div>
@@ -12177,7 +12177,7 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
                   cursor: "pointer",
                   transition: "background 0.15s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42, 0.045)")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -12197,8 +12197,8 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
 
         {/* Footer Shortcut Bar */}
         <div style={{ padding: "10px 16px", borderTop: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
-          <span>Navigation: <kbd style={{ background: "rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: 3 }}>↵ Enter</kbd> to open</span>
-          <span>Shortcut: <kbd style={{ background: "rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: 3 }}>Ctrl+K</kbd> / <kbd style={{ background: "rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: 3 }}>⌘K</kbd></span>
+          <span>Navigation: <kbd style={{ background: "rgba(15, 23, 42, 0.05)", padding: "1px 5px", borderRadius: 3 }}>↵ Enter</kbd> to open</span>
+          <span>Shortcut: <kbd style={{ background: "rgba(15, 23, 42, 0.05)", padding: "1px 5px", borderRadius: 3 }}>Ctrl+K</kbd> / <kbd style={{ background: "rgba(15, 23, 42, 0.05)", padding: "1px 5px", borderRadius: 3 }}>⌘K</kbd></span>
         </div>
       </div>
     </div>
@@ -12422,12 +12422,20 @@ export default function MyVaultSite() {
   return (
     <div style={{ background: TOKENS.ink, minHeight: "100vh", fontFamily: "'Inter', sans-serif" }} ref={topRef}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
-        body { margin: 0; background: #0B1F3A; }
-        input, select, textarea, option { color-scheme: dark; }
-        button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid ${TOKENS.brass}; outline-offset: 2px; }
-        select option { background: #101828; color: #F8FAFC; }
+        body { margin: 0; background: #F8FAFC; color: #0F172A; }
+        input, select, textarea, option { color-scheme: light; }
+        input, select, textarea {
+          background: #FFFFFF !important;
+          color: #0F172A !important;
+          border-color: #CBD5E1 !important;
+        }
+        input::placeholder, textarea::placeholder {
+          color: #94A3B8 !important;
+        }
+        button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid ${TOKENS.blue}; outline-offset: 2px; }
+        select option { background: #FFFFFF !important; color: #0F172A !important; }
         @keyframes marquee {
           0% { transform: translateX(0%); }
           100% { transform: translateX(-33.33%); }
@@ -12590,7 +12598,7 @@ export default function MyVaultSite() {
           left: 0,
           right: 0,
           zIndex: 9000,
-          background: `rgba(11, 31, 58, 0.97)`,
+          background: `rgba(255, 255, 255, 0.96)`,
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           borderTop: `1px solid rgba(255,255,255,0.1)`,
@@ -12599,7 +12607,7 @@ export default function MyVaultSite() {
           alignItems: "center",
           height: 64,
           padding: "0 8px",
-          boxShadow: "0 -8px 32px rgba(0,0,0,0.5)",
+          boxShadow: "0 -4px 20px rgba(0,0,0,0.06)",
         }}
       >
         {[
