@@ -4370,22 +4370,256 @@ function BusinessDashboardPage({ go }) {
 }
 
 function KnowledgePage({ go }) {
+  const [domainFilter, setDomainFilter] = useState("All");
+  const [selectedGuide, setSelectedGuide] = useState(null);
+
+  const GUIDES = [
+    {
+      id: "cnc-machining",
+      domain: "CNC & Machining",
+      title: "How Contract CNC Machining Works: 5-Axis Milling, Tolerances & Ra Finish",
+      readTime: "8 min read",
+      author: "Vikram Sengupta (Lead Manufacturing Eng)",
+      summary: "A practical engineer's guide to 5-axis milling, choosing tolerances (ISO 2768-mK), toolpath optimization, and surface finishing for contract parts.",
+      content: "When outsourcing CNC manufacturing, understanding machine capabilities drastically affects cost and lead time. 3-axis milling is optimal for flat surfaces and prismatic geometries, while 5-axis continuous milling enables complex aerodynamic profiles without multiple re-fixturing steps. Key tolerance considerations: standard commercial tolerance is ±0.05 mm; high-precision aerospace and medical components demand ±0.005 mm with CMM (Coordinate Measuring Machine) verification reports.",
+      takeaways: [
+        "Use ISO 2768-mK as default tolerance standard unless tight fit is mandatory",
+        "Specify Ra 1.6 µm for standard machined parts, Ra 0.4 µm for hydraulic sealing surfaces",
+        "Design internal corner radii to at least 1/3 of cavity depth to avoid tool chatter",
+        "Provide STEP or IGES 3D models alongside PDF 2D drawings with GD&T callouts"
+      ],
+      relatedCategory: "Custom CNC Machining"
+    },
+    {
+      id: "anycast-lb",
+      domain: "Cloud & Anycast",
+      title: "Multi-Region Anycast Load Balancing: BGP Routing & Sub-Second Failovers",
+      readTime: "11 min read",
+      author: "Abhimanyu (CTO)",
+      summary: "How BGP Anycast IP routing directs global user requests to the closest edge node, reducing latency and achieving instantaneous server failovers.",
+      content: "Traditional DNS-based load balancing suffers from client-side TTL caching delays, often leaving traffic stranded on unresponsive server pools for minutes after an outage. With BGP (Border Gateway Protocol) Anycast, multiple edge points-of-presence (POPs) announce the exact same public IP prefix to upstream tier-1 transit providers. When a regional server cluster fails health check thresholds, BGP withdraws the route advertisement in under 400 milliseconds, automatically diverting incoming packets to the next closest healthy point.",
+      takeaways: [
+        "BGP route withdrawals achieve sub-second global traffic rerouting",
+        "Edge nodes terminate TLS sessions closer to clients, saving 80–120ms roundtrip handshakes",
+        "DDoS attack volume is naturally diffused across dozens of edge POPs simultaneously",
+        "Health check daemons poll backend origins every 500ms using synthetic gRPC probes"
+      ],
+      relatedCategory: "AI & Software Development"
+    },
+    {
+      id: "smt-assembly",
+      domain: "Electronics & SMT",
+      title: "SMT Electronics Assembly Handbook: Stencil Design, Reflow & IPC-A-610",
+      readTime: "9 min read",
+      author: "Rohan Nair (VP Hardware Systems)",
+      summary: "Best practices for surface mount technology: laser-cut stencil thickness, solder paste chemistry (SAC305), pick-and-place fiducials, and IPC Class 3 quality standards.",
+      content: "Surface Mount Technology (SMT) turnkey manufacturing requires disciplined Design for Manufacturing (DFM) rules at the schematic and layout phase. Fiducial markers must be placed diagonally across board edges to provide optical alignment for high-speed pick-and-place robots. Solder paste volume transfer efficiency depends on the area ratio of stencil apertures (target > 0.66). Reflow oven thermal profiling must maintain peak temperatures of 245°C for lead-free SAC305 alloys without thermal shock to delicate QFN or BGA dies.",
+      takeaways: [
+        "Include three global fiducial markers on panel rails for optical calibration",
+        "Follow IPC-7351B land pattern guidelines to minimize tombstoning during reflow",
+        "Require Automated Optical Inspection (AOI) and X-ray inspection for bottom-terminated components (BGA/QFN)",
+        "Specify conformal coating (acrylic or silicone) for industrial and outdoor telemetry nodes"
+      ],
+      relatedCategory: "Electronics Assembly"
+    },
+    {
+      id: "plastic-injection",
+      domain: "Plastic Injection",
+      title: "Plastic Injection Molding Design Guide: Draft Angles, Ribs & Shrinkage",
+      readTime: "7 min read",
+      author: "Kavita Rao (Tooling Director)",
+      summary: "How to avoid sink marks, warping, and costly tool modifications by designing proper draft angles, uniform wall thickness, and strategic gate placement.",
+      content: "In custom plastic injection molding, tooling costs represent the largest upfront capital investment. Ensuring parts eject cleanly from hardened steel or aluminum tool cavities requires consistent draft angles — minimum 1° to 2° per side, and up to 5° for heavy textured finishes. Non-uniform wall thickness causes uneven cooling and severe warpage; wall transitions should always be tapered with generous fillets. Rib thickness should not exceed 60% of the nominal wall thickness to eliminate sink marks on visible exterior surfaces.",
+      takeaways: [
+        "Maintain nominal wall thickness between 1.5 mm and 3.0 mm for standard ABS/PC blends",
+        "Incorporate minimum 1.5° draft on exterior core and cavity surfaces",
+        "Design rib heights under 3× nominal wall thickness with 0.5° draft",
+        "Select P20 steel tooling for prototype runs (<50k) and H13 hardened steel for >500k parts"
+      ],
+      relatedCategory: "Custom Plastic Injection"
+    },
+    {
+      id: "zero-trust",
+      domain: "Cloud & Anycast",
+      title: "Zero-Trust Microservices: Mutual TLS, gRPC & Distributed Tracing",
+      readTime: "10 min read",
+      author: "Rajesh Kumar (Head of Cybersecurity)",
+      summary: "Architecting zero-trust perimeter security for internal service meshes using SPIFFE/SPIRE identity attestation, automated certificate rotation, and Jaeger telemetry.",
+      content: "Perimeter firewalls are insufficient for enterprise cloud platforms. Zero-trust architecture mandates that every inter-service call across the cluster verify identity and encryption independently. Utilizing mutual TLS (mTLS) with short-lived X.509 certificates ensures that compromised worker nodes cannot eavesdrop or impersonate other microservices. Distributed tracing via OpenTelemetry and Jaeger propagates W3C trace context headers across asynchronous message queues (Kafka, RabbitMQ), providing end-to-end auditability.",
+      takeaways: [
+        "Enforce mTLS across all pod-to-pod communication within the Kubernetes cluster",
+        "Implement automated token rotation with maximum 24-hour credential lifetimes",
+        "Log structured audit events for every administrative configuration mutation",
+        "Deploy rate-limiting token buckets at both ingress edge gateways and internal service meshes"
+      ],
+      relatedCategory: "AI & Software Development"
+    },
+    {
+      id: "supplier-audit",
+      domain: "Quality & ISO",
+      title: "ISO 9001:2015 & AS9100D Supplier Audit Checklist for Enterprise Sourcing",
+      readTime: "6 min read",
+      author: "Anita Sharma (Director of Quality Assurance)",
+      summary: "A comprehensive vendor qualification checklist for procurement leaders evaluating contract manufacturers, OEM suppliers, and calibration certifications.",
+      content: "Before awarding production purchase orders, enterprise procurement teams must perform structured supplier audits. Critical areas include raw material traceability (Mill Test Reports), calibration logs for metrology instruments (micrometers, height gauges, CMM), First Article Inspection (FAI) reports conforming to AS9102 standards, and documented Non-Conformance Report (NCR) workflows. Verifying that a supplier maintains controlled segregation of scrap material prevents defective parts from contaminating production batches.",
+      takeaways: [
+        "Verify material test reports (MTR) against heat numbers stamped on raw billet stock",
+        "Ensure inspection tools have valid calibration seals conforming to ISO/IEC 17025",
+        "Audit Corrective and Preventive Action (CAPA) documentation from previous quarters",
+        "Require Certificates of Conformance (CoC) shipped with every delivery batch"
+      ],
+      relatedCategory: "Custom CNC Machining"
+    }
+  ];
+
+  const domains = ["All", "CNC & Machining", "Electronics & SMT", "Cloud & Anycast", "Plastic Injection", "Quality & ISO"];
+
+  const filteredGuides = GUIDES.filter((g) => {
+    return domainFilter === "All" || g.domain === domainFilter;
+  });
+
   return (
     <>
-      <Section eyebrow="Knowledge Base & Guides" title="Technical & Manufacturing Resource Hub" sub="Educational articles, engineering guides, and architectural blueprints.">
-        <Grid min={280}>
-          <Card>
-            <div style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 8 }}>MANUFACTURING GUIDE</div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px" }}>How Contract CNC Machining Works</h3>
-            <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>A complete guide on 5-axis milling, precision tolerances, and choosing contract suppliers.</p>
-          </Card>
-          <Card>
-            <div style={{ fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 8 }}>CLOUD ARCHITECTURE</div>
-            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px" }}>Multi-Region Anycast Load Balancing</h3>
-            <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>How Anycast IP routing reduces global latency and handles sub-second server failovers.</p>
-          </Card>
+      <Section eyebrow="Knowledge Base & Guides" title="Technical & Manufacturing Resource Hub" sub="In-depth engineering playbooks, tolerance standards, cloud architectural blueprints, and procurement checklists.">
+        {/* Domain Filter Pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
+          {domains.map((d) => (
+            <button
+              key={d}
+              onClick={() => setDomainFilter(d)}
+              style={{
+                background: domainFilter === d ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                border: `1px solid ${domainFilter === d ? TOKENS.brass : TOKENS.hair}`,
+                color: domainFilter === d ? TOKENS.ink : TOKENS.slate,
+                borderRadius: 999,
+                padding: "7px 16px",
+                fontSize: 12.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: domainFilter === d ? 700 : 400,
+                cursor: "pointer",
+                transition: "all 0.15s ease"
+              }}
+            >
+              {d}
+            </button>
+          ))}
+        </div>
+
+        {/* Guides Grid */}
+        <Grid min={320}>
+          {filteredGuides.map((guide) => (
+            <Card key={guide.id} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <span style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 4 }}>
+                    {guide.domain.toUpperCase()}
+                  </span>
+                  <span style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
+                    {guide.readTime}
+                  </span>
+                </div>
+                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>
+                  {guide.title}
+                </h3>
+                <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 16px" }}>
+                  {guide.summary}
+                </p>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 14 }}>
+                  By {guide.author}
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <Button onClick={() => setSelectedGuide(guide)}>Read Full Playbook →</Button>
+                  <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post RFQ</Button>
+                </div>
+              </div>
+            </Card>
+          ))}
         </Grid>
       </Section>
+
+      {/* In-Depth Technical Guide Reader Modal */}
+      {selectedGuide && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
+            {/* Modal Header */}
+            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
+                  {selectedGuide.domain.toUpperCase()} · {selectedGuide.readTime}
+                </span>
+                <button onClick={() => setSelectedGuide(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+              </div>
+              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
+                {selectedGuide.title}
+              </h2>
+              <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
+                Authored by {selectedGuide.author}
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: 32 }}>
+              <div style={{ background: "rgba(21, 101, 192, 0.1)", borderLeft: `3px solid ${TOKENS.blue}`, padding: "14px 18px", borderRadius: "0 6px 6px 0", marginBottom: 24 }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#60A5FA", marginBottom: 4 }}>EXECUTIVE SUMMARY</div>
+                <p style={{ color: TOKENS.paper, fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+                  {selectedGuide.summary}
+                </p>
+              </div>
+
+              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 12px" }}>
+                Engineering Deep-Dive & Methodologies
+              </h4>
+              <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.8, marginBottom: 28 }}>
+                {selectedGuide.content}
+              </p>
+
+              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.brass, fontSize: 18, margin: "0 0 14px" }}>
+                Key Technical Takeaways & Quality Checklist
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
+                {selectedGuide.takeaways.map((t, idx) => (
+                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, padding: "12px 16px", borderRadius: 6 }}>
+                    <span style={{ color: TOKENS.teal, fontSize: 14, fontWeight: "bold", flexShrink: 0 }}>✓</span>
+                    <span style={{ color: TOKENS.paper, fontSize: 13.5, lineHeight: 1.5 }}>{t}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+                <button
+                  onClick={() => {
+                    trackEvent("download_guide_pdf", { id: selectedGuide.id });
+                    alert(`Preparing technical PDF export: "${selectedGuide.title}"...`);
+                  }}
+                  style={{
+                    background: "transparent",
+                    border: `1px solid ${TOKENS.hair}`,
+                    color: TOKENS.paper,
+                    padding: "10px 16px",
+                    borderRadius: 6,
+                    fontSize: 13,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    cursor: "pointer"
+                  }}
+                >
+                  📄 Download PDF Handbook
+                </button>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <Button variant="ghost" onClick={() => setSelectedGuide(null)}>Close Playbook</Button>
+                  <Button onClick={() => { setSelectedGuide(null); go("rfq-wizard"); }}>
+                    Post RFQ in {selectedGuide.relatedCategory.split(" ")[0]} →
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <CTA go={go} />
     </>
   );
