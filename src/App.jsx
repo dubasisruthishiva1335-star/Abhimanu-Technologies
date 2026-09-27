@@ -937,7 +937,7 @@ function Hero3DStage() {
         style={{
           display: "inline-flex",
           gap: 6,
-          background: "rgba(9,9,9,0.85)",
+          background: "rgba(16, 24, 40, 0.85)",
           backdropFilter: "blur(12px)",
           padding: "8px 12px",
           borderRadius: 999,
@@ -1228,7 +1228,7 @@ function VideoShowcase3D() {
       const h = canvas.height;
 
       // Dark cyber background
-      ctx.fillStyle = "#090909";
+      ctx.fillStyle = "#070E1A";
       ctx.fillRect(0, 0, w, h);
 
       // Grid background
@@ -1265,7 +1265,7 @@ function VideoShowcase3D() {
       const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, orbR * 2);
       grad.addColorStop(0, "rgba(243, 229, 171, 0.9)");
       grad.addColorStop(0.5, "rgba(212, 175, 55, 0.4)");
-      grad.addColorStop(1, "rgba(9, 9, 9, 0)");
+      grad.addColorStop(1, "rgba(7, 14, 26, 0)");
       ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(0, 0, orbR * 2, 0, Math.PI * 2);
@@ -1306,7 +1306,7 @@ function VideoShowcase3D() {
 
   return (
     <Card style={{ padding: 0, overflow: "hidden", border: `1px solid ${TOKENS.hair}` }}>
-      <div style={{ position: "relative", background: "#090909" }}>
+      <div style={{ position: "relative", background: "#070E1A" }}>
         <canvas ref={canvasRef} width={800} height={420} style={{ width: "100%", height: "auto", display: "block" }} />
 
         {/* Video HUD Overlay Header */}
@@ -1324,7 +1324,7 @@ function VideoShowcase3D() {
         >
           <div
             style={{
-              background: "rgba(9,9,9,0.85)",
+              background: "rgba(11, 31, 58, 0.88)",
               border: `1px solid ${TOKENS.hair}`,
               borderRadius: 4,
               padding: "6px 12px",
@@ -1341,7 +1341,7 @@ function VideoShowcase3D() {
                 key={q}
                 onClick={() => setQuality(q)}
                 style={{
-                  background: quality === q ? TOKENS.brass : "rgba(9,9,9,0.8)",
+                  background: quality === q ? TOKENS.brass : "rgba(16, 24, 40, 0.8)",
                   color: quality === q ? TOKENS.ink : TOKENS.paper,
                   border: `1px solid ${TOKENS.hair}`,
                   borderRadius: 3,
@@ -1364,7 +1364,7 @@ function VideoShowcase3D() {
             bottom: 16,
             left: 16,
             right: 16,
-            background: "rgba(9,9,9,0.9)",
+            background: "rgba(11, 31, 58, 0.92)",
             backdropFilter: "blur(12px)",
             border: `1px solid ${TOKENS.hair}`,
             borderRadius: 6,
@@ -1700,7 +1700,7 @@ function AICommandConsole() {
       {/* Console History Output */}
       <div
         style={{
-          background: "#090909",
+          background: "#070E1A",
           border: `1px solid ${TOKENS.hair}`,
           borderRadius: 4,
           padding: 16,
@@ -1830,7 +1830,7 @@ function SecurityStatusDashboard() {
   ];
 
   return (
-    <Card style={{ background: "rgba(9, 9, 9, 0.95)" }}>
+    <Card style={{ background: TOKENS.panel }}>
       <Eyebrow>Security & Compliance Dashboard</Eyebrow>
       <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
         Enterprise security reviewed at the architecture layer
@@ -2109,7 +2109,7 @@ function LoadBalancerDashboard() {
 
       {/* Edge Node Telemetry Modal */}
       {inspectNode && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.85)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
           <Card style={{ maxWidth: 580, width: "100%", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt, padding: 32 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal }}>NODE TELEMETRY INSPECTOR</span>
@@ -6319,7 +6319,7 @@ function AIAgent3DAvatarIcon({ onClick }) {
     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
       <div
         style={{
-          background: "rgba(9,9,9,0.85)",
+          background: "rgba(11, 31, 58, 0.9)",
           border: "1px solid rgba(212,175,55,0.4)",
           borderRadius: 999,
           padding: "6px 14px",
@@ -6335,7 +6335,7 @@ function AIAgent3DAvatarIcon({ onClick }) {
       <button
         onClick={onClick}
         style={{
-          background: "rgba(9, 9, 9, 0.9)",
+          background: "rgba(16, 24, 40, 0.9)",
           backdropFilter: "blur(12px)",
           border: "1px solid rgba(212, 175, 55, 0.5)",
           borderRadius: "50%",
@@ -6364,7 +6364,7 @@ function AIAgent3DAvatarIcon({ onClick }) {
             height: 12,
             borderRadius: "50%",
             background: "#4fb3ff",
-            border: "2px solid #090909",
+            border: "2px solid #0B1F3A",
             boxShadow: "0 0 8px #4fb3ff",
           }}
         />
@@ -6456,7 +6456,7 @@ function AIAgentWidget({ go }) {
           style={{
             width: 360,
             height: 480,
-            background: "rgba(9, 9, 9, 0.94)",
+            background: "rgba(11, 31, 58, 0.96)",
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
             border: "1px solid rgba(212, 175, 55, 0.4)",
