@@ -4901,15 +4901,15 @@ function KnowledgePage({ go }) {
   );
 }
 
-function ContactPage() {
+function ContactPage({ go }) {
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [refId, setRefId] = useState("");
-  const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", country: "", service: "Software Development", budget: "$25k - $50k", timeline: "1-3 Months", requirements: "" });
+  const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", country: "", service: "Custom CNC Machining & Manufacturing", budget: "$25k - $50k", timeline: "1-3 Months", requirements: "" });
 
   const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
-  const inputStyle = { width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "12px 14px", color: TOKENS.paper, fontSize: 14.5, fontFamily: "inherit", boxSizing: "border-box" };
-  const labelStyle = { display: "block", color: TOKENS.slate, fontSize: 12, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em" };
+  const inputStyle = { width: "100%", background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", color: TOKENS.paper, fontSize: 14.5, fontFamily: "inherit", boxSizing: "border-box" };
+  const labelStyle = { display: "block", color: TOKENS.slate, fontSize: 11.5, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em" };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -4920,15 +4920,12 @@ function ContactPage() {
     setRefId(newRef);
 
     try {
-      // Simulate live webhook endpoint post
       await fetch("https://httpbin.org/post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, refId: newRef, submittedAt: new Date().toISOString() })
       }).catch(() => {});
-    } catch (err) {
-      // Graceful fallback
-    }
+    } catch (err) {}
 
     setTimeout(() => {
       setSubmitting(false);
@@ -4939,69 +4936,175 @@ function ContactPage() {
   if (sent) {
     return (
       <Section eyebrow="Contact Confirmation" title="Inquiry Received Successfully">
-        <Card style={{ maxWidth: 560, margin: "0 auto", padding: 36, textAlign: "center", border: `1px solid ${TOKENS.brass}` }}>
-          <div style={{ width: 56, height: 56, borderRadius: 999, background: "rgba(212, 175, 55, 0.14)", border: `1px solid ${TOKENS.brass}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: TOKENS.brass, fontSize: 24, fontWeight: "bold" }}>✓</div>
+        <Card style={{ maxWidth: 580, margin: "0 auto", padding: 40, textAlign: "center", border: `1px solid ${TOKENS.brass}` }}>
+          <div style={{ width: 60, height: 60, borderRadius: 999, background: "rgba(0, 168, 150, 0.15)", border: `1px solid ${TOKENS.teal}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 18px", color: TOKENS.teal, fontSize: 26, fontWeight: "bold" }}>✓</div>
           <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>Thank You, {form.name || "Client"}!</h3>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.teal, marginBottom: 16 }}>REFERENCE ID: {refId}</div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.teal, marginBottom: 16 }}>OFFICIAL INTAKE REF: {refId}</div>
           <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: "0 0 24px" }}>
-            Your project inquiry has been registered. An Abhimanyu Technologies solution architect will review your scope and follow up at <strong style={{ color: TOKENS.paper }}>{form.email}</strong> within 12 business hours.
+            Your scope inquiry has been assigned to an Abhimanyu Technologies solution architect. We will follow up at <strong style={{ color: TOKENS.paper }}>{form.email}</strong> within 12 business hours.
           </p>
-          <Button onClick={() => setSent(false)}>Send Another Message</Button>
+          <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+            <Button onClick={() => setSent(false)}>Send Another Message</Button>
+            <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post Live RFQ Requirement</Button>
+          </div>
         </Card>
       </Section>
     );
   }
 
   return (
-    <Section eyebrow="Contact Abhimanyu Technologies" title="Scale Your Business With Us" sub="Tell us about your project requirements. Fields marked with an asterisk (*) are required.">
-      <form onSubmit={handleSubmit} style={{ maxWidth: 720, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
-        <div>
-          <label style={labelStyle}>FULL NAME *</label>
-          <input required style={inputStyle} value={form.name} onChange={update("name")} placeholder="John Doe" />
+    <>
+      <Section eyebrow="Contact Abhimanyu Technologies" title="Scale Your Business With Us" sub="Direct engineering consultations, contract manufacturing inquiries, and custom software scoping.">
+        {/* Fast Switcher Banner to RFQ Wizard */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 14,
+          background: "rgba(21, 101, 192, 0.1)",
+          border: `1px solid rgba(21, 101, 192, 0.3)`,
+          borderRadius: 8,
+          padding: "16px 20px",
+          marginBottom: 36,
+          maxWidth: 960,
+          margin: "0 auto 36px"
+        }}>
+          <div>
+            <div style={{ color: TOKENS.paper, fontWeight: 600, fontSize: 14.5 }}>
+              ⚡ Sourcing Custom Manufactured Parts or Electronics?
+            </div>
+            <div style={{ color: TOKENS.slate, fontSize: 13 }}>
+              Broadcast your CAD files and drawings to 500+ verified suppliers with automated instant quotes.
+            </div>
+          </div>
+          <button
+            onClick={() => go("rfq-wizard")}
+            style={{
+              background: TOKENS.brass,
+              color: TOKENS.ink,
+              border: "none",
+              borderRadius: 6,
+              padding: "9px 18px",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 12.5,
+              fontWeight: 700,
+              cursor: "pointer"
+            }}
+          >
+            Launch 6-Step RFQ Wizard →
+          </button>
         </div>
-        <div>
-          <label style={labelStyle}>WORK EMAIL *</label>
-          <input required type="email" style={inputStyle} value={form.email} onChange={update("email")} placeholder="john@company.com" />
+
+        <div style={{ maxWidth: 960, margin: "0 auto", display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 36 }} className="contact-grid">
+          {/* Main Inquiry Form */}
+          <Card style={{ padding: 32 }}>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 20px" }}>Project Scope Intake Form</h3>
+            <form onSubmit={handleSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div>
+                <label style={labelStyle}>FULL NAME *</label>
+                <input required style={inputStyle} value={form.name} onChange={update("name")} placeholder="John Doe" />
+              </div>
+              <div>
+                <label style={labelStyle}>WORK EMAIL *</label>
+                <input required type="email" style={inputStyle} value={form.email} onChange={update("email")} placeholder="john@company.com" />
+              </div>
+              <div>
+                <label style={labelStyle}>COMPANY / ORGANIZATION</label>
+                <input style={inputStyle} value={form.company} onChange={update("company")} placeholder="Enterprise Ltd" />
+              </div>
+              <div>
+                <label style={labelStyle}>PHONE / WHATSAPP NUMBER</label>
+                <input style={inputStyle} value={form.phone} onChange={update("phone")} placeholder="+91 / +1 000-000-0000" />
+              </div>
+              <div style={{ gridColumn: "1 / -1" }}>
+                <label style={labelStyle}>PRIMARY SERVICE / SOURCING PRACTICE</label>
+                <select style={inputStyle} value={form.service} onChange={update("service")}>
+                  <option value="Custom CNC Machining & Manufacturing">Custom CNC Machining & Manufacturing</option>
+                  <option value="Electronics & SMT Assembly">Electronics & SMT Assembly</option>
+                  <option value="Custom Software Development">Custom Software Development</option>
+                  <option value="AI & Machine Learning Engine">AI & Machine Learning Engine</option>
+                  <option value="Cloud Anycast & Infrastructure">Cloud Anycast & Infrastructure</option>
+                  <option value="IoT & Industrial Embedded Systems">IoT & Industrial Embedded Systems</option>
+                  <option value="SOC2 & Cybersecurity Compliance">SOC2 & Cybersecurity Compliance</option>
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>ESTIMATED BUDGET</label>
+                <select style={inputStyle} value={form.budget} onChange={update("budget")}>
+                  <option value="< $25k">&lt; $25,000 / &lt; ₹20 Lakhs</option>
+                  <option value="$25k - $50k">$25,000 - $50,000</option>
+                  <option value="$50k - $100k">$50,000 - $100,000</option>
+                  <option value="$100k+">$100,000+ / Custom Enterprise</option>
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>TIMELINE EXPECTATION</label>
+                <select style={inputStyle} value={form.timeline} onChange={update("timeline")}>
+                  <option value="Immediate (< 1 month)">Immediate (Less than 1 Month)</option>
+                  <option value="1-3 Months">1–3 Months (Standard)</option>
+                  <option value="3-6 Months">3–6 Months</option>
+                  <option value="Ongoing Partnership">Ongoing Strategic Partnership</option>
+                </select>
+              </div>
+              <div style={{ gridColumn: "1 / -1" }}>
+                <label style={labelStyle}>PROJECT REQUIREMENTS & SCOPE *</label>
+                <textarea required rows={4} style={{ ...inputStyle, resize: "vertical" }} value={form.requirements} onChange={update("requirements")} placeholder="Describe technical specifications, batch sizes, target outcomes, or software architecture..." />
+              </div>
+              <div style={{ gridColumn: "1 / -1" }}>
+                <Button type="submit" disabled={submitting}>
+                  {submitting ? "Transmitting Scope..." : "Submit Project Inquiry →"}
+                </Button>
+              </div>
+            </form>
+          </Card>
+
+          {/* Regional Hubs & Contact Metadata */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <Card style={{ padding: 24 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass, marginBottom: 8, letterSpacing: "0.08em" }}>
+                HEADQUARTERS & R&D LAB
+              </div>
+              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 6px" }}>
+                Telangana Enterprise Campus
+              </h4>
+              <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 12px" }}>
+                Telangana, India · Core Software, Neural Architecture Lab, and Distributed Cloud NOC.
+              </p>
+              <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>
+                Direct Hotline: +91 (Available 24/7 for Outages)
+              </div>
+            </Card>
+
+            <Card style={{ padding: 24 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: "#60A5FA", marginBottom: 8, letterSpacing: "0.08em" }}>
+                SOURCING & REGIONAL HUBS
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 13, color: TOKENS.slate }}>
+                <div>
+                  <b style={{ color: TOKENS.paper }}>Chennai Corridor:</b> Industrial Machining, Foundry & Sheet Metal Supplier Hub
+                </div>
+                <div>
+                  <b style={{ color: TOKENS.paper }}>Hyderabad & Bengaluru:</b> SMT Electronics Assembly & Cloud Software Practice
+                </div>
+                <div>
+                  <b style={{ color: TOKENS.paper }}>Pune & Mumbai:</b> Automotive IoT & Injection Molding Hub
+                </div>
+              </div>
+            </Card>
+
+            <Card style={{ padding: 24, background: "rgba(0,168,150,0.06)", border: `1px solid rgba(0,168,150,0.25)` }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 6 }}>
+                ⚡ 12-HOUR ARCHITECT SLA
+              </div>
+              <p style={{ color: TOKENS.paper, fontSize: 13, lineHeight: 1.5, margin: 0 }}>
+                Every inquiry is reviewed by an active Solutions Architect, not an SDR queue. You will receive an initial feasibility and architectural scope within 12 business hours.
+              </p>
+            </Card>
+          </div>
         </div>
-        <div>
-          <label style={labelStyle}>COMPANY NAME</label>
-          <input style={inputStyle} value={form.company} onChange={update("company")} placeholder="Acme Corp" />
-        </div>
-        <div>
-          <label style={labelStyle}>PHONE NUMBER</label>
-          <input style={inputStyle} value={form.phone} onChange={update("phone")} placeholder="+1 (555) 000-0000" />
-        </div>
-        <div>
-          <label style={labelStyle}>PRIMARY SERVICE NEEDED</label>
-          <select style={inputStyle} value={form.service} onChange={update("service")}>
-            <option value="Custom Software">Custom Software Development</option>
-            <option value="AI & Machine Learning">AI & Machine Learning</option>
-            <option value="Cloud & DevOps">Cloud & DevOps Migration</option>
-            <option value="Cybersecurity">Cybersecurity & Compliance</option>
-            <option value="IoT & Embedded">IoT & Embedded Systems</option>
-            <option value="Data & Analytics">Data & Business Analytics</option>
-          </select>
-        </div>
-        <div>
-          <label style={labelStyle}>ESTIMATED BUDGET</label>
-          <select style={inputStyle} value={form.budget} onChange={update("budget")}>
-            <option value="< $25k">&lt; $25,000</option>
-            <option value="$25k - $50k">$25,000 - $50,000</option>
-            <option value="$50k - $100k">$50,000 - $100,000</option>
-            <option value="$100k+">$100,000+</option>
-          </select>
-        </div>
-        <div style={{ gridColumn: "1 / -1" }}>
-          <label style={labelStyle}>PROJECT REQUIREMENTS & SCOPE *</label>
-          <textarea required rows={5} style={{ ...inputStyle, resize: "vertical" }} value={form.requirements} onChange={update("requirements")} placeholder="Describe your technical requirements, goals, and target outcomes..." />
-        </div>
-        <div style={{ gridColumn: "1 / -1" }}>
-          <Button type="submit" disabled={submitting}>
-            {submitting ? "Transmitting Scope..." : "Submit Project Inquiry →"}
-          </Button>
-        </div>
-      </form>
-    </Section>
+      </Section>
+    </>
   );
 }
 
