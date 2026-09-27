@@ -4565,7 +4565,7 @@ function RFQWizardPage({ go, openTracker }) {
 }
 
 
-function ManufacturersPage({ go }) {
+function ManufacturersPage({ go, openSupplierOnboarding }) {
   const [selectedMfr, setSelectedMfr] = useState(null);
   const [quoteForm, setQuoteForm] = useState({ material: "", qty: "", timeline: "", email: "" });
   const [quoteSent, setQuoteSent] = useState(false);
@@ -4611,6 +4611,56 @@ function ManufacturersPage({ go }) {
   return (
     <>
       <Section eyebrow="Verified Manufacturers" title="Industrial & OEM Manufacturing Partners" sub="Directly source custom manufacturing, CNC machining, metal fabrication, and electronics assembly.">
+        {/* Factory Verification Banner */}
+        <div style={{
+          background: "linear-gradient(135deg, rgba(212,175,55,0.12), rgba(21,101,192,0.14))",
+          border: `1px solid rgba(212,175,55,0.35)`,
+          borderRadius: 14,
+          padding: "18px 24px",
+          marginBottom: 24,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 16
+        }}>
+          <div style={{ maxWidth: 720 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+              <span style={{ fontSize: 20 }}>🏭</span>
+              <span style={{ fontFamily: "'Cinzel', serif", fontSize: 16, fontWeight: 700, color: TOKENS.white, letterSpacing: "0.03em" }}>
+                Are you an OEM Manufacturer or Precision Machine Shop?
+              </span>
+              <span style={{ background: `${TOKENS.teal}22`, border: `1px solid ${TOKENS.teal}55`, color: TOKENS.teal, padding: "2px 8px", borderRadius: 999, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                BATCH Q4 ENROLLMENT OPEN
+              </span>
+            </div>
+            <p style={{ margin: 0, fontSize: 13, color: TOKENS.slate, lineHeight: 1.5 }}>
+              Register your production plant, machine capacity (CNC, VMC, EDM, SMT), and quality certifications (ISO 9001, AS9100D, IATF 16949) to receive direct corporate RFQs and escrow-guaranteed contracts.
+            </p>
+          </div>
+          <button
+            onClick={() => openSupplierOnboarding && openSupplierOnboarding()}
+            style={{
+              background: `linear-gradient(135deg, ${TOKENS.brass}, #F59E0B)`,
+              color: "#080E1A",
+              border: "none",
+              borderRadius: 8,
+              padding: "11px 20px",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 12.5,
+              fontWeight: 800,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              boxShadow: "0 4px 14px rgba(212,175,55,0.3)",
+              whiteSpace: "nowrap"
+            }}
+          >
+            <span>★ Register Plant & Get Verified →</span>
+          </button>
+        </div>
+
         {/* Filter Bar */}
         <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
           {["All Categories", "CNC Machining", "Sheet Metal", "Electronics", "Rubber & Sealing", "Castings"].map((cat) => (
@@ -5937,7 +5987,7 @@ function TransparentLogo({ src, height = 40, alt = "MyVault Logo" }) {
   );
 }
 
-function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setCurrentUser, openAuth, openTracker }) {
+function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setCurrentUser, openAuth, openTracker, openSpotlight }) {
   const [open, setOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
@@ -6106,6 +6156,33 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
               </div>
             )}
           </div>
+
+          {/* Quick Search Shortcut Pill */}
+          <button
+            onClick={openSpotlight}
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              color: TOKENS.slate,
+              fontSize: 12,
+              fontFamily: "'Inter', sans-serif",
+              padding: "6px 12px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              transition: "all 0.15s ease",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = TOKENS.paper; e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = TOKENS.slate; e.currentTarget.style.borderColor = TOKENS.hair; }}
+            title="Press Ctrl+K or ⌘K to search anywhere"
+          >
+            <span>🔍 Search</span>
+            <kbd style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${TOKENS.hair}`, borderRadius: 3, padding: "1px 5px", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper }}>
+              Ctrl+K
+            </kbd>
+          </button>
 
           {/* Primary nav links */}
           {primaryNav.map((n) => (
@@ -6335,6 +6412,29 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
       {/* Mobile Menu */}
       {open && (
         <div className="mobile-menu" style={{ padding: "0 20px 20px", display: "flex", flexDirection: "column", gap: 4, background: `rgba(11, 31, 58, 0.98)`, borderTop: `1px solid ${TOKENS.hair}`, maxHeight: "75vh", overflowY: "auto" }}>
+          {/* Mobile Search Button */}
+          <button
+            onClick={() => { openSpotlight?.(); setOpen(false); }}
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              color: TOKENS.paper,
+              padding: "10px 14px",
+              fontSize: 13,
+              fontFamily: "'JetBrains Mono', monospace",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginTop: 10,
+              marginBottom: 4,
+            }}
+          >
+            <span>🔍 Search Entire Platform</span>
+            <kbd style={{ background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: 3, fontSize: 10 }}>Ctrl+K</kbd>
+          </button>
+
           {/* Quick Mobile Action Bar */}
           <div style={{ display: "flex", gap: 8, padding: "12px 0 8px", borderBottom: `1px solid ${TOKENS.hair}` }}>
             <button
@@ -6992,7 +7092,7 @@ function LeadCaptureModal() {
 
 /* ---------------------------- Interactive B2B RFQ & PO Lifecycle Inspector Modal ---------------------------- */
 
-function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go }) {
+function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD }) {
   const [activeId, setActiveId] = useState(rfqId || "RFQ-2026-9041");
   const [customInput, setCustomInput] = useState("");
   const [acceptedBid, setAcceptedBid] = useState(null);
@@ -7329,8 +7429,26 @@ function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go }) {
             </div>
             <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CAD MESH ATTACHMENT</div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper, marginTop: 4 }}>
-                📎 {knownRfq.id.toLowerCase()}_cad.step (14.2 MB)
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4, flexWrap: "wrap", gap: 6 }}>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper }}>
+                  📎 {knownRfq.id.toLowerCase()}_cad.step
+                </span>
+                <button
+                  onClick={() => openCAD?.(knownRfq.id, knownRfq.title)}
+                  style={{
+                    background: "rgba(212,175,55,0.15)",
+                    border: `1px solid ${TOKENS.brass}`,
+                    color: TOKENS.brass,
+                    borderRadius: 4,
+                    padding: "3px 8px",
+                    fontSize: 10.5,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    cursor: "pointer",
+                    fontWeight: 700,
+                  }}
+                >
+                  👁️ Inspect 3D Mesh →
+                </button>
               </div>
             </div>
           </div>
@@ -7898,6 +8016,972 @@ function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
   );
 }
 
+/* ---------------------------- Interactive 3D Three.js CAD Mesh & GD&T Inspector ---------------------------- */
+
+function CADViewerModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "Stainless Steel 316 Valve Manifold" }) {
+  const mountRef = useRef(null);
+  const [renderMode, setRenderMode] = useState("solid");
+  const [autoRotate, setAutoRotate] = useState(true);
+  const [activeDatum, setActiveDatum] = useState("A");
+
+  useEffect(() => {
+    if (!isOpen || !mountRef.current) return;
+
+    const mount = mountRef.current;
+    const width = mount.clientWidth || 540;
+    const height = mount.clientHeight || 420;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(4, 3, 5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    mount.appendChild(renderer.domElement);
+
+    const ambLight = new THREE.AmbientLight(0xffffff, 1.2);
+    scene.add(ambLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xf3e5ab, 2.5);
+    dirLight1.position.set(5, 8, 5);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0x4fb3ff, 1.8);
+    dirLight2.position.set(-5, -4, -4);
+    scene.add(dirLight2);
+
+    const cadGroup = new THREE.Group();
+    scene.add(cadGroup);
+
+    const bodyMat = new THREE.MeshStandardMaterial({
+      color: renderMode === "wireframe" ? 0x4fb3ff : renderMode === "xray" ? 0x00a896 : 0xd4af37,
+      metalness: renderMode === "solid" ? 0.85 : 0.2,
+      roughness: renderMode === "solid" ? 0.25 : 0.5,
+      wireframe: renderMode === "wireframe",
+      transparent: renderMode === "xray",
+      opacity: renderMode === "xray" ? 0.45 : 1,
+    });
+
+    const mainBody = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 2.2, 32), bodyMat);
+    cadGroup.add(mainBody);
+
+    const flange = new THREE.Mesh(new THREE.CylinderGeometry(1.7, 1.7, 0.35, 32), bodyMat);
+    flange.position.y = -1.1;
+    cadGroup.add(flange);
+
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 0.8, 24), bodyMat);
+    neck.position.y = 1.4;
+    cadGroup.add(neck);
+
+    const portMat = new THREE.MeshStandardMaterial({
+      color: renderMode === "wireframe" ? 0x4fb3ff : 0x1565c0,
+      metalness: 0.9,
+      roughness: 0.2,
+      wireframe: renderMode === "wireframe",
+      transparent: renderMode === "xray",
+      opacity: renderMode === "xray" ? 0.35 : 1,
+    });
+
+    const port1 = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 2.8, 20), portMat);
+    port1.rotation.z = Math.PI / 2;
+    cadGroup.add(port1);
+
+    const port2 = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 2.8, 20), portMat);
+    port2.rotation.x = Math.PI / 2;
+    cadGroup.add(port2);
+
+    for (let i = 0; i < 6; i++) {
+      const angle = (i * Math.PI * 2) / 6;
+      const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.45, 12), new THREE.MeshBasicMaterial({ color: 0x070e1a }));
+      hole.position.set(Math.cos(angle) * 1.45, -1.1, Math.sin(angle) * 1.45);
+      cadGroup.add(hole);
+    }
+
+    const grid = new THREE.GridHelper(6, 12, 0x1565c0, 0x1b2838);
+    grid.position.y = -1.35;
+    scene.add(grid);
+
+    let isDragging = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+
+    const onMouseDown = (e) => {
+      isDragging = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    };
+
+    const onMouseMove = (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - prevMouseX;
+      const deltaY = e.clientY - prevMouseY;
+      cadGroup.rotation.y += deltaX * 0.01;
+      cadGroup.rotation.x += deltaY * 0.01;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    };
+
+    const onMouseUp = () => {
+      isDragging = false;
+    };
+
+    const domEl = renderer.domElement;
+    domEl.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+
+    let animId;
+    const animate = () => {
+      if (autoRotate && !isDragging) {
+        cadGroup.rotation.y += 0.008;
+      }
+      renderer.render(scene, camera);
+      animId = requestAnimationFrame(animate);
+    };
+    animate();
+
+    const handleResize = () => {
+      if (!mount) return;
+      const w = mount.clientWidth;
+      const h = mount.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      domEl.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      window.removeEventListener("resize", handleResize);
+      renderer.dispose();
+      if (mount.contains(domEl)) mount.removeChild(domEl);
+    };
+  }, [isOpen, renderMode, autoRotate]);
+
+  if (!isOpen) return null;
+
+  const datums = [
+    { id: "A", label: "Datum [A] Primary Face", spec: "Flatness 0.005 mm", measured: "0.002 mm (Pass)", status: "COMPLIANT" },
+    { id: "B", label: "Datum [B] Valve Bore", spec: "Ø24.000 ±0.005 mm", measured: "24.002 mm (Pass)", status: "COMPLIANT" },
+    { id: "C", label: "Datum [C] Flange Circle", spec: "6x Ø8.00 True Pos 0.012 mm", measured: "0.006 mm (Pass)", status: "COMPLIANT" },
+    { id: "D", label: "Surface Finish", spec: "Ra 0.4 µm Mirror Grind", measured: "0.32 µm (Pass)", status: "COMPLIANT" },
+  ];
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(7, 16, 32, 0.95)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        zIndex: 10000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 16,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 960,
+          width: "100%",
+          maxHeight: "92vh",
+          overflowY: "auto",
+          background: TOKENS.panelAlt,
+          border: `1px solid rgba(212,175,55,0.4)`,
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)",
+            padding: "20px 24px",
+            borderBottom: `1px solid ${TOKENS.hair}`,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", marginBottom: 4 }}>
+              3D CAD MESH & GD&T TOLERANCE INSPECTOR · WEBGL ENGINE
+            </div>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+              {rfqId}: {partName}
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: `1px solid ${TOKENS.hair}`,
+              color: TOKENS.paper,
+              fontSize: 18,
+              cursor: "pointer",
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* CAD Canvas + Sidebar */}
+        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", minHeight: 440 }} className="hero-grid">
+          {/* Left Canvas Viewport */}
+          <div style={{ position: "relative", background: "#070E1A", display: "flex", flexDirection: "column" }}>
+            <div ref={mountRef} style={{ width: "100%", height: 420, cursor: "grab" }} />
+
+            {/* Viewport Control Overlay */}
+            <div
+              style={{
+                position: "absolute",
+                top: 14,
+                left: 14,
+                right: 14,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                pointerEvents: "none",
+              }}
+            >
+              <div style={{ pointerEvents: "auto", display: "flex", gap: 6 }}>
+                {[
+                  { id: "solid", label: "Solid Metal" },
+                  { id: "wireframe", label: "CAD Wireframe" },
+                  { id: "xray", label: "X-Ray Volume" },
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    onClick={() => setRenderMode(m.id)}
+                    style={{
+                      background: renderMode === m.id ? TOKENS.brass : "rgba(16,24,40,0.85)",
+                      color: renderMode === m.id ? TOKENS.ink : TOKENS.paper,
+                      border: `1px solid ${TOKENS.hair}`,
+                      borderRadius: 4,
+                      padding: "5px 10px",
+                      fontSize: 10.5,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontWeight: renderMode === m.id ? 700 : 400,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ pointerEvents: "auto" }}>
+                <button
+                  onClick={() => setAutoRotate(!autoRotate)}
+                  style={{
+                    background: autoRotate ? "rgba(0,168,150,0.2)" : "rgba(16,24,40,0.85)",
+                    color: autoRotate ? TOKENS.teal : TOKENS.slate,
+                    border: `1px solid ${autoRotate ? TOKENS.teal : TOKENS.hair}`,
+                    borderRadius: 4,
+                    padding: "5px 10px",
+                    fontSize: 10.5,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    cursor: "pointer",
+                  }}
+                >
+                  {autoRotate ? "● Rotate: ON" : "○ Rotate: PAUSED"}
+                </button>
+              </div>
+            </div>
+
+            <div style={{ padding: "8px 16px", background: "rgba(16,24,40,0.9)", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+              <span>🖱 Drag to rotate · Scroll to zoom</span>
+              <span style={{ color: TOKENS.teal }}>● 3D Mesh Integrity: 100% Manifold</span>
+            </div>
+          </div>
+
+          {/* Right Inspection & Telemetry Panel */}
+          <div style={{ padding: "20px 24px", borderLeft: `1px solid ${TOKENS.hair}`, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8, fontWeight: 700 }}>
+                GD&T TOLERANCE CALLOUTS (CMM VERIFIED)
+              </div>
+              <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, margin: "0 0 16px" }}>
+                128 discrete coordinate measurement points verified against ASME Y14.5M standard.
+              </p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+                {datums.map((d) => {
+                  const isSelected = activeDatum === d.id;
+                  return (
+                    <div
+                      key={d.id}
+                      onClick={() => setActiveDatum(d.id)}
+                      style={{
+                        background: isSelected ? "rgba(21,101,192,0.15)" : "rgba(255,255,255,0.025)",
+                        border: `1px solid ${isSelected ? TOKENS.blue : TOKENS.hair}`,
+                        borderRadius: 6,
+                        padding: "10px 12px",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.paper }}>
+                          {d.label}
+                        </span>
+                        <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 6px", borderRadius: 3, fontSize: 9.5, fontFamily: "'JetBrains Mono', monospace" }}>
+                          {d.status}
+                        </span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, fontSize: 11.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
+                        <span>Target: {d.spec}</span>
+                        <span style={{ color: TOKENS.teal }}>Actual: {d.measured}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Inspection Box */}
+              <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px", marginBottom: 20 }}>
+                <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>MATERIAL TEST REPORT (MTR)</div>
+                <div style={{ fontSize: 12.5, color: TOKENS.paper, marginTop: 4, fontWeight: 600 }}>SS 316L Stainless (Marine Grade)</div>
+                <div style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>Heat #8942A · Tensile 580 MPa · Hardness HRB 79</div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <button
+                onClick={() => alert(`Simulating STEP CAD file download (valves_assembly_v3.step · 14.2 MB)...`)}
+                style={{
+                  background: TOKENS.brass,
+                  color: TOKENS.ink,
+                  border: "none",
+                  borderRadius: 6,
+                  padding: "10px 16px",
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                📥 Download .STEP 3D CAD File (14.2 MB) →
+              </button>
+              <button
+                onClick={() => alert(`Generating Certified CMM GD&T Dimensional Report for ${rfqId}...`)}
+                style={{
+                  background: "transparent",
+                  border: `1px solid ${TOKENS.hair}`,
+                  color: TOKENS.paper,
+                  borderRadius: 6,
+                  padding: "8px 16px",
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  cursor: "pointer",
+                }}
+              >
+                📄 Export CMM Inspection Report (PDF)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- 4-Stage Supplier Onboarding & Shop Floor Verification Wizard ---------------------------- */
+
+function SupplierOnboardingModal({ isOpen, onClose }) {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({
+    companyName: "",
+    hub: "Chennai Machining Corridor (Tamil Nadu)",
+    yearEstablished: "2014",
+    floorArea: "25,000 sq. ft.",
+    machines: ["5-Axis CNC Milling", "CNC Turning Lathes"],
+    certifications: ["ISO 9001:2015", "AS9100D"],
+    tolerance: "±0.005 mm",
+    email: "",
+    phone: "",
+  });
+  const [verifiedBadge, setVerifiedBadge] = useState("");
+
+  if (!isOpen) return null;
+
+  const machineOptions = [
+    "5-Axis CNC Milling",
+    "CNC Turning Lathes",
+    "Wire EDM Cutting",
+    "Sheet Metal Laser & Bending",
+    "Surface & Cylindrical Grinding",
+    "SMT Pick-and-Place Assembly",
+    "Cleanroom ISO Class 7",
+    "Plastic Injection Tooling (80T - 450T)",
+  ];
+
+  const certOptions = [
+    "ISO 9001:2015 (Quality Management)",
+    "AS9100D (Aerospace & Defence)",
+    "IATF 16949 (Automotive Standard)",
+    "ISO 13485 (Medical Devices)",
+    "ISO 14001 (Environmental Safety)",
+    "ITAR Registered Compliance",
+  ];
+
+  const toggleItem = (listName, val) => {
+    const list = form[listName];
+    if (list.includes(val)) {
+      setForm({ ...form, [listName]: list.filter((i) => i !== val) });
+    } else {
+      setForm({ ...form, [listName]: [...list, val] });
+    }
+  };
+
+  const handleFinish = (e) => {
+    e.preventDefault();
+    const certNum = `VMFG-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    setVerifiedBadge(certNum);
+    trackEvent("supplier_plant_verified", { company: form.companyName, certNum });
+  };
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(7, 16, 32, 0.94)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        zIndex: 9999,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 16,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 680,
+          width: "100%",
+          maxHeight: "92vh",
+          overflowY: "auto",
+          background: TOKENS.panelAlt,
+          border: `1px solid rgba(212,175,55,0.4)`,
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)",
+            padding: "24px 28px",
+            borderBottom: `1px solid ${TOKENS.hair}`,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", marginBottom: 4 }}>
+              SUPPLIER ONBOARDING & SHOP FLOOR VERIFICATION
+            </div>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+              {verifiedBadge ? "Plant Verified & Onboarded" : "4-Stage Factory Verification Wizard"}
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: `1px solid ${TOKENS.hair}`,
+              color: TOKENS.paper,
+              fontSize: 18,
+              cursor: "pointer",
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {verifiedBadge ? (
+          /* Confirmation & Certificate Preview */
+          <div style={{ padding: "32px 28px", textAlign: "center" }}>
+            <div style={{ width: 68, height: 68, borderRadius: "50%", background: "rgba(0,168,150,0.15)", border: `2px solid ${TOKENS.teal}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: TOKENS.teal, fontSize: 32 }}>
+              ✓
+            </div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 6 }}>
+              OFFICIAL VERIFICATION CERTIFICATE ISSUED
+            </div>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 10px" }}>
+              {form.companyName || "Your Manufacturing Plant"}
+            </h3>
+            <div style={{ display: "inline-block", background: "rgba(212,175,55,0.12)", border: `1px solid ${TOKENS.brass}`, borderRadius: 6, padding: "8px 18px", fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brassBright, marginBottom: 20 }}>
+              ★ {verifiedBadge} · AS9100D & ISO VERIFIED
+            </div>
+
+            <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, maxWidth: 520, margin: "0 auto 24px" }}>
+              Your factory capabilities and certifications have been authenticated. Your plant profile is now live in the Abhimanyu Verified Directory and actively matched against inbound enterprise RFQs.
+            </p>
+
+            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+              <button
+                onClick={() => alert(`Simulating PDF Certificate Download for Verified Supplier ${verifiedBadge}...`)}
+                style={{
+                  background: TOKENS.teal,
+                  color: "#0B1F3A",
+                  border: "none",
+                  borderRadius: 6,
+                  padding: "10px 18px",
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                📄 Download Verification Certificate (PDF) →
+              </button>
+              <Button onClick={onClose}>Done</Button>
+            </div>
+          </div>
+        ) : (
+          /* Wizard Stepper Body */
+          <div style={{ padding: "24px 28px" }}>
+            {/* Step Bar */}
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 14 }}>
+              {[
+                { s: 1, label: "Plant Details" },
+                { s: 2, label: "Machinery" },
+                { s: 3, label: "Quality & Certs" },
+                { s: 4, label: "Contact & Review" },
+              ].map((st) => (
+                <div key={st.s} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: "50%",
+                      background: step > st.s ? TOKENS.teal : step === st.s ? TOKENS.brass : "rgba(255,255,255,0.06)",
+                      color: step >= st.s ? TOKENS.ink : TOKENS.slate,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 11,
+                      fontWeight: "bold",
+                      fontFamily: "'JetBrains Mono', monospace",
+                    }}
+                  >
+                    {step > st.s ? "✓" : st.s}
+                  </div>
+                  <span style={{ fontSize: 11.5, color: step === st.s ? TOKENS.paper : TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
+                    {st.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Step 1: Plant Identity */}
+            {step === 1 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
+                  Step 1: Facility Identity & Industrial Corridor
+                </h4>
+                <div>
+                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                    MANUFACTURING PLANT / COMPANY NAME
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Precision CNC Works Pvt. Ltd."
+                    value={form.companyName}
+                    onChange={(e) => setForm({ ...form, companyName: e.target.value })}
+                    style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                    PRIMARY INDUSTRIAL HUB / CORRIDOR
+                  </label>
+                  <select
+                    value={form.hub}
+                    onChange={(e) => setForm({ ...form, hub: e.target.value })}
+                    style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                  >
+                    <option value="Chennai Machining Corridor (Tamil Nadu)">Chennai Machining Corridor (Tamil Nadu)</option>
+                    <option value="Hyderabad Aerospace & Defence Hub (Telangana)">Hyderabad Aerospace & Defence Hub (Telangana)</option>
+                    <option value="Bengaluru Tech & Precision Machining (Karnataka)">Bengaluru Tech & Precision Machining (Karnataka)</option>
+                    <option value="Pune & Mumbai OEM Auto Belt (Maharashtra)">Pune & Mumbai OEM Auto Belt (Maharashtra)</option>
+                    <option value="Coimbatore Precision Foundry (Tamil Nadu)">Coimbatore Precision Foundry (Tamil Nadu)</option>
+                    <option value="Delhi NCR Industrial Sourcing Hub">Delhi NCR Industrial Sourcing Hub</option>
+                  </select>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                      YEAR ESTABLISHED
+                    </label>
+                    <input
+                      type="text"
+                      value={form.yearEstablished}
+                      onChange={(e) => setForm({ ...form, yearEstablished: e.target.value })}
+                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                      SHOP FLOOR AREA
+                    </label>
+                    <input
+                      type="text"
+                      value={form.floorArea}
+                      onChange={(e) => setForm({ ...form, floorArea: e.target.value })}
+                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                    />
+                  </div>
+                </div>
+                <div style={{ textAlign: "right", marginTop: 10 }}>
+                  <Button onClick={() => setStep(2)}>Next: Machinery & Capabilities →</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Machinery */}
+            {step === 2 && (
+              <div>
+                <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
+                  Step 2: Machine Shop Capabilities
+                </h4>
+                <p style={{ color: TOKENS.slate, fontSize: 13, marginBottom: 16 }}>
+                  Select all active equipment and process capabilities deployed on your shop floor.
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 20 }}>
+                  {machineOptions.map((opt) => {
+                    const active = form.machines.includes(opt);
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => toggleItem("machines", opt)}
+                        style={{
+                          background: active ? "rgba(0,168,150,0.15)" : "rgba(255,255,255,0.03)",
+                          border: `1px solid ${active ? TOKENS.teal : TOKENS.hair}`,
+                          color: active ? TOKENS.teal : TOKENS.paper,
+                          padding: "10px 12px",
+                          borderRadius: 6,
+                          fontSize: 12,
+                          fontFamily: "'JetBrains Mono', monospace",
+                          textAlign: "left",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {active ? "✓ " : "○ "} {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <Button variant="ghost" onClick={() => setStep(1)}>← Back</Button>
+                  <Button onClick={() => setStep(3)}>Next: Quality & Certs →</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Certifications */}
+            {step === 3 && (
+              <div>
+                <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
+                  Step 3: Quality Standards & Audited Tolerances
+                </h4>
+                <p style={{ color: TOKENS.slate, fontSize: 13, marginBottom: 16 }}>
+                  Select accredited certifications held by your facility.
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+                  {certOptions.map((opt) => {
+                    const active = form.certifications.some((c) => opt.startsWith(c));
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => toggleItem("certifications", opt.split(" ")[0])}
+                        style={{
+                          background: active ? "rgba(212,175,55,0.12)" : "rgba(255,255,255,0.03)",
+                          border: `1px solid ${active ? TOKENS.brass : TOKENS.hair}`,
+                          color: active ? TOKENS.brass : TOKENS.paper,
+                          padding: "10px 14px",
+                          borderRadius: 6,
+                          fontSize: 12.5,
+                          fontFamily: "'JetBrains Mono', monospace",
+                          textAlign: "left",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {active ? "✓ " : "○ "} {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                    VERIFIED CMM REPEATABILITY TOLERANCE
+                  </label>
+                  <select
+                    value={form.tolerance}
+                    onChange={(e) => setForm({ ...form, tolerance: e.target.value })}
+                    style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                  >
+                    <option value="±0.002 mm (Ultra-Precision Aerospace)">±0.002 mm (Ultra-Precision Aerospace)</option>
+                    <option value="±0.005 mm (High-Precision CNC)">±0.005 mm (High-Precision CNC)</option>
+                    <option value="±0.010 mm (Standard Mechanical)">±0.010 mm (Standard Mechanical)</option>
+                    <option value="±0.050 mm (Heavy Fabrication)">±0.050 mm (Heavy Fabrication)</option>
+                  </select>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <Button variant="ghost" onClick={() => setStep(2)}>← Back</Button>
+                  <Button onClick={() => setStep(4)}>Next: Contact & Review →</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Contact & Review */}
+            {step === 4 && (
+              <form onSubmit={handleFinish} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
+                  Step 4: Contact & Verification Review
+                </h4>
+                <div>
+                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                    OFFICIAL WORK EMAIL (FOR RFQ BROADCASTS)
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="tooling@precisioncnc.in"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                    PLANT TELEPHONE / WHATSAPP NUMBER
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="+91 98400 12345"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                  />
+                </div>
+
+                <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, padding: 14, borderRadius: 6, fontSize: 12 }}>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, marginBottom: 4 }}>
+                    PLANT SUMMARY TO BE VERIFIED:
+                  </div>
+                  <div style={{ color: TOKENS.paper }}>
+                    <strong>{form.companyName || "Plant"}</strong> · {form.hub} · {form.floorArea}
+                  </div>
+                  <div style={{ color: TOKENS.slate, marginTop: 4 }}>
+                    Capabilities: {form.machines.join(", ")}
+                  </div>
+                  <div style={{ color: TOKENS.teal, marginTop: 2 }}>
+                    Certs: {form.certifications.join(", ")} · Tolerance: {form.tolerance}
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
+                  <Button variant="ghost" onClick={() => setStep(3)}>← Back</Button>
+                  <Button type="submit">Submit & Issue Verification Seal →</Button>
+                </div>
+              </form>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Universal Command Palette (Ctrl+K) ---------------------------- */
+
+function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth }) {
+  const [query, setQuery] = useState("");
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 50);
+    } else {
+      setQuery("");
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const catalog = [
+    { type: "Page", title: "Products & Software Platforms", id: "products", icon: "🛒", sub: "ERP, CRM, HRMS, AI, IoT" },
+    { type: "Page", title: "Engineering Services & Pod Calculator", id: "services", icon: "🛠", sub: "Software, Cloud, AI, Security" },
+    { type: "Page", title: "Verified Manufacturers Directory", id: "manufacturers", icon: "🏭", sub: "CNC, Sheet Metal, SMT Assembly" },
+    { type: "Page", title: "Verified B2B Business Directory", id: "businesses", icon: "🏢", sub: "Suppliers, Logistics, Engineering" },
+    { type: "Page", title: "Live RFQs & Sourcing Requirements", id: "requirements", icon: "📋", sub: "Browse open buyer requirements" },
+    { type: "Page", title: "6-Step RFQ Post a Requirement Builder", id: "rfq-wizard", icon: "➕", sub: "Upload CAD & broadcast to plants" },
+    { type: "Page", title: "Seller & Business Owner Dashboard", id: "dashboard", icon: "📊", sub: "Telemetry, quotes, conversion funnel" },
+    { type: "Page", title: "Technical Knowledge Hub & Playbooks", id: "knowledge", icon: "📚", sub: "Engineering handbooks & standards" },
+    { type: "Page", title: "Architectural Blueprints by Industry", id: "industries", icon: "📐", sub: "Aerospace, FinTech, Healthcare, OEM" },
+    { type: "Page", title: "Enterprise Case Studies & ROI", id: "case-studies", icon: "📈", sub: "Production outcomes & telemetry" },
+    { type: "Page", title: "Engineering Insights & Whitepapers", id: "insights", icon: "🔬", sub: "Deep technical essays & code" },
+    { type: "Page", title: "Engineering Careers & Compensation", id: "careers", icon: "💼", sub: "Staff & Lead openings with bands" },
+    { type: "Page", title: "Engineering Manifesto & Edge Topology", id: "about", icon: "ℹ️", sub: "12 Anycast global edge PoPs" },
+    { type: "Page", title: "Enterprise Contact & Solutions Intake", id: "contact", icon: "📞", sub: "12-hour review guarantee" },
+    { type: "RFQ", title: "RFQ-2026-9041: 10,000 SS316 CNC Turned Valves", id: "requirements", rfqId: "RFQ-2026-9041", icon: "⚡", sub: "Custom CNC Machining · Chennai Hub" },
+    { type: "RFQ", title: "RFQ-2026-9082: SMT PCB Assembly for Medical IoT", id: "requirements", rfqId: "RFQ-2026-9082", icon: "⚡", sub: "Electronics Assembly · Hyderabad Hub" },
+    { type: "RFQ", title: "RFQ-2026-9114: Aerospace Aluminum 6061-T6 Brackets", id: "requirements", rfqId: "RFQ-2026-9114", icon: "⚡", sub: "CNC Machining · Pune Hub" },
+    { type: "RFQ", title: "RFQ-2026-9150: Automotive Sensor Injection Molding", id: "requirements", rfqId: "RFQ-2026-9150", icon: "⚡", sub: "Plastic Injection · Delhi Hub" },
+    { type: "Product", title: "Abhimanyu ERP Operations Platform", id: "products", icon: "📦", sub: "Inventory, Invoicing, Supply Chain" },
+    { type: "Product", title: "Abhimanyu CRM Lead Intelligence", id: "products", icon: "📦", sub: "AI Scoring, WhatsApp sequences" },
+    { type: "Product", title: "Abhimanyu AI Neural Defect Engine", id: "products", icon: "📦", sub: "Inline computer vision & telemetry" },
+    { type: "Product", title: "Abhimanyu IoT Fleet Telemetry Manager", id: "products", icon: "📦", sub: "10k+ connected sensors, MQTT" },
+  ];
+
+  const results = catalog.filter((item) => {
+    const q = query.toLowerCase();
+    return item.title.toLowerCase().includes(q) ||
+           item.type.toLowerCase().includes(q) ||
+           item.sub.toLowerCase().includes(q);
+  });
+
+  const handleSelect = (item) => {
+    onClose();
+    if (item.rfqId) {
+      openTracker?.(item.rfqId);
+    } else {
+      go(item.id);
+    }
+  };
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(7, 16, 32, 0.88)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        zIndex: 10000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        padding: "80px 16px 20px",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: 620,
+          width: "100%",
+          background: TOKENS.panelAlt,
+          border: `1px solid rgba(21,101,192,0.45)`,
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.85)",
+          display: "flex",
+          flexDirection: "column",
+          maxHeight: "75vh",
+        }}
+      >
+        {/* Search Input Bar */}
+        <div style={{ display: "flex", alignItems: "center", padding: "16px 20px", borderBottom: `1px solid ${TOKENS.hair}`, gap: 12, background: "rgba(255,255,255,0.02)" }}>
+          <span style={{ fontSize: 18, color: TOKENS.teal }}>🔍</span>
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Search products, services, RFQs, manufacturers, playbooks..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            style={{
+              flex: 1,
+              background: "transparent",
+              border: "none",
+              color: TOKENS.paper,
+              fontSize: 15,
+              outline: "none",
+              fontFamily: "'Inter', sans-serif",
+            }}
+          />
+          <kbd style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+            ESC
+          </kbd>
+        </div>
+
+        {/* Results List */}
+        <div style={{ overflowY: "auto", padding: "8px" }}>
+          {results.length === 0 ? (
+            <div style={{ padding: "32px 20px", textAlign: "center", color: TOKENS.slate, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
+              No matches found for "{query}". Try "CNC", "ERP", "RFQ", or "Anycast".
+            </div>
+          ) : (
+            results.slice(0, 10).map((r, idx) => (
+              <div
+                key={idx}
+                onClick={() => handleSelect(r)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "10px 14px",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  transition: "background 0.15s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ fontSize: 18 }}>{r.icon}</span>
+                  <div>
+                    <div style={{ color: TOKENS.paper, fontSize: 14, fontWeight: 500 }}>{r.title}</div>
+                    <div style={{ color: TOKENS.slate, fontSize: 12 }}>{r.sub}</div>
+                  </div>
+                </div>
+                <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, background: "rgba(0,168,150,0.12)", padding: "2px 6px", borderRadius: 3 }}>
+                  {r.type.toUpperCase()}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Footer Shortcut Bar */}
+        <div style={{ padding: "10px 16px", borderTop: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
+          <span>Navigation: <kbd style={{ background: "rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: 3 }}>↵ Enter</kbd> to open</span>
+          <span>Shortcut: <kbd style={{ background: "rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: 3 }}>Ctrl+K</kbd> / <kbd style={{ background: "rgba(255,255,255,0.06)", padding: "1px 5px", borderRadius: 3 }}>⌘K</kbd></span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* Dynamic Route SEO Manager */
 const PAGE_SEO = {
   home: {
@@ -8004,6 +9088,21 @@ export default function MyVaultSite() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [trackerRfqId, setTrackerRfqId] = useState(null);
   const [trackerOpen, setTrackerOpen] = useState(false);
+  const [cadModalOpen, setCadModalOpen] = useState(false);
+  const [cadPart, setCadPart] = useState({ id: "RFQ-2026-9041", name: "SS316 Valve Manifold" });
+  const [supplierOnboardingOpen, setSupplierOnboardingOpen] = useState(false);
+  const [spotlightOpen, setSpotlightOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSpotlightOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useRouteSEO(page);
 
@@ -8017,6 +9116,14 @@ export default function MyVaultSite() {
     setTrackerRfqId(id || "RFQ-2026-9041");
     setTrackerOpen(true);
   };
+
+  const openCAD = (id, name) => {
+    setCadPart({ id: id || "RFQ-2026-9041", name: name || "SS316 Valve Manifold" });
+    setCadModalOpen(true);
+  };
+
+  const openSupplierOnboarding = () => setSupplierOnboardingOpen(true);
+  const openSpotlight = () => setSpotlightOpen(true);
 
   const Page = PAGES[page] || HomePage;
 
@@ -8060,6 +9167,7 @@ export default function MyVaultSite() {
         setCurrentUser={setCurrentUser}
         openAuth={() => setAuthModalOpen(true)}
         openTracker={openTracker}
+        openSpotlight={openSpotlight}
       />
       <main style={{ paddingTop: 64 }}>
         <Page
@@ -8068,6 +9176,9 @@ export default function MyVaultSite() {
           currentUser={currentUser}
           openTracker={openTracker}
           openAuth={() => setAuthModalOpen(true)}
+          openCAD={openCAD}
+          openSupplierOnboarding={openSupplierOnboarding}
+          openSpotlight={openSpotlight}
         />
       </main>
       <Footer go={go} />
@@ -8078,6 +9189,7 @@ export default function MyVaultSite() {
         onClose={() => setTrackerOpen(false)}
         currency={currency}
         go={go}
+        openCAD={openCAD}
       />
       <AuthModal
         isOpen={authModalOpen}
@@ -8085,6 +9197,23 @@ export default function MyVaultSite() {
         currentUser={currentUser}
         onLogin={(profile) => setCurrentUser(profile)}
         onLogout={() => setCurrentUser(null)}
+      />
+      <CADViewerModal
+        isOpen={cadModalOpen}
+        onClose={() => setCadModalOpen(false)}
+        rfqId={cadPart.id}
+        partName={cadPart.name}
+      />
+      <SupplierOnboardingModal
+        isOpen={supplierOnboardingOpen}
+        onClose={() => setSupplierOnboardingOpen(false)}
+      />
+      <SpotlightSearchModal
+        isOpen={spotlightOpen}
+        onClose={() => setSpotlightOpen(false)}
+        go={go}
+        openTracker={openTracker}
+        openAuth={() => setAuthModalOpen(true)}
       />
       {/* Mobile Bottom Navigation Bar */}
       <nav
