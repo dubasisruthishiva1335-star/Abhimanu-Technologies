@@ -3484,76 +3484,295 @@ function CaseStudiesPage({ go }) {
 }
 
 function InsightsPage({ go }) {
+  const [selectedTopic, setSelectedTopic] = useState("All");
   const [selectedArticle, setSelectedArticle] = useState(null);
 
   const ARTICLES = [
     {
       id: "ai-business",
       category: "AI & ML",
-      title: "How AI Is Actually Changing Day-to-Day Business Operations",
+      title: "How Operational AI Is Transforming Day-to-Day Enterprise Workflows",
       author: "Abhimanyu (CTO)",
-      readTime: "5 min read",
-      summary: "Beyond generic chatbot noise: real operational AI models deployed for predictive supply chain routing, inline document processing, and sub-10ms risk authorization.",
-      content: "Many enterprises start AI projects by attempting to replace core business processes all at once. The most successful implementations, however, target single decision bottlenecks — such as automated invoice validation or real-time sensor anomaly scoring — where neural models work alongside human operators."
+      readTime: "6 min read",
+      date: "September 2026",
+      summary: "Beyond conversational LLM toys: deploying inline neural risk authorization, automated manufacturing defect classifiers, and predictive supply chain telemetry.",
+      content: "Many enterprise leaders start AI initiatives by attempting to overhaul entire operational divisions at once. In practice, the highest ROI deployments isolate single high-friction decision bottlenecks — such as sub-10ms transaction anomaly scoring or automated CAD drawing geometric classification — where neural models work alongside human operators with zero disruption to core operations.",
+      codeSnippet: `# Inline ONNX Runtime Anomaly Evaluation
+import onnxruntime as ort
+import numpy as np
+
+session = ort.InferenceSession("models/risk_engine_v4.onnx", providers=['CUDAExecutionProvider'])
+def score_transaction(features: np.ndarray) -> float:
+    inputs = {session.get_inputs()[0].name: features.astype(np.float32)}
+    output = session.run(None, inputs)
+    return float(output[0][0]) # Returns risk score in <6ms`,
+      outcomes: ["-91% Manual screening overhead", "< 7.5ms p95 prediction latency at edge", "Zero false-positive downtime"],
+      takeaway: "Isolate single operational decision points, benchmark against deterministic baselines, and maintain human override gates for sensitive state transitions."
     },
     {
       id: "cloud-migration",
       category: "Cloud & DevOps",
-      title: "Cloud Migration: A Practical Guide for High-Growth Engineering Teams",
+      title: "Zero-Downtime Cloud Migration for High-Throughput Distributed Microservices",
       author: "Ananya Verma (VP Eng)",
-      readTime: "7 min read",
-      summary: "How to transition from legacy monologs to multi-cloud containerized microservices without service interruption or cost ballooning.",
-      content: "A successful cloud migration requires breaking down infrastructure into stateless worker units managed via Infrastructure as Code (Terraform). Automated CI/CD pipelines with canary releases allow zero-downtime rollouts."
+      readTime: "8 min read",
+      date: "August 2026",
+      summary: "How to decouple legacy monolithic systems into multi-cloud containerized services without dropping packets or inflating infrastructure budgets.",
+      content: "Migrating enterprise workloads requiring 99.999% uptime cannot rely on maintenance windows. We utilize the Strangler Fig pattern paired with Anycast route weighting: new stateless microservices are deployed alongside legacy monoliths behind an Envoy proxy gateway. Synthetic canaries gradually shift 1%, 5%, 25%, and finally 100% of live traffic once p99 latency parity is mathematically proven.",
+      codeSnippet: `# Envoy Route Weighted Canary Traffic Split
+route_config:
+  name: api_v1_routes
+  routes:
+    - match: { prefix: "/v1/orders" }
+      route:
+        weighted_clusters:
+          clusters:
+            - { name: monolith_legacy, weight: 10 }
+            - { name: microservice_v2, weight: 90 }
+        timeout: 0.5s`,
+      outcomes: ["100% Zero service interruptions during cutover", "-64% Idle server compute expenditure", "Automated rollbacks within 150ms"],
+      takeaway: "Decouple storage before compute, run shadow traffic side-by-side, and verify database replica lag before cutting write authority."
     },
     {
       id: "zero-trust-security",
       category: "Cybersecurity",
-      title: "The Security Controls Most Engineering Teams Skip — and What They Cost Later",
+      title: "Architecting Zero-Trust Identity Attestation Across Multi-Cloud Clusters",
       author: "Rajesh Kumar (Head of Security)",
+      readTime: "7 min read",
+      date: "July 2026",
+      summary: "Why perimeter firewalls fail, and how to enforce mutual TLS (mTLS), SPIFFE workload identity, and ephemeral cryptographic key rotations.",
+      content: "Security is not a certification badge obtained before product launch — it is a foundational architectural constraint. In our cloud deployments, every inter-pod transaction across Kubernetes nodes must present a cryptographically verified X.509 certificate with a maximum lifetime of 12 hours, rotated automatically via SPIRE. If a node is compromised, lateral movement across the cluster is mathematically constrained.",
+      codeSnippet: `# SPIFFE / SPIRE Workload Attestation Filter
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: prod-workloads
+spec:
+  mtls:
+    mode: STRICT # Rejects all non-mTLS plaintext calls`,
+      outcomes: ["SOC2 Type II & ISO 27001 audited architecture", "Zero lateral network propagation vectors", "100% Automated cryptographic rotation"],
+      takeaway: "Assume the perimeter is breached; enforce cryptographic identity and field-level encryption for every single remote procedure call."
+    },
+    {
+      id: "anycast-scaling",
+      category: "System Scaling",
+      title: "Scaling Anycast Edge Gateways to 50,000 Requests/Sec with Sub-10ms Latency",
+      author: "Shiva (Founder & CEO)",
+      readTime: "9 min read",
+      date: "June 2026",
+      summary: "Architecting global BGP Anycast routing nodes to terminate client TLS handshakes locally, diffusing DDoS attacks and serving cached assets at edge speeds.",
+      content: "Global users expect desktop and mobile interfaces to load instantaneously. By terminating client TCP/TLS connections at the closest Anycast POP rather than routing roundtrips back to an origin datacenter in North America or India, we eliminate 120ms to 240ms of latency per request. Cache invalidation is coordinated via a global Redis Pub/Sub mesh with sub-30ms propagation worldwide.",
+      codeSnippet: `# BGP Anycast Route Health Probe Daemon (Go)
+func monitorOriginHealth(origin string) {
+    for {
+        resp, err := client.Get(origin + "/healthz")
+        if err != nil || resp.StatusCode != 200 {
+            log.Warn("Origin degraded, withdrawing BGP prefix...")
+            withdrawRouteAnnouncement("203.0.113.0/24")
+        }
+        time.Sleep(500 * time.Millisecond)
+    }
+}`,
+      outcomes: ["50,000+ Requests/sec peak load sustained", "< 9.2ms Median global client roundtrip", "Seamless automatic DDoS packet absorption"],
+      takeaway: "Terminate handshakes at the edge, keep origins stateless, and automate BGP route withdrawals on health-check dips."
+    },
+    {
+      id: "iot-firmware",
+      category: "Hardware & IoT",
+      title: "Hardware-in-the-Loop (HIL) Automated Testing for Industrial IoT Gateways",
+      author: "Rohan Nair (VP Hardware Systems)",
       readTime: "6 min read",
-      summary: "An architecture-level breakdown of zero-trust identity verification, database encryption at rest & in transit, and SOC2 compliance automation.",
-      content: "Security is not a checkbox added before launch — it is an architectural constraint. Implementing mutual TLS (mTLS), strict RBAC permissions, and automated vulnerability scanning at commit time prevents breach incidents."
+      date: "May 2026",
+      summary: "How to automate embedded firmware regression testing on real STM32 and ESP32 silicon before deploying over-the-air (OTA) updates.",
+      content: "Pushing faulty firmware to thousands of deployed industrial telemetry nodes across remote factories can brick hardware and cost weeks of downtime. We designed an automated Hardware-in-the-Loop (HIL) testbed rack where real target microcontrollers are stimulated with synthetic I2C, SPI, and Modbus sensor signals, validating power consumption and memory leak profiles before OTA approval.",
+      codeSnippet: `# HIL Automated Test Runner Pipeline (Python)
+def test_modbus_crc_under_line_noise(dut_serial):
+    dut_serial.inject_electrical_noise(duration_ms=50)
+    response = dut_serial.send_modbus_frame(ADDR_TEMPERATURE_SENSOR)
+    assert response.crc_valid is True
+    assert dut_serial.read_current_draw_ma() < 45.0`,
+      outcomes: ["99.98% Field OTA update success rate", "0 Hardware bricking incidents across 50k+ nodes", "-80% Manual bench testing hours"],
+      takeaway: "Never test embedded code solely on emulators; real hardware tolerances, voltage fluctuations, and bus noise require physical automated testbeds."
+    },
+    {
+      id: "database-partitioning",
+      category: "System Scaling",
+      title: "PostgreSQL Multi-Tenant Sharding Strategies for High-Volume B2B Platforms",
+      author: "Vikram Sengupta (Lead Eng)",
+      readTime: "8 min read",
+      date: "April 2026",
+      summary: "Architecting schema-per-tenant vs. row-level security sharding across high-write B2B marketplaces handling millions of catalog items.",
+      content: "When a B2B platform scales to tens of thousands of buyers and suppliers, database contention quickly degrades search indexing and inventory lock performance. We partition PostgreSQL tables by tenant organization ID with declarative time-series partitions for audit trails, ensuring queries only scan the exact memory pages required.",
+      codeSnippet: `-- Declarative PostgreSQL Time-Series Partitioning
+CREATE TABLE audit_telemetry (
+    id BIGSERIAL,
+    tenant_id UUID NOT NULL,
+    event_name VARCHAR(64) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    payload JSONB
+) PARTITION BY RANGE (created_at);
+
+CREATE TABLE audit_telemetry_2026_09 PARTITION OF audit_telemetry
+    FOR VALUES FROM ('2026-09-01') TO ('2026-10-01');`,
+      outcomes: ["4.8x Query execution speedup", "-72% Buffer cache miss rates", "Zero tenant cross-talk data exposure"],
+      takeaway: "Design database schemas around write concurrency patterns, and separate historical audit telemetry from operational state tables."
     }
   ];
 
+  const topics = ["All", "AI & ML", "Cloud & DevOps", "Cybersecurity", "System Scaling", "Hardware & IoT"];
+
+  const filtered = ARTICLES.filter((a) => {
+    return selectedTopic === "All" || a.category === selectedTopic;
+  });
+
   return (
     <>
-      <Section eyebrow="Technical Insights & Blog" title="Engineering Perspective & Research" sub="Deep dives on cloud architecture, generative AI, zero-trust security, and system scaling.">
-        <Grid min={280}>
-          {ARTICLES.map((a) => (
-            <Card key={a.id}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 10 }}>
-                <span>{a.category.toUpperCase()}</span>
-                <span>{a.readTime}</span>
+      <Section eyebrow="Technical Insights & Blog" title="Engineering Perspective & Research" sub="Deep dives on distributed cloud architecture, inline machine learning, embedded IoT systems, and high-load scalability.">
+        {/* Topic Filter Pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
+          {topics.map((t) => (
+            <button
+              key={t}
+              onClick={() => setSelectedTopic(t)}
+              style={{
+                background: selectedTopic === t ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                border: `1px solid ${selectedTopic === t ? TOKENS.brass : TOKENS.hair}`,
+                color: selectedTopic === t ? TOKENS.ink : TOKENS.slate,
+                borderRadius: 999,
+                padding: "7px 16px",
+                fontSize: 12.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: selectedTopic === t ? 700 : 400,
+                cursor: "pointer",
+                transition: "all 0.15s ease"
+              }}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+
+        {/* Articles Grid */}
+        <Grid min={300}>
+          {filtered.map((a) => (
+            <Card key={a.id} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 12 }}>
+                  <span style={{ background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 4 }}>{a.category.toUpperCase()}</span>
+                  <span>{a.readTime} · {a.date}</span>
+                </div>
+                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>
+                  {a.title}
+                </h3>
+                <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 16px" }}>
+                  {a.summary}
+                </p>
               </div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px", lineHeight: 1.4 }}>{a.title}</h3>
-              <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: "0 0 16px" }}>{a.summary}</p>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 12, color: TOKENS.brass }}>By {a.author}</span>
-                <Button variant="ghost" onClick={() => { trackEvent("read_insight", { id: a.id }); setSelectedArticle(a); }}>Read Article →</Button>
+
+              <div>
+                <div style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 14 }}>
+                  By {a.author}
+                </div>
+                <Button onClick={() => { trackEvent("read_insight", { id: a.id }); setSelectedArticle(a); }}>
+                  Read Technical Essay →
+                </Button>
               </div>
             </Card>
           ))}
         </Grid>
       </Section>
 
-      {/* Article Modal Reader */}
+      {/* Deep Navy Technical Reader Modal */}
       {selectedArticle && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.85)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <Card style={{ maxWidth: 680, width: "100%", maxHeight: "85vh", overflowY: "auto", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal }}>{selectedArticle.category} · {selectedArticle.readTime}</span>
-              <button onClick={() => setSelectedArticle(null)} style={{ background: "transparent", border: "none", color: TOKENS.paper, fontSize: 22, cursor: "pointer" }}>✕</button>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
+            {/* Header */}
+            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
+                  {selectedArticle.category.toUpperCase()} · {selectedArticle.readTime} · {selectedArticle.date}
+                </span>
+                <button onClick={() => setSelectedArticle(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+              </div>
+              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
+                {selectedArticle.title}
+              </h2>
+              <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
+                Written by {selectedArticle.author}
+              </div>
             </div>
-            <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 10px" }}>{selectedArticle.title}</h2>
-            <div style={{ fontSize: 13, color: TOKENS.brass, marginBottom: 20 }}>Written by {selectedArticle.author}</div>
-            <p style={{ color: TOKENS.paper, fontSize: 16, lineHeight: 1.7, marginBottom: 20 }}>{selectedArticle.content}</p>
-            <div style={{ background: "rgba(255,255,255,0.02)", borderLeft: `3px solid ${TOKENS.brass}`, padding: 16, marginBottom: 24 }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 4 }}>KEY TAKEAWAY</div>
-              <p style={{ color: TOKENS.slate, fontSize: 14, margin: 0 }}>{selectedArticle.summary}</p>
+
+            {/* Body */}
+            <div style={{ padding: 32 }}>
+              <p style={{ color: TOKENS.paper, fontSize: 15.5, lineHeight: 1.8, marginBottom: 24 }}>
+                {selectedArticle.content}
+              </p>
+
+              {/* Code Snippet Blueprint */}
+              {selectedArticle.codeSnippet && (
+                <div style={{ background: "#070E1A", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 18, marginBottom: 24, overflowX: "auto" }}>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal, marginBottom: 8 }}>
+                    ARCHITECTURAL IMPLEMENTATION BLUEPRINT
+                  </div>
+                  <pre style={{ margin: 0, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#E2E8F0", lineHeight: 1.6 }}>
+                    {selectedArticle.codeSnippet}
+                  </pre>
+                </div>
+              )}
+
+              {/* Production Outcomes */}
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8, letterSpacing: "0.06em" }}>
+                  MEASURABLE PRODUCTION OUTCOMES
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 10 }}>
+                  {selectedArticle.outcomes.map((o, idx) => (
+                    <div key={idx} style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", fontSize: 12.5, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
+                      ✓ {o}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Key Takeaway Box */}
+              <div style={{ background: "rgba(212, 175, 55, 0.08)", borderLeft: `3px solid ${TOKENS.brass}`, padding: "14px 18px", borderRadius: "0 6px 6px 0", marginBottom: 28 }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 4 }}>
+                  CORE ARCHITECTURAL TAKEAWAY
+                </div>
+                <p style={{ color: TOKENS.slate, fontSize: 14, margin: 0, lineHeight: 1.6 }}>
+                  {selectedArticle.takeaway}
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 20 }}>
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(window.location.href);
+                    alert("Article link copied to clipboard!");
+                  }}
+                  style={{
+                    background: "transparent",
+                    border: `1px solid ${TOKENS.hair}`,
+                    color: TOKENS.paper,
+                    padding: "8px 14px",
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    cursor: "pointer"
+                  }}
+                >
+                  🔗 Share Article
+                </button>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <Button variant="ghost" onClick={() => setSelectedArticle(null)}>Close Reader</Button>
+                  <Button onClick={() => { setSelectedArticle(null); go("contact"); }}>
+                    Discuss Architecture with Author →
+                  </Button>
+                </div>
+              </div>
             </div>
-            <Button onClick={() => setSelectedArticle(null)}>Close Article</Button>
-          </Card>
+          </div>
         </div>
       )}
 
