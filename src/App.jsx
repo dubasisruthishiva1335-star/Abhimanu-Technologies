@@ -118,9 +118,12 @@ const PUBLIC_RFQS = [
     quantity: "10,000 Units",
     location: "Target Delivery: Chennai / Telangana",
     budget: "$45,000 - $60,000",
-    deadline: "Deadline: 14 Days Left",
+    deadline: "14 Days Left",
     status: "OPEN FOR QUOTES",
-    bidsCount: "12 Bids Submitted"
+    bidsCount: "12 Bids Submitted",
+    tolerance: "±0.005 mm",
+    material: "SS 316L Marine Grade",
+    buyer: "Hydraulics Global Ltd"
   },
   {
     id: "RFQ-2026-9082",
@@ -129,9 +132,54 @@ const PUBLIC_RFQS = [
     quantity: "2,500 Units",
     location: "Target Delivery: Hyderabad / Bengaluru",
     budget: "$28,000 - $35,000",
-    deadline: "Deadline: 8 Days Left",
+    deadline: "8 Days Left",
     status: "OPEN FOR QUOTES",
-    bidsCount: "8 Bids Submitted"
+    bidsCount: "8 Bids Submitted",
+    tolerance: "IPC-A-610 Class 3",
+    material: "FR4 6-Layer + ABS Enclosure",
+    buyer: "MedTech BioSystems"
+  },
+  {
+    id: "RFQ-2026-9114",
+    title: "Precision Aerospace Grade Aluminum 6061-T6 Structural Brackets",
+    category: "Custom CNC Machining",
+    quantity: "5,000 Units",
+    location: "Target Delivery: Pune / Mumbai",
+    budget: "$32,000 - $48,000",
+    deadline: "5 Days Left",
+    status: "HIGH PRIORITY",
+    bidsCount: "19 Bids Submitted",
+    tolerance: "±0.01 mm / Hard Anodized Type III",
+    material: "Aluminium 6061-T6",
+    buyer: "AeroDynamics Defence"
+  },
+  {
+    id: "RFQ-2026-9150",
+    title: "High-Volume Custom Plastic Injection Molding for Automotive Sensor Cases",
+    category: "Custom Plastic Injection",
+    quantity: "50,000 Units",
+    location: "Target Delivery: Delhi NCR / Pan-India",
+    budget: "$70,000 - $95,000",
+    deadline: "21 Days Left",
+    status: "OPEN FOR QUOTES",
+    bidsCount: "15 Bids Submitted",
+    tolerance: "ISO 20457 SPI-A2 Mirror Finish",
+    material: "Polycarbonate / PBT Blend",
+    buyer: "AutoElectrics Tier-1"
+  },
+  {
+    id: "RFQ-2026-9195",
+    title: "Enterprise Multi-Tenant AI Defect Detection Pipeline & Camera Stream",
+    category: "AI & Software Development",
+    quantity: "8 Manufacturing Plants",
+    location: "Target Delivery: Global Deployment / Cloud Edge",
+    budget: "$85,000 - $120,000",
+    deadline: "11 Days Left",
+    status: "VERIFIED BUYER",
+    bidsCount: "6 Bids Submitted",
+    tolerance: "Sub-15ms p99 inference latency",
+    material: "Kubernetes, ONNX, TensorRT, RTSP",
+    buyer: "Apex Foundry Conglomerate"
   }
 ];
 
@@ -2415,11 +2463,82 @@ function Hero({ go }) {
   );
 }
 
+function B2BPlatformMetricsStrip({ go }) {
+  const stats = [
+    { num: "500+", label: "Verified Manufacturers", note: "ISO 9001 & AS9100 Audited", color: TOKENS.brass },
+    { num: "$18.4M", label: "Gross RFQ Pipeline", note: "Active buyer sourcing value", color: "#60A5FA" },
+    { num: "< 4.2h", label: "Median Quote Turnaround", note: "AI-matched priority bidding", color: TOKENS.teal },
+    { num: "99.98%", label: "On-Time Delivery SLA", note: "Contract escrow protection", color: TOKENS.paper },
+  ];
+
+  const quickPills = [
+    { label: "CNC Machining", id: "manufacturers", icon: "⚙️" },
+    { label: "Sheet Metal Fab", id: "manufacturers", icon: "📐" },
+    { label: "Electronics & SMT", id: "manufacturers", icon: "⚡" },
+    { label: "Injection Molding", id: "manufacturers", icon: "🧪" },
+    { label: "Enterprise ERP & AI", id: "products", icon: "💻" },
+    { label: "Post a Requirement", id: "rfq-wizard", icon: "📋" },
+  ];
+
+  return (
+    <div style={{ background: "rgba(16, 24, 40, 0.8)", borderTop: `1px solid ${TOKENS.hair}`, borderBottom: `1px solid ${TOKENS.hair}`, padding: "28px 24px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        {/* KPI Counter Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20, marginBottom: 24 }}>
+          {stats.map((s, i) => (
+            <div key={i} style={{ borderLeft: `2px solid ${s.color}`, paddingLeft: 14 }}>
+              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 32, fontWeight: 600, color: s.color, lineHeight: 1.1 }}>{s.num}</div>
+              <div style={{ fontSize: 13.5, color: TOKENS.paper, fontWeight: 500, marginTop: 4 }}>{s.label}</div>
+              <div style={{ fontSize: 11.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{s.note}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* 1-Click Directory Launchers */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", paddingTop: 16, borderTop: `1px solid rgba(255,255,255,0.06)` }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginRight: 6 }}>DIRECTORIES:</span>
+          {quickPills.map((p) => (
+            <button
+              key={p.label}
+              onClick={() => go(p.id)}
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 999,
+                padding: "6px 14px",
+                fontSize: 12.5,
+                color: TOKENS.paper,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                transition: "all 0.15s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = TOKENS.brass;
+                e.currentTarget.style.background = "rgba(212,175,55,0.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = TOKENS.hair;
+                e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+              }}
+            >
+              <span>{p.icon}</span>
+              <span>{p.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function HomePage({ go }) {
   return (
     <>
       <TelemetryTicker />
       <Hero go={go} />
+      <B2BPlatformMetricsStrip go={go} />
       <ArcDivider />
 
       <Section eyebrow="Cybernetic Media Reel" title="Watch Abhimanyu platform in action" tight>
@@ -3836,65 +3955,412 @@ function BusinessesPage({ go }) {
 }
 
 function RequirementsPage({ go }) {
+  const [selectedCat, setSelectedCat] = useState("All");
+  const [search, setSearch] = useState("");
+  const [quotingRfq, setQuotingRfq] = useState(null);
+  const [bidsMap, setBidsMap] = useState({});
+  const [quoteForm, setQuoteForm] = useState({ price: "", leadTime: "14 Days", notes: "", company: "", email: "" });
+  const [submittedBid, setSubmittedBid] = useState(false);
+
+  const categories = ["All", "Custom CNC Machining", "Electronics Assembly", "Custom Plastic Injection", "AI & Software Development"];
+
+  const filtered = PUBLIC_RFQS.filter((rfq) => {
+    const matchesCat = selectedCat === "All" || rfq.category === selectedCat;
+    const matchesQuery = rfq.title.toLowerCase().includes(search.toLowerCase()) ||
+                         rfq.location.toLowerCase().includes(search.toLowerCase()) ||
+                         rfq.id.toLowerCase().includes(search.toLowerCase());
+    return matchesCat && matchesQuery;
+  });
+
+  const handleQuoteSubmit = (e) => {
+    e.preventDefault();
+    trackEvent("submit_rfq_bid", { rfqId: quotingRfq.id, price: quoteForm.price, email: quoteForm.email });
+    setBidsMap((prev) => ({
+      ...prev,
+      [quotingRfq.id]: (prev[quotingRfq.id] || parseInt(quotingRfq.bidsCount) || 12) + 1
+    }));
+    setSubmittedBid(true);
+    setTimeout(() => {
+      setSubmittedBid(false);
+      setQuotingRfq(null);
+      setQuoteForm({ price: "", leadTime: "14 Days", notes: "", company: "", email: "" });
+    }, 2400);
+  };
+
   return (
     <>
-      <Section eyebrow="Public Requirements Hub" title="Live RFQs & Sourcing Inquiries" sub="Explore live buyer requirements and submit competitive quotations directly.">
+      <Section eyebrow="Public Requirements Hub" title="Live RFQs & Sourcing Inquiries" sub="Explore live buyer requirements, filter by manufacturing capability, and submit competitive quotations directly.">
+        {/* Controls: Search and Filter Tabs */}
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 14, marginBottom: 24 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCat(cat)}
+                style={{
+                  background: selectedCat === cat ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                  border: `1px solid ${selectedCat === cat ? TOKENS.brass : TOKENS.hair}`,
+                  color: selectedCat === cat ? TOKENS.ink : TOKENS.slate,
+                  borderRadius: 999,
+                  padding: "6px 14px",
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: selectedCat === cat ? 700 : 400,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease"
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ minWidth: 260, flex: "1 1 260px", maxWidth: 360 }}>
+            <input
+              type="text"
+              placeholder="Search RFQs by keyword or location..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                width: "100%",
+                background: "rgba(16, 24, 40, 0.8)",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 6,
+                padding: "8px 14px",
+                color: TOKENS.paper,
+                fontSize: 13,
+                fontFamily: "'Inter', sans-serif"
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Live RFQ Grid */}
         <Grid min={320}>
-          {PUBLIC_RFQS.map((rfq) => (
-            <Card key={rfq.id}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", marginBottom: 10 }}>
-                <span style={{ color: TOKENS.teal }}>{rfq.id}</span>
-                <span style={{ color: TOKENS.brass }}>{rfq.status}</span>
-              </div>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px" }}>{rfq.title}</h3>
-              <div style={{ fontSize: 13.5, color: TOKENS.slate, marginBottom: 4 }}><b>Category:</b> {rfq.category}</div>
-              <div style={{ fontSize: 13.5, color: TOKENS.slate, marginBottom: 4 }}><b>Quantity:</b> {rfq.quantity}</div>
-              <div style={{ fontSize: 13.5, color: TOKENS.slate, marginBottom: 14 }}><b>Target Location:</b> {rfq.location}</div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 12, marginTop: 12 }}>
-                <span style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>{rfq.bidsCount}</span>
-                <Button onClick={() => go("contact")}>Submit Quotation →</Button>
-              </div>
-            </Card>
-          ))}
+          {filtered.map((rfq) => {
+            const currentBids = bidsMap[rfq.id] || parseInt(rfq.bidsCount) || 12;
+            return (
+              <Card key={rfq.id}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", marginBottom: 12 }}>
+                  <span style={{ color: TOKENS.teal, background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 3 }}>{rfq.id}</span>
+                  <span style={{ color: rfq.status === "HIGH PRIORITY" ? "#EF4444" : TOKENS.brass, fontWeight: 700 }}>
+                    ● {rfq.status}
+                  </span>
+                </div>
+                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>{rfq.title}</h3>
+                
+                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 5 }}>
+                  <b style={{ color: TOKENS.paper }}>Category:</b> {rfq.category}
+                </div>
+                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 5 }}>
+                  <b style={{ color: TOKENS.paper }}>Batch Size:</b> {rfq.quantity}
+                </div>
+                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 5 }}>
+                  <b style={{ color: TOKENS.paper }}>Target:</b> {rfq.location.replace("Target Delivery: ", "")}
+                </div>
+                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 5 }}>
+                  <b style={{ color: TOKENS.paper }}>Tolerance / Material:</b> {rfq.tolerance || "Standard Spec"}
+                </div>
+                <div style={{ fontSize: 13, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 8, marginBottom: 14 }}>
+                  Estimated Budget: {rfq.budget} · {rfq.deadline}
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14, marginTop: 12 }}>
+                  <span style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
+                    ⚡ {currentBids} Bids Submitted
+                  </span>
+                  <Button onClick={() => setQuotingRfq(rfq)}>Submit Quotation →</Button>
+                </div>
+              </Card>
+            );
+          })}
         </Grid>
       </Section>
+
+      {/* Interactive Quotation Submission Modal */}
+      {quotingRfq && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.92)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 620, width: "100%", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.8)" }}>
+            <div style={{ background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)", padding: "20px 28px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 4, letterSpacing: "0.1em" }}>OFFICIAL QUOTATION SUBMISSION</div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: 0 }}>{quotingRfq.id}: {quotingRfq.title}</h3>
+                </div>
+                <button onClick={() => setQuotingRfq(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 16, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+              </div>
+            </div>
+
+            <div style={{ padding: 28 }}>
+              {submittedBid ? (
+                <div style={{ textAlign: "center", padding: "32px 0" }}>
+                  <div style={{ fontSize: 44, marginBottom: 12 }}>🚀</div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 8px" }}>Quotation Broadcasted Successfully!</h3>
+                  <p style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>
+                    Your proposal for {quotingRfq.id} has been transmitted to buyer "{quotingRfq.buyer || "Enterprise Buyer"}".
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleQuoteSubmit}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                    <div>
+                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>PROPOSED TOTAL BID PRICE *</label>
+                      <input
+                        required
+                        placeholder="e.g. $48,500 USD or ₹38,00,000"
+                        value={quoteForm.price}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, price: e.target.value })}
+                        style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>PRODUCTION LEAD TIME</label>
+                      <select
+                        value={quoteForm.leadTime}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, leadTime: e.target.value })}
+                        style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                      >
+                        <option value="7 Days">7 Business Days (Express)</option>
+                        <option value="14 Days">14 Business Days (Standard)</option>
+                        <option value="21 Days">21 Business Days</option>
+                        <option value="30+ Days">30+ Business Days</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                    <div>
+                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>MANUFACTURER / VENDOR NAME *</label>
+                      <input
+                        required
+                        placeholder="Your Enterprise Name"
+                        value={quoteForm.company}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, company: e.target.value })}
+                        style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>WORK EMAIL FOR DIRECT CONTACT *</label>
+                      <input
+                        required
+                        type="email"
+                        placeholder="sales@yourcompany.com"
+                        value={quoteForm.email}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, email: e.target.value })}
+                        style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: 18 }}>
+                    <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>TECHNICAL QUALIFICATIONS & SCOPE NOTES</label>
+                    <textarea
+                      rows={3}
+                      placeholder="Specify CNC machines, material traceability certificates (MTR), surface coating tolerances..."
+                      value={quoteForm.notes}
+                      onChange={(e) => setQuoteForm({ ...quoteForm, notes: e.target.value })}
+                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13, resize: "vertical" }}
+                    />
+                  </div>
+
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>🔒 Verified SSL Encrypted Bid</span>
+                    <Button type="submit">Transmit Formal Quote →</Button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <CTA go={go} label="Post Your Own Requirement" />
     </>
   );
 }
 
 function BusinessDashboardPage({ go }) {
+  const [timeframe, setTimeframe] = useState("30D");
+  const [leadsState, setLeadsState] = useState(
+    PUBLIC_RFQS.map((item) => ({ ...item, quoted: false, dismissed: false }))
+  );
+  const [notification, setNotification] = useState("⚡ Live: 2 new buyers posted RFQs in CNC & SMT in the last 15 mins");
+
+  const metrics = {
+    "7D": { views: "680", leads: "28", quotes: "14", pipeline: "$142,000", winRate: "34%" },
+    "30D": { views: "2,450", leads: "120", quotes: "45", pipeline: "$480,000", winRate: "38%" },
+    "Q1": { views: "8,920", leads: "390", quotes: "148", pipeline: "$1,620,000", winRate: "41%" },
+    "ALL": { views: "24,800", leads: "1,140", quotes: "482", pipeline: "$5,240,000", winRate: "42%" }
+  }[timeframe];
+
+  const handleAction = (id, type) => {
+    trackEvent(`dashboard_lead_${type}`, { rfqId: id });
+    setLeadsState((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, quoted: type === "quote", dismissed: type === "dismiss" } : l))
+    );
+  };
+
+  const activeLeads = leadsState.filter((l) => !l.dismissed);
+
   return (
-    <Section eyebrow="Seller & Business Dashboard" title="Enterprise Account Command Center" sub="Manage inbound leads, active product listings, RFQ submissions, and performance telemetry.">
+    <Section eyebrow="Seller & Business Dashboard" title="Enterprise Account Command Center" sub="Manage inbound buyer leads, active product listings, RFQ submissions, and performance telemetry.">
       <Card style={{ padding: 32 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 32 }}>
-          <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, padding: 20, borderRadius: 6 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>PROFILE VIEWS</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: TOKENS.paper, marginTop: 6 }}>2,450</div>
+        {/* Live Notification Strip */}
+        {notification && (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(21, 101, 192, 0.15)", border: `1px solid rgba(21, 101, 192, 0.4)`, borderRadius: 6, padding: "10px 16px", marginBottom: 24, fontSize: 13, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
+            <span>{notification}</span>
+            <button onClick={() => setNotification(null)} style={{ background: "transparent", border: "none", color: TOKENS.slate, cursor: "pointer", fontSize: 14 }}>✕</button>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, padding: 20, borderRadius: 6 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>INBOUND LEADS</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: TOKENS.teal, marginTop: 6 }}>120</div>
+        )}
+
+        {/* Timeframe Selector & Export Bar */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
+          <div style={{ display: "flex", gap: 6 }}>
+            {["7D", "30D", "Q1", "ALL"].map((t) => (
+              <button
+                key={t}
+                onClick={() => setTimeframe(t)}
+                style={{
+                  background: timeframe === t ? TOKENS.brass : "rgba(255,255,255,0.04)",
+                  border: `1px solid ${timeframe === t ? TOKENS.brass : TOKENS.hair}`,
+                  color: timeframe === t ? TOKENS.ink : TOKENS.paper,
+                  padding: "5px 12px",
+                  borderRadius: 4,
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: timeframe === t ? 700 : 400,
+                  cursor: "pointer"
+                }}
+              >
+                {t}
+              </button>
+            ))}
           </div>
-          <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, padding: 20, borderRadius: 6 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass }}>SUBMITTED QUOTES</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: TOKENS.brass, marginTop: 6 }}>45</div>
-          </div>
-          <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, padding: 20, borderRadius: 6 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.paper }}>PIPELINE VALUE</div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: TOKENS.paper, marginTop: 6 }}>$480,000</div>
+
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              onClick={() => {
+                trackEvent("export_dashboard_csv");
+                alert("Downloading CSV report for " + timeframe + " telemetry data...");
+              }}
+              style={{
+                background: "transparent",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 4,
+                padding: "6px 12px",
+                color: TOKENS.slate,
+                fontSize: 12,
+                fontFamily: "'JetBrains Mono', monospace",
+                cursor: "pointer"
+              }}
+            >
+              📥 Export CSV Report
+            </button>
+            <Button onClick={() => go("rfq-wizard")}>➕ Broadcast New RFQ</Button>
           </div>
         </div>
 
-        <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Recent Inbound RFQ Leads</h4>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {PUBLIC_RFQS.map((item) => (
-            <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 16, background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 4, flexWrap: "wrap", gap: 12 }}>
-              <div>
+        {/* KPI Metrics Strip */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 14, marginBottom: 32 }}>
+          <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>PROFILE VIEWS ({timeframe})</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, marginTop: 6 }}>{metrics.views}</div>
+          </div>
+          <div style={{ background: "rgba(0,168,150,0.06)", border: `1px solid rgba(0,168,150,0.25)`, padding: 18, borderRadius: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal }}>INBOUND LEADS</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.teal, marginTop: 6 }}>{metrics.leads}</div>
+          </div>
+          <div style={{ background: "rgba(212,175,55,0.06)", border: `1px solid rgba(212,175,55,0.25)`, padding: 18, borderRadius: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass }}>SUBMITTED QUOTES</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.brass, marginTop: 6 }}>{metrics.quotes}</div>
+          </div>
+          <div style={{ background: "rgba(21,101,192,0.08)", border: `1px solid rgba(21,101,192,0.3)`, padding: 18, borderRadius: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: "#60A5FA" }}>PIPELINE VALUE</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: "#60A5FA", marginTop: 6 }}>{metrics.pipeline}</div>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>WIN RATIO</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper, marginTop: 6 }}>{metrics.winRate}</div>
+          </div>
+        </div>
+
+        {/* Visual Pipeline Funnel Telemetry */}
+        <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 18, marginBottom: 32 }}>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 12 }}>DEAL PIPELINE CONVERSION FUNNEL</div>
+          <div style={{ display: "flex", height: 16, borderRadius: 8, overflow: "hidden", background: "rgba(255,255,255,0.05)" }}>
+            <div style={{ width: "45%", background: TOKENS.blue, title: "Initial Scope" }} />
+            <div style={{ width: "30%", background: TOKENS.teal, title: "Tech Spec Review" }} />
+            <div style={{ width: "18%", background: TOKENS.brass, title: "Negotiation" }} />
+            <div style={{ width: "7%", background: "#10B981", title: "Won Contract" }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 8, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+            <span>● 45% Scoping</span>
+            <span>● 30% Tech Audit</span>
+            <span>● 18% Price Negotiating</span>
+            <span>● 7% Won Deals</span>
+          </div>
+        </div>
+
+        {/* Live Inbound RFQ Leads Table */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: 0 }}>
+            Matched Inbound Buyer RFQs ({activeLeads.length})
+          </h4>
+          <span style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>⚡ AI Match Engine Active</span>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {activeLeads.map((item) => (
+            <div
+              key={item.id}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "16px 20px",
+                background: item.quoted ? "rgba(0,168,150,0.08)" : "rgba(255,255,255,0.02)",
+                border: `1px solid ${item.quoted ? TOKENS.teal : TOKENS.hair}`,
+                borderRadius: 6,
+                flexWrap: "wrap",
+                gap: 14
+              }}
+            >
+              <div style={{ flex: "1 1 300px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal }}>{item.id}</span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass }}>● {item.status}</span>
+                </div>
                 <div style={{ fontSize: 15, color: TOKENS.paper, fontWeight: 600 }}>{item.title}</div>
-                <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>{item.category} · {item.quantity} · {item.budget}</div>
+                <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>
+                  {item.category} · Qty: {item.quantity} · Budget: {item.budget} · {item.location}
+                </div>
               </div>
-              <Button onClick={() => go("contact")}>Send Quote →</Button>
+
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                {item.quoted ? (
+                  <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, border: `1px solid ${TOKENS.teal}`, padding: "6px 12px", borderRadius: 4, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
+                    ✓ Quote Submitted
+                  </span>
+                ) : (
+                  <>
+                    <Button onClick={() => handleAction(item.id, "quote")}>Send Quote →</Button>
+                    <button
+                      onClick={() => handleAction(item.id, "dismiss")}
+                      style={{
+                        background: "transparent",
+                        border: `1px solid ${TOKENS.hair}`,
+                        color: TOKENS.slate,
+                        padding: "8px 12px",
+                        borderRadius: 4,
+                        fontSize: 12,
+                        cursor: "pointer"
+                      }}
+                    >
+                      Decline
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -4346,33 +4812,139 @@ function SiteHeader({ page, go }) {
 
 function Footer({ go }) {
   const cols = [
-    { title: "Company", items: [["About", "about"], ["Careers", "careers"], ["Insights", "insights"], ["Contact", "contact"]] },
-    { title: "Services", items: [["Services", "services"], ["Solutions", "services"]] },
-    { title: "Products", items: [["Products", "products"]] },
-    { title: "Industries", items: [["Industries", "industries"]] },
+    {
+      title: "Sourcing & Manufacturing",
+      items: [
+        ["CNC Machining", "manufacturers"],
+        ["Sheet Metal Fabrication", "manufacturers"],
+        ["SMT Electronics Assembly", "manufacturers"],
+        ["Rubber & Sealing Systems", "manufacturers"],
+        ["Post a Requirement (RFQ)", "rfq-wizard"],
+        ["Browse Live RFQs", "requirements"]
+      ]
+    },
+    {
+      title: "Enterprise Software",
+      items: [
+        ["Abhimanyu ERP Platform", "products"],
+        ["Abhimanyu CRM & Sales", "products"],
+        ["Abhimanyu HRMS & Payroll", "products"],
+        ["Abhimanyu AI Neural Engine", "products"],
+        ["Abhimanyu IoT Fleet Manager", "products"],
+        ["Seller & Vendor Dashboard", "dashboard"]
+      ]
+    },
+    {
+      title: "Engineering Services",
+      items: [
+        ["Custom Software Architecture", "services"],
+        ["Machine Learning & Vision AI", "services"],
+        ["Cloud & Anycast Load Balancing", "services"],
+        ["Zero-Trust Cybersecurity", "services"],
+        ["Technical Case Studies", "case-studies"],
+        ["Engineering Insights Blog", "insights"]
+      ]
+    },
+    {
+      title: "Regional Industrial Hubs",
+      items: [
+        ["Telangana Enterprise HQ", "contact"],
+        ["Chennai Industrial Corridor", "manufacturers"],
+        ["Bengaluru Tech & Hardware", "services"],
+        ["Pune & Mumbai OEM Hub", "manufacturers"],
+        ["Delhi NCR Sourcing Hub", "requirements"],
+        ["Global Edge Anycast Routing", "home"]
+      ]
+    }
   ];
+
   return (
-    <footer style={{ borderTop: `1px solid ${TOKENS.hair}`, padding: "64px 24px 32px" }}>
-      <div style={{ maxWidth: 1140, margin: "0 auto" }}>
+    <footer style={{ borderTop: `1px solid ${TOKENS.hair}`, background: "rgba(11, 31, 58, 0.98)", padding: "70px 24px 36px" }}>
+      <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+        {/* Pre-footer Callout Banner */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 16,
+          background: "linear-gradient(135deg, rgba(21,101,192,0.18) 0%, rgba(0,168,150,0.1) 100%)",
+          border: `1px solid rgba(212,175,55,0.25)`,
+          borderRadius: 8,
+          padding: "24px 30px",
+          marginBottom: 48
+        }}>
+          <div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, color: TOKENS.paper, marginBottom: 4 }}>
+              Scale Your Sourcing & Manufacturing Operations
+            </div>
+            <div style={{ fontSize: 13.5, color: TOKENS.slate }}>
+              Join 500+ verified enterprise buyers, OEM manufacturers, and technology suppliers.
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <Button onClick={() => go("rfq-wizard")}>Post RFQ in 6 Steps →</Button>
+            <Button variant="ghost" onClick={() => go("contact")}>Contact Leadership</Button>
+          </div>
+        </div>
+
+        {/* 5-Column Grid */}
         <div style={{ display: "grid", gridTemplateColumns: "1.4fr repeat(4, 1fr)", gap: 32, marginBottom: 48 }} className="footer-grid">
           <div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, marginBottom: 10 }}>Abhimanyu</div>
-            <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, maxWidth: 220 }}>Technology. Innovation. Transformation.</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <TransparentLogo src="/logo.png" height={32} />
+              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, color: TOKENS.paper, fontWeight: 600 }}>Abhimanyu</div>
+            </div>
+            <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 16px", maxWidth: 240 }}>
+              One Platform. Every Industry. Sloganed to <b style={{ color: TOKENS.brass }}>"Scale Your Business"</b>.
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              <span style={{ background: "rgba(212,175,55,0.1)", border: `1px solid rgba(212,175,55,0.3)`, padding: "3px 8px", borderRadius: 3, fontSize: 10.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>ISO 9001:2015</span>
+              <span style={{ background: "rgba(0,168,150,0.1)", border: `1px solid rgba(0,168,150,0.3)`, padding: "3px 8px", borderRadius: 3, fontSize: 10.5, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>SOC2 TYPE II</span>
+              <span style={{ background: "rgba(21,101,192,0.12)", border: `1px solid rgba(21,101,192,0.3)`, padding: "3px 8px", borderRadius: 3, fontSize: 10.5, color: "#60A5FA", fontFamily: "'JetBrains Mono', monospace" }}>99.999% SLA</span>
+            </div>
           </div>
+
           {cols.map((c) => (
             <div key={c.title}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11.5, color: TOKENS.brass, letterSpacing: "0.08em", marginBottom: 14 }}>{c.title.toUpperCase()}</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, letterSpacing: "0.08em", marginBottom: 16 }}>{c.title.toUpperCase()}</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
                 {c.items.map(([label, id]) => (
-                  <button key={label} onClick={() => go(id)} style={{ background: "none", border: "none", color: TOKENS.slate, fontSize: 13.5, textAlign: "left", cursor: "pointer", padding: 0 }}>{label}</button>
+                  <button
+                    key={label}
+                    onClick={() => go(id)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: TOKENS.slate,
+                      fontSize: 13,
+                      textAlign: "left",
+                      cursor: "pointer",
+                      padding: 0,
+                      transition: "color 0.15s ease"
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = TOKENS.paper)}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = TOKENS.slate)}
+                  >
+                    {label}
+                  </button>
                 ))}
               </div>
             </div>
           ))}
         </div>
-        <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 24, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12, color: TOKENS.slate, fontSize: 12.5, fontFamily: "'JetBrains Mono', monospace" }}>
-          <span>© 2026 Abhimanyu Technologies. All rights reserved.</span>
-          <span>Privacy · Terms · Cookies</span>
+
+        {/* Bottom Legal & Telemetry Line */}
+        <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, color: TOKENS.slate, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
+          <div>
+            <span>© 2026 Abhimanyu Technologies Pvt Ltd. All rights reserved.</span>
+            <span style={{ margin: "0 10px", color: TOKENS.hair }}>|</span>
+            <span>Telangana HQ, India</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <span style={{ color: TOKENS.teal }}>● 12 Edge Nodes Live (Anycast)</span>
+            <span>Privacy Policy · Terms of Sourcing · Security</span>
+          </div>
         </div>
       </div>
     </footer>
