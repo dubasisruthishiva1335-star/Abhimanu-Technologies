@@ -2717,6 +2717,43 @@ function AboutPage({ go }) {
         </Grid>
       </Section>
 
+      <Section eyebrow="Engineering Manifesto" title="Architectural Principles We Uphold" tight>
+        <Grid min={260}>
+          {[
+            { title: "Reliability Over Novelty", desc: "We favor battle-tested boring technologies for core ledgers and stateful storage. Experimental stacks stay in sandbox environments.", badge: "RESILIENCE" },
+            { title: "Zero-Knowledge By Default", desc: "Data isolation with AES-256 multi-region encryption, strict RBAC permissions, and automated key rotation across all cloud origins.", badge: "SECURITY" },
+            { title: "Radical Telemetry & Observability", desc: "Every API call, message queue, and database transaction is metered with synthetic distributed tracing. Alerts trigger before customers notice.", badge: "MONITORING" },
+            { title: "Code Built to Last", desc: "We write clean, strictly typed, modular architectures intended to be extended over 5+ years without technical debt or rewrites.", badge: "ENGINEERING" }
+          ].map((v) => (
+            <Card key={v.title}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.08em" }}>{v.badge}</div>
+              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 8px" }}>{v.title}</h4>
+              <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{v.desc}</p>
+            </Card>
+          ))}
+        </Grid>
+      </Section>
+
+      <Section alt eyebrow="Global Infrastructure" title="12 Anycast Edge POPs Across 4 Continents" tight>
+        <div style={{ background: "rgba(16, 24, 40, 0.8)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 28, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20 }}>
+          <div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.brass }}>Telangana HQ</div>
+            <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>PRIMARY R&D & SYSTEM NOC</div>
+            <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>Core microservices engineering, neural AI lab, and tier-1 multi-cloud routing orchestrator.</p>
+          </div>
+          <div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: "#60A5FA" }}>APAC Core</div>
+            <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>SINGAPORE · CHENNAI · TOKYO</div>
+            <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>Sub-8ms regional Edge POPs serving Southeast Asia, Indian industrial corridors, and East Asia.</p>
+          </div>
+          <div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.paper }}>EMEA & Americas</div>
+            <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>FRANKFURT · LONDON · N. VIRGINIA</div>
+            <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>High-throughput transatlantic transit nodes with full SOC2 Type II and GDPR data boundary compliance.</p>
+          </div>
+        </div>
+      </Section>
+
       <CTA go={go} label="Work With Our Team" />
     </>
   );
