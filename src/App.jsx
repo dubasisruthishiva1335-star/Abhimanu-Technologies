@@ -24,6 +24,26 @@ const TOKENS = {
   hair: "rgba(255, 255, 255, 0.10)",
 };
 
+/* ---------------------------- Multi-Currency Engine ---------------------------- */
+
+const CURRENCIES = {
+  INR: { code: "INR", symbol: "₹", label: "🇮🇳 INR (₹)", rate: 1 },
+  USD: { code: "USD", symbol: "$", label: "🇺🇸 USD ($)", rate: 0.012 },
+  EUR: { code: "EUR", symbol: "€", label: "🇪🇺 EUR (€)", rate: 0.011 },
+  AED: { code: "AED", symbol: "AED ", label: "🇦🇪 AED (د.إ)", rate: 0.044 },
+};
+
+const formatPrice = (inrAmount, curr = "INR") => {
+  const c = CURRENCIES[curr] || CURRENCIES.INR;
+  const converted = inrAmount * c.rate;
+  if (curr === "INR") {
+    if (inrAmount >= 10000000) return `₹${(inrAmount / 10000000).toFixed(1)} Cr`;
+    if (inrAmount >= 100000) return `₹${(inrAmount / 100000).toFixed(1)} L`;
+    return `₹${inrAmount.toLocaleString("en-IN")}`;
+  }
+  return `${c.symbol}${Math.round(converted).toLocaleString("en-US")}`;
+};
+
 /* ---------------------------- data ---------------------------- */
 
 const NAV = [
@@ -2961,9 +2981,18 @@ function InteractiveScopingEstimator({ go }) {
   );
 }
 
-function ProductsPage({ go }) {
+function ProductsPage({ go, currency = "INR" }) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productTab, setProductTab] = useState("overview");
+
+  const renderPlanPrice = (rawPrice) => {
+    if (!rawPrice || rawPrice === "Custom" || currency === "INR") return rawPrice;
+    const match = rawPrice.match(/₹([\d,]+)(.*)/);
+    if (!match) return rawPrice;
+    const num = parseInt(match[1].replace(/,/g, ""), 10);
+    const suffix = match[2] || "";
+    return `${formatPrice(num, currency)}${suffix}`;
+  };
 
   const PRODUCT_DETAILS = {
     erp: {
@@ -3187,7 +3216,7 @@ function ProductsPage({ go }) {
                       }}>
                         {i === 1 && <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.1em" }}>MOST POPULAR</div>}
                         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, marginBottom: 4 }}>{plan.plan}</div>
-                        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.brass, marginBottom: 8, fontWeight: 600 }}>{plan.price}</div>
+                        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, color: TOKENS.brass, marginBottom: 8, fontWeight: 600 }}>{renderPlanPrice(plan.price)}</div>
                         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 10 }}>{plan.users}</div>
                         <div style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5 }}>{plan.notes}</div>
                       </div>
@@ -4229,7 +4258,7 @@ function CareersPage({ go }) {
 
 /* ---------------------------- New B2B Marketplace Sub-Pages ---------------------------- */
 
-function RFQWizardPage({ go }) {
+function RFQWizardPage({ go, openTracker }) {
   const [step, setStep] = useState(1);
   const [rfq, setRfq] = useState({ category: "Custom CNC Machining", qty: "5,000 Units", location: "Telangana / Chennai", specs: "", cadFile: null, cadFileName: "", contactEmail: "" });
   const [submittedId, setSubmittedId] = useState("");
@@ -4278,8 +4307,9 @@ function RFQWizardPage({ go }) {
               📎 CAD FILE: {rfq.cadFileName}
             </div>
           )}
-          <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-            <Button onClick={() => go("requirements")}>View Public RFQ Hub →</Button>
+          <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+            <Button onClick={() => openTracker?.(submittedId)}>🔍 Track This RFQ in Real-Time →</Button>
+            <Button variant="ghost" onClick={() => go("requirements")}>View Public RFQ Hub</Button>
             <Button variant="ghost" onClick={() => { setSubmittedId(""); setStep(1); }}>Post Another RFQ</Button>
           </div>
         </Card>
@@ -4911,7 +4941,7 @@ function BusinessesPage({ go }) {
   );
 }
 
-function RequirementsPage({ go }) {
+function RequirementsPage({ go, openTracker, currency = "INR" }) {
   const [selectedCat, setSelectedCat] = useState("All");
   const [search, setSearch] = useState("");
   const [quotingRfq, setQuotingRfq] = useState(null);
@@ -4947,6 +4977,50 @@ function RequirementsPage({ go }) {
   return (
     <>
       <Section eyebrow="Public Requirements Hub" title="Live RFQs & Sourcing Inquiries" sub="Explore live buyer requirements, filter by manufacturing capability, and submit competitive quotations directly.">
+        {/* Top RFQ Tracker Banner */}
+        <div
+          style={{
+            background: "linear-gradient(135deg, rgba(21,101,192,0.12) 0%, rgba(0,168,150,0.12) 100%)",
+            border: `1px solid rgba(0,168,150,0.35)`,
+            borderRadius: 8,
+            padding: "16px 22px",
+            marginBottom: 24,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 14,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 24 }}>🛰️</span>
+            <div>
+              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper, fontWeight: 600 }}>
+                Live RFQ Procurement & PO Status Tracker
+              </div>
+              <div style={{ fontSize: 12.5, color: TOKENS.slate }}>
+                Track automated DFM CAD mesh verification, evaluate competing supplier quotes, and generate digital Purchase Orders.
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => openTracker?.("RFQ-2026-9041")}
+            style={{
+              background: TOKENS.teal,
+              color: "#0B1F3A",
+              border: "none",
+              borderRadius: 5,
+              padding: "8px 16px",
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+          >
+            🔍 Track RFQ Milestones & Bids →
+          </button>
+        </div>
+
         {/* Controls: Search and Filter Tabs */}
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 14, marginBottom: 24 }}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -5022,11 +5096,28 @@ function RequirementsPage({ go }) {
                   Estimated Budget: {rfq.budget} · {rfq.deadline}
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14, marginTop: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14, marginTop: 12, flexWrap: "wrap", gap: 8 }}>
                   <span style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
                     ⚡ {currentBids} Bids Submitted
                   </span>
-                  <Button onClick={() => setQuotingRfq(rfq)}>Submit Quotation →</Button>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    <button
+                      onClick={() => openTracker?.(rfq.id)}
+                      style={{
+                        background: "rgba(255,255,255,0.04)",
+                        border: `1px solid ${TOKENS.hair}`,
+                        color: TOKENS.paper,
+                        padding: "7px 12px",
+                        borderRadius: 4,
+                        fontSize: 11.5,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Inspect Timeline →
+                    </button>
+                    <Button onClick={() => setQuotingRfq(rfq)}>Submit Quotation →</Button>
+                  </div>
                 </div>
               </Card>
             );
@@ -5846,9 +5937,11 @@ function TransparentLogo({ src, height = 40, alt = "MyVault Logo" }) {
   );
 }
 
-function SiteHeader({ page, go }) {
+function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setCurrentUser, openAuth, openTracker }) {
   const [open, setOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const megaMenuCols = [
     {
@@ -6038,8 +6131,183 @@ function SiteHeader({ page, go }) {
           ))}
         </nav>
 
-        {/* Desktop CTA */}
-        <div className="desktop-nav" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        {/* Desktop CTA & Controls */}
+        <div className="desktop-nav" style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {/* Currency Switcher */}
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setCurrencyOpen(!currencyOpen)}
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 6,
+                color: TOKENS.paper,
+                fontSize: 12,
+                fontFamily: "'JetBrains Mono', monospace",
+                padding: "6px 10px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+              title="Select Platform Currency"
+            >
+              <span>{CURRENCIES[currency]?.label || currency}</span>
+              <span style={{ fontSize: 9 }}>▼</span>
+            </button>
+            {currencyOpen && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "calc(100% + 6px)",
+                  right: 0,
+                  background: "rgba(11, 31, 58, 0.98)",
+                  border: `1px solid ${TOKENS.hair}`,
+                  borderRadius: 6,
+                  padding: 4,
+                  zIndex: 100,
+                  boxShadow: "0 12px 32px rgba(0,0,0,0.6)",
+                  minWidth: 140,
+                }}
+              >
+                {Object.keys(CURRENCIES).map((cKey) => (
+                  <button
+                    key={cKey}
+                    onClick={() => { setCurrency?.(cKey); setCurrencyOpen(false); }}
+                    style={{
+                      width: "100%",
+                      background: currency === cKey ? "rgba(212,175,55,0.15)" : "transparent",
+                      border: "none",
+                      color: currency === cKey ? TOKENS.brass : TOKENS.paper,
+                      padding: "7px 10px",
+                      textAlign: "left",
+                      fontSize: 12,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      cursor: "pointer",
+                      borderRadius: 4,
+                    }}
+                  >
+                    {CURRENCIES[cKey].label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Track RFQ Button */}
+          <button
+            onClick={() => openTracker?.("RFQ-2026-9041")}
+            style={{
+              background: "rgba(0,168,150,0.12)",
+              border: `1px solid rgba(0,168,150,0.35)`,
+              borderRadius: 6,
+              color: TOKENS.teal,
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              padding: "6px 12px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+            }}
+            title="Inspect Real-time RFQ Status, Competing Quotes & Digital POs"
+          >
+            <span>🔍</span> Track RFQ
+          </button>
+
+          {/* User Profile / Auth Button */}
+          {currentUser ? (
+            <div style={{ position: "relative" }}>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                style={{
+                  background: "rgba(21,101,192,0.15)",
+                  border: `1px solid rgba(21,101,192,0.4)`,
+                  borderRadius: 6,
+                  color: TOKENS.paper,
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  padding: "6px 12px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
+                <span>{currentUser.avatar}</span>
+                <span style={{ maxWidth: 110, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {currentUser.company.split(" ")[0]}
+                </span>
+                <span style={{ fontSize: 9, color: TOKENS.teal }}>●</span>
+              </button>
+
+              {userMenuOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "calc(100% + 6px)",
+                    right: 0,
+                    width: 250,
+                    background: "rgba(11, 31, 58, 0.98)",
+                    border: `1px solid ${TOKENS.hair}`,
+                    borderRadius: 8,
+                    padding: 12,
+                    zIndex: 100,
+                    boxShadow: "0 16px 40px rgba(0,0,0,0.7)",
+                  }}
+                >
+                  <div style={{ paddingBottom: 8, borderBottom: `1px solid ${TOKENS.hair}`, marginBottom: 8 }}>
+                    <div style={{ fontFamily: "'Fraunces', serif", fontSize: 14, color: TOKENS.paper }}>{currentUser.name}</div>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass }}>{currentUser.company}</div>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginTop: 2 }}>{currentUser.badge}</div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    <button
+                      onClick={() => { go("dashboard"); setUserMenuOpen(false); }}
+                      style={{ background: "transparent", border: "none", color: TOKENS.paper, textAlign: "left", padding: "6px 8px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", borderRadius: 4 }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      📊 Seller & Buyer Dashboard
+                    </button>
+                    <button
+                      onClick={() => { openTracker?.("RFQ-2026-9041"); setUserMenuOpen(false); }}
+                      style={{ background: "transparent", border: "none", color: TOKENS.paper, textAlign: "left", padding: "6px 8px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", borderRadius: 4 }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      📋 Track Live RFQs ({currentUser.activeRFQs})
+                    </button>
+                    <button
+                      onClick={() => { openAuth?.(); setUserMenuOpen(false); }}
+                      style={{ background: "transparent", border: "none", color: TOKENS.teal, textAlign: "left", padding: "6px 8px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", borderRadius: 4 }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      ⚙️ Manage Account / Switch Role
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={openAuth}
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 6,
+                color: TOKENS.paper,
+                fontSize: 12,
+                fontFamily: "'JetBrains Mono', monospace",
+                padding: "6px 12px",
+                cursor: "pointer",
+              }}
+            >
+              🔑 Sign In
+            </button>
+          )}
+
           <button
             onClick={() => go("contact")}
             style={{
@@ -6047,15 +6315,15 @@ function SiteHeader({ page, go }) {
               border: `1px solid ${TOKENS.hair}`,
               borderRadius: 6,
               color: TOKENS.paper,
-              fontSize: 12.5,
+              fontSize: 12,
               fontFamily: "'JetBrains Mono', monospace",
-              padding: "8px 14px",
+              padding: "6px 12px",
               cursor: "pointer",
             }}
           >
             Contact
           </button>
-          <Button onClick={() => go("rfq-wizard")}>Post RFQ →</Button>
+          <Button onClick={() => go("rfq-wizard")} style={{ padding: "7px 14px", fontSize: 12 }}>Post RFQ →</Button>
         </div>
 
         {/* Mobile Toggle */}
@@ -6067,6 +6335,22 @@ function SiteHeader({ page, go }) {
       {/* Mobile Menu */}
       {open && (
         <div className="mobile-menu" style={{ padding: "0 20px 20px", display: "flex", flexDirection: "column", gap: 4, background: `rgba(11, 31, 58, 0.98)`, borderTop: `1px solid ${TOKENS.hair}`, maxHeight: "75vh", overflowY: "auto" }}>
+          {/* Quick Mobile Action Bar */}
+          <div style={{ display: "flex", gap: 8, padding: "12px 0 8px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+            <button
+              onClick={() => { openTracker?.("RFQ-2026-9041"); setOpen(false); }}
+              style={{ flex: 1, background: "rgba(0,168,150,0.15)", border: `1px solid ${TOKENS.teal}`, color: TOKENS.teal, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
+            >
+              🔍 Track RFQ
+            </button>
+            <button
+              onClick={() => { openAuth?.(); setOpen(false); }}
+              style={{ flex: 1, background: "rgba(21,101,192,0.15)", border: `1px solid ${TOKENS.blue}`, color: TOKENS.paper, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
+            >
+              {currentUser ? `👤 ${currentUser.company.split(" ")[0]}` : "🔑 Sign In"}
+            </button>
+          </div>
+
           {[
             { id: "home", label: "🏠 Home" },
             { id: "products", label: "🛒 Products" },
@@ -6706,6 +6990,914 @@ function LeadCaptureModal() {
   );
 }
 
+/* ---------------------------- Interactive B2B RFQ & PO Lifecycle Inspector Modal ---------------------------- */
+
+function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go }) {
+  const [activeId, setActiveId] = useState(rfqId || "RFQ-2026-9041");
+  const [customInput, setCustomInput] = useState("");
+  const [acceptedBid, setAcceptedBid] = useState(null);
+  const [generatingPo, setGeneratingPo] = useState(false);
+
+  useEffect(() => {
+    if (rfqId) setActiveId(rfqId);
+  }, [rfqId]);
+
+  if (!isOpen) return null;
+
+  const knownRfq = PUBLIC_RFQS.find((r) => r.id === activeId) || {
+    id: activeId,
+    title: `Precision Engineered Component Batch — ${activeId}`,
+    category: "Custom CNC Machining",
+    quantity: "5,000 Units",
+    location: "Target Delivery: Telangana / Chennai",
+    budget: "$40,000 - $65,000",
+    deadline: "14 Days",
+    status: "OPEN FOR QUOTES",
+    bidsCount: "12 Bids Submitted",
+    tolerance: "±0.010 mm",
+    material: "Aluminium 6061-T6 / SS 316L",
+    buyer: "Verified Enterprise Buyer",
+  };
+
+  const sampleBids = [
+    {
+      id: "BID-1",
+      supplier: "Apex Precision Engineering Ltd.",
+      hub: "Chennai Corridor, Tamil Nadu",
+      inrPrice: 1840000,
+      leadTime: "14 Business Days",
+      oee: "99.4%",
+      certs: ["AS9100D", "ISO 9001:2015"],
+      rating: "4.9/5 (142 Deliveries)",
+      status: "TOP MATCH",
+    },
+    {
+      id: "BID-2",
+      supplier: "Deccan High-Precision Engineering",
+      hub: "Hyderabad Aerospace Hub, Telangana",
+      inrPrice: 1920000,
+      leadTime: "12 Business Days",
+      oee: "98.8%",
+      certs: ["ISO 9001:2015", "IATF 16949"],
+      rating: "4.8/5 (88 Deliveries)",
+      status: "FASTEST LEAD",
+    },
+    {
+      id: "BID-3",
+      supplier: "Bengaluru Micro-Machining Ltd.",
+      hub: "Peenya Industrial Area, Bengaluru",
+      inrPrice: 1790000,
+      leadTime: "16 Business Days",
+      oee: "99.1%",
+      certs: ["ISO 13485", "ISO 9001:2015"],
+      rating: "4.9/5 (210 Deliveries)",
+      status: "BEST VALUE",
+    },
+  ];
+
+  const handleAcceptBid = (bid) => {
+    setGeneratingPo(true);
+    setTimeout(() => {
+      setAcceptedBid({
+        ...bid,
+        poNumber: `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+        issuedAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      });
+      setGeneratingPo(false);
+      trackEvent("accept_rfq_bid", { rfqId: activeId, supplier: bid.supplier, po: `PO-2026-${activeId.slice(-4)}` });
+    }, 700);
+  };
+
+  const milestones = [
+    { step: 1, label: "RFQ Broadcasted", desc: "Broadcasted to 42 verified plants", done: true, current: false },
+    { step: 2, label: "DFM Feasibility Audit", desc: "CAD mesh ±0.005mm verified", done: true, current: false },
+    { step: 3, label: "Competitive Bidding", desc: "3 live quotes evaluated", done: !acceptedBid, current: !acceptedBid },
+    { step: 4, label: "PO & FAI Prototype", desc: acceptedBid ? `Issued ${acceptedBid.poNumber}` : "Pending buyer acceptance", done: !!acceptedBid, current: !!acceptedBid },
+    { step: 5, label: "Batch Dispatch", desc: "14-day production cycle", done: false, current: false },
+  ];
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(7, 16, 32, 0.94)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        zIndex: 9999,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 16,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 880,
+          width: "100%",
+          maxHeight: "92vh",
+          overflowY: "auto",
+          background: TOKENS.panelAlt,
+          border: `1px solid rgba(212,175,55,0.4)`,
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+        }}
+      >
+        {/* Modal Top Header */}
+        <div
+          style={{
+            background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)",
+            padding: "24px 28px",
+            borderBottom: `1px solid ${TOKENS.hair}`,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            gap: 16,
+          }}
+        >
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8, flexWrap: "wrap" }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em" }}>
+                LIVE PROCUREMENT LIFECYCLE & PO TRACKER
+              </span>
+              <span
+                style={{
+                  background: acceptedBid ? "rgba(0,168,150,0.2)" : "rgba(212,175,55,0.15)",
+                  color: acceptedBid ? TOKENS.teal : TOKENS.brass,
+                  border: `1px solid ${acceptedBid ? TOKENS.teal : TOKENS.brass}`,
+                  fontSize: 10.5,
+                  padding: "3px 8px",
+                  borderRadius: 4,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: 700,
+                }}
+              >
+                {acceptedBid ? `● ${acceptedBid.poNumber} ISSUED` : `● ${knownRfq.status}`}
+              </span>
+            </div>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+              {knownRfq.id}: {knownRfq.title}
+            </h3>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate, marginTop: 4 }}>
+              Buyer: <span style={{ color: TOKENS.paper }}>{knownRfq.buyer}</span> • {knownRfq.location}
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: `1px solid ${TOKENS.hair}`,
+              color: TOKENS.paper,
+              fontSize: 18,
+              cursor: "pointer",
+              width: 34,
+              height: 34,
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Quick Switcher & Lookup */}
+        <div style={{ padding: "14px 28px", background: "rgba(255,255,255,0.02)", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>Switch RFQ:</span>
+            {PUBLIC_RFQS.map((r) => (
+              <button
+                key={r.id}
+                onClick={() => { setActiveId(r.id); setAcceptedBid(null); }}
+                style={{
+                  background: activeId === r.id ? TOKENS.brass : "transparent",
+                  color: activeId === r.id ? TOKENS.ink : TOKENS.paper,
+                  border: `1px solid ${activeId === r.id ? TOKENS.brass : TOKENS.hair}`,
+                  borderRadius: 4,
+                  padding: "4px 8px",
+                  fontSize: 11,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  cursor: "pointer",
+                }}
+              >
+                {r.id.split("-")[2]}
+              </button>
+            ))}
+          </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (customInput.trim()) {
+                setActiveId(customInput.trim().toUpperCase());
+                setAcceptedBid(null);
+                setCustomInput("");
+              }
+            }}
+            style={{ display: "flex", gap: 6 }}
+          >
+            <input
+              type="text"
+              placeholder="Enter RFQ / Ref ID..."
+              value={customInput}
+              onChange={(e) => setCustomInput(e.target.value)}
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 4,
+                padding: "4px 10px",
+                color: TOKENS.paper,
+                fontSize: 11,
+                fontFamily: "'JetBrains Mono', monospace",
+                width: 140,
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                background: TOKENS.blue,
+                color: "#fff",
+                border: "none",
+                borderRadius: 4,
+                padding: "4px 10px",
+                fontSize: 11,
+                cursor: "pointer",
+                fontFamily: "'JetBrains Mono', monospace",
+              }}
+            >
+              Lookup
+            </button>
+          </form>
+        </div>
+
+        {/* Modal Body */}
+        <div style={{ padding: "24px 28px" }}>
+          {/* Milestone Stepper */}
+          <div style={{ marginBottom: 28, background: "rgba(255,255,255,0.02)", padding: "18px 20px", borderRadius: 8, border: `1px solid ${TOKENS.hair}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
+              {milestones.map((m, idx) => (
+                <div key={idx} style={{ flex: 1, minWidth: 120, position: "relative" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                    <div
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: "50%",
+                        background: m.done ? TOKENS.teal : m.current ? TOKENS.brass : "rgba(255,255,255,0.08)",
+                        color: m.done || m.current ? TOKENS.ink : TOKENS.slate,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 11,
+                        fontWeight: "bold",
+                        fontFamily: "'JetBrains Mono', monospace",
+                      }}
+                    >
+                      {m.done ? "✓" : m.step}
+                    </div>
+                    <span style={{ fontSize: 11.5, fontFamily: "'Inter', sans-serif", fontWeight: 600, color: m.done || m.current ? TOKENS.paper : TOKENS.slate }}>
+                      {m.label}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 10.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", paddingLeft: 32 }}>
+                    {m.desc}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* PO Issued Banner */}
+          {acceptedBid && (
+            <div
+              style={{
+                marginBottom: 24,
+                background: "linear-gradient(135deg, rgba(0, 168, 150, 0.15) 0%, rgba(21, 101, 192, 0.15) 100%)",
+                border: `1px solid ${TOKENS.teal}`,
+                borderRadius: 8,
+                padding: "20px 24px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 16,
+              }}
+            >
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, fontWeight: 700, marginBottom: 4 }}>
+                  ✓ B2B PURCHASE ORDER ISSUED: {acceptedBid.poNumber}
+                </div>
+                <div style={{ color: TOKENS.paper, fontSize: 14 }}>
+                  Awarded to <strong>{acceptedBid.supplier}</strong> for {formatPrice(acceptedBid.inrPrice, currency)}. Shop floor dispatch scheduled in {acceptedBid.leadTime}.
+                </div>
+              </div>
+              <button
+                onClick={() => alert(`Simulating Secure PDF Download for Purchase Order ${acceptedBid.poNumber} (Includes Digital Escrow & CMM GD&T Inspection Report)...`)}
+                style={{
+                  background: TOKENS.teal,
+                  color: "#0B1F3A",
+                  border: "none",
+                  borderRadius: 6,
+                  padding: "8px 18px",
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                📄 Download PO ({acceptedBid.poNumber}) →
+              </button>
+            </div>
+          )}
+
+          {/* RFQ Specs Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 28 }}>
+            <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>BATCH QUANTITY</div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: TOKENS.paper, fontWeight: 600, marginTop: 4 }}>{knownRfq.quantity}</div>
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>REQUIRED TOLERANCE</div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: TOKENS.teal, fontWeight: 600, marginTop: 4 }}>{knownRfq.tolerance}</div>
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CERTIFIED MATERIAL</div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: TOKENS.brass, fontWeight: 600, marginTop: 4 }}>{knownRfq.material}</div>
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.025)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CAD MESH ATTACHMENT</div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper, marginTop: 4 }}>
+                📎 {knownRfq.id.toLowerCase()}_cad.step (14.2 MB)
+              </div>
+            </div>
+          </div>
+
+          {/* Competing Vetted Supplier Quotes */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <h4 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
+                Competing Supplier Bids ({sampleBids.length})
+              </h4>
+              <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+                Currency: <strong style={{ color: TOKENS.brass }}>{currency}</strong>
+              </span>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {sampleBids.map((bid) => {
+                const isAwarded = acceptedBid?.id === bid.id;
+                return (
+                  <div
+                    key={bid.id}
+                    style={{
+                      background: isAwarded ? "rgba(0,168,150,0.08)" : "rgba(255,255,255,0.025)",
+                      border: `1px solid ${isAwarded ? TOKENS.teal : TOKENS.hair}`,
+                      borderRadius: 8,
+                      padding: "16px 20px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      gap: 14,
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper, fontWeight: 600 }}>
+                          {bid.supplier}
+                        </span>
+                        <span style={{ background: "rgba(21,101,192,0.15)", color: TOKENS.teal, fontSize: 10, padding: "2px 6px", borderRadius: 4, fontFamily: "'JetBrains Mono', monospace" }}>
+                          {bid.status}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 12, color: TOKENS.slate, marginBottom: 6 }}>
+                        📍 {bid.hub} • ⭐ {bid.rating} • OEE: {bid.oee}
+                      </div>
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                        {bid.certs.map((c) => (
+                          <span key={c} style={{ background: "rgba(255,255,255,0.05)", color: TOKENS.slate, fontSize: 10, padding: "2px 6px", borderRadius: 3, fontFamily: "'JetBrains Mono', monospace" }}>
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
+                      <div>
+                        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, color: TOKENS.brassBright, fontWeight: 700 }}>
+                          {formatPrice(bid.inrPrice, currency)}
+                        </div>
+                        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
+                          ⏱ Lead: {bid.leadTime}
+                        </div>
+                      </div>
+
+                      {acceptedBid ? (
+                        isAwarded ? (
+                          <span style={{ background: TOKENS.teal, color: TOKENS.ink, padding: "6px 14px", borderRadius: 4, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                            ✓ PO AWARDED
+                          </span>
+                        ) : (
+                          <span style={{ color: TOKENS.slate, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
+                            Bid Closed
+                          </span>
+                        )
+                      ) : (
+                        <button
+                          disabled={generatingPo}
+                          onClick={() => handleAcceptBid(bid)}
+                          style={{
+                            background: TOKENS.brass,
+                            color: TOKENS.ink,
+                            border: "none",
+                            borderRadius: 4,
+                            padding: "7px 14px",
+                            fontSize: 11.5,
+                            fontFamily: "'JetBrains Mono', monospace",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                          }}
+                        >
+                          {generatingPo ? "Issuing PO..." : "Accept Bid & Issue PO →"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Modal Bottom Actions */}
+          <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 18, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+            <button
+              onClick={() => alert(`Downloading DFM Engineering Feasibility & Automated Mesh Audit report for ${knownRfq.id}...`)}
+              style={{
+                background: "transparent",
+                border: `1px solid ${TOKENS.hair}`,
+                color: TOKENS.paper,
+                borderRadius: 4,
+                padding: "8px 14px",
+                fontSize: 12,
+                fontFamily: "'JetBrains Mono', monospace",
+                cursor: "pointer",
+              }}
+            >
+              📥 Download DFM Feasibility Audit (PDF)
+            </button>
+            <div style={{ display: "flex", gap: 10 }}>
+              <Button variant="ghost" onClick={() => { onClose(); go("requirements"); }}>Browse Other Live RFQs</Button>
+              <Button onClick={onClose}>Done</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Enterprise B2B Buyer & Supplier Access Portal ---------------------------- */
+
+function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
+  const [tab, setTab] = useState("signin");
+  const [role, setRole] = useState("buyer");
+  const [form, setForm] = useState({
+    name: "",
+    company: "",
+    email: "",
+    hub: "Telangana Enterprise Campus",
+    gstin: "",
+    industry: "Aerospace & Defence",
+  });
+  const [toast, setToast] = useState("");
+
+  if (!isOpen) return null;
+
+  const handleDemoLogin = (demoRole) => {
+    let profile;
+    if (demoRole === "buyer") {
+      profile = {
+        name: "Dr. K. S. Rao",
+        company: "Bharat Aerospace & Dynamics",
+        role: "buyer",
+        location: "Telangana & Chennai Hub",
+        avatar: "🏢",
+        badge: "Enterprise Procurement Lead",
+        tier: "Tier-1 Defence & Space",
+        activeRFQs: 3,
+        email: "ksrao@bharataero.gov.in",
+      };
+    } else {
+      profile = {
+        name: "S. Venkatesh",
+        company: "Apex Precision Engineering Ltd.",
+        role: "supplier",
+        location: "Ambattur Corridor, Chennai",
+        avatar: "🏭",
+        badge: "Verified OEM Manufacturer",
+        tier: "AS9100D Certified Plant",
+        activeRFQs: 8,
+        email: "venkatesh@apexprecision.in",
+      };
+    }
+    onLogin(profile);
+    setToast(`Logged in as ${profile.company} (${profile.role.toUpperCase()})`);
+    setTimeout(() => {
+      setToast("");
+      onClose();
+    }, 900);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const profile = {
+      name: form.name || (role === "buyer" ? "Enterprise Buyer" : "Industrial Supplier"),
+      company: form.company || "Enterprise Corp Ltd.",
+      role: role,
+      location: form.hub,
+      avatar: role === "buyer" ? "🏢" : "🏭",
+      badge: role === "buyer" ? "Procurement Director" : "Verified Manufacturer",
+      tier: "Verified Member",
+      activeRFQs: 1,
+      email: form.email,
+    };
+    onLogin(profile);
+    setToast(`Welcome, ${profile.name}! Account synced.`);
+    setTimeout(() => {
+      setToast("");
+      onClose();
+    }, 900);
+  };
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(7, 16, 32, 0.94)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        zIndex: 9999,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 16,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 520,
+          width: "100%",
+          maxHeight: "92vh",
+          overflowY: "auto",
+          background: TOKENS.panelAlt,
+          border: `1px solid rgba(212,175,55,0.4)`,
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.85)",
+          position: "relative",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            background: "linear-gradient(135deg, #0a1929 0%, #101828 100%)",
+            padding: "24px 28px",
+            borderBottom: `1px solid ${TOKENS.hair}`,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", marginBottom: 4 }}>
+              ENTERPRISE ACCESS PORTAL
+            </div>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
+              {currentUser ? "Manage Enterprise Profile" : tab === "signin" ? "Sign In to Your Workspace" : "Register Enterprise Account"}
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: `1px solid ${TOKENS.hair}`,
+              color: TOKENS.paper,
+              fontSize: 18,
+              cursor: "pointer",
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Toast Notification */}
+        {toast && (
+          <div style={{ background: "rgba(0,168,150,0.2)", borderBottom: `1px solid ${TOKENS.teal}`, color: TOKENS.teal, padding: "10px 24px", fontSize: 13, fontFamily: "'JetBrains Mono', monospace", textAlign: "center" }}>
+            ✓ {toast}
+          </div>
+        )}
+
+        {currentUser ? (
+          /* Active Account State */
+          <div style={{ padding: "28px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 18, marginBottom: 20 }}>
+              <div style={{ fontSize: 36 }}>{currentUser.avatar}</div>
+              <div>
+                <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: TOKENS.paper }}>{currentUser.company}</div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass }}>{currentUser.badge} ({currentUser.role.toUpperCase()})</div>
+                <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 4 }}>📍 {currentUser.location} • {currentUser.email}</div>
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 24 }}>
+              <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, padding: 12, borderRadius: 6, textAlign: "center" }}>
+                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>ACTIVE RFQs</div>
+                <div style={{ fontSize: 20, fontFamily: "'Fraunces', serif", color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>{currentUser.activeRFQs} Live</div>
+              </div>
+              <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, padding: 12, borderRadius: 6, textAlign: "center" }}>
+                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>SECURITY STATUS</div>
+                <div style={{ fontSize: 13, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginTop: 8 }}>✓ MFA VERIFIED</div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <button
+                onClick={() => {
+                  const newRole = currentUser.role === "buyer" ? "supplier" : "buyer";
+                  handleDemoLogin(newRole);
+                }}
+                style={{
+                  background: "rgba(21, 101, 192, 0.15)",
+                  border: `1px solid ${TOKENS.blue}`,
+                  color: TOKENS.paper,
+                  padding: "10px 16px",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  fontSize: 13,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  textAlign: "center",
+                }}
+              >
+                Switch Role to {currentUser.role === "buyer" ? "🏭 Verified Supplier" : "🏢 Enterprise Buyer"} →
+              </button>
+
+              <button
+                onClick={() => {
+                  onLogout();
+                  setToast("Signed out successfully.");
+                  setTimeout(() => { setToast(""); onClose(); }, 800);
+                }}
+                style={{
+                  background: "transparent",
+                  border: `1px solid ${TOKENS.hair}`,
+                  color: "#f87171",
+                  padding: "10px 16px",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  fontSize: 13,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  textAlign: "center",
+                }}
+              >
+                Sign Out of Workspace
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Sign In / Register Forms */
+          <div style={{ padding: "24px 28px" }}>
+            {/* Quick 1-Click Demo Logins */}
+            <div style={{ marginBottom: 20, background: "rgba(212, 175, 55, 0.08)", border: `1px solid rgba(212, 175, 55, 0.3)`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, marginBottom: 8, fontWeight: 700 }}>
+                ⚡ 1-CLICK INSTANT TEST LOGIN
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button
+                  onClick={() => handleDemoLogin("buyer")}
+                  style={{
+                    flex: 1,
+                    background: "rgba(255,255,255,0.06)",
+                    border: `1px solid ${TOKENS.hair}`,
+                    color: TOKENS.paper,
+                    padding: "8px 12px",
+                    borderRadius: 6,
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    textAlign: "left",
+                  }}
+                >
+                  🏢 <strong>Buyer:</strong> Bharat Aerospace
+                </button>
+                <button
+                  onClick={() => handleDemoLogin("supplier")}
+                  style={{
+                    flex: 1,
+                    background: "rgba(255,255,255,0.06)",
+                    border: `1px solid ${TOKENS.hair}`,
+                    color: TOKENS.paper,
+                    padding: "8px 12px",
+                    borderRadius: 6,
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    textAlign: "left",
+                  }}
+                >
+                  🏭 <strong>Supplier:</strong> Apex Precision
+                </button>
+              </div>
+            </div>
+
+            {/* Mode Switcher Tabs */}
+            <div style={{ display: "flex", borderBottom: `1px solid ${TOKENS.hair}`, marginBottom: 20 }}>
+              <button
+                onClick={() => setTab("signin")}
+                style={{
+                  flex: 1,
+                  background: "transparent",
+                  border: "none",
+                  borderBottom: `2px solid ${tab === "signin" ? TOKENS.brass : "transparent"}`,
+                  color: tab === "signin" ? TOKENS.brass : TOKENS.slate,
+                  padding: "8px 0",
+                  cursor: "pointer",
+                  fontSize: 13,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: 600,
+                }}
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => setTab("register")}
+                style={{
+                  flex: 1,
+                  background: "transparent",
+                  border: "none",
+                  borderBottom: `2px solid ${tab === "register" ? TOKENS.brass : "transparent"}`,
+                  color: tab === "register" ? TOKENS.brass : TOKENS.slate,
+                  padding: "8px 0",
+                  cursor: "pointer",
+                  fontSize: 13,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: 600,
+                }}
+              >
+                Register Business
+              </button>
+            </div>
+
+            {/* Role Selection */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 6 }}>
+                SELECT YOUR ENTERPRISE ROLE
+              </label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => setRole("buyer")}
+                  style={{
+                    background: role === "buyer" ? "rgba(21, 101, 192, 0.2)" : "rgba(255,255,255,0.03)",
+                    border: `1px solid ${role === "buyer" ? TOKENS.blue : TOKENS.hair}`,
+                    color: role === "buyer" ? TOKENS.paper : TOKENS.slate,
+                    padding: "10px",
+                    borderRadius: 6,
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    textAlign: "center",
+                  }}
+                >
+                  🏢 Enterprise Buyer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole("supplier")}
+                  style={{
+                    background: role === "supplier" ? "rgba(0, 168, 150, 0.2)" : "rgba(255,255,255,0.03)",
+                    border: `1px solid ${role === "supplier" ? TOKENS.teal : TOKENS.hair}`,
+                    color: role === "supplier" ? TOKENS.paper : TOKENS.slate,
+                    padding: "10px",
+                    borderRadius: 6,
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    textAlign: "center",
+                  }}
+                >
+                  🏭 Verified Supplier
+                </button>
+              </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {tab === "register" && (
+                <div>
+                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                    FULL NAME / REPRESENTATIVE
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Ramesh Chandra"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                  />
+                </div>
+              )}
+
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                  WORK EMAIL (CORPORATE DOMAIN)
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="name@company.com"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                />
+              </div>
+
+              {tab === "register" && (
+                <>
+                  <div>
+                    <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                      COMPANY / ENTITY NAME
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Apex Industrial Solutions Ltd."
+                      value={form.company}
+                      onChange={(e) => setForm({ ...form, company: e.target.value })}
+                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
+                      PRIMARY OPERATIONAL HUB
+                    </label>
+                    <select
+                      value={form.hub}
+                      onChange={(e) => setForm({ ...form, hub: e.target.value })}
+                      style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
+                    >
+                      <option value="Telangana Enterprise Campus">Telangana Enterprise Campus (Hyderabad)</option>
+                      <option value="Chennai Machining Corridor">Chennai Machining Corridor (Tamil Nadu)</option>
+                      <option value="Bengaluru Tech & Hardware Hub">Bengaluru Tech & Hardware Hub (Karnataka)</option>
+                      <option value="Pune & Mumbai Industrial Belt">Pune & Mumbai Industrial Belt (Maharashtra)</option>
+                      <option value="Delhi NCR Sourcing Belt">Delhi NCR Sourcing Belt</option>
+                      <option value="International / Global Export">International / Global Export</option>
+                    </select>
+                  </div>
+                </>
+              )}
+
+              <Button type="submit">
+                {tab === "signin" ? "Sign In to Workspace →" : "Create Enterprise Account →"}
+              </Button>
+
+              {/* Corporate SSO */}
+              <div style={{ textAlign: "center", marginTop: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin(role)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: TOKENS.slate,
+                    fontSize: 11.5,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                  }}
+                >
+                  ⚡ Continue with Corporate SSO (Okta / Azure AD / SAML)
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* Dynamic Route SEO Manager */
 const PAGE_SEO = {
   home: {
@@ -6797,6 +7989,22 @@ const PAGES = {
 
 export default function MyVaultSite() {
   const [page, setPage] = useState("home");
+  const [currency, setCurrency] = useState("INR");
+  const [currentUser, setCurrentUser] = useState({
+    name: "Dr. K. S. Rao",
+    company: "Bharat Aerospace & Dynamics",
+    role: "buyer",
+    location: "Telangana & Chennai Hub",
+    avatar: "🏢",
+    badge: "Enterprise Procurement Lead",
+    tier: "Tier-1 Defence & Space",
+    activeRFQs: 3,
+    email: "ksrao@bharataero.gov.in",
+  });
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [trackerRfqId, setTrackerRfqId] = useState(null);
+  const [trackerOpen, setTrackerOpen] = useState(false);
+
   useRouteSEO(page);
 
   const topRef = useRef(null);
@@ -6804,6 +8012,12 @@ export default function MyVaultSite() {
     setPage(id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const openTracker = (id) => {
+    setTrackerRfqId(id || "RFQ-2026-9041");
+    setTrackerOpen(true);
+  };
+
   const Page = PAGES[page] || HomePage;
 
   return (
@@ -6837,12 +8051,41 @@ export default function MyVaultSite() {
           * { transition: none !important; animation: none !important; }
         }
       `}</style>
-      <SiteHeader page={page} go={go} />
+      <SiteHeader
+        page={page}
+        go={go}
+        currency={currency}
+        setCurrency={setCurrency}
+        currentUser={currentUser}
+        setCurrentUser={setCurrentUser}
+        openAuth={() => setAuthModalOpen(true)}
+        openTracker={openTracker}
+      />
       <main style={{ paddingTop: 64 }}>
-        <Page go={go} />
+        <Page
+          go={go}
+          currency={currency}
+          currentUser={currentUser}
+          openTracker={openTracker}
+          openAuth={() => setAuthModalOpen(true)}
+        />
       </main>
       <Footer go={go} />
       <LeadCaptureModal />
+      <RFQTrackerModal
+        rfqId={trackerRfqId}
+        isOpen={trackerOpen}
+        onClose={() => setTrackerOpen(false)}
+        currency={currency}
+        go={go}
+      />
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        currentUser={currentUser}
+        onLogin={(profile) => setCurrentUser(profile)}
+        onLogout={() => setCurrentUser(null)}
+      />
       {/* Mobile Bottom Navigation Bar */}
       <nav
         className="mobile-bottom-nav"
@@ -6873,7 +8116,14 @@ export default function MyVaultSite() {
         ].map((item) => (
           <button
             key={item.id}
-            onClick={() => go(item.id)}
+            onClick={() => {
+              if (item.id === "dashboard") {
+                if (!currentUser) setAuthModalOpen(true);
+                else go("dashboard");
+              } else {
+                go(item.id);
+              }
+            }}
             style={{
               background: item.highlight
                 ? `linear-gradient(135deg, ${TOKENS.blue} 0%, #1976D2 100%)`
