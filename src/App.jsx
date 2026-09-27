@@ -2,26 +2,26 @@ import React, { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
 
 /* ============================================================
-   MYVAULT — corporate website (unified theme)
+   ABHIMANYU TECHNOLOGIES — Deep Navy Enterprise B2B Platform
 
-   Single design language across the whole site: near-black ink
-   ground (#090909 → #10151f), brass/gold rings as the signature
-   3D motif, a cool blue rim-light accent, and translucent glass
-   panels for every card/section so the ambient background glow
-   from index.html always shows through consistently. No page,
-   card, or section falls back to a plain white background.
+   Design System: Professional · Modern · Trustworthy · Industrial
+   Background: Deep Navy (#0B1F3A) / Slate Charcoal (#101828)
+   Primary Accent: Electric Blue (#1565C0) / Brass Gold (#D4AF37)
+   Teal Accent: #00A896
+   Text: Crisp White (#F8FAFC) / Muted Slate (#94A3B8)
    ============================================================ */
 
 const TOKENS = {
-  ink: "#090909",
-  panel: "rgba(255, 255, 255, 0.035)",
-  panelAlt: "#10151f",
-  brass: "#d4af37",
-  brassBright: "#f3e5ab",
-  paper: "#f4efe6",
-  slate: "#c8bfae",
-  teal: "#4fb3ff",
-  hair: "rgba(255, 255, 255, 0.08)",
+  ink: "#0B1F3A",
+  panel: "rgba(16, 24, 40, 0.75)",
+  panelAlt: "#101828",
+  brass: "#D4AF37",
+  brassBright: "#F3E5AB",
+  paper: "#F8FAFC",
+  slate: "#94A3B8",
+  teal: "#00A896",
+  blue: "#1565C0",
+  hair: "rgba(255, 255, 255, 0.10)",
 };
 
 /* ---------------------------- data ---------------------------- */
@@ -2139,6 +2139,7 @@ function Hero({ go }) {
   const [searchTab, setSearchTab] = useState("products");
   const [searchQuery, setSearchQuery] = useState("");
   const [parsedIntent, setParsedIntent] = useState(null);
+  const [location, setLocation] = useState("📍 Chennai");
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -2155,90 +2156,260 @@ function Hero({ go }) {
     setParsedIntent(intent);
   };
 
+  const quickActions = [
+    { icon: "🛒", label: "Find Products", id: "products", accent: TOKENS.blue },
+    { icon: "🛠", label: "Find Services", id: "services", accent: TOKENS.teal },
+    { icon: "🏭", label: "Manufacturers", id: "manufacturers", accent: TOKENS.brass },
+    { icon: "🏢", label: "Find Business", id: "businesses", accent: "#7C3AED" },
+    { icon: "📋", label: "Post Request", id: "rfq-wizard", accent: "#059669" },
+  ];
+
   return (
-    <div style={{ padding: "130px 24px 70px", position: "relative", overflow: "hidden" }}>
-      <div style={{ maxWidth: 1340, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.05fr", gap: 32, alignItems: "center" }} className="hero-grid">
-        <div>
-          <Eyebrow>Abhimanyu Technologies — Enterprise B2B Platform</Eyebrow>
-          <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 500, fontSize: "clamp(38px, 6vw, 64px)", color: TOKENS.paper, lineHeight: 1.06, margin: "0 0 18px", maxWidth: 660 }}>
-            One Platform. Every Industry.
-          </h1>
-          <p style={{ color: TOKENS.slate, fontSize: 17, lineHeight: 1.65, margin: "0 0 24px", maxWidth: 540 }}>
-            Connect with verified manufacturers, enterprise products, AI services, and global suppliers. Sloganed to <strong style={{ color: TOKENS.brass }}>"Scale Your Business"</strong>.
-          </p>
+    <div style={{
+      padding: "100px 24px 60px",
+      position: "relative",
+      overflow: "hidden",
+      background: `linear-gradient(160deg, #0B1F3A 0%, #0d2347 40%, #101828 100%)`,
+    }}>
+      {/* Decorative background grid */}
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        backgroundImage: `radial-gradient(rgba(21, 101, 192, 0.15) 1px, transparent 1px)`,
+        backgroundSize: "40px 40px",
+        pointerEvents: "none",
+      }} />
+      {/* Glow blobs */}
+      <div style={{ position: "absolute", top: "20%", right: "10%", width: 400, height: 400, borderRadius: "50%", background: "rgba(21, 101, 192, 0.08)", filter: "blur(80px)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: "10%", left: "5%", width: 300, height: 300, borderRadius: "50%", background: "rgba(0, 168, 150, 0.07)", filter: "blur(60px)", pointerEvents: "none" }} />
 
-          {/* AI Search Engine Bar */}
-          <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.brass}`, borderRadius: 8, padding: 18, marginBottom: 24, boxShadow: "0 16px 40px rgba(0,0,0,0.4)" }}>
-            <div style={{ display: "flex", gap: 6, marginBottom: 12, overflowX: "auto" }}>
-              {[
-                { id: "products", label: "🛒 Products" },
-                { id: "services", label: "🛠 Services" },
-                { id: "manufacturers", label: "🏭 Manufacturers" },
-                { id: "businesses", label: "🏢 Businesses" },
-                { id: "rfq", label: "📋 Post RFQ" }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setSearchTab(tab.id)}
-                  style={{
-                    background: searchTab === tab.id ? TOKENS.brass : "transparent",
-                    color: searchTab === tab.id ? TOKENS.ink : TOKENS.paper,
-                    border: `1px solid ${searchTab === tab.id ? TOKENS.brass : TOKENS.hair}`,
-                    borderRadius: 4,
-                    padding: "5px 12px",
-                    fontSize: 11.5,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    cursor: "pointer",
-                    fontWeight: searchTab === tab.id ? "bold" : "normal"
-                  }}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            <form onSubmit={handleSearch} style={{ display: "flex", gap: 8 }}>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder='e.g., "I need 10,000 stainless steel CNC parts in Chennai"'
-                style={{
-                  flex: 1,
-                  background: TOKENS.ink,
-                  border: `1px solid ${TOKENS.hair}`,
-                  borderRadius: 4,
-                  padding: "10px 14px",
-                  color: TOKENS.paper,
-                  fontSize: 13.5
-                }}
-              />
-              <Button type="submit">AI Search 🔍</Button>
-            </form>
-
-            {/* AI Intent Breakdown Card */}
-            {parsedIntent && (
-              <div style={{ marginTop: 14, background: "rgba(79, 179, 255, 0.08)", border: `1px solid ${TOKENS.teal}`, borderRadius: 4, padding: 12 }}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 6 }}>🤖 AI INTENT EXTRACTED</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 12, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
-                  <span>SPEC: {parsedIntent.material}</span> · 
-                  <span>QTY: {parsedIntent.qty}</span> · 
-                  <span>LOCATION: {parsedIntent.location}</span>
-                </div>
-                <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
-                  <button onClick={() => go("manufacturers")} style={{ background: TOKENS.brass, color: TOKENS.ink, border: "none", borderRadius: 3, padding: "5px 10px", fontSize: 11, cursor: "pointer", fontWeight: "bold" }}>Find Matching Manufacturers →</button>
-                  <button onClick={() => go("rfq-wizard")} style={{ background: "transparent", border: `1px solid ${TOKENS.brass}`, color: TOKENS.brass, borderRadius: 3, padding: "5px 10px", fontSize: 11, cursor: "pointer" }}>Auto-Generate RFQ →</button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-            <Button onClick={() => go("rfq-wizard")}>Post a Requirement (RFQ) →</Button>
-            <Button variant="ghost" onClick={() => go("manufacturers")}>Explore Manufacturers</Button>
-          </div>
+      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
+        {/* Eyebrow */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+          <span style={{
+            background: "rgba(21, 101, 192, 0.2)",
+            border: `1px solid rgba(21, 101, 192, 0.4)`,
+            borderRadius: 999,
+            padding: "5px 14px",
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 11,
+            color: TOKENS.teal,
+            letterSpacing: "0.12em",
+          }}>
+            ● ENTERPRISE B2B MARKETPLACE · INDIA'S LARGEST PLATFORM
+          </span>
         </div>
-        <Hero3DStage />
+
+        {/* Main Headline */}
+        <h1 style={{
+          fontFamily: "'Fraunces', serif",
+          fontWeight: 600,
+          fontSize: "clamp(40px, 7vw, 72px)",
+          color: TOKENS.paper,
+          lineHeight: 1.0,
+          margin: "0 0 8px",
+          maxWidth: 800,
+          letterSpacing: "-0.01em",
+        }}>
+          ONE PLATFORM.
+        </h1>
+        <h1 style={{
+          fontFamily: "'Fraunces', serif",
+          fontWeight: 600,
+          fontSize: "clamp(40px, 7vw, 72px)",
+          lineHeight: 1.0,
+          margin: "0 0 20px",
+          maxWidth: 800,
+          letterSpacing: "-0.01em",
+          background: `linear-gradient(90deg, ${TOKENS.brass} 0%, #00A896 60%, #1565C0 100%)`,
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}>
+          EVERY INDUSTRY.
+        </h1>
+        <p style={{
+          color: TOKENS.slate,
+          fontSize: "clamp(15px, 2vw, 18px)",
+          lineHeight: 1.65,
+          margin: "0 0 36px",
+          maxWidth: 600,
+        }}>
+          Products · Services · Businesses · Manufacturing
+          <br />
+          <span style={{ color: TOKENS.paper, fontWeight: 500 }}>Find anything in 2–3 clicks. Verified suppliers. Instant RFQs.</span>
+        </p>
+
+        {/* Search Engine Bar */}
+        <div style={{
+          background: "rgba(16, 24, 40, 0.90)",
+          border: `1px solid rgba(212, 175, 55, 0.35)`,
+          borderRadius: 12,
+          padding: "18px 20px",
+          marginBottom: 28,
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)",
+          maxWidth: 820,
+        }}>
+          {/* Tab row */}
+          <div style={{ display: "flex", gap: 6, marginBottom: 14, overflowX: "auto" }}>
+            {[
+              { id: "products", label: "🛒 Products" },
+              { id: "services", label: "🛠 Services" },
+              { id: "manufacturers", label: "🏭 Manufacturers" },
+              { id: "businesses", label: "🏢 Businesses" },
+              { id: "rfq", label: "📋 Post RFQ" }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setSearchTab(tab.id)}
+                style={{
+                  background: searchTab === tab.id ? TOKENS.brass : "rgba(255,255,255,0.05)",
+                  color: searchTab === tab.id ? TOKENS.ink : TOKENS.slate,
+                  border: `1px solid ${searchTab === tab.id ? TOKENS.brass : TOKENS.hair}`,
+                  borderRadius: 6,
+                  padding: "6px 14px",
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  cursor: "pointer",
+                  fontWeight: searchTab === tab.id ? "bold" : "normal",
+                  whiteSpace: "nowrap",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Search input row */}
+          <form onSubmit={handleSearch} style={{ display: "flex", gap: 10, alignItems: "stretch" }}>
+            {/* Location selector */}
+            <select
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              style={{
+                background: "rgba(255,255,255,0.06)",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 8,
+                padding: "10px 12px",
+                color: TOKENS.paper,
+                fontSize: 13,
+                fontFamily: "'Inter', sans-serif",
+                cursor: "pointer",
+                flexShrink: 0,
+                minWidth: 150,
+              }}
+            >
+              {["📍 Chennai", "📍 Telangana", "📍 Hyderabad", "📍 Bengaluru", "📍 Mumbai", "📍 Delhi NCR", "📍 Pune", "📍 Pan-India", "📍 Global"].map((loc) => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder='e.g., "I need 10,000 stainless steel CNC parts in Chennai"'
+              style={{
+                flex: 1,
+                background: "rgba(255,255,255,0.06)",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 8,
+                padding: "10px 16px",
+                color: TOKENS.paper,
+                fontSize: 14,
+                fontFamily: "'Inter', sans-serif",
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                background: `linear-gradient(135deg, ${TOKENS.blue} 0%, #1976D2 100%)`,
+                color: "#fff",
+                border: "none",
+                borderRadius: 8,
+                padding: "10px 22px",
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                boxShadow: "0 4px 16px rgba(21, 101, 192, 0.5)",
+              }}
+            >
+              🔍 Search
+            </button>
+          </form>
+
+          {/* AI Intent Breakdown */}
+          {parsedIntent && (
+            <div style={{ marginTop: 14, background: "rgba(0, 168, 150, 0.08)", border: `1px solid rgba(0, 168, 150, 0.35)`, borderRadius: 6, padding: "10px 14px" }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 6 }}>🤖 AI INTENT EXTRACTED</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 12, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
+                <span style={{ background: "rgba(255,255,255,0.06)", padding: "3px 8px", borderRadius: 4 }}>SPEC: {parsedIntent.material}</span>
+                <span style={{ background: "rgba(255,255,255,0.06)", padding: "3px 8px", borderRadius: 4 }}>QTY: {parsedIntent.qty}</span>
+                <span style={{ background: "rgba(255,255,255,0.06)", padding: "3px 8px", borderRadius: 4 }}>📍 {parsedIntent.location}</span>
+              </div>
+              <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
+                <button onClick={() => go("manufacturers")} style={{ background: TOKENS.brass, color: TOKENS.ink, border: "none", borderRadius: 4, padding: "6px 12px", fontSize: 11.5, cursor: "pointer", fontWeight: "bold" }}>Find Matching Manufacturers →</button>
+                <button onClick={() => go("rfq-wizard")} style={{ background: "transparent", border: `1px solid ${TOKENS.brass}`, color: TOKENS.brass, borderRadius: 4, padding: "6px 12px", fontSize: 11.5, cursor: "pointer" }}>Auto-Generate RFQ →</button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Quick Action Cards */}
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
+          {quickActions.map((qa) => (
+            <button
+              key={qa.id}
+              onClick={() => go(qa.id)}
+              style={{
+                background: "rgba(16, 24, 40, 0.85)",
+                border: `1px solid rgba(255,255,255,0.12)`,
+                borderRadius: 10,
+                padding: "14px 20px",
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 8,
+                transition: "all 0.2s ease",
+                backdropFilter: "blur(12px)",
+                minWidth: 110,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.border = `1px solid ${qa.accent}`;
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = `0 12px 28px rgba(0,0,0,0.4)`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.border = "1px solid rgba(255,255,255,0.12)";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              <span style={{ fontSize: 24 }}>{qa.icon}</span>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, letterSpacing: "0.04em" }}>{qa.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Trust badges */}
+        <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" }}>
+          {[
+            { icon: "✓", text: "500+ Verified Suppliers" },
+            { icon: "✓", text: "ISO Certified Manufacturers" },
+            { icon: "✓", text: "Instant RFQ Matching" },
+            { icon: "✓", text: "Pan-India + Global Reach" },
+          ].map((badge) => (
+            <div key={badge.text} style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "'Inter', sans-serif", fontSize: 13, color: TOKENS.slate }}>
+              <span style={{ color: TOKENS.teal, fontWeight: 700 }}>{badge.icon}</span>
+              {badge.text}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -3233,43 +3404,252 @@ function TransparentLogo({ src, height = 40, alt = "MyVault Logo" }) {
 
 function SiteHeader({ page, go }) {
   const [open, setOpen] = useState(false);
+  const [megaOpen, setMegaOpen] = useState(false);
+
+  const megaMenuCols = [
+    {
+      title: "🛒 Products",
+      links: [
+        { label: "Browse All Products", id: "products" },
+        { label: "Abhimanyu ERP", id: "products" },
+        { label: "Abhimanyu CRM", id: "products" },
+        { label: "Abhimanyu HRMS", id: "products" },
+        { label: "Abhimanyu AI Platform", id: "products" },
+        { label: "Abhimanyu IoT", id: "products" },
+      ]
+    },
+    {
+      title: "🛠 Services",
+      links: [
+        { label: "Software Engineering", id: "services" },
+        { label: "AI & Machine Learning", id: "services" },
+        { label: "Cloud & DevOps", id: "services" },
+        { label: "Cybersecurity", id: "services" },
+        { label: "IoT & Embedded", id: "services" },
+        { label: "Data & Analytics", id: "services" },
+      ]
+    },
+    {
+      title: "🏢 Businesses",
+      links: [
+        { label: "Business Directory", id: "businesses" },
+        { label: "Post Your Business", id: "contact" },
+        { label: "Verified Partners", id: "businesses" },
+        { label: "Seller Dashboard", id: "dashboard" },
+        { label: "Knowledge Base", id: "knowledge" },
+        { label: "Case Studies", id: "case-studies" },
+      ]
+    },
+    {
+      title: "🏭 Manufacturing",
+      links: [
+        { label: "Find Manufacturers", id: "manufacturers" },
+        { label: "CNC Machining", id: "manufacturers" },
+        { label: "Sheet Metal Fab", id: "manufacturers" },
+        { label: "Electronics Assembly", id: "manufacturers" },
+        { label: "Post RFQ Requirement", id: "rfq-wizard" },
+        { label: "Browse Live RFQs", id: "requirements" },
+      ]
+    }
+  ];
+
+  const primaryNav = [
+    { id: "products", label: "Products" },
+    { id: "services", label: "Services" },
+    { id: "manufacturers", label: "Manufacturers" },
+    { id: "businesses", label: "Businesses" },
+    { id: "requirements", label: "RFQs" },
+    { id: "dashboard", label: "Dashboard" },
+  ];
+
   return (
-    <header style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "rgba(9,9,9,0.85)", backdropFilter: "blur(12px)", borderBottom: `1px solid ${TOKENS.hair}` }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <button onClick={() => go("home")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 14, padding: 0 }}>
-          <TransparentLogo src="/logo.png" height={38} />
+    <header style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: `rgba(11, 31, 58, 0.95)`, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderBottom: `1px solid ${TOKENS.hair}` }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
+        {/* Logo */}
+        <button onClick={() => go("home")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 12, padding: 0, flexShrink: 0 }}>
+          <TransparentLogo src="/logo.png" height={36} />
           <div style={{ textAlign: "left" }}>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 600, color: TOKENS.paper, letterSpacing: "0.02em", lineHeight: 1.1 }}>Abhimanyu</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: TOKENS.teal, letterSpacing: "0.18em", textTransform: "uppercase" }}>SCALE YOUR BUSINESS</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600, color: TOKENS.paper, letterSpacing: "0.01em", lineHeight: 1.1 }}>Abhimanyu</div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 8, color: TOKENS.teal, letterSpacing: "0.20em", textTransform: "uppercase" }}>SCALE YOUR BUSINESS</div>
           </div>
         </button>
 
-        <nav className="desktop-nav" style={{ display: "flex", gap: 22 }}>
-          {NAV.slice(0, -1).map((n) => (
+        {/* Desktop Nav */}
+        <nav className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          {/* Explore Mega Menu trigger */}
+          <div style={{ position: "relative" }}>
+            <button
+              onMouseEnter={() => setMegaOpen(true)}
+              onMouseLeave={() => setMegaOpen(false)}
+              onClick={() => setMegaOpen(!megaOpen)}
+              style={{
+                background: megaOpen ? `rgba(21, 101, 192, 0.15)` : "transparent",
+                border: megaOpen ? `1px solid rgba(21, 101, 192, 0.4)` : "1px solid transparent",
+                borderRadius: 6,
+                cursor: "pointer",
+                color: megaOpen ? TOKENS.brass : TOKENS.paper,
+                fontSize: 13,
+                fontFamily: "'JetBrains Mono', monospace",
+                padding: "7px 14px",
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
+                transition: "all 0.2s ease",
+              }}
+            >
+              🧭 Explore <span style={{ fontSize: 9 }}>▼</span>
+            </button>
+
+            {/* Mega Menu Dropdown */}
+            {megaOpen && (
+              <div
+                onMouseEnter={() => setMegaOpen(true)}
+                onMouseLeave={() => setMegaOpen(false)}
+                style={{
+                  position: "absolute",
+                  top: "calc(100% + 6px)",
+                  left: "-20px",
+                  width: 760,
+                  background: `rgba(11, 31, 58, 0.98)`,
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  border: `1px solid ${TOKENS.hair}`,
+                  borderRadius: 10,
+                  boxShadow: "0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,55,0.1)",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: 0,
+                  padding: 8,
+                  zIndex: 100,
+                }}
+              >
+                {megaMenuCols.map((col, ci) => (
+                  <div key={ci} style={{ padding: "12px 16px", borderRight: ci < 3 ? `1px solid ${TOKENS.hair}` : "none" }}>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, letterSpacing: "0.08em", marginBottom: 12, fontWeight: 700 }}>
+                      {col.title}
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                      {col.links.map((lnk, li) => (
+                        <button
+                          key={li}
+                          onClick={() => { go(lnk.id); setMegaOpen(false); }}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            textAlign: "left",
+                            color: TOKENS.slate,
+                            fontSize: 13,
+                            cursor: "pointer",
+                            padding: "6px 8px",
+                            borderRadius: 4,
+                            transition: "all 0.15s ease",
+                            fontFamily: "'Inter', sans-serif",
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = TOKENS.paper; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = TOKENS.slate; }}
+                        >
+                          {lnk.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                {/* Mega Menu Footer CTA */}
+                <div style={{ gridColumn: "1 / -1", borderTop: `1px solid ${TOKENS.hair}`, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
+                    📍 Chennai • Telangana • Pan-India • Global
+                  </div>
+                  <button
+                    onClick={() => { go("rfq-wizard"); setMegaOpen(false); }}
+                    style={{ background: TOKENS.brass, color: TOKENS.ink, border: "none", borderRadius: 5, padding: "7px 16px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, cursor: "pointer" }}
+                  >
+                    ➕ Post RFQ →
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Primary nav links */}
+          {primaryNav.map((n) => (
             <button
               key={n.id}
               onClick={() => go(n.id)}
-              style={{ background: "none", border: "none", cursor: "pointer", color: page === n.id ? TOKENS.brass : TOKENS.slate, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}
+              style={{
+                background: page === n.id ? "rgba(21, 101, 192, 0.15)" : "transparent",
+                border: "1px solid transparent",
+                borderRadius: 6,
+                cursor: "pointer",
+                color: page === n.id ? TOKENS.brass : TOKENS.slate,
+                fontSize: 13,
+                fontFamily: "'JetBrains Mono', monospace",
+                padding: "7px 12px",
+                transition: "all 0.15s ease",
+              }}
+              onMouseEnter={(e) => { if (page !== n.id) { e.currentTarget.style.color = TOKENS.paper; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; } }}
+              onMouseLeave={(e) => { if (page !== n.id) { e.currentTarget.style.color = TOKENS.slate; e.currentTarget.style.background = "transparent"; } }}
             >
               {n.label}
             </button>
           ))}
         </nav>
 
-        <div className="desktop-nav"><Button onClick={() => go("contact")}>Get Started →</Button></div>
+        {/* Desktop CTA */}
+        <div className="desktop-nav" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <button
+            onClick={() => go("contact")}
+            style={{
+              background: "transparent",
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              color: TOKENS.paper,
+              fontSize: 12.5,
+              fontFamily: "'JetBrains Mono', monospace",
+              padding: "8px 14px",
+              cursor: "pointer",
+            }}
+          >
+            Contact
+          </button>
+          <Button onClick={() => go("rfq-wizard")}>Post RFQ →</Button>
+        </div>
 
+        {/* Mobile Toggle */}
         <button className="mobile-toggle" onClick={() => setOpen(!open)} style={{ display: "none", background: "none", border: "none", color: TOKENS.paper, fontSize: 22 }}>
           {open ? "×" : "≡"}
         </button>
       </div>
 
+      {/* Mobile Menu */}
       {open && (
-        <div className="mobile-menu" style={{ padding: "0 24px 20px", display: "flex", flexDirection: "column", gap: 14, background: "rgba(9,9,9,0.95)" }}>
-          {NAV.map((n) => (
+        <div className="mobile-menu" style={{ padding: "0 20px 20px", display: "flex", flexDirection: "column", gap: 4, background: `rgba(11, 31, 58, 0.98)`, borderTop: `1px solid ${TOKENS.hair}`, maxHeight: "75vh", overflowY: "auto" }}>
+          {[
+            { id: "home", label: "🏠 Home" },
+            { id: "products", label: "🛒 Products" },
+            { id: "services", label: "🛠 Services" },
+            { id: "manufacturers", label: "🏭 Manufacturers" },
+            { id: "businesses", label: "🏢 Businesses" },
+            { id: "requirements", label: "📋 Requirements (RFQ)" },
+            { id: "rfq-wizard", label: "➕ Post a Requirement" },
+            { id: "dashboard", label: "📊 Dashboard" },
+            { id: "knowledge", label: "📚 Knowledge" },
+            { id: "about", label: "ℹ️ About" },
+            { id: "contact", label: "📞 Contact" },
+          ].map((n) => (
             <button
               key={n.id}
               onClick={() => { go(n.id); setOpen(false); }}
-              style={{ background: "none", border: "none", textAlign: "left", color: page === n.id ? TOKENS.brass : TOKENS.paper, fontSize: 15, fontFamily: "'JetBrains Mono', monospace" }}
+              style={{
+                background: page === n.id ? "rgba(21, 101, 192, 0.15)" : "transparent",
+                border: "none",
+                textAlign: "left",
+                color: page === n.id ? TOKENS.brass : TOKENS.paper,
+                fontSize: 15,
+                fontFamily: "'Inter', sans-serif",
+                padding: "12px 10px",
+                cursor: "pointer",
+                borderRadius: 6,
+              }}
             >
               {n.label}
             </button>
@@ -3878,30 +4258,101 @@ export default function MyVaultSite() {
   return (
     <div style={{ background: TOKENS.ink, minHeight: "100vh", fontFamily: "'Inter', sans-serif" }} ref={topRef}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains Mono:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
-        body { margin: 0; }
-        button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid ${TOKENS.brass}; outline-offset: 2px; }
+        body { margin: 0; background: #0B1F3A; }
+        input, select, textarea, option { color-scheme: dark; }
+        button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid ${TOKENS.brass}; outline-offset: 2px; }
+        select option { background: #101828; color: #F8FAFC; }
         @keyframes marquee {
           0% { transform: translateX(0%); }
           100% { transform: translateX(-33.33%); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
         }
         @media (max-width: 860px) {
           .desktop-nav { display: none !important; }
           .mobile-toggle { display: block !important; }
           .hero-grid { grid-template-columns: 1fr !important; }
           .footer-grid { grid-template-columns: 1fr 1fr !important; }
+          main { padding-bottom: 72px !important; }
+        }
+        @media (min-width: 861px) {
+          .mobile-bottom-nav { display: none !important; }
         }
         @media (prefers-reduced-motion: reduce) {
           * { transition: none !important; animation: none !important; }
         }
       `}</style>
       <SiteHeader page={page} go={go} />
-      <main style={{ paddingTop: 78 }}>
+      <main style={{ paddingTop: 64 }}>
         <Page go={go} />
       </main>
       <Footer go={go} />
       <LeadCaptureModal />
+      {/* Mobile Bottom Navigation Bar */}
+      <nav
+        className="mobile-bottom-nav"
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 9000,
+          background: `rgba(11, 31, 58, 0.97)`,
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          borderTop: `1px solid rgba(255,255,255,0.1)`,
+          display: "flex",
+          justifyContent: "space-around",
+          alignItems: "center",
+          height: 64,
+          padding: "0 8px",
+          boxShadow: "0 -8px 32px rgba(0,0,0,0.5)",
+        }}
+      >
+        {[
+          { icon: "🏠", label: "Home", id: "home" },
+          { icon: "🧭", label: "Explore", id: "products" },
+          { icon: "➕", label: "Post RFQ", id: "rfq-wizard", highlight: true },
+          { icon: "💬", label: "Messages", id: "contact" },
+          { icon: "👤", label: "Account", id: "dashboard" },
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => go(item.id)}
+            style={{
+              background: item.highlight
+                ? `linear-gradient(135deg, ${TOKENS.blue} 0%, #1976D2 100%)`
+                : "transparent",
+              border: "none",
+              borderRadius: item.highlight ? 14 : 8,
+              padding: item.highlight ? "10px 18px" : "8px 12px",
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 3,
+              minWidth: item.highlight ? 70 : 52,
+              boxShadow: item.highlight ? "0 4px 14px rgba(21, 101, 192, 0.6)" : "none",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <span style={{ fontSize: item.highlight ? 20 : 18, lineHeight: 1 }}>{item.icon}</span>
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 9,
+              letterSpacing: "0.04em",
+              color: page === item.id ? TOKENS.brass : item.highlight ? "#fff" : TOKENS.slate,
+              fontWeight: page === item.id || item.highlight ? 700 : 400,
+            }}>
+              {item.label.toUpperCase()}
+            </span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }

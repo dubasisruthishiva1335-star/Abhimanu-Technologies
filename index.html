@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#090909" />
+    <meta name="theme-color" content="#0B1F3A" />
     <meta name="color-scheme" content="dark" />
     <meta name="description" content="Abhimanyu Technologies — Enterprise Software Engineering, AI & Machine Learning, Cloud Architecture, Cybersecurity, and IoT Solutions. Scale Your Business with high-performance software." />
     <meta name="keywords" content="Abhimanyu Technologies, Scale Your Business, Software Engineering, AI Development, Cloud Migration, Enterprise Security, IoT, Telangana Software Company" />
@@ -108,17 +108,18 @@
 
     <style>
       :root {
-        --bg: #090909;
-        --bg-alt: #10151f;
-        --surface: rgba(255, 255, 255, 0.03);
-        --text: #f4efe6;
-        --muted: #c8bfae;
-        --gold: #d4af37;
-        --gold-bright: #f3e5ab;
-        --gold-soft: rgba(212, 175, 55, 0.14);
-        --blue: #4fb3ff;
-        --blue-soft: rgba(79, 179, 255, 0.12);
-        --line: rgba(255, 255, 255, 0.08);
+        --bg: #0B1F3A;
+        --bg-alt: #101828;
+        --surface: rgba(16, 24, 40, 0.75);
+        --text: #F8FAFC;
+        --muted: #94A3B8;
+        --gold: #D4AF37;
+        --gold-bright: #F3E5AB;
+        --gold-soft: rgba(212, 175, 55, 0.12);
+        --blue: #1565C0;
+        --teal: #00A896;
+        --blue-soft: rgba(21, 101, 192, 0.12);
+        --line: rgba(255, 255, 255, 0.10);
       }
 
       * {
@@ -126,10 +127,9 @@
       }
 
       /*
-        Fix: html itself had no background before. On iOS Safari / overscroll
-        bounce, the browser paints the <html> canvas behind the body, which
-        defaulted to white. Every layer below is now pinned to --bg so there
-        is no seam, no matter how far the page rubber-bands.
+        Deep Navy Enterprise B2B Platform
+        Background: #0B1F3A → #101828 deep navy gradient
+        No white flash on any device, iOS Safari overscroll fixed.
       */
       html {
         background-color: var(--bg) !important;
@@ -156,22 +156,21 @@
         overflow-x: hidden;
         overscroll-behavior: none;
         background:
-          radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.04), transparent 26%),
-          radial-gradient(circle at top left, var(--gold-soft), transparent 30%),
-          radial-gradient(circle at 82% 18%, var(--blue-soft), transparent 24%),
-          radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.03), transparent 28%),
-          linear-gradient(180deg, #090909 0%, #10151f 100%) var(--bg) !important;
+          radial-gradient(circle at 80% 10%, rgba(21, 101, 192, 0.12), transparent 35%),
+          radial-gradient(circle at 10% 80%, rgba(0, 168, 150, 0.08), transparent 30%),
+          radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.04), transparent 50%),
+          linear-gradient(180deg, #0B1F3A 0%, #0d2347 30%, #101828 100%) var(--bg) !important;
         line-height: 1.5;
       }
 
       #root {
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 22%),
-          radial-gradient(circle at 50% 0%, rgba(79, 179, 255, 0.05), transparent 40%) var(--bg) !important;
+          linear-gradient(180deg, rgba(21, 101, 192, 0.04), transparent 20%),
+          radial-gradient(circle at 60% 0%, rgba(0, 168, 150, 0.06), transparent 40%) var(--bg) !important;
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.03),
-          inset 0 0 120px rgba(212, 175, 55, 0.035),
-          inset 0 0 140px rgba(79, 179, 255, 0.03);
+          inset 0 1px 0 rgba(255, 255, 255, 0.04),
+          inset 0 0 120px rgba(21, 101, 192, 0.04),
+          inset 0 0 140px rgba(0, 168, 150, 0.03);
       }
 
       ::selection {
