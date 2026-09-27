@@ -2780,6 +2780,10 @@ function ServicesPage({ go }) {
         </Card>
       </Section>
 
+      <Section eyebrow="Scoping & Velocity Estimator" title="Interactive Engineering Scope Calculator" sub="Estimate team squad size, delivery velocity, and architectural milestones for your project.">
+        <InteractiveScopingEstimator go={go} />
+      </Section>
+
       <Section alt eyebrow="Solutions by Objective" title="Targeted Business Outcomes" tight>
         <Grid min={260}>
           {SOLUTIONS.map((s) => (
@@ -2792,6 +2796,131 @@ function ServicesPage({ go }) {
       </Section>
       <CTA go={go} label="Discuss Your Custom Architecture" />
     </>
+  );
+}
+
+function InteractiveScopingEstimator({ go }) {
+  const [scopeType, setScopeType] = useState("full");
+  const [tier, setTier] = useState("ha");
+  const [compliance, setCompliance] = useState("soc2");
+
+  const scopes = {
+    mvp: { title: "MVP / Rapid Prototype", weeks: "4–6 Weeks", team: "Lead Architect + 2 Full-Stack Engineers", costRange: "$20,000 – $35,000" },
+    full: { title: "Enterprise Platform Build", weeks: "10–14 Weeks", team: "Staff Architect + 4 Engineers + QA Lead + DevOps", costRange: "$50,000 – $95,000" },
+    infra: { title: "Anycast & Edge Migration", weeks: "6–8 Weeks", team: "Cloud Infrastructure Lead + 2 SRE Engineers", costRange: "$30,000 – $48,000" },
+    partner: { title: "Ongoing Dedicated Pod", weeks: "Annual Retainer", team: "Dedicated 6-Person Engineering Pod", costRange: "$15,000 / month" }
+  };
+
+  const selected = scopes[scopeType];
+
+  return (
+    <Card style={{ padding: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 28 }}>
+        {/* Left: Interactive Selectors */}
+        <div>
+          <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 10, letterSpacing: "0.08em" }}>
+            1. PROJECT SCOPE & OBJECTIVE
+          </label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+            {Object.entries(scopes).map(([k, v]) => (
+              <button
+                key={k}
+                onClick={() => setScopeType(k)}
+                style={{
+                  textAlign: "left",
+                  background: scopeType === k ? "rgba(21, 101, 192, 0.15)" : "rgba(255,255,255,0.02)",
+                  border: `1px solid ${scopeType === k ? TOKENS.blue : TOKENS.hair}`,
+                  borderRadius: 6,
+                  padding: "10px 14px",
+                  color: scopeType === k ? TOKENS.paper : TOKENS.slate,
+                  fontSize: 13.5,
+                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}
+              >
+                <span>{v.title}</span>
+                <span style={{ fontSize: 11, color: scopeType === k ? TOKENS.teal : TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>{v.weeks}</span>
+              </button>
+            ))}
+          </div>
+
+          <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 10, letterSpacing: "0.08em" }}>
+            2. HIGH-AVAILABILITY & SECURITY GRADE
+          </label>
+          <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+            {[
+              { id: "std", label: "Standard Cloud (99.9%)" },
+              { id: "ha", label: "Multi-Region Anycast (99.99%)" },
+              { id: "zero", label: "Zero-Knowledge Defense" }
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTier(t.id)}
+                style={{
+                  flex: 1,
+                  background: tier === t.id ? "rgba(0,168,150,0.12)" : "rgba(255,255,255,0.02)",
+                  border: `1px solid ${tier === t.id ? TOKENS.teal : TOKENS.hair}`,
+                  borderRadius: 6,
+                  padding: "8px 10px",
+                  color: tier === t.id ? TOKENS.teal : TOKENS.slate,
+                  fontSize: 12,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  cursor: "pointer"
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Calculated Architectural Blueprint Envelope */}
+        <div style={{ background: "rgba(11, 31, 58, 0.7)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 24, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 6 }}>
+              ESTIMATED SCOPE ENVELOPE
+            </div>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 16px" }}>
+              {selected.title}
+            </h3>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 16, marginBottom: 20 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5 }}>
+                <span style={{ color: TOKENS.slate }}>Target Velocity:</span>
+                <span style={{ color: TOKENS.paper, fontWeight: 600 }}>{selected.weeks}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5 }}>
+                <span style={{ color: TOKENS.slate }}>Engineering Pod:</span>
+                <span style={{ color: TOKENS.paper, textAlign: "right", maxWidth: 200 }}>{selected.team}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5 }}>
+                <span style={{ color: TOKENS.slate }}>Infrastructure SLA:</span>
+                <span style={{ color: TOKENS.teal }}>
+                  {tier === "std" ? "99.9% Uptime" : tier === "ha" ? "99.99% Anycast Edge" : "Zero-Trust Military Grade"}
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 10 }}>
+                <span style={{ color: TOKENS.slate }}>Budget Envelope:</span>
+                <span style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                  {selected.costRange}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 10 }}>
+            <Button onClick={() => go("contact")}>
+              Lock Scope & Request Scoping Brief →
+            </Button>
+            <Button variant="ghost" onClick={() => go("rfq-wizard")}>
+              Post as RFQ
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Card>
   );
 }
 
