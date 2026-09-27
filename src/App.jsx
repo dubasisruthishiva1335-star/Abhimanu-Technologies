@@ -28,15 +28,113 @@ const TOKENS = {
 
 const NAV = [
   { id: "home", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "services", label: "Services" },
   { id: "products", label: "Products" },
-  { id: "industries", label: "Industries" },
-  { id: "case-studies", label: "Case Studies" },
-  { id: "insights", label: "Insights" },
-  { id: "careers", label: "Careers" },
+  { id: "services", label: "Services" },
+  { id: "manufacturers", label: "Manufacturers" },
+  { id: "businesses", label: "Businesses" },
+  { id: "requirements", label: "Requirements (RFQ)" },
+  { id: "dashboard", label: "Dashboard" },
+  { id: "knowledge", label: "Knowledge" },
+  { id: "about", label: "About" },
   { id: "contact", label: "Contact" },
 ];
+
+/* ---------------------------- B2B Marketplace Datasets ---------------------------- */
+
+const B2B_MANUFACTURERS = [
+  {
+    id: "mfg-1",
+    name: "Apex Precision Engineering Ltd.",
+    category: "CNC Machining",
+    location: "Chennai, Tamil Nadu",
+    verified: true,
+    rating: "4.9 ★ (142 Reviews)",
+    capacity: "High Capacity (50k units/mo)",
+    capabilities: ["5-Axis CNC Milling", "Precision Lathe Turning", "Stainless Steel 316", "Titanium Aerospace Grade"],
+    certifications: ["ISO 9001:2015", "AS9100D Aerospace", "SOC2 Type II"],
+    responseRate: "Avg Response: < 2 Hours",
+    minOrder: "100 Units"
+  },
+  {
+    id: "mfg-2",
+    name: "Deccan Sheet Metal & Fabrication",
+    category: "Sheet Metal Fabrication",
+    location: "Hyderabad, Telangana",
+    verified: true,
+    rating: "4.8 ★ (98 Reviews)",
+    capacity: "Medium Batch (25k units/mo)",
+    capabilities: ["Fiber Laser Cutting", "CNC Press Brake Bending", "Robot MIG/TIG Welding", "Powder Coating"],
+    certifications: ["ISO 9001:2015", "IATF 16949 Automotive"],
+    responseRate: "Avg Response: < 1 Hour",
+    minOrder: "50 Units"
+  },
+  {
+    id: "mfg-3",
+    name: "Vanguard Electronics OEM Systems",
+    category: "Electronics Assembly",
+    location: "Bengaluru, Karnataka",
+    verified: true,
+    rating: "4.95 ★ (210 Reviews)",
+    capacity: "Mass Production (200k PCBs/mo)",
+    capabilities: ["High-Speed SMT Assembly", "BGA X-Ray Inspection", "Conformal Coating", "Turnkey Box Build"],
+    certifications: ["ISO 13485 Medical", "ISO 9001:2015", "IPC-A-610 Class 3"],
+    responseRate: "Avg Response: Instant AI Matching",
+    minOrder: "500 Units"
+  }
+];
+
+const B2B_BUSINESSES = [
+  {
+    id: "biz-1",
+    name: "Abhimanyu Technologies India HQ",
+    type: "Enterprise Software & Cloud AI Partner",
+    location: "Telangana, India",
+    verified: true,
+    rating: "5.0 ★ (350+ Global Clients)",
+    specialties: ["AI Systems & LLMs", "Cloud Anycast Load Balancing", "Custom SaaS", "Cybersecurity"],
+    employees: "250+ Engineers",
+    established: "2020",
+    slug: "abhimanyu-technologies"
+  },
+  {
+    id: "biz-2",
+    name: "Vertex Automation & Robotics Systems",
+    type: "Industrial IoT & Robotics OEM",
+    location: "Pune, Maharashtra",
+    verified: true,
+    rating: "4.85 ★ (84 Clients)",
+    specialties: ["SCADA Systems", "PLC Programming", "Industrial Conveyor Automation", "IoT Sensors"],
+    employees: "120+ Engineers",
+    established: "2018",
+    slug: "vertex-automation"
+  }
+];
+
+const PUBLIC_RFQS = [
+  {
+    id: "RFQ-2026-9041",
+    title: "Manufacture 10,000 Stainless Steel 316 CNC Turned Valves",
+    category: "Custom CNC Machining",
+    quantity: "10,000 Units",
+    location: "Target Delivery: Chennai / Telangana",
+    budget: "$45,000 - $60,000",
+    deadline: "Deadline: 14 Days Left",
+    status: "OPEN FOR QUOTES",
+    bidsCount: "12 Bids Submitted"
+  },
+  {
+    id: "RFQ-2026-9082",
+    title: "Turnkey SMT PCB Assembly & Enclosure Box Build for Medical IoT Node",
+    category: "Electronics Assembly",
+    quantity: "2,500 Units",
+    location: "Target Delivery: Hyderabad / Bengaluru",
+    budget: "$28,000 - $35,000",
+    deadline: "Deadline: 8 Days Left",
+    status: "OPEN FOR QUOTES",
+    bidsCount: "8 Bids Submitted"
+  }
+];
+
 
 const WHAT_WE_DO = [
   { title: "Software Development", desc: "Custom web, mobile, and enterprise applications built on architectures that outlive the first release.", icon: "box" },
@@ -2038,28 +2136,106 @@ function GlobalNodeMap() {
 /* ---------------------------- pages ---------------------------- */
 
 function Hero({ go }) {
+  const [searchTab, setSearchTab] = useState("products");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [parsedIntent, setParsedIntent] = useState(null);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!searchQuery) return;
+    trackEvent("ai_intent_search", { query: searchQuery, tab: searchTab });
+
+    const queryLower = searchQuery.toLowerCase();
+    const intent = {
+      material: queryLower.includes("stainless") ? "Stainless Steel 316" : queryLower.includes("aluminium") ? "Aluminium T6" : "Custom Spec Alloy",
+      qty: queryLower.includes("10,000") || queryLower.includes("10000") ? "10,000 Units" : queryLower.includes("5,000") || queryLower.includes("5000") ? "5,000 Units" : "Custom Batch",
+      location: queryLower.includes("chennai") ? "Chennai, Tamil Nadu" : queryLower.includes("hyderabad") || queryLower.includes("telangana") ? "Telangana HQ / Hyderabad" : "Pan-India / Global",
+      category: searchTab.toUpperCase()
+    };
+    setParsedIntent(intent);
+  };
+
   return (
-    <div style={{ padding: "140px 24px 80px", position: "relative", overflow: "hidden" }}>
-      <div style={{ maxWidth: 1340, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: 32, alignItems: "center" }} className="hero-grid">
+    <div style={{ padding: "130px 24px 70px", position: "relative", overflow: "hidden" }}>
+      <div style={{ maxWidth: 1340, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1.05fr", gap: 32, alignItems: "center" }} className="hero-grid">
         <div>
-          <Eyebrow>Abhimanyu Technologies</Eyebrow>
-          <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 500, fontSize: "clamp(40px, 6.5vw, 68px)", color: TOKENS.paper, lineHeight: 1.06, margin: 0, maxWidth: 660 }}>
-            Engineering built to hold.
+          <Eyebrow>Abhimanyu Technologies — Enterprise B2B Platform</Eyebrow>
+          <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 500, fontSize: "clamp(38px, 6vw, 64px)", color: TOKENS.paper, lineHeight: 1.06, margin: "0 0 18px", maxWidth: 660 }}>
+            One Platform. Every Industry.
           </h1>
-          <p style={{ color: TOKENS.slate, fontSize: 18.5, lineHeight: 1.65, marginTop: 24, maxWidth: 540 }}>
-            Abhimanyu designs and builds software, AI, cloud, and data systems for businesses that need
-            technology they can rely on years after launch — not just at the demo.
+          <p style={{ color: TOKENS.slate, fontSize: 17, lineHeight: 1.65, margin: "0 0 24px", maxWidth: 540 }}>
+            Connect with verified manufacturers, enterprise products, AI services, and global suppliers. Sloganed to <strong style={{ color: TOKENS.brass }}>"Scale Your Business"</strong>.
           </p>
-          <div style={{ display: "flex", gap: 14, marginTop: 36, flexWrap: "wrap" }}>
-            <Button onClick={() => go("services")}>Explore Services →</Button>
-            <Button variant="ghost" onClick={() => go("products")}>View Products</Button>
+
+          {/* AI Search Engine Bar */}
+          <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.brass}`, borderRadius: 8, padding: 18, marginBottom: 24, boxShadow: "0 16px 40px rgba(0,0,0,0.4)" }}>
+            <div style={{ display: "flex", gap: 6, marginBottom: 12, overflowX: "auto" }}>
+              {[
+                { id: "products", label: "🛒 Products" },
+                { id: "services", label: "🛠 Services" },
+                { id: "manufacturers", label: "🏭 Manufacturers" },
+                { id: "businesses", label: "🏢 Businesses" },
+                { id: "rfq", label: "📋 Post RFQ" }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setSearchTab(tab.id)}
+                  style={{
+                    background: searchTab === tab.id ? TOKENS.brass : "transparent",
+                    color: searchTab === tab.id ? TOKENS.ink : TOKENS.paper,
+                    border: `1px solid ${searchTab === tab.id ? TOKENS.brass : TOKENS.hair}`,
+                    borderRadius: 4,
+                    padding: "5px 12px",
+                    fontSize: 11.5,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    cursor: "pointer",
+                    fontWeight: searchTab === tab.id ? "bold" : "normal"
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <form onSubmit={handleSearch} style={{ display: "flex", gap: 8 }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder='e.g., "I need 10,000 stainless steel CNC parts in Chennai"'
+                style={{
+                  flex: 1,
+                  background: TOKENS.ink,
+                  border: `1px solid ${TOKENS.hair}`,
+                  borderRadius: 4,
+                  padding: "10px 14px",
+                  color: TOKENS.paper,
+                  fontSize: 13.5
+                }}
+              />
+              <Button type="submit">AI Search 🔍</Button>
+            </form>
+
+            {/* AI Intent Breakdown Card */}
+            {parsedIntent && (
+              <div style={{ marginTop: 14, background: "rgba(79, 179, 255, 0.08)", border: `1px solid ${TOKENS.teal}`, borderRadius: 4, padding: 12 }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 6 }}>🤖 AI INTENT EXTRACTED</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 12, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
+                  <span>SPEC: {parsedIntent.material}</span> · 
+                  <span>QTY: {parsedIntent.qty}</span> · 
+                  <span>LOCATION: {parsedIntent.location}</span>
+                </div>
+                <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
+                  <button onClick={() => go("manufacturers")} style={{ background: TOKENS.brass, color: TOKENS.ink, border: "none", borderRadius: 3, padding: "5px 10px", fontSize: 11, cursor: "pointer", fontWeight: "bold" }}>Find Matching Manufacturers →</button>
+                  <button onClick={() => go("rfq-wizard")} style={{ background: "transparent", border: `1px solid ${TOKENS.brass}`, color: TOKENS.brass, borderRadius: 3, padding: "5px 10px", fontSize: 11, cursor: "pointer" }}>Auto-Generate RFQ →</button>
+                </div>
+              </div>
+            )}
           </div>
-          <div style={{ display: "flex", gap: 28, marginTop: 56, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, letterSpacing: "0.1em", color: TOKENS.slate, flexWrap: "wrap" }}>
-            <span>SOFTWARE</span><span style={{ color: TOKENS.brass }}>·</span>
-            <span>AI</span><span style={{ color: TOKENS.brass }}>·</span>
-            <span>CLOUD</span><span style={{ color: TOKENS.brass }}>·</span>
-            <span>DATA</span><span style={{ color: TOKENS.brass }}>·</span>
-            <span>IOT</span>
+
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            <Button onClick={() => go("rfq-wizard")}>Post a Requirement (RFQ) →</Button>
+            <Button variant="ghost" onClick={() => go("manufacturers")}>Explore Manufacturers</Button>
           </div>
         </div>
         <Hero3DStage />
@@ -2572,6 +2748,324 @@ function CareersPage({ go }) {
         </div>
       </Section>
       <CTA go={go} label="Ask About Openings" />
+    </>
+  );
+}
+
+/* ---------------------------- New B2B Marketplace Sub-Pages ---------------------------- */
+
+function RFQWizardPage({ go }) {
+  const [step, setStep] = useState(1);
+  const [rfq, setRfq] = useState({ category: "Custom CNC Machining", qty: "5,000 Units", location: "Telangana / Chennai", specs: "", contactEmail: "" });
+  const [submittedId, setSubmittedId] = useState("");
+
+  const update = (k, v) => setRfq({ ...rfq, [k]: v });
+
+  const handleFinish = (e) => {
+    e.preventDefault();
+    const id = `RFQ-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    setSubmittedId(id);
+    trackEvent("submit_rfq_wizard", { id, category: rfq.category });
+  };
+
+  if (submittedId) {
+    return (
+      <Section eyebrow="RFQ Confirmation" title="Requirement Posted & Broadcasted">
+        <Card style={{ maxWidth: 580, margin: "0 auto", padding: 36, textAlign: "center", border: `1px solid ${TOKENS.brass}` }}>
+          <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(212, 175, 55, 0.15)", border: `1px solid ${TOKENS.brass}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: TOKENS.brass, fontSize: 24, fontWeight: "bold" }}>✓</div>
+          <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>RFQ {submittedId} Live</h3>
+          <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6, marginBottom: 20 }}>
+            Your requirement for <strong style={{ color: TOKENS.paper }}>{rfq.category} ({rfq.qty})</strong> has been verified and broadcasted to 42 matched suppliers.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+            <Button onClick={() => go("requirements")}>View Public RFQ Hub →</Button>
+            <Button variant="ghost" onClick={() => setSubmittedId("")}>Post Another RFQ</Button>
+          </div>
+        </Card>
+      </Section>
+    );
+  }
+
+  return (
+    <Section eyebrow="Post a Requirement (RFQ)" title="5-Step Sourcing & RFQ Builder" sub="Fill out the requirements below to receive instant verified supplier quotes.">
+      <Card style={{ maxWidth: 680, margin: "0 auto", padding: 32 }}>
+        {/* Step Indicator Bar */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 28, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 16 }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 24, height: 24, borderRadius: "50%", background: step >= i ? TOKENS.brass : "rgba(255,255,255,0.06)", color: step >= i ? TOKENS.ink : TOKENS.slate, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: "bold", fontFamily: "'JetBrains Mono', monospace" }}>{i}</span>
+              <span style={{ fontSize: 12, color: step === i ? TOKENS.paper : TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
+                {i === 1 ? "Category" : i === 2 ? "Quantity" : i === 3 ? "Location" : i === 4 ? "Specs" : "Review"}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {step === 1 && (
+          <div>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 1: Select Sourcing Category</h4>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              {["Custom CNC Machining", "Sheet Metal Fabrication", "Electronics & SMT Assembly", "AI & Software Development", "Industrial Automation", "Custom Plastic Injection"].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => update("category", cat)}
+                  style={{
+                    background: rfq.category === cat ? "rgba(212, 175, 55, 0.15)" : "rgba(255,255,255,0.03)",
+                    border: `1px solid ${rfq.category === cat ? TOKENS.brass : TOKENS.hair}`,
+                    color: rfq.category === cat ? TOKENS.brass : TOKENS.paper,
+                    padding: "14px 16px", borderRadius: 4, textAlign: "left", cursor: "pointer", fontSize: 13.5
+                  }}
+                >
+                  ✓ {cat}
+                </button>
+              ))}
+            </div>
+            <div style={{ marginTop: 24, textAlign: "right" }}><Button onClick={() => setStep(2)}>Next: Quantity →</Button></div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 2: Production Quantity & Batch Size</h4>
+            <input
+              style={{ width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 4, marginBottom: 16 }}
+              value={rfq.qty}
+              onChange={(e) => update("qty", e.target.value)}
+              placeholder="e.g. 5,000 Units / Prototype Run"
+            />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Button variant="ghost" onClick={() => setStep(1)}>← Back</Button>
+              <Button onClick={() => setStep(3)}>Next: Location →</Button>
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 3: Target Delivery Location</h4>
+            <input
+              style={{ width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 4, marginBottom: 16 }}
+              value={rfq.location}
+              onChange={(e) => update("location", e.target.value)}
+              placeholder="e.g. Telangana, Chennai, Bengaluru, Global"
+            />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Button variant="ghost" onClick={() => setStep(2)}>← Back</Button>
+              <Button onClick={() => setStep(4)}>Next: Specifications →</Button>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 4: Technical Specs & Document Notes</h4>
+            <textarea
+              rows={4}
+              style={{ width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 4, marginBottom: 16 }}
+              value={rfq.specs}
+              onChange={(e) => update("specs", e.target.value)}
+              placeholder="Specify materials (e.g. Stainless Steel 316), tolerances, surface finishing, or CAD notes..."
+            />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Button variant="ghost" onClick={() => setStep(3)}>← Back</Button>
+              <Button onClick={() => setStep(5)}>Next: Review →</Button>
+            </div>
+          </div>
+        )}
+
+        {step === 5 && (
+          <form onSubmit={handleFinish}>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 5: Review & Broadcast RFQ</h4>
+            <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, padding: 16, borderRadius: 4, marginBottom: 16 }}>
+              <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>CATEGORY: {rfq.category}</div>
+              <div style={{ fontSize: 13, color: TOKENS.paper, marginTop: 4 }}>QUANTITY: {rfq.qty}</div>
+              <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 4 }}>LOCATION: {rfq.location}</div>
+              <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 4 }}>SPECS: {rfq.specs || "Standard Industry Tolerance"}</div>
+            </div>
+            <input
+              type="email"
+              required
+              style={{ width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 4, marginBottom: 16 }}
+              value={rfq.contactEmail}
+              onChange={(e) => update("contactEmail", e.target.value)}
+              placeholder="Enter your work email for supplier quotes..."
+            />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Button variant="ghost" onClick={() => setStep(4)}>← Back</Button>
+              <Button type="submit">Broadcast RFQ Now 🚀</Button>
+            </div>
+          </form>
+        )}
+      </Card>
+    </Section>
+  );
+}
+
+function ManufacturersPage({ go }) {
+  return (
+    <>
+      <Section eyebrow="Verified Manufacturers" title="Industrial & OEM Manufacturing Partners" sub="Directly source custom manufacturing, CNC machining, metal fabrication, and electronics assembly.">
+        <Grid min={300}>
+          {B2B_MANUFACTURERS.map((m) => (
+            <Card key={m.id}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <span style={{ background: "rgba(212, 175, 55, 0.15)", border: `1px solid ${TOKENS.brass}`, borderRadius: 4, padding: "4px 8px", fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>✓ VERIFIED SUPPLIER</span>
+                <span style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>{m.rating}</span>
+              </div>
+              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 21, margin: "0 0 4px" }}>{m.name}</h3>
+              <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 12 }}>{m.category} · {m.location}</div>
+              
+              <div style={{ borderTop: `1px solid ${TOKENS.hair}`, borderBottom: `1px solid ${TOKENS.hair}`, padding: "12px 0", margin: "12px 0" }}>
+                <div style={{ fontSize: 12, color: TOKENS.paper, fontWeight: 600, marginBottom: 6 }}>CAPABILITIES:</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {m.capabilities.map((c) => (
+                    <span key={c} style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, padding: "4px 8px", borderRadius: 3, fontSize: 11, color: TOKENS.slate }}>{c}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 16 }}>{m.responseRate}</div>
+              <Button onClick={() => go("contact")}>Request Direct Quote →</Button>
+            </Card>
+          ))}
+        </Grid>
+      </Section>
+      <CTA go={go} label="List Your Manufacturing Business" />
+    </>
+  );
+}
+
+function BusinessesPage({ go }) {
+  const [selectedBiz, setSelectedBiz] = useState(null);
+
+  return (
+    <>
+      <Section eyebrow="B2B Business Directory" title="Verified Enterprises & Service Providers" sub="Search and connect with verified enterprise technology partners and industrial suppliers.">
+        <Grid min={320}>
+          {B2B_BUSINESSES.map((b) => (
+            <Card key={b.id}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+                <span style={{ color: TOKENS.teal, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>{b.type.toUpperCase()}</span>
+                <span style={{ color: TOKENS.brass, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>✓ VERIFIED</span>
+              </div>
+              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 6px" }}>{b.name}</h3>
+              <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 14 }}>{b.location} · {b.rating}</div>
+              <div style={{ fontSize: 13, color: TOKENS.paper, marginBottom: 16 }}>Specialties: {b.specialties.join(" · ")}</div>
+              <Button variant="ghost" onClick={() => setSelectedBiz(b)}>View Company Profile →</Button>
+            </Card>
+          ))}
+        </Grid>
+      </Section>
+
+      {/* Business Modal Inspector */}
+      {selectedBiz && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.85)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <Card style={{ maxWidth: 640, width: "100%", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt, padding: 32 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass }}>✓ VERIFIED BUSINESS PROFILE</span>
+              <button onClick={() => setSelectedBiz(null)} style={{ background: "transparent", border: "none", color: TOKENS.paper, fontSize: 22, cursor: "pointer" }}>✕</button>
+            </div>
+            <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 6px" }}>{selectedBiz.name}</h2>
+            <div style={{ fontSize: 14, color: TOKENS.teal, marginBottom: 16 }}>{selectedBiz.type} · {selectedBiz.location}</div>
+            <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6, marginBottom: 20 }}>
+              Leading provider established in {selectedBiz.established} with a team of {selectedBiz.employees}. Fully verified and audited for high-reliability enterprise delivery.
+            </p>
+            <Button onClick={() => { setSelectedBiz(null); go("contact"); }}>Send Direct Enquiry →</Button>
+          </Card>
+        </div>
+      )}
+
+      <CTA go={go} />
+    </>
+  );
+}
+
+function RequirementsPage({ go }) {
+  return (
+    <>
+      <Section eyebrow="Public Requirements Hub" title="Live RFQs & Sourcing Inquiries" sub="Explore live buyer requirements and submit competitive quotations directly.">
+        <Grid min={320}>
+          {PUBLIC_RFQS.map((rfq) => (
+            <Card key={rfq.id}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", marginBottom: 10 }}>
+                <span style={{ color: TOKENS.teal }}>{rfq.id}</span>
+                <span style={{ color: TOKENS.brass }}>{rfq.status}</span>
+              </div>
+              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px" }}>{rfq.title}</h3>
+              <div style={{ fontSize: 13.5, color: TOKENS.slate, marginBottom: 4 }}><b>Category:</b> {rfq.category}</div>
+              <div style={{ fontSize: 13.5, color: TOKENS.slate, marginBottom: 4 }}><b>Quantity:</b> {rfq.quantity}</div>
+              <div style={{ fontSize: 13.5, color: TOKENS.slate, marginBottom: 14 }}><b>Target Location:</b> {rfq.location}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 12, marginTop: 12 }}>
+                <span style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>{rfq.bidsCount}</span>
+                <Button onClick={() => go("contact")}>Submit Quotation →</Button>
+              </div>
+            </Card>
+          ))}
+        </Grid>
+      </Section>
+      <CTA go={go} label="Post Your Own Requirement" />
+    </>
+  );
+}
+
+function BusinessDashboardPage({ go }) {
+  return (
+    <Section eyebrow="Seller & Business Dashboard" title="Enterprise Account Command Center" sub="Manage inbound leads, active product listings, RFQ submissions, and performance telemetry.">
+      <Card style={{ padding: 32 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 32 }}>
+          <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, padding: 20, borderRadius: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>PROFILE VIEWS</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: TOKENS.paper, marginTop: 6 }}>2,450</div>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, padding: 20, borderRadius: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>INBOUND LEADS</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: TOKENS.teal, marginTop: 6 }}>120</div>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, padding: 20, borderRadius: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass }}>SUBMITTED QUOTES</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: TOKENS.brass, marginTop: 6 }}>45</div>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, padding: 20, borderRadius: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.paper }}>PIPELINE VALUE</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: TOKENS.paper, marginTop: 6 }}>$480,000</div>
+          </div>
+        </div>
+
+        <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Recent Inbound RFQ Leads</h4>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {PUBLIC_RFQS.map((item) => (
+            <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 16, background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 4, flexWrap: "wrap", gap: 12 }}>
+              <div>
+                <div style={{ fontSize: 15, color: TOKENS.paper, fontWeight: 600 }}>{item.title}</div>
+                <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>{item.category} · {item.quantity} · {item.budget}</div>
+              </div>
+              <Button onClick={() => go("contact")}>Send Quote →</Button>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </Section>
+  );
+}
+
+function KnowledgePage({ go }) {
+  return (
+    <>
+      <Section eyebrow="Knowledge Base & Guides" title="Technical & Manufacturing Resource Hub" sub="Educational articles, engineering guides, and architectural blueprints.">
+        <Grid min={280}>
+          <Card>
+            <div style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 8 }}>MANUFACTURING GUIDE</div>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px" }}>How Contract CNC Machining Works</h3>
+            <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>A complete guide on 5-axis milling, precision tolerances, and choosing contract suppliers.</p>
+          </Card>
+          <Card>
+            <div style={{ fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 8 }}>CLOUD ARCHITECTURE</div>
+            <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px" }}>Multi-Region Anycast Load Balancing</h3>
+            <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>How Anycast IP routing reduces global latency and handles sub-second server failovers.</p>
+          </Card>
+        </Grid>
+      </Section>
+      <CTA go={go} />
     </>
   );
 }
@@ -3284,40 +3778,60 @@ function LeadCaptureModal() {
 /* Dynamic Route SEO Manager */
 const PAGE_SEO = {
   home: {
-    title: "Abhimanyu Technologies — Scale Your Business | Enterprise AI & Cloud Load Balancing",
-    description: "Next-generation enterprise software development, AI & data engineering, cloud Anycast load balancing, and cybersecurity solutions."
+    title: "Abhimanyu Technologies — Enterprise B2B Platform & Scale Your Business",
+    description: "Connect with verified manufacturers, enterprise products, AI services, custom CNC machining, and global suppliers."
+  },
+  products: {
+    title: "Enterprise B2B Product Marketplace | Abhimanyu Technologies",
+    description: "Explore enterprise software platforms, industrial machinery, electronics, and verified products."
+  },
+  services: {
+    title: "Services & Solutions Directory | Abhimanyu Technologies",
+    description: "Custom software engineering, AI/ML models, cloud Anycast load balancing, and cybersecurity services."
+  },
+  manufacturers: {
+    title: "Verified Industrial & OEM Manufacturers Directory | Abhimanyu",
+    description: "Find verified CNC machining, sheet metal fabrication, and electronics assembly manufacturers."
+  },
+  businesses: {
+    title: "Verified B2B Business Directory | Abhimanyu Technologies",
+    description: "Browse verified enterprise suppliers, service providers, and business profiles."
+  },
+  requirements: {
+    title: "Public RFQs & Buyer Requirements Hub | Abhimanyu Technologies",
+    description: "View active buyer requirements, post RFQs, and submit competitive supplier quotations."
+  },
+  "rfq-wizard": {
+    title: "5-Step RFQ Post a Requirement Wizard | Abhimanyu Technologies",
+    description: "Post your manufacturing or software requirement in 5 simple steps and receive instant verified quotes."
+  },
+  dashboard: {
+    title: "Seller & Business Owner Dashboard | Abhimanyu Technologies",
+    description: "Manage inbound leads, RFQs, submitted quotations, and account analytics."
+  },
+  knowledge: {
+    title: "Technical SEO & Manufacturing Knowledge Base | Abhimanyu",
+    description: "Industrial guides on CNC contract manufacturing, Anycast cloud architecture, and AI models."
   },
   about: {
     title: "About Us | Abhimanyu Technologies Leadership & Vision",
-    description: "Learn about Abhimanyu Technologies founder Shiva, CTO Abhimanyu, executive leadership team, company history, and engineering values."
-  },
-  services: {
-    title: "Enterprise Services & Cloud Load Balancing | Abhimanyu Technologies",
-    description: "Custom software development, AI/ML model deployment, multi-region cloud load balancing, and zero-trust cybersecurity services."
-  },
-  products: {
-    title: "Enterprise Software Platforms | Abhimanyu ERP, CRM & AI",
-    description: "Explore turnkey, supported enterprise software platforms: Abhimanyu ERP, CRM, HRMS, AI Automation, and IoT Platforms."
-  },
-  industries: {
-    title: "Industry Solutions | Banking, Healthcare, E-Commerce & Logistics",
-    description: "Domain-specific software engineering and cloud architectures for FinTech, Healthcare, Manufacturing, E-Commerce, and Logistics."
+    description: "Learn about founder Shiva, CTO Abhimanyu, executive leadership, company history, and engineering values."
   },
   "case-studies": {
     title: "Case Studies & Client ROI Outcomes | Abhimanyu Technologies",
-    description: "In-depth technical case studies on multi-region cloud load balancing, 500k user LMS, and sub-10ms AI fraud scoring."
+    description: "In-depth technical case studies on cloud load balancing, LMS analytics, and AI fraud scoring."
   },
   insights: {
     title: "Technical Insights & Engineering Blog | Abhimanyu Technologies",
-    description: "Read research whitepapers on cloud Anycast load balancing, generative AI business integration, and zero-trust cybersecurity."
+    description: "Research whitepapers on Anycast load balancing, generative AI, and zero-trust security."
   },
   careers: {
-    title: "Engineering Careers & Open Roles | Abhimanyu Technologies",
+    title: "Careers & Open Engineering Roles | Abhimanyu Technologies",
     description: "Join Abhimanyu Technologies in Telangana HQ or remote. Hiring Flutter, Node.js, AI/ML, and DevOps Engineers."
   },
   contact: {
     title: "Contact Us & Project Inquiry | Scale Your Business",
-    description: "Get in touch with an Abhimanyu Technologies solution architect. Request project scope quotes, timelines, and consultations."
+    description: "Get in touch with an Abhimanyu Technologies solution architect for scope quotes and consultations."
   }
 };
 
@@ -3333,9 +3847,21 @@ function useRouteSEO(page) {
 }
 
 const PAGES = {
-  home: HomePage, about: AboutPage, services: ServicesPage, products: ProductsPage,
-  industries: IndustriesPage, "case-studies": CaseStudiesPage, insights: InsightsPage,
-  careers: CareersPage, contact: ContactPage,
+  home: HomePage,
+  products: ProductsPage,
+  services: ServicesPage,
+  manufacturers: ManufacturersPage,
+  businesses: BusinessesPage,
+  requirements: RequirementsPage,
+  "rfq-wizard": RFQWizardPage,
+  dashboard: BusinessDashboardPage,
+  knowledge: KnowledgePage,
+  about: AboutPage,
+  industries: IndustriesPage,
+  "case-studies": CaseStudiesPage,
+  insights: InsightsPage,
+  careers: CareersPage,
+  contact: ContactPage,
 };
 
 export default function MyVaultSite() {
