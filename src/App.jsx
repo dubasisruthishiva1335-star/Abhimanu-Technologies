@@ -3185,14 +3185,161 @@ function ProductsPage({ go }) {
 }
 
 function IndustriesPage({ go }) {
+  const [activeInd, setActiveInd] = useState("mfg");
+
+  const INDUSTRY_BLUEPRINTS = {
+    mfg: {
+      id: "mfg",
+      name: "Manufacturing & Industry 4.0",
+      tagline: "Sensor-to-Cloud Telemetry & Predictive OEE",
+      compliance: ["ISO 9001:2015", "IEC 62443 (OT Security)", "OPC-UA / Modbus TCP"],
+      challenge: "Isolated machine PLCs, manual whiteboard scrap tracking, and unplanned spindle/motor bearing downtime.",
+      blueprint: "Edge micro-gateways running on industrial ARM/x86 hardware collect vibrational and thermal telemetry via MQTT/Modbus. In-line ONNX anomaly models predict mechanical failure 36 hours prior to seizure, automatically generating maintenance work orders in Abhimanyu ERP.",
+      metric: "-78% Unplanned downtime · +14.2% Overall Equipment Effectiveness (OEE)",
+      stack: "Raspberry Pi CM4 · TimescaleDB · Grafana · ONNX · gRPC · Docker Edge"
+    },
+    fin: {
+      id: "fin",
+      name: "Banking, FinTech & Insurance",
+      tagline: "Sub-10ms Fraud Prevention & Core Ledger Integrity",
+      compliance: ["PCI-DSS Level 1", "SOC2 Type II", "RBI / ISO 27001", "FIPS 140-2"],
+      challenge: "High checkout abandonment due to manual KYC reviews and legacy batch fraud detection causing elevated chargeback exposure.",
+      blueprint: "Zero-knowledge distributed ledger with sub-8ms inline neural risk evaluation at Anycast edge POPs. Multi-region PostgreSQL with active-active synchronous replication guarantees zero double-spend anomalies even under network partition.",
+      metric: "99.999% High-Availability SLA · -91% Fraudulent transactions",
+      stack: "Rust · Go · Python PyTorch · PostgreSQL Citus · Redis Cluster · AWS KMS"
+    },
+    health: {
+      id: "health",
+      name: "Healthcare & MedTech Systems",
+      tagline: "HIPAA Compliant Telemetry & Real-Time Patient Analytics",
+      compliance: ["HIPAA / HITECH", "HL7 FHIR v4", "FDA 21 CFR Part 11", "ISO 13485"],
+      challenge: "Unintegrated electronic health records (EHR), non-compliant patient data transmission, and delayed vitals telemetry during emergency care.",
+      blueprint: "End-to-end encrypted WebSocket gateways streaming biometric vitals with AES-256 field-level column encryption. Automated FHIR resource adapters ingest hospital feeds into scalable clinical research data lakes.",
+      metric: "100% Audit trail coverage · Sub-200ms vital sign alarm dispatch",
+      stack: "React Native · Node.js · Kafka · AWS MedTech VPC · PostgreSQL · Docker"
+    },
+    logistics: {
+      id: "logistics",
+      name: "Logistics, Cold-Chain & Fleet Operations",
+      tagline: "Dynamic Geospatial Routing & Proof-of-Delivery Escrow",
+      compliance: ["GDP (Good Distribution Practice)", "DOT / ISO 28000", "e-Way Bill GST"],
+      challenge: "Refrigerated cargo temperature excursions going undetected until final delivery, causing millions in spoiled pharmaceutical and food cargo.",
+      blueprint: "LoRaWAN and cellular IoT temperature loggers transmitting heartbeat telemetry every 60 seconds. Smart geofencing engines trigger instant rerouting alerts if cold-chain thresholds deviate by more than ±0.5°C.",
+      metric: "-68% Spoilage claims · 14 Million daily tracking telemetry events",
+      stack: "Flutter Mobile · Go Microservices · Redis Geo · ClickHouse · AWS IoT Core"
+    },
+    aero: {
+      id: "aero",
+      name: "Aerospace & Defence Systems",
+      tagline: "Mission-Critical CNC Metrology & AS9100 Traceability",
+      compliance: ["AS9100D", "ITAR Compliant Vaults", "MIL-STD-810H", "NIST SP 800-171"],
+      challenge: "Strict raw material pedigree requirements, CMM coordinate measuring validation, and zero tolerance for defect contamination across suppliers.",
+      blueprint: "Full digital twin inspection logging linking raw material Mill Test Reports (MTR) directly to CNC machine toolpaths and AS9102 First Article Inspection reports stored in immutable audit vaults.",
+      metric: "100% Complete lot genealogy · Zero defect containment escapes",
+      stack: "SolidWorks API · Python · PostgreSQL · Vault Cryptography · Private Edge"
+    }
+  };
+
+  const selected = INDUSTRY_BLUEPRINTS[activeInd];
+
   return (
     <>
-      <Section eyebrow="Industries" title="Domain-Specific Engineering Solutions" sub="Tailored regulatory compliance, domain schemas, and high-load capabilities built for your industry.">
-        <Grid min={270}>
+      <Section eyebrow="Domain Engineering" title="Industry-Specific Architectural Blueprints" sub="Engineered compliance regimes, fault-tolerant topologies, and real-time data pipelines built for your exact operational domain.">
+        {/* Industry Selector Tabs */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 32 }}>
+          {Object.values(INDUSTRY_BLUEPRINTS).map((ind) => (
+            <button
+              key={ind.id}
+              onClick={() => setActiveInd(ind.id)}
+              style={{
+                background: activeInd === ind.id ? TOKENS.brass : "rgba(255, 255, 255, 0.03)",
+                color: activeInd === ind.id ? TOKENS.ink : TOKENS.paper,
+                border: `1px solid ${activeInd === ind.id ? TOKENS.brass : TOKENS.hair}`,
+                borderRadius: 999,
+                padding: "10px 20px",
+                fontSize: 13.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: activeInd === ind.id ? 700 : 400,
+                cursor: "pointer",
+                transition: "all 0.15s ease"
+              }}
+            >
+              {ind.name.split(" ")[0]}
+            </button>
+          ))}
+        </div>
+
+        {/* Detailed Blueprint Showcase Card */}
+        <Card style={{ padding: 36, marginBottom: 40, border: `1px solid rgba(212,175,55,0.3)` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
+            <div>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.1em" }}>
+                ARCHITECTURAL BLUEPRINT
+              </span>
+              <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 26, margin: "6px 0 6px" }}>
+                {selected.name}
+              </h2>
+              <div style={{ color: TOKENS.slate, fontSize: 14 }}>{selected.tagline}</div>
+            </div>
+
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {selected.compliance.map((c) => (
+                <span key={c} style={{ background: "rgba(21,101,192,0.12)", border: `1px solid rgba(21,101,192,0.3)`, padding: "5px 10px", borderRadius: 4, fontSize: 11, color: "#60A5FA", fontFamily: "'JetBrains Mono', monospace" }}>
+                  ✓ {c}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, margin: "24px 0" }}>
+            <div style={{ background: "rgba(239, 68, 68, 0.05)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: 6, padding: 20 }}>
+              <div style={{ color: "#f87171", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginBottom: 8 }}>
+                CRITICAL OPERATIONAL CHALLENGE
+              </div>
+              <p style={{ color: TOKENS.paper, fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+                {selected.challenge}
+              </p>
+            </div>
+
+            <div style={{ background: "rgba(0, 168, 150, 0.05)", border: "1px solid rgba(0, 168, 150, 0.25)", borderRadius: 6, padding: 20 }}>
+              <div style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginBottom: 8 }}>
+                PRODUCTION PERFORMANCE METRIC
+              </div>
+              <div style={{ color: TOKENS.paper, fontSize: 15, fontWeight: 600, lineHeight: 1.5, margin: 0 }}>
+                {selected.metric}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 24 }}>
+            <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginBottom: 8 }}>
+              ENGINEERED TOPOLOGY & DATA PIPELINE
+            </h4>
+            <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.7, margin: 0 }}>
+              {selected.blueprint}
+            </p>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 14, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 20 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate }}>
+              TECH STACK: <span style={{ color: TOKENS.paper }}>{selected.stack}</span>
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <Button onClick={() => go("contact")}>Request Domain Blueprint Scope →</Button>
+              <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post {selected.name.split(" ")[0]} RFQ</Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* All Industries Directory Overview Grid */}
+        <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 18px" }}>
+          All 10 Specialized Industry Coverage Areas
+        </h3>
+        <Grid min={260}>
           {INDUSTRIES.map((ind) => (
             <Card key={ind.name}>
-              <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 10px" }}>{ind.name}</h3>
-              <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{ind.note}</p>
+              <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 8px" }}>{ind.name}</h4>
+              <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{ind.note}</p>
             </Card>
           ))}
         </Grid>
