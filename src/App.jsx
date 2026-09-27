@@ -6642,21 +6642,22 @@ function LeadCaptureModal() {
       {!open && !subscribed && (
         <button
           onClick={() => setOpen(true)}
+          className="lead-trigger-pill"
           style={{
             position: "fixed",
-            bottom: 24,
-            left: 24,
+            bottom: "clamp(80px, 10vh, 24px)",
+            left: 20,
             zIndex: 9990,
-            background: "rgba(16, 21, 31, 0.92)",
+            background: "rgba(16, 24, 40, 0.95)",
             border: `1px solid ${TOKENS.brass}`,
             borderRadius: 999,
-            padding: "10px 18px",
+            padding: "9px 16px",
             color: TOKENS.paper,
-            fontSize: 12.5,
+            fontSize: 12,
             fontFamily: "'JetBrains Mono', monospace",
             cursor: "pointer",
-            backdropFilter: "blur(12px)",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+            backdropFilter: "blur(14px)",
+            boxShadow: "0 12px 32px rgba(0,0,0,0.6)",
             display: "flex",
             alignItems: "center",
             gap: 8,
@@ -6668,19 +6669,19 @@ function LeadCaptureModal() {
 
       {/* Modal Dialog */}
       {open && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.8)", backdropFilter: "blur(10px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <Card style={{ maxWidth: 460, width: "100%", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt, position: "relative", padding: 32 }}>
-            <button onClick={() => setOpen(false)} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: TOKENS.paper, fontSize: 20, cursor: "pointer" }}>✕</button>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.94)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 480, width: "100%", border: `1px solid rgba(212,175,55,0.4)`, background: TOKENS.panelAlt, borderRadius: 12, overflow: "hidden", position: "relative", padding: 36, boxShadow: "0 32px 80px rgba(0,0,0,0.85)" }}>
+            <button onClick={() => setOpen(false)} style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
 
             {subscribed ? (
-              <div style={{ textAlign: "center", padding: "12px 0" }}>
-                <div style={{ fontSize: 28, color: TOKENS.brass, marginBottom: 8 }}>✓</div>
-                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 8px" }}>Guide Sent!</h3>
-                <p style={{ color: TOKENS.slate, fontSize: 14, margin: 0 }}>Check your inbox shortly for the Enterprise Architecture Blueprint 2026 PDF.</p>
+              <div style={{ textAlign: "center", padding: "16px 0" }}>
+                <div style={{ fontSize: 36, color: TOKENS.teal, marginBottom: 12 }}>✓</div>
+                <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>Blueprint Dispatched!</h3>
+                <p style={{ color: TOKENS.slate, fontSize: 14, margin: 0, lineHeight: 1.6 }}>Check your inbox shortly for the Enterprise Architecture Blueprint 2026 PDF.</p>
               </div>
             ) : (
               <form onSubmit={handleSubscribe}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8 }}>FREE ENTERPRISE RESOURCE</div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.08em" }}>FREE ENTERPRISE WHITEPAPER</div>
                 <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 10px" }}>Enterprise Architecture Blueprint</h3>
                 <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
                   Download our 2026 whitepaper on building resilient microservices, zero-trust security, and sub-10ms AI engines.
@@ -6692,13 +6693,13 @@ function LeadCaptureModal() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your work email..."
-                    style={{ background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "12px 14px", color: TOKENS.paper, fontSize: 14 }}
+                    style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", color: TOKENS.paper, fontSize: 14 }}
                   />
                   <Button type="submit">Download Blueprint PDF →</Button>
                 </div>
               </form>
             )}
-          </Card>
+          </div>
         </div>
       )}
     </>
