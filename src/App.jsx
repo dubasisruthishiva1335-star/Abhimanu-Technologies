@@ -3375,7 +3375,6 @@ export default function MyVaultSite() {
         <Page go={go} />
       </main>
       <Footer go={go} />
-      <AIAgentWidget go={go} />
       <LeadCaptureModal />
     </div>
   );
