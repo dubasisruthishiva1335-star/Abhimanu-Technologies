@@ -2927,8 +2927,10 @@ function CareersPage({ go }) {
 
 function RFQWizardPage({ go }) {
   const [step, setStep] = useState(1);
-  const [rfq, setRfq] = useState({ category: "Custom CNC Machining", qty: "5,000 Units", location: "Telangana / Chennai", specs: "", contactEmail: "" });
+  const [rfq, setRfq] = useState({ category: "Custom CNC Machining", qty: "5,000 Units", location: "Telangana / Chennai", specs: "", cadFile: null, cadFileName: "", contactEmail: "" });
   const [submittedId, setSubmittedId] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
 
   const update = (k, v) => setRfq({ ...rfq, [k]: v });
 
@@ -2939,18 +2941,42 @@ function RFQWizardPage({ go }) {
     trackEvent("submit_rfq_wizard", { id, category: rfq.category });
   };
 
+  const simulateUpload = (fileName) => {
+    setUploading(true);
+    setUploadProgress(0);
+    update("cadFileName", fileName);
+    let prog = 0;
+    const interval = setInterval(() => {
+      prog += Math.floor(Math.random() * 18) + 8;
+      if (prog >= 100) {
+        prog = 100;
+        clearInterval(interval);
+        setUploading(false);
+      }
+      setUploadProgress(prog);
+    }, 180);
+  };
+
+  const STEP_LABELS = ["Category", "Quantity", "Location", "Specs", "Upload CAD", "Review & Post"];
+
   if (submittedId) {
     return (
       <Section eyebrow="RFQ Confirmation" title="Requirement Posted & Broadcasted">
         <Card style={{ maxWidth: 580, margin: "0 auto", padding: 36, textAlign: "center", border: `1px solid ${TOKENS.brass}` }}>
-          <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(212, 175, 55, 0.15)", border: `1px solid ${TOKENS.brass}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: TOKENS.brass, fontSize: 24, fontWeight: "bold" }}>✓</div>
-          <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>RFQ {submittedId} Live</h3>
-          <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6, marginBottom: 20 }}>
-            Your requirement for <strong style={{ color: TOKENS.paper }}>{rfq.category} ({rfq.qty})</strong> has been verified and broadcasted to 42 matched suppliers.
+          <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(0, 168, 150, 0.15)", border: `1px solid ${TOKENS.teal}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", color: TOKENS.teal, fontSize: 28, fontWeight: "bold" }}>✓</div>
+          <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 8px" }}>RFQ {submittedId} Live</h3>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 16 }}>BROADCASTED TO 42 MATCHED SUPPLIERS</div>
+          <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6, marginBottom: 8 }}>
+            Your requirement for <strong style={{ color: TOKENS.paper }}>{rfq.category} ({rfq.qty})</strong> has been verified and broadcasted instantly.
           </p>
+          {rfq.cadFileName && (
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 20 }}>
+              📎 CAD FILE: {rfq.cadFileName}
+            </div>
+          )}
           <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             <Button onClick={() => go("requirements")}>View Public RFQ Hub →</Button>
-            <Button variant="ghost" onClick={() => setSubmittedId("")}>Post Another RFQ</Button>
+            <Button variant="ghost" onClick={() => { setSubmittedId(""); setStep(1); }}>Post Another RFQ</Button>
           </div>
         </Card>
       </Section>
@@ -2958,20 +2984,37 @@ function RFQWizardPage({ go }) {
   }
 
   return (
-    <Section eyebrow="Post a Requirement (RFQ)" title="5-Step Sourcing & RFQ Builder" sub="Fill out the requirements below to receive instant verified supplier quotes.">
-      <Card style={{ maxWidth: 680, margin: "0 auto", padding: 32 }}>
+    <Section eyebrow="Post a Requirement (RFQ)" title="6-Step Sourcing & RFQ Builder" sub="Fill out the requirements below to receive instant verified supplier quotes.">
+      <Card style={{ maxWidth: 700, margin: "0 auto", padding: 32 }}>
         {/* Step Indicator Bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 28, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 16 }}>
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ width: 24, height: 24, borderRadius: "50%", background: step >= i ? TOKENS.brass : "rgba(255,255,255,0.06)", color: step >= i ? TOKENS.ink : TOKENS.slate, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: "bold", fontFamily: "'JetBrains Mono', monospace" }}>{i}</span>
-              <span style={{ fontSize: 12, color: step === i ? TOKENS.paper : TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
-                {i === 1 ? "Category" : i === 2 ? "Quantity" : i === 3 ? "Location" : i === 4 ? "Specs" : "Review"}
-              </span>
-            </div>
-          ))}
+        <div style={{ overflowX: "auto", marginBottom: 28, paddingBottom: 16, borderBottom: `1px solid ${TOKENS.hair}` }}>
+          <div style={{ display: "flex", gap: 8, minWidth: 560 }}>
+            {STEP_LABELS.map((label, idx) => {
+              const i = idx + 1;
+              const done = step > i;
+              const active = step === i;
+              return (
+                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: "50%",
+                    background: done ? TOKENS.teal : active ? TOKENS.brass : "rgba(255,255,255,0.06)",
+                    color: done || active ? TOKENS.ink : TOKENS.slate,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 12, fontWeight: "bold", fontFamily: "'JetBrains Mono', monospace",
+                    border: active ? `2px solid ${TOKENS.brass}` : "none",
+                  }}>
+                    {done ? "✓" : i}
+                  </div>
+                  <span style={{ fontSize: 10, color: active ? TOKENS.paper : done ? TOKENS.teal : TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", textAlign: "center", letterSpacing: "0.04em" }}>
+                    {label.toUpperCase()}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
+        {/* Step 1: Category */}
         {step === 1 && (
           <div>
             <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 1: Select Sourcing Category</h4>
@@ -2981,13 +3024,13 @@ function RFQWizardPage({ go }) {
                   key={cat}
                   onClick={() => update("category", cat)}
                   style={{
-                    background: rfq.category === cat ? "rgba(212, 175, 55, 0.15)" : "rgba(255,255,255,0.03)",
+                    background: rfq.category === cat ? "rgba(212, 175, 55, 0.12)" : "rgba(255,255,255,0.03)",
                     border: `1px solid ${rfq.category === cat ? TOKENS.brass : TOKENS.hair}`,
                     color: rfq.category === cat ? TOKENS.brass : TOKENS.paper,
-                    padding: "14px 16px", borderRadius: 4, textAlign: "left", cursor: "pointer", fontSize: 13.5
+                    padding: "14px 16px", borderRadius: 6, textAlign: "left", cursor: "pointer", fontSize: 13.5, transition: "all 0.15s ease"
                   }}
                 >
-                  ✓ {cat}
+                  {rfq.category === cat ? "✓ " : "○ "}{cat}
                 </button>
               ))}
             </div>
@@ -2995,14 +3038,23 @@ function RFQWizardPage({ go }) {
           </div>
         )}
 
+        {/* Step 2: Quantity */}
         {step === 2 && (
           <div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 2: Production Quantity & Batch Size</h4>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 2: Production Quantity & Batch Size</h4>
+            <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 16 }}>Enter the total quantity required. You may also specify prototype/sample quantities.</p>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
+              {["100 Units (Sample)", "500 Units", "1,000 Units", "5,000 Units", "10,000 Units", "50,000+ Units"].map((qty) => (
+                <button key={qty} onClick={() => update("qty", qty)} style={{ background: rfq.qty === qty ? "rgba(212,175,55,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${rfq.qty === qty ? TOKENS.brass : TOKENS.hair}`, color: rfq.qty === qty ? TOKENS.brass : TOKENS.paper, borderRadius: 6, padding: "8px 14px", fontSize: 13, cursor: "pointer" }}>
+                  {qty}
+                </button>
+              ))}
+            </div>
             <input
-              style={{ width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 4, marginBottom: 16 }}
+              style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14 }}
               value={rfq.qty}
               onChange={(e) => update("qty", e.target.value)}
-              placeholder="e.g. 5,000 Units / Prototype Run"
+              placeholder="Or type custom quantity / Prototype Run"
             />
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Button variant="ghost" onClick={() => setStep(1)}>← Back</Button>
@@ -3011,14 +3063,23 @@ function RFQWizardPage({ go }) {
           </div>
         )}
 
+        {/* Step 3: Location */}
         {step === 3 && (
           <div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 3: Target Delivery Location</h4>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 3: Target Delivery Location</h4>
+            <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 16 }}>Select your preferred delivery destination or type a custom location.</p>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
+              {["Telangana", "Chennai", "Bengaluru", "Hyderabad", "Mumbai", "Delhi NCR", "Pan-India", "Global Export"].map((loc) => (
+                <button key={loc} onClick={() => update("location", loc)} style={{ background: rfq.location === loc ? "rgba(0,168,150,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${rfq.location === loc ? TOKENS.teal : TOKENS.hair}`, color: rfq.location === loc ? TOKENS.teal : TOKENS.paper, borderRadius: 6, padding: "8px 14px", fontSize: 13, cursor: "pointer" }}>
+                  📍 {loc}
+                </button>
+              ))}
+            </div>
             <input
-              style={{ width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 4, marginBottom: 16 }}
+              style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14 }}
               value={rfq.location}
               onChange={(e) => update("location", e.target.value)}
-              placeholder="e.g. Telangana, Chennai, Bengaluru, Global"
+              placeholder="Or type custom city / region"
             />
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Button variant="ghost" onClick={() => setStep(2)}>← Back</Button>
@@ -3027,42 +3088,139 @@ function RFQWizardPage({ go }) {
           </div>
         )}
 
+        {/* Step 4: Specs */}
         {step === 4 && (
           <div>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 4: Technical Specs & Document Notes</h4>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 4: Technical Specifications</h4>
+            <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 16 }}>Describe material grades, tolerances, surface finish, and any special requirements.</p>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+              {["Stainless Steel 316", "Aluminium 6061", "Mild Steel", "HDPE Plastic", "PCB FR4", "Titanium Grade 5"].map((mat) => (
+                <button key={mat} onClick={() => update("specs", rfq.specs ? rfq.specs + ", " + mat : mat)} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.slate, borderRadius: 4, padding: "5px 10px", fontSize: 11.5, cursor: "pointer" }}>
+                  + {mat}
+                </button>
+              ))}
+            </div>
             <textarea
-              rows={4}
-              style={{ width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 4, marginBottom: 16 }}
+              rows={5}
+              style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14, resize: "vertical" }}
               value={rfq.specs}
               onChange={(e) => update("specs", e.target.value)}
-              placeholder="Specify materials (e.g. Stainless Steel 316), tolerances, surface finishing, or CAD notes..."
+              placeholder="e.g. Stainless Steel 316, ±0.01mm tolerance, Ra 1.6 µm surface finish, anodized..."
             />
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Button variant="ghost" onClick={() => setStep(3)}>← Back</Button>
-              <Button onClick={() => setStep(5)}>Next: Review →</Button>
+              <Button onClick={() => setStep(5)}>Next: Upload CAD →</Button>
             </div>
           </div>
         )}
 
+        {/* Step 5: CAD/File Upload Simulation */}
         {step === 5 && (
-          <form onSubmit={handleFinish}>
-            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 5: Review & Broadcast RFQ</h4>
-            <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, padding: 16, borderRadius: 4, marginBottom: 16 }}>
-              <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>CATEGORY: {rfq.category}</div>
-              <div style={{ fontSize: 13, color: TOKENS.paper, marginTop: 4 }}>QUANTITY: {rfq.qty}</div>
-              <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 4 }}>LOCATION: {rfq.location}</div>
-              <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 4 }}>SPECS: {rfq.specs || "Standard Industry Tolerance"}</div>
+          <div>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 5: Upload CAD / Technical Drawing</h4>
+            <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 20 }}>Attach your CAD files, DXF drawings, PDF specs, or reference images. Supported: .STEP · .DXF · .PDF · .PNG · .DWG</p>
+
+            {/* Drag & Drop zone (simulated) */}
+            <div
+              style={{
+                border: `2px dashed ${rfq.cadFileName ? TOKENS.teal : TOKENS.hair}`,
+                borderRadius: 10,
+                padding: "40px 24px",
+                textAlign: "center",
+                cursor: "pointer",
+                background: rfq.cadFileName ? "rgba(0, 168, 150, 0.06)" : "rgba(255,255,255,0.02)",
+                transition: "all 0.2s ease",
+                marginBottom: 16,
+              }}
+              onClick={() => {
+                if (!rfq.cadFileName && !uploading) {
+                  const files = ["part_drawing_v3.step", "valve_assy.dxf", "pcb_layout.dxf", "cad_model_final.pdf", "bracket_rev2.dwg"];
+                  simulateUpload(files[Math.floor(Math.random() * files.length)]);
+                }
+              }}
+            >
+              {rfq.cadFileName ? (
+                <>
+                  <div style={{ fontSize: 32, marginBottom: 10 }}>📄</div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.teal }}>{rfq.cadFileName}</div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 6 }}>FILE ATTACHED — UPLOAD COMPLETE ✓</div>
+                  <button onClick={(e) => { e.stopPropagation(); update("cadFileName", ""); setUploadProgress(0); }} style={{ background: "transparent", border: `1px solid ${TOKENS.hair}`, color: TOKENS.slate, borderRadius: 4, padding: "4px 10px", fontSize: 11, cursor: "pointer", marginTop: 12 }}>Remove File</button>
+                </>
+              ) : uploading ? (
+                <>
+                  <div style={{ fontSize: 28, marginBottom: 10 }}>⏳</div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper, marginBottom: 12 }}>Uploading {rfq.cadFileName || "file"}...</div>
+                  <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 999, height: 6, overflow: "hidden", maxWidth: 240, margin: "0 auto" }}>
+                    <div style={{ height: "100%", width: `${uploadProgress}%`, background: `linear-gradient(90deg, ${TOKENS.teal}, ${TOKENS.blue})`, borderRadius: 999, transition: "width 0.2s ease" }} />
+                  </div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginTop: 8 }}>{uploadProgress}% UPLOADING</div>
+                </>
+              ) : (
+                <>
+                  <div style={{ fontSize: 36, marginBottom: 12 }}>📁</div>
+                  <div style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper, marginBottom: 6 }}>Click to Upload CAD / Drawing</div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>STEP · DXF · PDF · DWG · PNG — max 50MB</div>
+                </>
+              )}
             </div>
-            <input
-              type="email"
-              required
-              style={{ width: "100%", background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 4, marginBottom: 16 }}
-              value={rfq.contactEmail}
-              onChange={(e) => update("contactEmail", e.target.value)}
-              placeholder="Enter your work email for supplier quotes..."
-            />
+
+            <div style={{ background: "rgba(212,175,55,0.06)", border: `1px solid rgba(212,175,55,0.2)`, borderRadius: 6, padding: 12, marginBottom: 20, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
+              💡 TIP: Attaching a CAD file increases quote accuracy by 85% and reduces quote turnaround time.
+            </div>
+
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Button variant="ghost" onClick={() => setStep(4)}>← Back</Button>
+              <div style={{ display: "flex", gap: 10 }}>
+                <button onClick={() => setStep(6)} style={{ background: "transparent", border: `1px solid ${TOKENS.hair}`, color: TOKENS.slate, borderRadius: 6, padding: "10px 16px", fontSize: 13, cursor: "pointer", fontFamily: "'JetBrains Mono', monospace" }}>Skip this step</button>
+                <Button onClick={() => setStep(6)}>Next: Review & Post →</Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 6: Review & Broadcast */}
+        {step === 6 && (
+          <form onSubmit={handleFinish}>
+            <h4 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 6: Review & Broadcast RFQ</h4>
+
+            {/* Summary table */}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 8, marginBottom: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: "10px 16px", fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>
+                <span style={{ color: TOKENS.slate }}>CATEGORY</span>
+                <span style={{ color: TOKENS.paper }}>{rfq.category}</span>
+                <span style={{ color: TOKENS.slate }}>QUANTITY</span>
+                <span style={{ color: TOKENS.paper }}>{rfq.qty}</span>
+                <span style={{ color: TOKENS.slate }}>LOCATION</span>
+                <span style={{ color: TOKENS.teal }}>📍 {rfq.location}</span>
+                <span style={{ color: TOKENS.slate }}>SPECS</span>
+                <span style={{ color: TOKENS.paper }}>{rfq.specs || "Standard Industry Tolerance"}</span>
+                {rfq.cadFileName && (
+                  <>
+                    <span style={{ color: TOKENS.slate }}>CAD FILE</span>
+                    <span style={{ color: TOKENS.brass }}>📎 {rfq.cadFileName}</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", color: TOKENS.slate, fontSize: 12, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em" }}>WORK EMAIL FOR QUOTE RESPONSES *</label>
+              <input
+                type="email"
+                required
+                style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, fontSize: 14 }}
+                value={rfq.contactEmail}
+                onChange={(e) => update("contactEmail", e.target.value)}
+                placeholder="you@company.com"
+              />
+            </div>
+
+            <div style={{ background: "rgba(0, 168, 150, 0.06)", border: `1px solid rgba(0, 168, 150, 0.2)`, borderRadius: 6, padding: 12, marginBottom: 20, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
+              🚀 This RFQ will be instantly broadcasted to 42 verified suppliers matching your category and location.
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Button variant="ghost" onClick={() => setStep(5)}>← Back</Button>
               <Button type="submit">Broadcast RFQ Now 🚀</Button>
             </div>
           </form>
@@ -3071,6 +3229,7 @@ function RFQWizardPage({ go }) {
     </Section>
   );
 }
+
 
 function ManufacturersPage({ go }) {
   return (
@@ -3108,6 +3267,43 @@ function ManufacturersPage({ go }) {
 
 function BusinessesPage({ go }) {
   const [selectedBiz, setSelectedBiz] = useState(null);
+  const [profileTab, setProfileTab] = useState("about");
+
+  const BIZ_PROFILES = {
+    "biz-1": {
+      about: "Abhimanyu Technologies is an enterprise technology company building AI systems, cloud infrastructure, and custom B2B software platforms for organizations that require absolute reliability. Founded in 2020, headquartered in Telangana, India.",
+      products: ["Abhimanyu ERP — Unified business operations", "Abhimanyu CRM — Sales & lead management", "Abhimanyu AI Platform — Enterprise AI automation", "Abhimanyu IoT Fleet Manager", "Abhimanyu Analytics Dashboard"],
+      services: ["Custom Software Engineering", "AI & Machine Learning Models", "Cloud & Anycast Load Balancing", "Zero-Trust Cybersecurity", "IoT & Embedded Systems"],
+      manufacturing: "Not applicable — Software & Cloud AI company",
+      certifications: ["ISO 9001:2015", "SOC2 Type II (In Progress)", "AWS Advanced Partner", "Microsoft Azure Partner"],
+      reviews: [
+        { client: "FinTech Corp", rating: "5★", text: "Built our sub-10ms AI fraud detection API. Exceptional architecture." },
+        { client: "Logistics Leader", rating: "5★", text: "Reduced cloud overhead by 64%. Zero downtime migration." },
+      ]
+    },
+    "biz-2": {
+      about: "Vertex Automation & Robotics Systems is a leading Industrial IoT and Robotics OEM headquartered in Pune, Maharashtra. Since 2018, we design and manufacture SCADA systems, PLC automation, and conveyor robotics for India's top manufacturers.",
+      products: ["SCADA Control System v5", "PLC Logic Controllers", "Industrial Conveyor Automation", "IoT Sensor Gateway", "Predictive Maintenance AI"],
+      services: ["Industrial Automation Design", "PLC Programming & Integration", "SCADA System Installation", "Robotic Line Commissioning", "Annual Maintenance Contracts"],
+      manufacturing: "In-house manufacturing of control panels, IoT sensor nodes, and conveyor systems. Capacity: 200 units/month.",
+      certifications: ["ISO 9001:2015", "CE Marked Products", "IEC 61131-3 PLC Standard", "UL Listed Components"],
+      reviews: [
+        { client: "Auto OEM", rating: "5★", text: "Reduced production line downtime by 78% with predictive maintenance." },
+        { client: "Steel Plant", rating: "4.8★", text: "Fully automated our conveyor system. Excellent support team." },
+      ]
+    }
+  };
+
+  const profile = selectedBiz ? (BIZ_PROFILES[selectedBiz.id] || BIZ_PROFILES["biz-1"]) : null;
+
+  const PROFILE_TABS = [
+    { id: "about", label: "About" },
+    { id: "products", label: "Products" },
+    { id: "services", label: "Services" },
+    { id: "manufacturing", label: "Manufacturing" },
+    { id: "certifications", label: "Certifications" },
+    { id: "reviews", label: "Reviews" },
+  ];
 
   return (
     <>
@@ -3115,34 +3311,166 @@ function BusinessesPage({ go }) {
         <Grid min={320}>
           {B2B_BUSINESSES.map((b) => (
             <Card key={b.id}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                <span style={{ color: TOKENS.teal, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>{b.type.toUpperCase()}</span>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                <span style={{ background: "rgba(21,101,192,0.12)", border: `1px solid rgba(21,101,192,0.3)`, borderRadius: 4, padding: "4px 10px", fontSize: 11, color: "#60A5FA", fontFamily: "'JetBrains Mono', monospace" }}>{b.type.toUpperCase()}</span>
                 <span style={{ color: TOKENS.brass, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>✓ VERIFIED</span>
               </div>
               <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 6px" }}>{b.name}</h3>
-              <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 14 }}>{b.location} · {b.rating}</div>
-              <div style={{ fontSize: 13, color: TOKENS.paper, marginBottom: 16 }}>Specialties: {b.specialties.join(" · ")}</div>
-              <Button variant="ghost" onClick={() => setSelectedBiz(b)}>View Company Profile →</Button>
+              <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 8 }}>📍 {b.location} · Est. {b.established}</div>
+              <div style={{ fontSize: 12.5, color: TOKENS.teal, marginBottom: 14 }}>{b.rating} · {b.employees}</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
+                {b.specialties.map((s) => (
+                  <span key={s} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${TOKENS.hair}`, padding: "4px 8px", borderRadius: 4, fontSize: 11, color: TOKENS.slate }}>{s}</span>
+                ))}
+              </div>
+              <Button variant="ghost" onClick={() => { setSelectedBiz(b); setProfileTab("about"); }}>View Company Profile →</Button>
             </Card>
           ))}
         </Grid>
       </Section>
 
-      {/* Business Modal Inspector */}
-      {selectedBiz && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(9, 9, 9, 0.85)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <Card style={{ maxWidth: 640, width: "100%", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt, padding: 32 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass }}>✓ VERIFIED BUSINESS PROFILE</span>
-              <button onClick={() => setSelectedBiz(null)} style={{ background: "transparent", border: "none", color: TOKENS.paper, fontSize: 22, cursor: "pointer" }}>✕</button>
+      {/* Business Full Mini-Website Profile Modal */}
+      {selectedBiz && profile && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(7, 16, 32, 0.92)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.3)`, borderRadius: 12, boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}>
+            {/* Profile Header */}
+            <div style={{ background: `linear-gradient(135deg, #0d2040 0%, ${TOKENS.panelAlt} 100%)`, padding: "28px 32px 0", borderBottom: `1px solid ${TOKENS.hair}`, borderRadius: "12px 12px 0 0" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8, letterSpacing: "0.1em" }}>✓ VERIFIED BUSINESS PROFILE</div>
+                  <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 6px" }}>{selectedBiz.name}</h2>
+                  <div style={{ fontSize: 14, color: TOKENS.teal, marginBottom: 8 }}>{selectedBiz.type}</div>
+                  <div style={{ display: "flex", gap: 16, fontSize: 13, color: TOKENS.slate }}>
+                    <span>📍 {selectedBiz.location}</span>
+                    <span>🏢 Est. {selectedBiz.established}</span>
+                    <span>👥 {selectedBiz.employees}</span>
+                  </div>
+                </div>
+                <button onClick={() => setSelectedBiz(null)} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+              </div>
+              <div style={{ fontSize: 12.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 16 }}>{selectedBiz.rating}</div>
+
+              {/* Tab navigation */}
+              <div style={{ display: "flex", gap: 2, overflowX: "auto", paddingBottom: 0 }}>
+                {PROFILE_TABS.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setProfileTab(t.id)}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      borderBottom: `2px solid ${profileTab === t.id ? TOKENS.brass : "transparent"}`,
+                      color: profileTab === t.id ? TOKENS.brass : TOKENS.slate,
+                      fontSize: 13,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      padding: "8px 16px 10px",
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                      transition: "all 0.15s ease",
+                      fontWeight: profileTab === t.id ? 700 : 400,
+                    }}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <h2 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 6px" }}>{selectedBiz.name}</h2>
-            <div style={{ fontSize: 14, color: TOKENS.teal, marginBottom: 16 }}>{selectedBiz.type} · {selectedBiz.location}</div>
-            <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6, marginBottom: 20 }}>
-              Leading provider established in {selectedBiz.established} with a team of {selectedBiz.employees}. Fully verified and audited for high-reliability enterprise delivery.
-            </p>
-            <Button onClick={() => { setSelectedBiz(null); go("contact"); }}>Send Direct Enquiry →</Button>
-          </Card>
+
+            {/* Tab Content */}
+            <div style={{ padding: 32 }}>
+              {profileTab === "about" && (
+                <div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 14px" }}>About {selectedBiz.name}</h3>
+                  <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.75, marginBottom: 24 }}>{profile.about}</p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    {[
+                      { label: "Founded", value: selectedBiz.established },
+                      { label: "Team Size", value: selectedBiz.employees },
+                      { label: "Location", value: selectedBiz.location },
+                      { label: "Rating", value: selectedBiz.rating },
+                    ].map((item) => (
+                      <div key={item.label} style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
+                        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate, marginBottom: 4 }}>{item.label.toUpperCase()}</div>
+                        <div style={{ color: TOKENS.paper, fontSize: 14, fontWeight: 500 }}>{item.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {profileTab === "products" && (
+                <div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Products & Platforms</h3>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {profile.products.map((p, i) => (
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
+                        <span style={{ color: TOKENS.brass, fontSize: 16 }}>📦</span>
+                        <span style={{ color: TOKENS.paper, fontSize: 14 }}>{p}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {profileTab === "services" && (
+                <div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Services Offered</h3>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {profile.services.map((s, i) => (
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(0,168,150,0.05)", border: `1px solid rgba(0,168,150,0.2)`, borderRadius: 6, padding: "12px 16px" }}>
+                        <span style={{ color: TOKENS.teal, fontSize: 14 }}>✓</span>
+                        <span style={{ color: TOKENS.paper, fontSize: 14 }}>{s}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {profileTab === "manufacturing" && (
+                <div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 14px" }}>Manufacturing Capabilities</h3>
+                  <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.7 }}>{profile.manufacturing}</p>
+                </div>
+              )}
+
+              {profileTab === "certifications" && (
+                <div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Certifications & Compliance</h3>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    {profile.certifications.map((cert, i) => (
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(212,175,55,0.06)", border: `1px solid rgba(212,175,55,0.25)`, borderRadius: 6, padding: "12px 16px" }}>
+                        <span style={{ color: TOKENS.brass, fontSize: 16 }}>🏅</span>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper }}>{cert}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {profileTab === "reviews" && (
+                <div>
+                  <h3 style={{ fontFamily: "'Fraunces', serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Client Reviews</h3>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                    {profile.reviews.map((r, i) => (
+                      <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 20 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+                          <span style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: TOKENS.paper }}>{r.client}</span>
+                          <span style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }}>{r.rating}</span>
+                        </div>
+                        <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>"{r.text}"</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* CTA Footer */}
+              <div style={{ marginTop: 28, paddingTop: 24, borderTop: `1px solid ${TOKENS.hair}`, display: "flex", gap: 12 }}>
+                <Button onClick={() => { setSelectedBiz(null); go("contact"); }}>Send Direct Enquiry →</Button>
+                <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post RFQ to This Supplier</Button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
