@@ -1,14 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import * as THREE from "three";
 
 /* ============================================================
-   ABHIMANYU TECHNOLOGIES — Deep Navy Enterprise B2B Platform
-
-   Design System: Professional · Modern · Trustworthy · Industrial
-   Background: Deep Navy (#0B1F3A) / Slate Charcoal (#101828)
-   Primary Accent: Electric Blue (#1565C0) / Brass Gold (#D4AF37)
-   Teal Accent: #00A896
-   Text: Crisp White (#F8FAFC) / Muted Slate (#94A3B8)
+   ABHIMANYU TECHNOLOGIES — Enterprise IT Services & Products
+   
+   Platform Architecture:
+   - Full-Stack Digital Engineering & Custom IT Services
+   - Web Development (Frontend & Full-Stack)
+   - Android & iOS Mobile App Development
+   - Backend & Distributed API Microservices
+   - Cloud, DevOps & Infrastructure (AWS/GCP/Azure/K8s)
+   - Enterprise AI & Custom Automation
+   - Proprietary Software Products (ERP, CRM, HRMS, AI Studio)
+   - Interactive Client Project Scope & Cost Estimator
    ============================================================ */
 
 const LIGHT_TOKENS = {
@@ -20,23 +24,29 @@ const LIGHT_TOKENS = {
   paper: "#0F172A",
   slate: "#475569",
   teal: "#0D9488",
-  blue: "#1D4ED8",
+  blue: "#2563EB",
+  blueDark: "#1D4ED8",
   hair: "#E2E8F0",
   white: "#0F172A",
+  badgeBg: "rgba(37, 99, 235, 0.08)",
+  cardHover: "rgba(37, 99, 235, 0.04)",
 };
 
 const DARK_TOKENS = {
-  ink: "#0B1F3A",
-  panel: "#102A4C",
-  panelAlt: "#163761",
-  brass: "#D4AF37",
-  brassBright: "#F59E0B",
+  ink: "#0B1727",
+  panel: "#132238",
+  panelAlt: "#1B2F4A",
+  brass: "#F59E0B",
+  brassBright: "#FBBF24",
   paper: "#F8FAFC",
   slate: "#94A3B8",
-  teal: "#00A896",
+  teal: "#14B8A6",
   blue: "#38BDF8",
+  blueDark: "#0284C7",
   hair: "rgba(255, 255, 255, 0.12)",
   white: "#FFFFFF",
+  badgeBg: "rgba(56, 189, 248, 0.14)",
+  cardHover: "rgba(56, 189, 248, 0.06)",
 };
 
 const TOKENS = { ...LIGHT_TOKENS };
@@ -61,428 +71,568 @@ const formatPrice = (inrAmount, curr = "INR") => {
   return `${c.symbol}${Math.round(converted).toLocaleString("en-US")}`;
 };
 
-/* ---------------------------- data ---------------------------- */
+/* ---------------------------- Navigation Structure ---------------------------- */
 
 const NAV = [
   { id: "home", label: "Home" },
+  { id: "services", label: "IT Services" },
   { id: "products", label: "Products" },
-  { id: "services", label: "Services" },
-  { id: "manufacturers", label: "Manufacturers" },
-  { id: "businesses", label: "Businesses" },
-  { id: "requirements", label: "Requirements (RFQ)" },
-  { id: "dashboard", label: "Dashboard" },
-  { id: "knowledge", label: "Knowledge" },
-  { id: "about", label: "About" },
+  { id: "rfq-wizard", label: "Project Planner" },
+  { id: "case-studies", label: "Case Studies" },
+  { id: "dashboard", label: "Client Portal" },
+  { id: "knowledge", label: "Tech Hub" },
+  { id: "about", label: "About Us" },
+  { id: "careers", label: "Careers" },
   { id: "contact", label: "Contact" },
 ];
 
-/* ---------------------------- B2B Marketplace Datasets ---------------------------- */
+/* ---------------------------- IT Services Dataset ---------------------------- */
 
-const B2B_MANUFACTURERS = [
+const IT_SERVICES = [
   {
-    id: "mfg-1",
-    name: "Apex Precision Engineering Ltd.",
-    category: "CNC Machining",
-    location: "Chennai, Tamil Nadu",
-    verified: true,
-    rating: "4.9 ★ (142 Reviews)",
-    capacity: "High Capacity (50k units/mo)",
-    capabilities: ["5-Axis CNC Milling", "Precision Lathe Turning", "Stainless Steel 316", "Titanium Aerospace Grade"],
-    certifications: ["ISO 9001:2015", "AS9100D Aerospace", "SOC2 Type II"],
-    responseRate: "Avg Response: < 2 Hours",
-    minOrder: "100 Units"
+    id: "web-dev",
+    category: "Web Engineering",
+    title: "Web Application Development",
+    shortDesc: "High-performance, responsive web portals, SaaS platforms, and enterprise progressive web apps built with Next.js, React, and Node.js.",
+    icon: "🌐",
+    tag: "Core Service",
+    techStack: ["Next.js 14", "React 18", "TypeScript", "Tailwind CSS", "Node.js", "GraphQL"],
+    features: [
+      "SSR & SSG Next.js web applications with sub-second page loads",
+      "Headless e-commerce, custom customer portals, and internal tools",
+      "Progressive Web Apps (PWAs) with offline caching and service workers",
+      "High-converting landing pages with 98+ Google Lighthouse scores",
+      "Real-time WebSocket feeds and interactive dashboards",
+      "Enterprise SEO optimization & structured metadata schemas",
+    ],
+    deliverables: "Production-ready Web App, Figma UI Kit, CI/CD Pipeline, Automated Test Suite",
+    timeline: "3 to 8 weeks",
+    estInr: 180000,
   },
   {
-    id: "mfg-2",
-    name: "Deccan Sheet Metal & Fabrication",
-    category: "Sheet Metal Fabrication",
-    location: "Hyderabad, Telangana",
-    verified: true,
-    rating: "4.8 ★ (98 Reviews)",
-    capacity: "Medium Batch (25k units/mo)",
-    capabilities: ["Fiber Laser Cutting", "CNC Press Brake Bending", "Robot MIG/TIG Welding", "Powder Coating"],
-    certifications: ["ISO 9001:2015", "IATF 16949 Automotive"],
-    responseRate: "Avg Response: < 1 Hour",
-    minOrder: "50 Units"
+    id: "frontend-dev",
+    category: "Frontend Engineering",
+    title: "Frontend & UI/UX Development",
+    shortDesc: "Pixel-perfect, accessible, and fluid user interfaces crafted from Figma designs with modern component architectures and micro-frontends.",
+    icon: "🎨",
+    tag: "UI / UX Speciality",
+    techStack: ["React", "Vue.js", "Zustand", "Tailwind CSS", "Framer Motion", "Storybook"],
+    features: [
+      "Custom enterprise design systems with reusable tokenized UI components",
+      "WCAG 2.1 AA accessibility compliance and cross-browser resilience",
+      "Smooth 60fps animations, interactive micro-interactions, and 3D visualizers",
+      "Micro-frontend architectures for enterprise scale and team isolation",
+      "State management optimization with zero unnecessary re-renders",
+      "Rigorous unit and visual regression testing via Storybook & Playwright",
+    ],
+    deliverables: "Design System Repository, Reusable Component Library, Storybook Docs",
+    timeline: "2 to 6 weeks",
+    estInr: 140000,
   },
   {
-    id: "mfg-3",
-    name: "Vanguard Electronics OEM Systems",
-    category: "Electronics Assembly",
-    location: "Bengaluru, Karnataka",
-    verified: true,
-    rating: "4.95 ★ (210 Reviews)",
-    capacity: "Mass Production (200k PCBs/mo)",
-    capabilities: ["High-Speed SMT Assembly", "BGA X-Ray Inspection", "Conformal Coating", "Turnkey Box Build"],
-    certifications: ["ISO 13485 Medical", "ISO 9001:2015", "IPC-A-610 Class 3"],
-    responseRate: "Avg Response: Instant AI Matching",
-    minOrder: "500 Units"
-  }
-];
-
-const B2B_BUSINESSES = [
-  {
-    id: "biz-1",
-    name: "Abhimanyu Technologies India HQ",
-    type: "Enterprise Software & Cloud AI Partner",
-    location: "Telangana, India",
-    verified: true,
-    rating: "5.0 ★ (350+ Global Clients)",
-    specialties: ["AI Systems & LLMs", "Cloud Anycast Load Balancing", "Custom SaaS", "Cybersecurity"],
-    employees: "250+ Engineers",
-    established: "2020",
-    slug: "abhimanyu-technologies"
+    id: "backend-dev",
+    category: "Backend & Systems",
+    title: "Backend & Distributed API Engineering",
+    shortDesc: "Scalable microservices, high-throughput REST and GraphQL APIs, event-driven data streaming, and secure database architectures.",
+    icon: "⚙️",
+    tag: "High Concurrency",
+    techStack: ["Node.js", "Python (FastAPI)", "Go", "PostgreSQL", "Redis", "Kafka", "Docker"],
+    features: [
+      "Distributed microservices capable of handling 50,000+ requests/second",
+      "PostgreSQL relational modeling, connection pooling, and multi-tenant sharding",
+      "Redis distributed caching, rate-limiting, and Pub/Sub message queues",
+      "Kafka / RabbitMQ event-driven streaming for asynchronous data pipelines",
+      "OAuth2, JWT, Role-Based Access Control (RBAC), and SOC2 audit trails",
+      "Automated OpenAPI / Swagger interactive documentation and SDK generators",
+    ],
+    deliverables: "Containerized Microservices, Database Migrations, API Docs, Load Test Reports",
+    timeline: "4 to 10 weeks",
+    estInr: 220000,
   },
   {
-    id: "biz-2",
-    name: "Vertex Automation & Robotics Systems",
-    type: "Industrial IoT & Robotics OEM",
-    location: "Pune, Maharashtra",
-    verified: true,
-    rating: "4.85 ★ (84 Clients)",
-    specialties: ["SCADA Systems", "PLC Programming", "Industrial Conveyor Automation", "IoT Sensors"],
-    employees: "120+ Engineers",
-    established: "2018",
-    slug: "vertex-automation"
-  }
-];
-
-const PUBLIC_RFQS = [
-  {
-    id: "RFQ-2026-9041",
-    title: "Manufacture 10,000 Stainless Steel 316 CNC Turned Valves",
-    category: "Custom CNC Machining",
-    quantity: "10,000 Units",
-    location: "Target Delivery: Chennai / Telangana",
-    budget: "$45,000 - $60,000",
-    deadline: "14 Days Left",
-    status: "OPEN FOR QUOTES",
-    bidsCount: "12 Bids Submitted",
-    tolerance: "±0.005 mm",
-    material: "SS 316L Marine Grade",
-    buyer: "Hydraulics Global Ltd"
+    id: "android-dev",
+    category: "Mobile Engineering",
+    title: "Android & Mobile App Development",
+    shortDesc: "Native Android apps in Kotlin & Jetpack Compose, plus cross-platform Flutter and React Native apps for Android & iOS.",
+    icon: "📱",
+    tag: "Native & Cross-Platform",
+    techStack: ["Kotlin", "Jetpack Compose", "Flutter", "Swift", "React Native", "Room DB", "Firebase"],
+    features: [
+      "Native Android development utilizing Kotlin Coroutines, Flow, and Jetpack Compose",
+      "Cross-platform Flutter & React Native development for unified Android + iOS delivery",
+      "Offline-first sync architectures with Room SQLite and encrypted local databases",
+      "Push notifications (Firebase Cloud Messaging), deep linking, and biometric auth",
+      "Hardware sensors, Bluetooth BLE, GPS real-time tracking, and camera integrations",
+      "End-to-end Google Play Store and Apple App Store release & compliance management",
+    ],
+    deliverables: "Signed Android APK/AAB, iOS IPA, Source Code, Play Store Deployment",
+    timeline: "4 to 12 weeks",
+    estInr: 250000,
   },
   {
-    id: "RFQ-2026-9082",
-    title: "Turnkey SMT PCB Assembly & Enclosure Box Build for Medical IoT Node",
-    category: "Electronics Assembly",
-    quantity: "2,500 Units",
-    location: "Target Delivery: Hyderabad / Bengaluru",
-    budget: "$28,000 - $35,000",
-    deadline: "8 Days Left",
-    status: "OPEN FOR QUOTES",
-    bidsCount: "8 Bids Submitted",
-    tolerance: "IPC-A-610 Class 3",
-    material: "FR4 6-Layer + ABS Enclosure",
-    buyer: "MedTech BioSystems"
+    id: "fullstack-dev",
+    category: "Turnkey Engineering",
+    title: "Full Stack Turnkey Development",
+    shortDesc: "End-to-end digital product engineering from conceptual wireframes to scalable backend microservices, web apps, and native mobile apps.",
+    icon: "⚡",
+    tag: "End-to-End Delivery",
+    techStack: ["React / Next.js", "Kotlin / Flutter", "Node.js / Python", "PostgreSQL", "AWS / Docker"],
+    features: [
+      "Turnkey MVP engineering: launch your digital product from zero to production",
+      "Unified data models and seamless API synchronization across Web and Mobile",
+      "Automated payment gateway integration (Stripe, Razorpay, PayPal, Invoicing)",
+      "Comprehensive Admin Control Panel with business analytics, charts, and user audits",
+      "Continuous integration and continuous deployment (CI/CD) with zero downtime",
+      "Post-launch technical maintenance, security patches, and SLA uptime guarantees",
+    ],
+    deliverables: "Complete Web + Mobile Suite, Admin CMS, Cloud Infrastructure, Source Code",
+    timeline: "6 to 14 weeks",
+    estInr: 450000,
   },
   {
-    id: "RFQ-2026-9114",
-    title: "Precision Aerospace Grade Aluminum 6061-T6 Structural Brackets",
-    category: "Custom CNC Machining",
-    quantity: "5,000 Units",
-    location: "Target Delivery: Pune / Mumbai",
-    budget: "$32,000 - $48,000",
-    deadline: "5 Days Left",
-    status: "HIGH PRIORITY",
-    bidsCount: "19 Bids Submitted",
-    tolerance: "±0.01 mm / Hard Anodized Type III",
-    material: "Aluminium 6061-T6",
-    buyer: "AeroDynamics Defence"
+    id: "cloud-devops",
+    category: "Cloud & Infrastructure",
+    title: "Cloud, DevOps & SRE Engineering",
+    shortDesc: "Automated cloud infrastructure, Kubernetes container orchestration, CI/CD pipelines, and 99.99% high-availability architectures.",
+    icon: "☁️",
+    tag: "99.99% SLA",
+    techStack: ["AWS", "Google Cloud", "Kubernetes", "Docker", "Terraform", "GitHub Actions", "Prometheus"],
+    features: [
+      "Cloud architecture setup across AWS (ECS/EKS, Lambda, RDS, S3) and Google Cloud",
+      "Infrastructure as Code (IaC) using Terraform for repeatable, audited environments",
+      "Docker multi-stage containerization and automated Kubernetes orchestration",
+      "Zero-downtime CI/CD deployment pipelines via GitHub Actions and GitLab CI",
+      "24/7 observability, distributed tracing, and Prometheus/Grafana alerting",
+      "DDoS mitigation, WAF rule configuration, SSL/TLS automation, and backup strategies",
+    ],
+    deliverables: "Terraform Scripts, Kubernetes Manifests, CI/CD Workflows, SRE Monitoring",
+    timeline: "2 to 6 weeks",
+    estInr: 160000,
   },
   {
-    id: "RFQ-2026-9150",
-    title: "High-Volume Custom Plastic Injection Molding for Automotive Sensor Cases",
-    category: "Custom Plastic Injection",
-    quantity: "50,000 Units",
-    location: "Target Delivery: Delhi NCR / Pan-India",
-    budget: "$70,000 - $95,000",
-    deadline: "21 Days Left",
-    status: "OPEN FOR QUOTES",
-    bidsCount: "15 Bids Submitted",
-    tolerance: "ISO 20457 SPI-A2 Mirror Finish",
-    material: "Polycarbonate / PBT Blend",
-    buyer: "AutoElectrics Tier-1"
+    id: "ai-solutions",
+    category: "Artificial Intelligence",
+    title: "Enterprise AI & Custom Solutions",
+    shortDesc: "Custom LLM integrations, Retrieval-Augmented Generation (RAG) over proprietary data, computer vision, and intelligent process automation.",
+    icon: "🤖",
+    tag: "Next-Gen AI",
+    techStack: ["Python", "OpenAI / Claude API", "LangChain", "LlamaIndex", "Vector DBs", "PyTorch"],
+    features: [
+      "Private Retrieval-Augmented Generation (RAG) systems over enterprise documents",
+      "Custom AI assistants for automated customer support, lead routing, and intake",
+      "Intelligent Document Processing (IDP): OCR invoice extraction and parsing",
+      "Predictive analytics, churn forecasting, and demand planning algorithms",
+      "Fine-tuning of open-source models (Llama 3, Mistral) on private client servers",
+      "Strict data privacy fences ensuring client IP is never used for external training",
+    ],
+    deliverables: "Trained AI Pipeline, Vector Database, API Middleware, Admin Sandbox",
+    timeline: "4 to 10 weeks",
+    estInr: 320000,
   },
   {
-    id: "RFQ-2026-9195",
-    title: "Enterprise Multi-Tenant AI Defect Detection Pipeline & Camera Stream",
-    category: "AI & Software Development",
-    quantity: "8 Manufacturing Plants",
-    location: "Target Delivery: Global Deployment / Cloud Edge",
-    budget: "$85,000 - $120,000",
-    deadline: "11 Days Left",
-    status: "VERIFIED BUYER",
-    bidsCount: "6 Bids Submitted",
-    tolerance: "Sub-15ms p99 inference latency",
-    material: "Kubernetes, ONNX, TensorRT, RTSP",
-    buyer: "Apex Foundry Conglomerate"
-  }
+    id: "qa-security",
+    category: "Quality & Security",
+    title: "Cybersecurity, QA & Testing",
+    shortDesc: "Automated end-to-end regression suites, API load testing, vulnerability assessments, and OWASP compliance certification.",
+    icon: "🔒",
+    tag: "Zero Defect Policy",
+    techStack: ["Playwright", "Cypress", "Jest", "k6", "OWASP ZAP", "SonarQube"],
+    features: [
+      "Automated cross-browser end-to-end regression suites using Playwright",
+      "API performance and load stress testing (k6) to simulate 100k+ concurrent users",
+      "Static code analysis (SAST) and dependency vulnerability scans (SonarQube)",
+      "OWASP Top 10 penetration testing and security gap remediation",
+      "Mobile automated UI testing on cloud device farms (Firebase Test Lab)",
+      "Detailed QA audit certification reports prior to production deployments",
+    ],
+    deliverables: "Automated Test Suites, Penetration Test Report, QA Certification Seal",
+    timeline: "2 to 5 weeks",
+    estInr: 120000,
+  },
 ];
 
+/* ---------------------------- Software Products Dataset ---------------------------- */
 
-const WHAT_WE_DO = [
-  { title: "Software Development", desc: "Custom web, mobile, and enterprise applications built on architectures that outlive the first release.", icon: "box" },
-  { title: "AI & Data", desc: "Machine learning, generative AI, and analytics that turn operational data into decisions.", icon: "knot" },
-  { title: "Cloud & DevOps", desc: "Migration, architecture, and automated delivery pipelines built for scale from day one.", icon: "icosa" },
-  { title: "Digital Solutions", desc: "End-to-end platforms designed around a business outcome, not a technology checklist.", icon: "octa" },
+const SOFTWARE_PRODUCTS = [
+  {
+    id: "erp",
+    name: "Abhimanyu Cloud ERP",
+    badge: "Enterprise Flagship",
+    tagline: "All-in-One Cloud Operations, Supply Chain & Financial Management",
+    shortDesc: "A modular, lightning-fast cloud ERP engineered for high-growth businesses. Unify inventory, multi-warehouse logistics, purchase orders, automated GST billing, and real-time P&L reporting.",
+    icon: "📦",
+    category: "Operations & Finance",
+    metrics: ["4.2x Faster Month-End Close", "99.98% Inventory Accuracy", "12,000+ Daily Transactions"],
+    modules: [
+      "Smart Multi-Warehouse Inventory with Batch & Barcode Tracking",
+      "Automated Purchase Orders & Supplier Portal with Vendor Scorecards",
+      "GST-Compliant E-Invoicing, E-Way Bill Generation & Tax Audits",
+      "Double-Entry General Ledger, Accounts Receivable/Payable & P&L",
+      "Production Planning (BOM, Work Orders & Machine Downtime Tracking)",
+      "Role-Based Access Control (RBAC) with Bank-Grade Audit Logs",
+    ],
+    pricing: {
+      starter: { label: "Starter", inr: 24999, period: "/mo", desc: "Up to 15 users, 1 warehouse, core inventory & accounting" },
+      pro: { label: "Growth Pro", inr: 59999, period: "/mo", desc: "Up to 50 users, 5 warehouses, automated GST & supplier portal" },
+      enterprise: { label: "Enterprise", inr: 129999, period: "/mo", desc: "Unlimited users, dedicated cloud instance, custom API integrations" },
+    },
+    techStack: ["Next.js", "Node.js", "PostgreSQL", "Redis", "Docker", "AWS"],
+    demoId: "erp",
+  },
+  {
+    id: "crm",
+    name: "Abhimanyu CRM",
+    badge: "AI-Powered",
+    tagline: "Intelligent Lead Acceleration, Omnichannel WhatsApp & Revenue Pipeline",
+    shortDesc: "Close deals faster with automated AI lead scoring, visual drag-and-drop sales pipelines, two-way WhatsApp & Email sequences, and predictive revenue forecasting.",
+    icon: "🎯",
+    category: "Sales & Marketing",
+    metrics: ["+46% Lead-to-Deal Conversion", "<15 Min Response SLA", "Omnichannel WhatsApp Sync"],
+    modules: [
+      "Visual Drag-and-Drop Sales Pipeline with Custom Deal Stages",
+      "Official Meta WhatsApp Cloud API Integration with Automated Drip Sequences",
+      "AI Lead Scoring based on engagement telemetry and budget fit",
+      "Unified Customer Inbox: Email, WhatsApp, Phone, and Web Chat",
+      "Automated Quotation Generator with E-Signature and PDF Export",
+      "Sales Representative Activity Telemetry, Leaderboards & Commissions",
+    ],
+    pricing: {
+      starter: { label: "Starter", inr: 14999, period: "/mo", desc: "Up to 5 sales reps, 5,000 active leads, WhatsApp automation" },
+      pro: { label: "Growth Pro", inr: 34999, period: "/mo", desc: "Up to 20 reps, 25,000 leads, AI scoring & custom reports" },
+      enterprise: { label: "Enterprise", inr: 79999, period: "/mo", desc: "Unlimited seats, dedicated WhatsApp number pools, custom webhooks" },
+    },
+    techStack: ["React", "FastAPI (Python)", "PostgreSQL", "Redis", "WebSockets"],
+    demoId: "crm",
+  },
+  {
+    id: "hrms",
+    name: "Abhimanyu HRMS",
+    badge: "People Operations",
+    tagline: "Modern Payroll, Biometric Attendance & Employee Lifecycle Platform",
+    shortDesc: "Automate workforce management from hiring to retirement. Features 1-click compliant payroll, geo-fenced mobile attendance, leave approvals, and employee self-service.",
+    icon: "👥",
+    category: "Human Capital",
+    metrics: ["1-Click Monthly Payroll", "100% Statutory Compliance", "Zero Paperwork HR"],
+    modules: [
+      "Automated Payroll Processing with PF, ESI, TDS & Professional Tax",
+      "Mobile Geo-Fenced & Facial Biometric Attendance Integration",
+      "Flexible Leave Policies, Holiday Calendars & Shift Rostering",
+      "Employee Self-Service Mobile App (Payslip Downloads, Reimbursements)",
+      "Performance Appraisal Cycles, OKR Tracking & 360 Feedback",
+      "Digital Onboarding, Offer Letter Generator & Document Vault",
+    ],
+    pricing: {
+      starter: { label: "Starter", inr: 9999, period: "/mo", desc: "Up to 25 employees, automated payroll & attendance" },
+      pro: { label: "Growth Pro", inr: 24999, period: "/mo", desc: "Up to 100 employees, biometric sync & appraisal cycles" },
+      enterprise: { label: "Enterprise", inr: 54999, period: "/mo", desc: "Unlimited workforce, custom ERP payroll sync, dedicated HR SLA" },
+    },
+    techStack: ["Next.js", "Go", "PostgreSQL", "Flutter (Mobile App)", "Docker"],
+    demoId: "hrms",
+  },
+  {
+    id: "ai-studio",
+    name: "Abhimanyu AI Studio",
+    badge: "Generative AI",
+    tagline: "Private Enterprise Knowledge Brain & Custom AI Workflow Orchestrator",
+    shortDesc: "Deploy secure, enterprise-grade AI assistants trained on your private internal documents, wikis, and databases with zero data leakage.",
+    icon: "🧠",
+    category: "Enterprise Intelligence",
+    metrics: ["<350ms Query Latency", "100% Private Data Isolation", "Multi-Model Fallback"],
+    modules: [
+      "Private Document Ingestion: PDF, Word, Excel, Notion, Confluence, SQL",
+      "Hybrid Semantic & Keyword Search using Vector Embeddings",
+      "Custom Prompt Engineering Studio with Guardrails & Hallucination Filters",
+      "Multi-LLM Routing (OpenAI GPT-4o, Anthropic Claude 3.5, Local Llama 3)",
+      "Automated Workflow Triggers: Ticket Resolution, Summarization, Email Drafting",
+      "Full Audit Trail of AI Responses with Ground-Truth Source Citations",
+    ],
+    pricing: {
+      starter: { label: "Starter", inr: 29999, period: "/mo", desc: "Up to 50,000 queries/mo, 10GB documents, 3 custom agents" },
+      pro: { label: "Growth Pro", inr: 69999, period: "/mo", desc: "Up to 250,000 queries/mo, 100GB documents, unlimited agents" },
+      enterprise: { label: "Enterprise", inr: 149999, period: "/mo", desc: "On-premise / private VPC deployment, fine-tuned custom models" },
+    },
+    techStack: ["Python", "FastAPI", "Milvus / Qdrant", "LangChain", "Next.js"],
+    demoId: "ai-studio",
+  },
+  {
+    id: "devpulse",
+    name: "Abhimanyu DevPulse",
+    badge: "DevOps & SRE",
+    tagline: "Real-Time Cloud Telemetry, Container Health & Automated Rollback Monitor",
+    shortDesc: "Gain full observability into your distributed services. Detect latency spikes, memory leaks, and failing API routes before your customers notice.",
+    icon: "📊",
+    category: "Cloud Observability",
+    metrics: ["Real-time APM Telemetry", "<2s Incident Alerts", "Automated Rollback Engine"],
+    modules: [
+      "Distributed Tracing across microservices with latency bottleneck alerts",
+      "Docker & Kubernetes Pod Health, CPU/Memory telemetry, and auto-scaling rules",
+      "API Endpoint Uptime & HTTP status code distribution dashboards",
+      "Automated Canary Rollback triggers when error rate exceeds threshold",
+      "Slack, PagerDuty, WhatsApp & Email incident routing with runbooks",
+      "Log Aggregation & Search with instant root-cause analysis",
+    ],
+    pricing: {
+      starter: { label: "Starter", inr: 11999, period: "/mo", desc: "Up to 10 servers/nodes, 100GB logs, 1-minute metric intervals" },
+      pro: { label: "Growth Pro", inr: 28999, period: "/mo", desc: "Up to 50 servers, 500GB logs, real-time APM & Slack alerts" },
+      enterprise: { label: "Enterprise", inr: 64999, period: "/mo", desc: "Unlimited infrastructure, automated rollback webhooks, SLA 99.99%" },
+    },
+    techStack: ["Go", "Prometheus", "Grafana", "TimescaleDB", "React"],
+    demoId: "devpulse",
+  },
+  {
+    id: "appengine",
+    name: "Abhimanyu AppEngine",
+    badge: "Developer Tool",
+    tagline: "Rapid Backend-as-a-Service & Secure API Generator for Web & Mobile",
+    shortDesc: "Accelerate your development cycle by 10x. Model your database schemas visually and auto-generate production-ready REST & GraphQL APIs with built-in auth.",
+    icon: "⚡",
+    category: "Developer Platform",
+    metrics: ["10x Faster Backend Setup", "Instant REST & GraphQL", "Auto-Generated TypeScript SDKs"],
+    modules: [
+      "Visual Database Schema Designer with automatic foreign key relations",
+      "Auto-generated CRUD REST endpoints and GraphQL queries with pagination",
+      "Pre-built Authentication (JWT, Email Magic Link, Google/Apple OAuth)",
+      "Role-Based Field-Level Permissions and Row-Level Security (RLS)",
+      "Auto-generated typed TypeScript and Kotlin client SDKs",
+      "1-Click Deploy to isolated cloud environments with automatic backups",
+    ],
+    pricing: {
+      starter: { label: "Developer", inr: 7999, period: "/mo", desc: "Up to 3 active projects, 50,000 API requests/day, community support" },
+      pro: { label: "Team Pro", inr: 19999, period: "/mo", desc: "Up to 15 projects, 1M requests/day, team collaboration & custom domains" },
+      enterprise: { label: "Enterprise", inr: 49999, period: "/mo", desc: "Self-hosted license, unlimited APIs, custom database connectors" },
+    },
+    techStack: ["Node.js", "TypeScript", "PostgreSQL", "Prisma", "Docker"],
+    demoId: "appengine",
+  },
 ];
 
-const SERVICE_CATEGORIES = [
-  { key: "software", label: "Software Engineering", blurb: "Applications engineered to be maintained, not just shipped.", problem: "Most software gets built fast and handed over — one dependency upgrade away from becoming unmaintainable.", outcome: "A codebase your team, or ours, can extend for years without a rewrite.", items: ["Custom Software Development", "Web Application Development", "Mobile App Development", "Enterprise Applications", "SaaS Development", "API Development", "Microservices", "Legacy Modernization", "System Integration"] },
-  { key: "cloud", label: "Cloud & DevOps", blurb: "Infrastructure that scales quietly and fails loudly — never the reverse.", problem: "Manual deployments and unmonitored servers turn small outages into all-night incidents.", outcome: "Infrastructure that scales with demand and tells you about a problem before your customers do.", items: ["Cloud Consulting", "Cloud Migration", "Cloud Architecture", "AWS / Azure / GCP", "CI/CD", "Infrastructure as Code", "Containerization (Docker, Kubernetes)", "Release Automation", "Monitoring & Logging"] },
-  { key: "ai", label: "AI & Machine Learning", blurb: "Models built for a specific business problem, evaluated against it honestly.", problem: "Most 'AI features' are bolted on to look modern, with no way to measure if they actually help.", outcome: "A model scoped to one decision, measured against a baseline, with a human still in the loop where it matters.", items: ["Generative AI", "AI Agents", "Machine Learning", "Natural Language Processing", "Computer Vision", "Recommendation Systems", "Predictive Analytics", "AI Automation", "AI Chatbots"] },
-  { key: "data", label: "Data & Analytics", blurb: "Pipelines and dashboards that people actually check before deciding.", problem: "Data lives in five different tools, and nobody fully trusts any of the reports built from it.", outcome: "One pipeline, one source of truth, and a dashboard people open before a meeting instead of during it.", items: ["Data Engineering", "Data Warehousing", "ETL / ELT", "Business Intelligence", "Real-time Analytics", "Data Governance", "Big Data"] },
-  { key: "security", label: "Cybersecurity", blurb: "Security reviewed at every layer, not bolted on before launch.", problem: "Security gets treated as a pre-launch checklist instead of a design constraint from day one.", outcome: "A system reviewed at the architecture level, with the boring controls (auth, access, logging) actually in place.", items: ["Security Consulting", "Application Security", "Cloud Security", "Identity & Access Management", "Vulnerability Assessment", "Security Monitoring", "Incident Response", "Compliance"] },
-  { key: "iot", label: "IoT & Embedded", blurb: "From sensor to dashboard, with the firmware in between.", problem: "Connected-device projects stall between the hardware team and the software team, with nobody owning the middle.", outcome: "One team that owns firmware, connectivity, and the dashboard the data ends up on.", items: ["IoT Development", "Embedded Software", "ESP32 / STM32", "Sensor Integration", "MQTT", "Device Management", "Industrial IoT", "IoT Analytics"] },
-  { key: "qa", label: "Testing & QA", blurb: "Confidence before release, measured rather than assumed.", problem: "\"It works on my machine\" is doing a lot of load-bearing work in most release processes.", outcome: "A test suite and release checklist that catch regressions before your customers do.", items: ["Manual Testing", "Automation Testing", "API Testing", "Performance Testing", "Security Testing", "Mobile Testing", "Regression Testing"] },
-  { key: "managed", label: "Managed Services & Consulting", blurb: "For teams who need a technology partner, not a one-time vendor.", problem: "The team that built the system moved on, and nobody left knows why it's built the way it is.", outcome: "A partner who stays on the system long enough to actually know it — and answers the phone when something breaks.", items: ["Application Support", "Infrastructure Support", "Cloud Operations", "24/7 Support", "IT Consulting", "Digital Strategy", "Architecture Consulting"] },
+/* ---------------------------- Tech Stacks ---------------------------- */
+
+const TECH_CATEGORIES = [
+  {
+    category: "Frontend Web",
+    icon: "🌐",
+    items: [
+      { name: "React 18", desc: "Component architecture, hooks, concurrent rendering" },
+      { name: "Next.js 14", desc: "App router, SSR/SSG, optimized edge rendering" },
+      { name: "TypeScript", desc: "Strict type safety, enterprise maintainability" },
+      { name: "Tailwind CSS", desc: "Rapid utility-first styling and design systems" },
+      { name: "Vue.js 3", desc: "Reactive composition API and Pinia state management" },
+      { name: "Zustand / Redux", desc: "Predictable, high-performance client state" },
+    ],
+  },
+  {
+    category: "Mobile App Development",
+    icon: "📱",
+    items: [
+      { name: "Android (Kotlin)", desc: "Native Android, Jetpack Compose, Coroutines" },
+      { name: "Flutter", desc: "Cross-platform iOS & Android with native 60fps canvas" },
+      { name: "React Native", desc: "Fast multi-platform mobile apps with native bridges" },
+      { name: "iOS (Swift)", desc: "SwiftUI, Combine, Metal, native iOS ecosystem" },
+      { name: "Room SQLite", desc: "Encrypted offline-first local database caching" },
+      { name: "Firebase / FCM", desc: "Push notification pipelines and real-time sync" },
+    ],
+  },
+  {
+    category: "Backend & APIs",
+    icon: "⚙️",
+    items: [
+      { name: "Node.js / Express", desc: "Event-driven asynchronous I/O microservices" },
+      { name: "Python (FastAPI)", desc: "High-speed async APIs, AI integrations, data" },
+      { name: "Go (Golang)", desc: "Ultra-low latency, concurrent network microservices" },
+      { name: "Java Spring Boot", desc: "Battle-tested enterprise transactional backends" },
+      { name: "GraphQL & REST", desc: "Flexible typed query layers and clean RESTful APIs" },
+      { name: "gRPC & Protobuf", desc: "High-performance inter-service communication" },
+    ],
+  },
+  {
+    category: "Databases & Streaming",
+    icon: "💾",
+    items: [
+      { name: "PostgreSQL", desc: "ACID compliant relational data with JSONB support" },
+      { name: "MongoDB", desc: "Scalable document storage for dynamic schemas" },
+      { name: "Redis", desc: "In-memory caching, rate-limiting, and Pub/Sub queues" },
+      { name: "Apache Kafka", desc: "High-throughput distributed event streaming" },
+      { name: "Elasticsearch", desc: "Full-text search indexing and log analysis" },
+      { name: "Vector DBs", desc: "Milvus, Pinecone & Qdrant for AI semantic retrieval" },
+    ],
+  },
+  {
+    category: "Cloud & DevOps",
+    icon: "☁️",
+    items: [
+      { name: "Amazon Web Services", desc: "ECS/EKS, Lambda, RDS, S3, CloudFront, Route53" },
+      { name: "Google Cloud Platform", desc: "Cloud Run, GKE, BigQuery, Cloud Pub/Sub" },
+      { name: "Kubernetes (K8s)", desc: "Automated container orchestration and scaling" },
+      { name: "Docker", desc: "Multi-stage reproducible microservice containers" },
+      { name: "Terraform", desc: "Declarative Infrastructure as Code (IaC)" },
+      { name: "GitHub Actions", desc: "Automated continuous delivery & automated testing" },
+    ],
+  },
 ];
 
-const PRODUCTS = [
-  { key: "erp", name: "Abhimanyu ERP", tag: "Business Management", icon: "box", desc: "A unified platform for operations, inventory, and finance — replacing the spreadsheet-and-email stack most growing businesses run on." },
-  { key: "crm", name: "Abhimanyu CRM", tag: "Sales & Customers", icon: "sphere", desc: "Track leads from first contact to closed deal, with the follow-up automation most teams mean to set up and never do." },
-  { key: "hrms", name: "Abhimanyu HRMS", tag: "People Operations", icon: "dodeca", desc: "Attendance, payroll, and performance in one system, built for teams that have outgrown manual HR." },
-  { key: "ai-platform", name: "Abhimanyu AI", tag: "Intelligent Automation", icon: "knot", desc: "Deploy assistants and predictive models against your own operational data, with a human still reviewing every decision that matters." },
-  { key: "iot-platform", name: "Abhimanyu IoT", tag: "Connected Devices", icon: "icosa", desc: "Monitor and manage fleets of connected devices from a single dashboard, with alerts before a failure — not after." },
-  { key: "analytics", name: "Abhimanyu Analytics", tag: "Business Intelligence", icon: "cone", desc: "Dashboards built from your real schema, not a generic template that needs six months of customization." },
-];
-
-const SOLUTIONS = [
-  { title: "Digital Transformation", desc: "Modernize the processes that still run on paper, PDF, or tribal knowledge." },
-  { title: "Business Automation", desc: "Remove the repetitive steps between a request and a result." },
-  { title: "Enterprise Solutions", desc: "Secure, scalable applications built for organizations that can't afford downtime." },
-  { title: "AI-Powered Solutions", desc: "Use AI where it improves a decision — not everywhere it's technically possible." },
-  { title: "Cloud Transformation", desc: "Move infrastructure to environments that scale with demand, not headcount." },
-  { title: "IoT Transformation", desc: "Connect equipment and spaces to data you can act on in real time." },
-];
-
-const INDUSTRIES = [
-  { name: "Banking & Finance", note: "Core systems, compliance-aware workflows, fraud-conscious architecture." },
-  { name: "Healthcare", note: "Patient data handled with the care regulation actually requires." },
-  { name: "Education", note: "Platforms built for institutions and the students who depend on them." },
-  { name: "Retail & E-commerce", note: "Inventory, checkout, and fulfillment that hold up during peak load." },
-  { name: "Manufacturing", note: "Machines, sensors, and production data connected to one view." },
-  { name: "Logistics", note: "Tracking and routing systems that reflect what's actually happening on the ground." },
-  { name: "Real Estate", note: "Listings, leasing, and property operations in one platform." },
-  { name: "Travel & Hospitality", note: "Booking and guest systems built for peak-season traffic." },
-  { name: "Government", note: "Citizen-facing services built for accessibility and scale." },
-  { name: "Startups & SMEs", note: "Enterprise-grade engineering at a scope that fits an early-stage budget." },
-];
-
-const TECH = [
-  { group: "Frontend", items: ["React", "Next.js", "Angular", "Vue"] },
-  { group: "Backend", items: ["Node.js", "Python", "Java", ".NET"] },
-  { group: "Mobile", items: ["Flutter", "React Native", "Android", "iOS"] },
-  { group: "Databases", items: ["PostgreSQL", "MySQL", "MongoDB", "Redis"] },
-  { group: "Cloud", items: ["AWS", "Azure", "Google Cloud"] },
-  { group: "Data & AI", items: ["Python", "TensorFlow", "GenAI", "Data Engineering"] },
-  { group: "DevOps", items: ["Docker", "Kubernetes", "CI/CD", "Terraform"] },
-];
-
-const WHY = [
-  { title: "Innovation", desc: "We use current technology to solve problems that are actually current — not to pad a stack list.", icon: "knot" },
-  { title: "Engineering Excellence", desc: "Software built to be read and maintained by the next engineer, not just to pass a demo.", icon: "dodeca" },
-  { title: "Business-Focused", desc: "Every technical decision traces back to a business requirement someone can name.", icon: "octa" },
-  { title: "Long-Term Partnership", desc: "We stay involved after launch — that's where most software actually earns its cost.", icon: "icosa" },
-  { title: "Security First", desc: "Security reviewed at design time, not patched in after an incident.", icon: "cone" },
-];
-
-const PROCESS = [
-  { step: "01", title: "Discover", desc: "We map the actual workflow — not just the feature list — before any code gets written. This is where most future rework gets avoided." },
-  { step: "02", title: "Design", desc: "Architecture and interface decisions get made together, so the two don't end up fighting each other three months in." },
-  { step: "03", title: "Build", desc: "Short, visible iterations. You see working software early — not a status report that says 'on track.'" },
-  { step: "04", title: "Launch", desc: "Deployment, monitoring, and a rollback plan in place before go-live. Launch day should be uneventful, on purpose." },
-  { step: "05", title: "Support", desc: "We stay on after go-live, because that's when the real usage patterns — and the real bugs — actually show up." },
-];
-
-const ENGAGEMENT = [
-  { title: "Fixed-Scope Project", desc: "A defined outcome, timeline, and price — best when the requirements are already clear.", bullets: ["Detailed proposal before work starts", "Milestone-based delivery", "Fixed budget, no surprise invoices"] },
-  { title: "Dedicated Team", desc: "Engineers embedded with your team, working your backlog — best for ongoing product development.", bullets: ["Scale the team up or down monthly", "Direct access to the engineers, not just a PM", "Works inside your existing tools and process"] },
-  { title: "Ongoing Partner", desc: "MyVault acting as your technology department — for teams that need coverage, not just a one-off project.", bullets: ["Maintenance, monitoring, and on-call support", "Roadmap planning alongside your team", "Priced as a predictable monthly retainer"] },
-];
-
-const FAQ = [
-  { q: "How long does a typical project take?", a: "It depends entirely on scope — a focused MVP can take a few weeks; an enterprise platform takes longer. We give a real timeline after the Discover stage, not before it." },
-  { q: "Do you work with early-stage startups as well as larger businesses?", a: "Yes. Fixed-Scope and Dedicated Team engagements both work well for teams at an early stage; Ongoing Partner tends to suit businesses with a system already in production." },
-  { q: "What happens after launch?", a: "We don't disappear at go-live. Support and maintenance continue under whichever engagement model you're on, and we're the ones who already understand the system when something needs to change." },
-  { q: "Can you take over and maintain an existing codebase?", a: "Yes — we start with an architecture review so we understand what we're inheriting before committing to a timeline or quote." },
-  { q: "Where is MyVault based?", a: "MyVault is based in Telangana, India, and works with clients across time zones." },
-];
+/* ---------------------------- Client Case Studies ---------------------------- */
 
 const CASE_STUDIES = [
-  { client: "Illustrative case study", title: "Unifying operations onto one cloud platform", challenge: "A growing business was running operations across disconnected spreadsheets and point tools, with no shared view of inventory or sales.", solution: "MyVault designed and built an integrated cloud platform covering inventory, orders, and reporting in one system.", stack: "Next.js · Node.js · PostgreSQL · AWS" },
-  { client: "Illustrative case study", title: "A student-facing LMS with real-time progress tracking", challenge: "An education program needed a way to deliver structured course content and verify completion at scale.", solution: "MyVault built a mobile learning platform with module-based progression, assessments, and certificate issuance.", stack: "Flutter · Express · PostgreSQL · S3" },
+  {
+    id: "fintech-bank",
+    title: "Next-Gen Mobile Neobank & Real-Time Payment Engine",
+    client: "Apex FinTech Solutions",
+    industry: "FinTech & Banking",
+    icon: "💳",
+    summary: "Built a native Android and cross-platform iOS mobile banking application paired with Go microservices, handling over 1.2M daily transactions with sub-100ms latency.",
+    challenge: "Client required bank-grade biometrics, zero-fraud card tokenization, instant UPI / IMPS settlements, and offline-first balance checking for users in low-bandwidth regions.",
+    solution: "Engineered a high-performance Flutter mobile client integrated with Go gRPC backend services, Redis distributed caching, and Kafka transactional logs with automated fraud detection.",
+    results: [
+      { label: "Daily Active Users", value: "850,000+" },
+      { label: "API Latency", value: "< 85ms" },
+      { label: "Crash-Free Sessions", value: "99.94%" },
+      { label: "Transaction Volume", value: "₹420 Cr/mo" },
+    ],
+    tech: ["Flutter", "Kotlin", "Go", "PostgreSQL", "Kafka", "Redis", "AWS EKS"],
+  },
+  {
+    id: "telehealth-platform",
+    title: "HIPAA-Compliant Telehealth Web Portal & Android App",
+    client: "Vanguard Health Technologies",
+    industry: "Healthcare & MedTech",
+    icon: "🩺",
+    summary: "Architected a comprehensive telemedicine consultation platform with HD WebRTC video, digital prescription generator, and native Android app for doctors and patients.",
+    challenge: "Handling secure peer-to-peer encrypted medical consultations with real-time vitals monitoring and automated electronic health record (EHR) sync.",
+    solution: "Developed a Next.js 14 web app and native Android app in Kotlin with WebRTC end-to-end encrypted video, HIPAA compliant AWS S3 medical vaults, and FHIR API standards.",
+    results: [
+      { label: "Video Consults", value: "140,000+" },
+      { label: "Prescription Gen Time", value: "< 2 mins" },
+      { label: "HIPAA Audit Score", value: "100% Pass" },
+      { label: "Doctor App Rating", value: "4.9 ★" },
+    ],
+    tech: ["Next.js", "Kotlin", "WebRTC", "FastAPI (Python)", "PostgreSQL", "Docker"],
+  },
+  {
+    id: "logistics-saas",
+    title: "Global Supply Chain Fleet Telemetry & Dispatch SaaS",
+    client: "TransContinental Logistics Ltd.",
+    industry: "Logistics & Fleet",
+    icon: "🚚",
+    summary: "Engineered a real-time fleet GPS tracking, automated driver route optimization, and digital consignment dispatch platform for 12,000+ freight trucks.",
+    challenge: "Processing high-frequency MQTT GPS telemetry packets every 3 seconds from thousands of vehicles while generating instant detour alerts.",
+    solution: "Built a distributed Node.js + Go streaming ingestion pipeline on Apache Kafka and TimescaleDB, with an interactive React mapping dashboard and Android driver app.",
+    results: [
+      { label: "Tracked Fleet", value: "12,400 Trucks" },
+      { label: "Fuel Cost Savings", value: "18.4%" },
+      { label: "Telemetry Ingestion", value: "65k msgs/sec" },
+      { label: "On-Time Deliveries", value: "98.2%" },
+    ],
+    tech: ["React", "Android (Java/Kotlin)", "Go", "Kafka", "TimescaleDB", "Google Maps SDK"],
+  },
+  {
+    id: "ai-enterprise-rag",
+    title: "Autonomous Enterprise Knowledge Assistant & RAG Studio",
+    client: "Cognitive Enterprise Systems",
+    industry: "Enterprise AI & SaaS",
+    icon: "🤖",
+    summary: "Implemented a private Retrieval-Augmented Generation (RAG) assistant allowing 4,000+ corporate employees to instantly query 2M+ internal technical documents in natural language.",
+    challenge: "Eliminating hallucination, maintaining strict document access permissions per employee role, and achieving sub-second question-answering speeds.",
+    solution: "Constructed an automated document embedding pipeline using Milvus vector databases, hybrid BM25 + dense vector search, and custom Claude 3.5 Sonnet prompt orchestration.",
+    results: [
+      { label: "Information Retrieval", value: "-82% Time" },
+      { label: "Accuracy Rate", value: "98.7%" },
+      { label: "Indexed Documents", value: "2,100,000+" },
+      { label: "Support Tickets Resolved", value: "45% Auto" },
+    ],
+    tech: ["Python", "FastAPI", "Milvus Vector DB", "LangChain", "Next.js", "Docker"],
+  },
+  {
+    id: "ecommerce-engine",
+    title: "High-Concurrency Multi-Vendor Marketplace Backend",
+    client: "OmniStore Commerce Network",
+    industry: "E-Commerce & Retail",
+    icon: "🛍️",
+    summary: "Re-architected an omnichannel retail platform with micro-frontends, dynamic inventory sync, and a checkout engine built to sustain flash sales of 45,000 orders/minute.",
+    challenge: "Previous legacy monolith crashed during peak festive flash sales with cart locking deadlocks and inventory overselling.",
+    solution: "Decomposed the system into distributed Node.js microservices with Redis distributed locks, idempotent payment webhooks, and Next.js ISR edge caching.",
+    results: [
+      { label: "Peak Flash Sale QPS", value: "48,000 Req/s" },
+      { label: "Overselling Incidents", value: "0" },
+      { label: "Checkout Duration", value: "1.4s" },
+      { label: "Uptime During Sale", value: "100.0%" },
+    ],
+    tech: ["Next.js", "Node.js", "PostgreSQL", "Redis Cluster", "AWS Fargate", "Stripe API"],
+  },
 ];
 
-const INSIGHTS = [
-  { category: "AI", title: "How AI Is Actually Changing Day-to-Day Business Decisions" },
-  { category: "Cloud", title: "Cloud Migration: A Practical Guide for Growing Businesses" },
-  { category: "IoT", title: "What Connecting Your Equipment to Data Actually Buys You" },
-  { category: "Software Development", title: "Choosing an Architecture That Survives Your Second Year" },
-  { category: "Cybersecurity", title: "The Security Reviews Most Teams Skip — and What They Cost Later" },
-  { category: "Digital Transformation", title: "Where Automation Pays Off First, and Where It Doesn't Yet" },
+/* ---------------------------- Client Testimonials ---------------------------- */
+
+const TESTIMONIALS = [
+  {
+    quote: "Abhimanyu Technologies delivered our native Android app and cloud backend 3 weeks ahead of schedule. Their engineering quality, clean code architecture, and proactive communication set a new benchmark for software partners.",
+    author: "Rajesh Varma",
+    role: "Chief Technology Officer",
+    company: "Apex FinTech Solutions",
+    avatar: "👨‍💼",
+    rating: 5,
+  },
+  {
+    quote: "The WebRTC telehealth platform they engineered has been rock solid. We have conducted over 140,000 patient consultations with zero downtime. Their attention to security, HIPAA compliance, and UX is extraordinary.",
+    author: "Dr. Ananya Sen",
+    role: "VP of Product Engineering",
+    company: "Vanguard Health Technologies",
+    avatar: "👩‍⚕️",
+    rating: 5,
+  },
+  {
+    quote: "Abhimanyu Cloud ERP transformed our multi-warehouse operations. We cut our month-end financial reconciliation from 8 days to just 6 hours. Outstanding product and incredible customer engineering support.",
+    author: "K. S. Narayanan",
+    role: "Managing Director",
+    company: "Deccan Industrial Logistics",
+    avatar: "👨‍🏭",
+    rating: 5,
+  },
 ];
 
-const ROLES = [
-  { title: "Flutter Developer", dept: "Engineering", type: "Full-time" },
-  { title: "Backend Engineer — Node.js", dept: "Engineering", type: "Full-time" },
-  { title: "AI / ML Engineer", dept: "AI & Data", type: "Full-time" },
-  { title: "Product Designer", dept: "Design", type: "Full-time" },
-  { title: "QA Engineer", dept: "Engineering", type: "Full-time" },
-];
+/* ---------------------------- Reusable UI Components ---------------------------- */
 
-const VALUES = [
-  { title: "Clarity over cleverness", desc: "The simplest correct solution wins, even when a more impressive one is available." },
-  { title: "Ownership", desc: "Whoever builds it stays close to how it performs once real people use it." },
-  { title: "Directness", desc: "We'd rather tell you a timeline is wrong now than protect it until it's too late to fix." },
-];
+function Button({ children, onClick, variant = "primary", style = {}, disabled = false, title }) {
+  const isPrimary = variant === "primary";
+  const isSecondary = variant === "secondary";
+  const isOutline = variant === "outline";
 
-/* ---------------------------- primitives ---------------------------- */
+  let bg = TOKENS.blue;
+  let color = "#FFFFFF";
+  let border = "none";
 
-function Eyebrow({ children }) {
-  return (
-    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", color: TOKENS.brass, marginBottom: 14 }}>
-      {children}
-    </div>
-  );
-}
+  if (isSecondary) {
+    bg = TOKENS.panelAlt;
+    color = TOKENS.paper;
+    border = `1px solid ${TOKENS.hair}`;
+  } else if (isOutline) {
+    bg = "transparent";
+    color = TOKENS.blue;
+    border = `1px solid ${TOKENS.blue}`;
+  }
 
-function ArcDivider() {
-  return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "8px 0 0" }}>
-      <Vault3D size={72} variant="ring" />
-    </div>
-  );
-}
-
-function Section({ id, eyebrow, title, sub, children, alt, tight }) {
-  return (
-    <section
-      id={id}
-      style={{
-        background: alt ? TOKENS.panelAlt : "transparent",
-        padding: tight ? "64px 24px" : "96px 24px",
-        borderTop: `1px solid ${TOKENS.hair}`,
-      }}
-    >
-      <div style={{ maxWidth: 1140, margin: "0 auto" }}>
-        {(eyebrow || title) && (
-          <div style={{ marginBottom: 48, maxWidth: 640 }}>
-            {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-            {title && (
-              <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500, fontSize: "clamp(28px, 4vw, 40px)", color: TOKENS.paper, margin: 0, lineHeight: 1.15 }}>
-                {title}
-              </h2>
-            )}
-            {sub && <p style={{ color: TOKENS.slate, fontSize: 17, lineHeight: 1.6, marginTop: 16 }}>{sub}</p>}
-          </div>
-        )}
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function Card({ children, style }) {
-  const ref = useRef(null);
-  const reduced = useRef(false);
-  useEffect(() => {
-    reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }, []);
-
-  const handleMove = (e) => {
-    if (reduced.current) return;
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5;
-    const py = (e.clientY - rect.top) / rect.height - 0.5;
-    el.style.transform = `perspective(700px) rotateX(${(-py * 7).toFixed(2)}deg) rotateY(${(px * 7).toFixed(2)}deg) translateZ(8px)`;
-  };
-  const reset = () => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.transform = "perspective(700px) rotateX(0deg) rotateY(0deg) translateZ(0px)";
-    el.style.borderColor = TOKENS.hair;
-    el.style.boxShadow = "0 1px 0 rgba(0,0,0,0.4)";
-  };
-
-  return (
-    <div
-      ref={ref}
-      style={{
-        background: TOKENS.panel,
-        backdropFilter: "blur(14px)",
-        WebkitBackdropFilter: "blur(14px)",
-        border: `1px solid ${TOKENS.hair}`,
-        borderRadius: 4,
-        padding: 28,
-        transition: "transform 0.18s cubic-bezier(0.16,1,0.3,1), border-color 0.2s ease, box-shadow 0.2s ease",
-        transformStyle: "preserve-3d",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-        willChange: "transform",
-        ...style,
-      }}
-      onMouseMove={handleMove}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "rgba(212,175,55,0.45)";
-        e.currentTarget.style.boxShadow = "0 24px 44px -22px rgba(0,0,0,0.65)";
-      }}
-      onMouseLeave={reset}
-    >
-      {children}
-    </div>
-  );
-}
-
-const BRASS_SHADOW_UP = "0 4px 0 #93781c, 0 10px 18px -8px rgba(212,175,55,0.55)";
-const BRASS_SHADOW_DOWN = "0 1px 0 #93781c, 0 4px 10px -6px rgba(212,175,55,0.5)";
-
-function Button({ children, onClick, variant = "brass", type = "button", full }) {
-  const base = {
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: 13,
-    letterSpacing: "0.04em",
-    padding: "13px 26px",
-    borderRadius: 2,
-    cursor: "pointer",
-    border: "1px solid transparent",
-    transition: "background 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease, border-color 0.15s ease",
-    width: full ? "100%" : "auto",
-    transform: "translateY(0)",
-  };
-  const styles = {
-    brass: { ...base, background: TOKENS.brass, color: "#FFFFFF", fontWeight: 700, borderRadius: 6, boxShadow: "0 2px 8px rgba(217,119,6,0.25)" },
-    ghost: { ...base, background: "#FFFFFF", color: TOKENS.paper, borderColor: TOKENS.hair, borderRadius: 6, boxShadow: "0 1px 3px rgba(0,0,0,0.04)" },
-  };
   return (
     <button
-      type={type}
       onClick={onClick}
-      style={styles[variant]}
-      onMouseDown={(e) => {
-        if (variant === "brass") {
-          e.currentTarget.style.transform = "translateY(3px)";
-          e.currentTarget.style.boxShadow = BRASS_SHADOW_DOWN;
-        }
-      }}
-      onMouseUp={(e) => {
-        if (variant === "brass") {
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.boxShadow = BRASS_SHADOW_UP;
-        }
-      }}
-      onMouseEnter={(e) => {
-        if (variant === "brass") e.currentTarget.style.background = TOKENS.brassBright;
-        else e.currentTarget.style.borderColor = TOKENS.brass;
-      }}
-      onMouseLeave={(e) => {
-        if (variant === "brass") {
-          e.currentTarget.style.background = TOKENS.brass;
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.boxShadow = BRASS_SHADOW_UP;
-        } else e.currentTarget.style.borderColor = TOKENS.hair;
+      disabled={disabled}
+      title={title}
+      style={{
+        background: bg,
+        color: color,
+        border: border,
+        borderRadius: 8,
+        padding: "10px 18px",
+        fontSize: 13.5,
+        fontFamily: "'Inter', sans-serif",
+        fontWeight: 600,
+        cursor: disabled ? "not-allowed" : "pointer",
+        opacity: disabled ? 0.6 : 1,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        transition: "all 0.15s ease",
+        ...style,
       }}
     >
       {children}
@@ -490,6123 +640,512 @@ function Button({ children, onClick, variant = "brass", type = "button", full })
   );
 }
 
-function Grid({ min = 260, children }) {
+function SectionHeading({ title, subtitle, badge }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fit, minmax(${min}px, 1fr))`, gap: 20 }}>
-      {children}
+    <div style={{ textAlign: "center", maxWidth: 760, margin: "0 auto 40px" }}>
+      {badge && (
+        <span
+          style={{
+            display: "inline-block",
+            background: TOKENS.badgeBg,
+            color: TOKENS.blue,
+            border: `1px solid ${TOKENS.blue}33`,
+            borderRadius: 999,
+            padding: "4px 14px",
+            fontSize: 11.5,
+            fontFamily: "'JetBrains Mono', monospace",
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            marginBottom: 12,
+          }}
+        >
+          {badge}
+        </span>
+      )}
+      <h2
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: "clamp(24px, 4vw, 36px)",
+          fontWeight: 800,
+          color: TOKENS.paper,
+          letterSpacing: "-0.025em",
+          margin: "0 0 12px",
+          lineHeight: 1.2,
+        }}
+      >
+        {title}
+      </h2>
+      {subtitle && (
+        <p
+          style={{
+            fontSize: 15,
+            color: TOKENS.slate,
+            lineHeight: 1.6,
+            margin: 0,
+          }}
+        >
+          {subtitle}
+        </p>
+      )}
     </div>
   );
 }
 
-/* ---------------------------- shared three.js scaffolding ---------------------------- */
-
-function makeSceneRig(mount, width, height, fov, camZ) {
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(fov, width / height, 0.1, 100);
-  camera.position.set(0, 0, camZ);
-
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  mount.appendChild(renderer.domElement);
-
-  scene.add(new THREE.AmbientLight(0x40465c, 1.3));
-  const key = new THREE.PointLight(0xf3e5ab, 2.4, 60);
-  key.position.set(4, 4, 6);
-  scene.add(key);
-  const rim = new THREE.PointLight(0x4fb3ff, 1.2, 60);
-  rim.position.set(-5, -3, -4);
-  scene.add(rim);
-
-  return { scene, camera, renderer };
+function TransparentLogo({ src = "/logo.png", height = 36 }) {
+  return (
+    <img
+      src={src}
+      alt="Abhimanyu Technologies Logo"
+      style={{
+        height,
+        width: "auto",
+        objectFit: "contain",
+        filter: "drop-shadow(0 2px 8px rgba(37, 99, 235, 0.25))",
+      }}
+    />
+  );
 }
 
-/* ---------------------------- vault dial (hero signature, real 3D) ---------------------------- */
+/* ---------------------------- Interactive 3D Tech Canvas ---------------------------- */
 
-function Vault3D({ size = 360, variant = "hero" }) {
+function HeroThreeCanvas() {
   const mountRef = useRef(null);
 
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const width = mount.clientWidth || size;
-    const height = mount.clientHeight || size;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, mount.clientWidth / mount.clientHeight, 0.1, 1000);
+    camera.position.z = 24;
 
-    const { scene, camera, renderer } = makeSceneRig(mount, width, height, 38, variant === "hero" ? 9 : variant === "ring" ? 6 : 4.2);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(mount.clientWidth, mount.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    mount.appendChild(renderer.domElement);
 
-    const brassMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.85, roughness: 0.28, emissive: 0x3a2a05, emissiveIntensity: 0.3 });
-    const darkMat = new THREE.MeshStandardMaterial({ color: 0x1a1c22, metalness: 0.5, roughness: 0.55 });
-    const gemMat = new THREE.MeshStandardMaterial({ color: 0xf3e5ab, emissive: 0xf3e5ab, emissiveIntensity: 0.9, metalness: 0.9, roughness: 0.1 });
+    // Particle field representing connected digital nodes / microservices
+    const particleCount = 120;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
 
-    const group = new THREE.Group();
-    scene.add(group);
-
-    const detailed = variant !== "logo";
-    const ringCount = variant === "hero" ? 3 : 1;
-    const baseR = variant === "hero" ? 2.6 : variant === "ring" ? 2.2 : 1.3;
-    const rings = [];
-    for (let i = 0; i < ringCount; i++) {
-      const r = baseR - i * 0.7;
-      const torus = new THREE.Mesh(new THREE.TorusGeometry(r, 0.05, 12, 72), brassMat);
-      group.add(torus);
-      rings.push(torus);
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 40;
+      positions[i + 1] = (Math.random() - 0.5) * 24;
+      positions[i + 2] = (Math.random() - 0.5) * 20;
     }
 
-    if (variant === "hero") {
-      const tickCount = 24;
-      for (let i = 0; i < tickCount; i++) {
-        const a = (i / tickCount) * Math.PI * 2;
-        const tall = i % 6 === 0;
-        const tick = new THREE.Mesh(new THREE.BoxGeometry(0.045, tall ? 0.34 : 0.16, 0.045), darkMat);
-        tick.position.set(Math.cos(a) * 2.92, Math.sin(a) * 2.92, 0);
-        tick.rotation.z = a + Math.PI / 2;
-        group.add(tick);
-      }
-    }
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
-    if (detailed) {
-      const hub = new THREE.Mesh(new THREE.CylinderGeometry(variant === "hero" ? 0.46 : 0.28, variant === "hero" ? 0.46 : 0.28, 0.26, 28), brassMat);
-      hub.rotation.x = Math.PI / 2;
-      group.add(hub);
-    }
+    const material = new THREE.PointsMaterial({
+      color: 0x2563eb,
+      size: 0.8,
+      transparent: true,
+      opacity: 0.65,
+    });
 
-    let needleGroup = null;
-    if (variant === "hero") {
-      const needle = new THREE.Mesh(new THREE.BoxGeometry(0.075, 1.7, 0.075), brassMat);
-      needle.position.y = 1.7 / 2;
-      needleGroup = new THREE.Group();
-      needleGroup.add(needle);
-      group.add(needleGroup);
-    }
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
 
-    const gem = new THREE.Mesh(new THREE.OctahedronGeometry(variant === "hero" ? 0.17 : variant === "ring" ? 0.12 : 0.09, 0), gemMat);
-    gem.position.z = 0.2;
-    group.add(gem);
+    // Geometric polyhedra representing microservice clusters
+    const polyGeo = new THREE.IcosahedronGeometry(7, 1);
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: 0x0d9488,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.18,
+    });
+    const poly = new THREE.Mesh(polyGeo, wireMat);
+    scene.add(poly);
 
-    let points = null, pointsGeo = null, pointsMat = null;
-    if (variant === "hero") {
-      const count = 70;
-      const positions = new Float32Array(count * 3);
-      for (let i = 0; i < count; i++) {
-        const r = 3.6 + Math.random() * 3.2;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.random() * Math.PI;
-        positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-        positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 4 - 1.5;
-      }
-      pointsGeo = new THREE.BufferGeometry();
-      pointsGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-      pointsMat = new THREE.PointsMaterial({ color: 0xd4af37, size: 0.035, transparent: true, opacity: 0.5, sizeAttenuation: true });
-      points = new THREE.Points(pointsGeo, pointsMat);
-      scene.add(points);
-    }
-
-    let raf;
-    const start = performance.now();
-    let mx = 0, my = 0;
-    const handleMove = (e) => {
-      const rect = mount.getBoundingClientRect();
-      mx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-      my = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    };
-    if (variant === "hero" && !reduced) window.addEventListener("mousemove", handleMove);
-
-    const animate = (t) => {
-      const elapsed = (t - start) / 1000;
-      if (!reduced) {
-        rings.forEach((r, i) => {
-          r.rotation.z = elapsed * (0.06 + i * 0.035) * (i % 2 === 0 ? 1 : -1);
-        });
-        gem.rotation.y = elapsed * 0.7;
-        gem.rotation.x = elapsed * 0.5;
-        if (needleGroup) needleGroup.rotation.z = -Math.min(elapsed / 1.1, 1) * (Math.PI / 2);
-        if (points) points.rotation.y = elapsed * 0.025;
-        if (variant === "hero") {
-          group.rotation.x = my * 0.14;
-          group.rotation.y = mx * 0.2;
-        } else {
-          group.rotation.y = elapsed * 0.25;
-        }
-        raf = requestAnimationFrame(animate);
-      } else {
-        if (needleGroup) needleGroup.rotation.z = -(Math.PI / 2);
-      }
+    let animationFrameId;
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+      particles.rotation.y += 0.0012;
+      particles.rotation.x += 0.0006;
+      poly.rotation.y -= 0.002;
+      poly.rotation.x -= 0.001;
       renderer.render(scene, camera);
     };
-    raf = requestAnimationFrame(animate);
+    animate();
 
     const handleResize = () => {
-      const w = mount.clientWidth || size, h = mount.clientHeight || size;
-      camera.aspect = w / h;
+      if (!mount) return;
+      camera.aspect = mount.clientWidth / mount.clientHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(mount.clientWidth, mount.clientHeight);
     };
     window.addEventListener("resize", handleResize);
 
     return () => {
-      cancelAnimationFrame(raf);
       window.removeEventListener("resize", handleResize);
-      if (variant === "hero") window.removeEventListener("mousemove", handleMove);
-      if (pointsGeo) pointsGeo.dispose();
-      if (pointsMat) pointsMat.dispose();
+      cancelAnimationFrame(animationFrameId);
+      if (mount && renderer.domElement) {
+        mount.removeChild(renderer.domElement);
+      }
+      geometry.dispose();
+      material.dispose();
+      polyGeo.dispose();
+      wireMat.dispose();
       renderer.dispose();
-      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
     };
-  }, [variant, size]);
+  }, []);
 
   return (
     <div
       ref={mountRef}
-      aria-hidden="true"
       style={{
-        width: variant === "hero" ? "min(560px, 90vw)" : size,
-        height: variant === "hero" ? "min(560px, 90vw)" : size,
-        margin: "0 auto",
-      }}
-    />
-  );
-}
-
-/* ---------------------------- holographic globe (hero mode) ---------------------------- */
-
-function HolographicGlobe3D({ size = 560 }) {
-  const mountRef = useRef(null);
-
-  useEffect(() => {
-    const mount = mountRef.current;
-    if (!mount) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const width = mount.clientWidth || size;
-    const height = mount.clientHeight || size;
-
-    const { scene, camera, renderer } = makeSceneRig(mount, width, height, 40, 5.5);
-
-    const group = new THREE.Group();
-    scene.add(group);
-
-    const wireMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, wireframe: true, transparent: true, opacity: 0.55 });
-    const globe = new THREE.Mesh(new THREE.IcosahedronGeometry(1.7, 2), wireMat);
-    group.add(globe);
-
-    const coreMat = new THREE.MeshStandardMaterial({ color: 0x4fb3ff, emissive: 0x4fb3ff, emissiveIntensity: 0.6, metalness: 0.6, roughness: 0.3, transparent: true, opacity: 0.18 });
-    const core = new THREE.Mesh(new THREE.SphereGeometry(1.55, 32, 32), coreMat);
-    group.add(core);
-
-    const ringMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.85, roughness: 0.25, emissive: 0x3a2a05, emissiveIntensity: 0.3 });
-    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.03, 12, 90), ringMat);
-    ring1.rotation.x = Math.PI / 2.4;
-    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.025, 12, 90), ringMat);
-    ring2.rotation.x = Math.PI / 1.7;
-    ring2.rotation.y = Math.PI / 5;
-    group.add(ring1, ring2);
-
-    const count = 60;
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const r = 1.75;
-      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = r * Math.cos(phi);
-    }
-    const dotsGeo = new THREE.BufferGeometry();
-    dotsGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const dotsMat = new THREE.PointsMaterial({ color: 0xf3e5ab, size: 0.05, transparent: true, opacity: 0.85 });
-    const dots = new THREE.Points(dotsGeo, dotsMat);
-    group.add(dots);
-
-    let raf;
-    const start = performance.now();
-    const animate = (t) => {
-      const elapsed = (t - start) / 1000;
-      if (!reduced) {
-        group.rotation.y = elapsed * 0.22;
-        ring1.rotation.z = elapsed * 0.15;
-        ring2.rotation.z = -elapsed * 0.12;
-        raf = requestAnimationFrame(animate);
-      }
-      renderer.render(scene, camera);
-    };
-    raf = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      wireMat.dispose(); coreMat.dispose(); ringMat.dispose(); dotsGeo.dispose(); dotsMat.dispose();
-      renderer.dispose();
-      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
-    };
-  }, [size]);
-
-  return <div ref={mountRef} aria-hidden="true" style={{ width: "min(560px, 90vw)", height: "min(560px, 90vw)", margin: "0 auto" }} />;
-}
-
-/* ---------------------------- tech sphere (hero mode) ---------------------------- */
-
-function TechStack3D({ size = 560 }) {
-  const mountRef = useRef(null);
-
-  useEffect(() => {
-    const mount = mountRef.current;
-    if (!mount) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const width = mount.clientWidth || size;
-    const height = mount.clientHeight || size;
-
-    const { scene, camera, renderer } = makeSceneRig(mount, width, height, 40, 6);
-
-    const group = new THREE.Group();
-    scene.add(group);
-
-    const coreMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.85, roughness: 0.25, emissive: 0x3a2a05, emissiveIntensity: 0.35 });
-    const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.9, 0), coreMat);
-    group.add(core);
-
-    const satelliteGeos = [new THREE.OctahedronGeometry(0.32, 0), new THREE.TetrahedronGeometry(0.34, 0), new THREE.SphereGeometry(0.28, 16, 16), new THREE.BoxGeometry(0.42, 0.42, 0.42), new THREE.DodecahedronGeometry(0.3, 0)];
-    const satMat = new THREE.MeshStandardMaterial({ color: 0x4fb3ff, metalness: 0.6, roughness: 0.3, emissive: 0x0d2b40, emissiveIntensity: 0.5 });
-
-    const orbits = satelliteGeos.map((geo, i) => {
-      const pivot = new THREE.Group();
-      const sat = new THREE.Mesh(geo, satMat);
-      const radius = 1.9 + i * 0.35;
-      sat.position.set(radius, 0, 0);
-      pivot.add(sat);
-      pivot.rotation.x = (i / satelliteGeos.length) * Math.PI;
-      pivot.rotation.y = Math.random() * Math.PI;
-      group.add(pivot);
-
-      const orbitLine = new THREE.Mesh(new THREE.TorusGeometry(radius, 0.008, 8, 80), new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.25 }));
-      pivot.add(orbitLine);
-
-      return { pivot, speed: 0.25 + i * 0.08 };
-    });
-
-    let raf;
-    const start = performance.now();
-    const animate = (t) => {
-      const elapsed = (t - start) / 1000;
-      if (!reduced) {
-        core.rotation.y = elapsed * 0.4;
-        core.rotation.x = elapsed * 0.25;
-        orbits.forEach((o) => { o.pivot.rotation.y = elapsed * o.speed; });
-        group.rotation.y = elapsed * 0.05;
-        raf = requestAnimationFrame(animate);
-      }
-      renderer.render(scene, camera);
-    };
-    raf = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      coreMat.dispose(); satMat.dispose();
-      satelliteGeos.forEach((g) => g.dispose());
-      renderer.dispose();
-      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
-    };
-  }, [size]);
-
-  return <div ref={mountRef} aria-hidden="true" style={{ width: "min(560px, 90vw)", height: "min(560px, 90vw)", margin: "0 auto" }} />;
-}
-
-/* ---------------------------- security matrix (hero mode) ---------------------------- */
-
-function SecurityMatrix3D({ size = 540 }) {
-  const mountRef = useRef(null);
-
-  useEffect(() => {
-    const mount = mountRef.current;
-    if (!mount) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const width = mount.clientWidth || size;
-    const height = mount.clientHeight || size;
-
-    const { scene, camera, renderer } = makeSceneRig(mount, width, height, 42, 7.5);
-    camera.position.y = 1.4;
-    camera.lookAt(0, 0, 0);
-
-    const group = new THREE.Group();
-    group.rotation.x = -0.5;
-    scene.add(group);
-
-    const cols = 9, rowsN = 9, spacing = 0.55;
-    const geo = new THREE.BoxGeometry(0.14, 0.14, 0.14);
-    const cubes = [];
-    for (let x = 0; x < cols; x++) {
-      for (let z = 0; z < rowsN; z++) {
-        const mat = new THREE.MeshStandardMaterial({ color: 0x121620, metalness: 0.4, roughness: 0.6, emissive: 0x4fb3ff, emissiveIntensity: 0.15 });
-        const cube = new THREE.Mesh(geo, mat);
-        cube.position.set((x - cols / 2) * spacing, 0, (z - rowsN / 2) * spacing);
-        group.add(cube);
-        cubes.push({ cube, mat, offset: Math.random() * Math.PI * 2, dist: Math.hypot(x - cols / 2, z - rowsN / 2) });
-      }
-    }
-
-    const brassMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.85, roughness: 0.25, emissive: 0x3a2a05, emissiveIntensity: 0.3 });
-    const centerGem = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 0), brassMat);
-    centerGem.position.y = 0.9;
-    group.add(centerGem);
-
-    let raf;
-    const start = performance.now();
-    const animate = (t) => {
-      const elapsed = (t - start) / 1000;
-      if (!reduced) {
-        cubes.forEach((c) => {
-          const wave = Math.sin(elapsed * 1.4 - c.dist * 0.6 + c.offset) * 0.5 + 0.5;
-          c.cube.position.y = wave * 0.35;
-          c.mat.emissiveIntensity = 0.1 + wave * 0.9;
-        });
-        centerGem.rotation.y = elapsed * 0.8;
-        group.rotation.y = Math.sin(elapsed * 0.15) * 0.25;
-        raf = requestAnimationFrame(animate);
-      }
-      renderer.render(scene, camera);
-    };
-    raf = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      geo.dispose(); brassMat.dispose();
-      cubes.forEach((c) => c.mat.dispose());
-      renderer.dispose();
-      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
-    };
-  }, [size]);
-
-  return <div ref={mountRef} aria-hidden="true" style={{ width: "min(540px, 90vw)", height: "min(540px, 90vw)", margin: "0 auto" }} />;
-}
-
-/* ---------------------------- quantum 3D core (hero mode) ---------------------------- */
-
-function QuantumVault3D({ size = 560 }) {
-  const mountRef = useRef(null);
-
-  useEffect(() => {
-    const mount = mountRef.current;
-    if (!mount) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const width = mount.clientWidth || size;
-    const height = mount.clientHeight || size;
-
-    const { scene, camera, renderer } = makeSceneRig(mount, width, height, 42, 6.5);
-
-    const group = new THREE.Group();
-    scene.add(group);
-
-    const brassMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.2, emissive: 0x4a3808, emissiveIntensity: 0.4 });
-    const blueMat = new THREE.MeshStandardMaterial({ color: 0x4fb3ff, metalness: 0.7, roughness: 0.3, emissive: 0x0d2b40, emissiveIntensity: 0.6 });
-
-    // Inner octahedron core
-    const core = new THREE.Mesh(new THREE.OctahedronGeometry(1.1, 0), brassMat);
-    group.add(core);
-
-    // Quantum outer rings
-    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(2.3, 0.04, 16, 90), brassMat);
-    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.6, 0.03, 16, 90), blueMat);
-    ring1.rotation.x = Math.PI / 3;
-    ring2.rotation.y = Math.PI / 4;
-    group.add(ring1, ring2);
-
-    // Orbiting quantum energy points
-    const count = 90;
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const u = Math.random() * Math.PI * 2;
-      const v = Math.random() * Math.PI * 2;
-      const r = 2.8 + Math.sin(u * 3) * 0.4;
-      positions[i * 3] = r * Math.cos(u) * Math.sin(v);
-      positions[i * 3 + 1] = r * Math.sin(u) * Math.sin(v);
-      positions[i * 3 + 2] = r * Math.cos(v);
-    }
-    const pointsGeo = new THREE.BufferGeometry();
-    pointsGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const pointsMat = new THREE.PointsMaterial({ color: 0xf3e5ab, size: 0.05, transparent: true, opacity: 0.85 });
-    const points = new THREE.Points(pointsGeo, pointsMat);
-    group.add(points);
-
-    let raf;
-    const start = performance.now();
-    const animate = (t) => {
-      const elapsed = (t - start) / 1000;
-      if (!reduced) {
-        core.rotation.y = elapsed * 0.6;
-        core.rotation.z = elapsed * 0.4;
-        ring1.rotation.z = elapsed * 0.3;
-        ring2.rotation.x = elapsed * 0.25;
-        points.rotation.y = -elapsed * 0.15;
-        group.rotation.y = elapsed * 0.08;
-        raf = requestAnimationFrame(animate);
-      }
-      renderer.render(scene, camera);
-    };
-    raf = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      brassMat.dispose(); blueMat.dispose(); pointsGeo.dispose(); pointsMat.dispose();
-      renderer.dispose();
-      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
-    };
-  }, [size]);
-
-  return <div ref={mountRef} aria-hidden="true" style={{ width: "min(560px, 90vw)", height: "min(560px, 90vw)", margin: "0 auto" }} />;
-}
-
-/* ---------------------------- multi-mode hero stage ---------------------------- */
-
-function Hero3DStage() {
-  const [mode, setMode] = useState("quantum");
-
-  const modes = [
-    { key: "quantum", label: "QUANTUM CORE" },
-    { key: "vault", label: "VAULT DOOR" },
-    { key: "globe", label: "GLOBAL GLOBE" },
-    { key: "tech", label: "TECH SPHERE" },
-    { key: "security", label: "CYBER MATRIX" },
-  ];
-
-  return (
-    <div style={{ textAlign: "center", position: "relative" }}>
-      <div
-        style={{
-          display: "inline-flex",
-          gap: 6,
-          background: "rgba(255, 255, 255, 0.92)",
-          backdropFilter: "blur(12px)",
-          padding: "8px 12px",
-          borderRadius: 999,
-          border: `1px solid ${TOKENS.hair}`,
-          marginBottom: 20,
-          zIndex: 10,
-          position: "relative",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-        }}
-      >
-        {modes.map((m) => {
-          const active = mode === m.key;
-          return (
-            <button
-              key={m.key}
-              onClick={() => setMode(m.key)}
-              style={{
-                background: active ? TOKENS.brass : "transparent",
-                color: active ? TOKENS.ink : TOKENS.paper,
-                border: "none",
-                borderRadius: 999,
-                padding: "8px 18px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: active ? 700 : 500,
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                letterSpacing: "0.06em",
-              }}
-            >
-              {m.label}
-            </button>
-          );
-        })}
-      </div>
-
-      <div style={{ minHeight: 560, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-        {mode === "quantum" && <QuantumVault3D size={560} />}
-        {mode === "vault" && <Vault3D variant="hero" size={560} />}
-        {mode === "globe" && <HolographicGlobe3D size={560} />}
-        {mode === "tech" && <TechStack3D size={560} />}
-        {mode === "security" && <SecurityMatrix3D size={540} />}
-      </div>
-
-      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, letterSpacing: "0.14em", marginTop: 14 }}>
-        [ 3D STAGE ACTIVE: {mode.toUpperCase()} ]
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- mini 3D icon (rotating geometry) ---------------------------- */
-
-function Icon3D({ geometry = "box", size = 56 }) {
-  const mountRef = useRef(null);
-
-  useEffect(() => {
-    const mount = mountRef.current;
-    if (!mount) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 20);
-    camera.position.set(0, 0, 3.2);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(size, size);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    mount.appendChild(renderer.domElement);
-
-    scene.add(new THREE.AmbientLight(0x40465c, 1.4));
-    const key = new THREE.PointLight(0xf3e5ab, 2.2, 30);
-    key.position.set(3, 3, 4);
-    scene.add(key);
-    const rim = new THREE.PointLight(0x4fb3ff, 1.0, 30);
-    rim.position.set(-3, -2, -3);
-    scene.add(rim);
-
-    const mat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.8, roughness: 0.3, emissive: 0x3a2a05, emissiveIntensity: 0.25 });
-    let geo;
-    switch (geometry) {
-      case "knot": geo = new THREE.TorusKnotGeometry(0.62, 0.2, 90, 12); break;
-      case "icosa": geo = new THREE.IcosahedronGeometry(1, 0); break;
-      case "octa": geo = new THREE.OctahedronGeometry(1, 0); break;
-      case "dodeca": geo = new THREE.DodecahedronGeometry(0.95, 0); break;
-      case "cone": geo = new THREE.ConeGeometry(0.85, 1.35, 6); break;
-      case "sphere": geo = new THREE.SphereGeometry(0.95, 24, 24); break;
-      default: geo = new THREE.BoxGeometry(1.25, 1.25, 1.25);
-    }
-    const mesh = new THREE.Mesh(geo, mat);
-    scene.add(mesh);
-
-    let raf;
-    const start = performance.now();
-    const animate = (t) => {
-      const elapsed = (t - start) / 1000;
-      if (!reduced) {
-        mesh.rotation.x = elapsed * 0.45;
-        mesh.rotation.y = elapsed * 0.65;
-        raf = requestAnimationFrame(animate);
-      } else {
-        mesh.rotation.set(0.5, 0.6, 0);
-      }
-      renderer.render(scene, camera);
-    };
-    raf = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      geo.dispose();
-      mat.dispose();
-      renderer.dispose();
-      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
-    };
-  }, [geometry, size]);
-
-  return <div ref={mountRef} aria-hidden="true" style={{ width: size, height: size }} />;
-}
-
-/* ---------------------------- flip card (real 3D rotateY) ---------------------------- */
-
-function FlipCard({ title, desc, icon }) {
-  const [flipped, setFlipped] = useState(false);
-  return (
-    <div style={{ perspective: 1000, height: 210, cursor: "default" }} onMouseEnter={() => setFlipped(true)} onMouseLeave={() => setFlipped(false)}>
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          transformStyle: "preserve-3d",
-          transition: "transform 0.65s cubic-bezier(0.16,1,0.3,1)",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute", inset: 0, backfaceVisibility: "hidden",
-            background: TOKENS.panel, backdropFilter: "blur(14px)", border: `1px solid ${TOKENS.hair}`, borderRadius: 4,
-            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14,
-          }}
-        >
-          <Icon3D geometry={icon} size={56} />
-          <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 13, textAlign: "center", margin: 0, letterSpacing: "0.04em" }}>
-            {title.toUpperCase()}
-          </h4>
-        </div>
-        <div
-          style={{
-            position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)",
-            background: TOKENS.panelAlt, border: "1px solid rgba(212,175,55,0.35)", borderRadius: 4,
-            display: "flex", alignItems: "center", justifyContent: "center", padding: 22,
-          }}
-        >
-          <p style={{ color: TOKENS.paper, fontSize: 14, lineHeight: 1.6, margin: 0, textAlign: "center" }}>{desc}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- process / engagement / faq ---------------------------- */
-
-function ProcessSection() {
-  return (
-    <Section eyebrow="How We Solve It" title="A process built to remove surprises" sub="Five stages, the same for every engagement — so you always know what's next." tight>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 28 }}>
-        {PROCESS.map((p) => (
-          <div key={p.step}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 36, fontWeight: 700, color: "rgba(212,175,55,0.35)", marginBottom: 8 }}>{p.step}</div>
-            <h4 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 18, margin: "0 0 8px" }}>{p.title}</h4>
-            <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.65, margin: 0 }}>{p.desc}</p>
-          </div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function EngagementSection({ go }) {
-  return (
-    <Section alt eyebrow="Engagement Models" title="Work with us the way that fits" tight>
-      <Grid min={260}>
-        {ENGAGEMENT.map((e) => (
-          <Card key={e.title}>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px" }}>{e.title}</h3>
-            <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: "0 0 16px" }}>{e.desc}</p>
-            <ul style={{ margin: 0, paddingLeft: 18, color: TOKENS.paper, fontSize: 13.5, lineHeight: 1.9 }}>
-              {e.bullets.map((b) => <li key={b}>{b}</li>)}
-            </ul>
-          </Card>
-        ))}
-      </Grid>
-      <div style={{ marginTop: 30 }}>
-        <Button onClick={() => go("contact")}>Discuss Your Project →</Button>
-      </div>
-    </Section>
-  );
-}
-
-function FAQSection() {
-  const [openIdx, setOpenIdx] = useState(null);
-  return (
-    <Section eyebrow="FAQ" title="Common questions" tight>
-      <div style={{ maxWidth: 780 }}>
-        {FAQ.map((f, i) => {
-          const open = openIdx === i;
-          return (
-            <div key={f.q} style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
-              <button
-                onClick={() => setOpenIdx(open ? null : i)}
-                style={{ width: "100%", background: "none", border: "none", textAlign: "left", padding: "18px 0", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", gap: 16 }}
-              >
-                <span style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 16 }}>{f.q}</span>
-                <span style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 20, flexShrink: 0 }}>{open ? "−" : "+"}</span>
-              </button>
-              {open && <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.7, margin: "0 0 20px", maxWidth: 640 }}>{f.a}</p>}
-            </div>
-          );
-        })}
-      </div>
-    </Section>
-  );
-}
-
-/* ---------------------------- telemetry ticker ---------------------------- */
-
-function TelemetryTicker() {
-  const items = [
-    "⚡ SYSTEM HEALTH: 100% OPERATIONAL",
-    "🔒 ZERO-KNOWLEDGE AES-256 ENCRYPTION",
-    "🌍 16 GLOBAL VAULT NODES ONLINE",
-    "🚀 LATENCY: 14ms GLOBAL AVERAGE",
-    "🤖 NEURAL AGENT CORE v4.8 ACTIVE",
-    "🛡️ 99.999% SLA UPTIME GUARANTEE",
-  ];
-  return (
-    <div
-      style={{
-        background: "rgba(16, 21, 31, 0.9)",
-        borderBottom: `1px solid ${TOKENS.hair}`,
-        padding: "8px 0",
-        overflow: "hidden",
-        fontFamily: "'JetBrains Mono', monospace",
-        fontSize: 11,
-        color: TOKENS.teal,
-        letterSpacing: "0.1em",
-        whiteSpace: "nowrap",
-      }}
-    >
-      <div style={{ display: "flex", gap: 40, animation: "marquee 25s linear infinite" }}>
-        {[...items, ...items, ...items].map((item, idx) => (
-          <span key={idx} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-            {item} <span style={{ color: TOKENS.brass }}>•</span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- video showcase (cybernetic media player) ---------------------------- */
-
-function VideoShowcase3D() {
-  const [playing, setPlaying] = useState(true);
-  const [chapter, setChapter] = useState(0);
-  const [quality, setQuality] = useState("4K");
-  const canvasRef = useRef(null);
-
-  const chapters = [
-    { title: "Vault Architecture & Security Demo", duration: "02:45", tag: "SYSTEM ARCHITECTURE" },
-    { title: "Real-Time Telemetry & Threat Isolation", duration: "03:12", tag: "CYBER SECURITY" },
-    { title: "Neural AI Agent Autonomous Workflows", duration: "01:58", tag: "AI AUTOMATION" },
-  ];
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    let animId;
-    let frame = 0;
-
-    const render = () => {
-      frame++;
-      const w = canvas.width;
-      const h = canvas.height;
-
-      // Dark cyber background
-      ctx.fillStyle = "#070E1A";
-      ctx.fillRect(0, 0, w, h);
-
-      // Grid background
-      ctx.strokeStyle = "rgba(79, 179, 255, 0.08)";
-      ctx.lineWidth = 1;
-      const step = 30;
-      for (let x = 0; x < w; x += step) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-      }
-      for (let y = 0; y < h; y += step) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-      }
-
-      // Dynamic animated wave audio/video simulation
-      const cx = w / 2;
-      const cy = h / 2;
-      const t = frame * 0.04;
-
-      ctx.save();
-      ctx.translate(cx, cy);
-
-      // Concentric cybernetic rings
-      for (let i = 1; i <= 4; i++) {
-        const radius = i * 45 + Math.sin(t + i) * 6;
-        ctx.strokeStyle = i % 2 === 0 ? "rgba(212, 175, 55, 0.4)" : "rgba(79, 179, 255, 0.4)";
-        ctx.lineWidth = i === 2 ? 2 : 1;
-        ctx.beginPath();
-        ctx.arc(0, 0, radius, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
-      // Pulsing central orb
-      const orbR = 24 + Math.sin(t * 2) * 5;
-      const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, orbR * 2);
-      grad.addColorStop(0, "rgba(243, 229, 171, 0.9)");
-      grad.addColorStop(0.5, "rgba(212, 175, 55, 0.4)");
-      grad.addColorStop(1, "rgba(7, 14, 26, 0)");
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(0, 0, orbR * 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Oscilloscope waveforms
-      ctx.strokeStyle = "#4fb3ff";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      for (let x = -w / 2.2; x <= w / 2.2; x += 5) {
-        const y = Math.sin(x * 0.03 + t * 3) * 22 * Math.cos(x * 0.01);
-        if (x === -w / 2.2) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-
-      ctx.restore();
-
-      // Overlay text HUD
-      ctx.fillStyle = "#d4af37";
-      ctx.font = "11px 'JetBrains Mono', monospace";
-      ctx.fillText(`[ REEL ${chapter + 1} // ${chapters[chapter].tag} ]`, 20, 30);
-
-      ctx.fillStyle = "#c8bfae";
-      ctx.fillText(`STREAM: LIVE ${quality} (60 FPS)`, w - 160, 30);
-
-      if (playing) {
-        animId = requestAnimationFrame(render);
-      }
-    };
-
-    render();
-
-    return () => {
-      cancelAnimationFrame(animId);
-    };
-  }, [playing, chapter, quality]);
-
-  return (
-    <Card style={{ padding: 0, overflow: "hidden", border: `1px solid ${TOKENS.hair}` }}>
-      <div style={{ position: "relative", background: "#F8FAFC" }}>
-        <canvas ref={canvasRef} width={800} height={420} style={{ width: "100%", height: "auto", display: "block" }} />
-
-        {/* Video HUD Overlay Header */}
-        <div
-          style={{
-            position: "absolute",
-            top: 16,
-            left: 16,
-            right: 16,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            pointerEvents: "none",
-          }}
-        >
-          <div
-            style={{
-              background: "rgba(11, 31, 58, 0.88)",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 4,
-              padding: "6px 12px",
-              fontSize: 11,
-              fontFamily: "'JetBrains Mono', monospace",
-              color: TOKENS.paper,
-            }}
-          >
-            ● LIVE SHOWCASE REEL
-          </div>
-          <div style={{ pointerEvents: "auto", display: "flex", gap: 6 }}>
-            {["1080p", "4K", "RAW"].map((q) => (
-              <button
-                key={q}
-                onClick={() => setQuality(q)}
-                style={{
-                  background: quality === q ? TOKENS.brass : "rgba(16, 24, 40, 0.8)",
-                  color: quality === q ? TOKENS.ink : TOKENS.paper,
-                  border: `1px solid ${TOKENS.hair}`,
-                  borderRadius: 3,
-                  fontSize: 10,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  padding: "4px 8px",
-                  cursor: "pointer",
-                }}
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Video Control Bar */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 16,
-            left: 16,
-            right: 16,
-            background: "rgba(11, 31, 58, 0.92)",
-            backdropFilter: "blur(12px)",
-            border: `1px solid ${TOKENS.hair}`,
-            borderRadius: 6,
-            padding: "12px 18px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: 12,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <button
-              onClick={() => setPlaying(!playing)}
-              style={{
-                background: TOKENS.brass,
-                color: TOKENS.ink,
-                border: "none",
-                borderRadius: "50%",
-                width: 36,
-                height: 36,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: "bold",
-                cursor: "pointer",
-                fontSize: 14,
-              }}
-            >
-              {playing ? "❚❚" : "▶"}
-            </button>
-            <div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: TOKENS.paper }}>
-                {chapters[chapter].title}
-              </div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
-                CHAPTER {chapter + 1} OF 3 • {chapters[chapter].duration}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", gap: 8 }}>
-            {chapters.map((ch, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  setChapter(idx);
-                  setPlaying(true);
-                }}
-                style={{
-                  background: chapter === idx ? "rgba(212, 175, 55, 0.2)" : "transparent",
-                  color: chapter === idx ? TOKENS.brass : TOKENS.slate,
-                  border: `1px solid ${chapter === idx ? TOKENS.brass : TOKENS.hair}`,
-                  borderRadius: 4,
-                  padding: "6px 12px",
-                  fontSize: 11,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                }}
-              >
-                0{idx + 1}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-/* ---------------------------- 3D architecture explorer ---------------------------- */
-
-function Architecture3DExplorer() {
-  const [activeLayer, setActiveLayer] = useState(0);
-
-  const layers = [
-    { title: "Client Layer", tech: "React / Flutter / Native iOS & Android", desc: "Edge-cached responsive application interfaces with offline sync.", latency: "< 5ms" },
-    { title: "API & Event Gateway", tech: "GraphQL / gRPC / WebSockets", desc: "Zero-latency event streaming gateway with automated rate limiting.", latency: "12ms" },
-    { title: "Neural Processing Core", tech: "Python / PyTorch / TensorRT", desc: "Autonomous AI decision engine running real-time predictive workloads.", latency: "24ms" },
-    { title: "Encrypted Data Store", tech: "PostgreSQL / Redis / AWS S3", desc: "Zero-knowledge AES-256 encrypted multi-region database cluster.", latency: "18ms" },
-  ];
-
-  return (
-    <Card>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, alignItems: "center" }} className="hero-grid">
-        <div>
-          <Eyebrow>System Architecture Explorer</Eyebrow>
-          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 16px" }}>
-            Inspect the 4-layer MyVault Stack
-          </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
-            {layers.map((l, idx) => {
-              const active = activeLayer === idx;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setActiveLayer(idx)}
-                  style={{
-                    background: active ? "rgba(212, 175, 55, 0.12)" : "transparent",
-                    border: `1px solid ${active ? TOKENS.brass : TOKENS.hair}`,
-                    borderRadius: 4,
-                    padding: "14px 18px",
-                    textAlign: "left",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: active ? TOKENS.brass : TOKENS.paper }}>
-                      0{idx + 1}. {l.title}
-                    </span>
-                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
-                      {l.latency}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 24 }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 12 }}>
-            [ LAYER INSPECTION // 0{activeLayer + 1} ]
-          </div>
-          <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, color: TOKENS.paper, margin: "0 0 8px" }}>
-            {layers[activeLayer].title}
-          </h4>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, marginBottom: 16 }}>
-            {layers[activeLayer].tech}
-          </div>
-          <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.65, margin: 0 }}>
-            {layers[activeLayer].desc}
-          </p>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-/* ---------------------------- interactive ROI calculator ---------------------------- */
-
-function ROICalculator() {
-  const [seats, setSeats] = useState(25);
-  const [rate, setRate] = useState(65);
-
-  const annualSavings = seats * rate * 240;
-  const hoursSaved = seats * 180;
-
-  return (
-    <Card>
-      <Eyebrow>Interactive ROI Calculator</Eyebrow>
-      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
-        Calculate your annual operational savings
-      </h3>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }} className="hero-grid">
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 14, color: TOKENS.paper }}>
-              <span>Engineers / Users: <b>{seats} seats</b></span>
-            </div>
-            <input
-              type="range"
-              min={5}
-              max={250}
-              value={seats}
-              onChange={(e) => setSeats(Number(e.target.value))}
-              style={{ width: "100%", accentColor: TOKENS.brass }}
-            />
-          </div>
-
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 14, color: TOKENS.paper }}>
-              <span>Hourly Rate ($): <b>${rate}/hr</b></span>
-            </div>
-            <input
-              type="range"
-              min={30}
-              max={180}
-              value={rate}
-              onChange={(e) => setRate(Number(e.target.value))}
-              style={{ width: "100%", accentColor: TOKENS.brass }}
-            />
-          </div>
-        </div>
-
-        <div
-          style={{
-            background: "rgba(212, 175, 55, 0.06)",
-            border: `1px solid ${TOKENS.brass}`,
-            borderRadius: 6,
-            padding: 24,
-            textAlign: "center",
-          }}
-        >
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8 }}>
-            ESTIMATED ANNUAL SAVINGS
-          </div>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 38, color: TOKENS.brassBright, fontWeight: "bold" }}>
-            ${annualSavings.toLocaleString()}
-          </div>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, marginTop: 12 }}>
-            ⚡ {hoursSaved.toLocaleString()} hours saved per year
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-/* ---------------------------- 3D data pipeline flow visualizer ---------------------------- */
-
-function DataPipeline3D() {
-  const [activeStage, setActiveStage] = useState(0);
-
-  const stages = [
-    { title: "01. Edge Ingestion", rate: "1.2M req/sec", tech: "Kafka / WebSockets / Edge Proxies", detail: "High-throughput edge ingestion receiving sensor payload telemetry, raw API transactions, and user events across 16 global regions." },
-    { title: "02. Real-Time ETL Engine", rate: "850k ops/sec", tech: "Apache Spark / Flink / Rust", detail: "Zero-copy streaming transformations, field validation, and continuous schema compliance mapping." },
-    { title: "03. Neural AI Inference", rate: "420 models/sec", tech: "PyTorch / ONNX / CUDA", detail: "Autonomous predictive scoring, real-time threat detection, and agentic workflow triggers." },
-    { title: "04. Encrypted Vault Storage", rate: "100% Zero-Leak", tech: "AES-256 / Post-Quantum Encryption", detail: "Multi-region encrypted data persistence with automated backup snapshots and immutable audit trails." },
-  ];
-
-  return (
-    <Card>
-      <Eyebrow>3D Data Pipeline Visualizer</Eyebrow>
-      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 20px" }}>
-        Live streaming telemetry & transformation flow
-      </h3>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 24 }}>
-        {stages.map((s, idx) => {
-          const active = activeStage === idx;
-          return (
-            <button
-              key={idx}
-              onClick={() => setActiveStage(idx)}
-              style={{
-                background: active ? "rgba(212, 175, 55, 0.15)" : TOKENS.panelAlt,
-                border: `1px solid ${active ? TOKENS.brass : TOKENS.hair}`,
-                borderRadius: 6,
-                padding: 16,
-                textAlign: "left",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-            >
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 6 }}>
-                {s.rate}
-              </div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: active ? TOKENS.brassBright : TOKENS.paper }}>
-                {s.title}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      <div style={{ background: TOKENS.ink, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 22 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass }}>
-          <span>[ PIPELINE NODE STAGE 0{activeStage + 1} ]</span>
-          <span>TECH: {stages[activeStage].tech}</span>
-        </div>
-        <p style={{ color: TOKENS.paper, fontSize: 14.5, lineHeight: 1.65, margin: 0 }}>
-          {stages[activeStage].detail}
-        </p>
-      </div>
-    </Card>
-  );
-}
-
-/* ---------------------------- interactive AI command console ---------------------------- */
-
-function AICommandConsole() {
-  const [history, setHistory] = useState([
-    { cmd: "sys.health()", output: "✅ SYSTEM HEALTH: 100% OPERATIONAL | 16 Nodes Sync'd" },
-    { cmd: "sec.audit()", output: "🔒 ZERO-KNOWLEDGE STATUS: ACTIVE | 0 Vulnerabilities Detected" },
-  ]);
-  const [inputVal, setInputVal] = useState("");
-
-  const presets = [
-    { label: "sys.health()", cmd: "sys.health()", resp: "⚡ ALL 16 VAULT NODES RESPONDING IN <14ms AVERAGE" },
-    { label: "sec.audit()", cmd: "sec.audit()", resp: "🔒 AES-256 ZERO-KNOWLEDGE SHIELD ACTIVE | 100% ENCRYPTION" },
-    { label: "ai.benchmark()", cmd: "ai.benchmark()", resp: "🤖 NEURAL AGENT CORE v4.8: 4,200 INFERENCES/SEC @ 99.8% PRECISION" },
-    { label: "cost.optimize()", cmd: "cost.optimize()", resp: "💡 INFRASTRUCTURE RE-BALANCED: 34% WORKLOAD EFFICIENCY GAIN" },
-  ];
-
-  const handleRun = (command, response) => {
-    setHistory((prev) => [...prev, { cmd: command, output: response }]);
-  };
-
-  return (
-    <Card style={{ background: "#06090f", border: "1px solid rgba(79, 179, 255, 0.25)" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 12, marginBottom: 16 }}>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f56" }} />
-          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ffbd2e" }} />
-          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#27c93f" }} />
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper, marginLeft: 10 }}>
-            MyVault CLI Terminal v4.8 (Interactive Console)
-          </span>
-        </div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>
-          LIVE SESSION
-        </div>
-      </div>
-
-      {/* Preset Command Buttons */}
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, alignSelf: "center" }}>
-          RUN PRESET:
-        </span>
-        {presets.map((p) => (
-          <button
-            key={p.cmd}
-            onClick={() => handleRun(p.cmd, p.resp)}
-            style={{
-              background: "rgba(79, 179, 255, 0.08)",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 3,
-              padding: "4px 10px",
-              fontSize: 11,
-              fontFamily: "'JetBrains Mono', monospace",
-              color: TOKENS.teal,
-              cursor: "pointer",
-            }}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Console History Output */}
-      <div
-        style={{
-          background: "#F8FAFC",
-          border: `1px solid ${TOKENS.hair}`,
-          borderRadius: 4,
-          padding: 16,
-          minHeight: 180,
-          maxHeight: 260,
-          overflowY: "auto",
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 12,
-          color: TOKENS.paper,
-          lineHeight: 1.7,
-        }}
-      >
-        {history.map((h, i) => (
-          <div key={i} style={{ marginBottom: 10 }}>
-            <div style={{ color: TOKENS.brass }}>
-              myvault@console:~$ <span style={{ color: TOKENS.paper }}>{h.cmd}</span>
-            </div>
-            <div style={{ color: TOKENS.slate, paddingLeft: 16 }}>{h.output}</div>
-          </div>
-        ))}
-        <div style={{ color: TOKENS.teal, display: "flex", alignItems: "center", gap: 6 }}>
-          myvault@console:~$ <span style={{ animation: "pulse 1s infinite", color: TOKENS.brass }}>▌</span>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-/* ---------------------------- Client Impact & Testimonials Carousel ---------------------------- */
-
-function ClientTestimonials() {
-  const [slide, setSlide] = useState(0);
-
-  const testimonials = [
-    {
-      metric: "+280%",
-      label: "TRANSACTION THROUGHPUT",
-      title: "FinTech Platform Migration & Core Scaling",
-      quote: "Abhimanyu Technologies redesigned our core transaction pipeline. We scaled to 2.4 million daily transactions with zero downtime during peak load.",
-      client: "Global Banking & Payments Client",
-      stack: "Next.js · Node.js · PostgreSQL · AWS",
-    },
-    {
-      metric: "-64%",
-      label: "INFRASTRUCTURE OVERHEAD",
-      title: "Enterprise Cloud Modernization & DevOps",
-      quote: "The Abhimanyu team automated our release pipelines and cloud architecture. Our deployment cycles dropped from weeks to hours with zero unhandled incidents.",
-      client: "Enterprise Logistics Provider",
-      stack: "Kubernetes · Terraform · AWS · Docker",
-    },
-    {
-      metric: "14,000+",
-      label: "CONNECTED IoT DEVICES",
-      title: "Real-Time Fleet Telemetry & Predictive AI",
-      quote: "From sensor firmware to our executive analytics dashboard, Abhimanyu built a system that predicts equipment maintenance needs before failures occur.",
-      client: "Industrial IoT Operations Client",
-      stack: "MQTT · Python · PyTorch · Flutter",
-    },
-  ];
-
-  const curr = testimonials[slide];
-
-  return (
-    <Card style={{ position: "relative", overflow: "hidden" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "0.8fr 1.2fr", gap: 32, alignItems: "center" }} className="hero-grid">
-        <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 28, textAlign: "center" }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.1em" }}>
-            {curr.label}
-          </div>
-          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 48, fontWeight: 700, color: TOKENS.brassBright }}>
-            {curr.metric}
-          </div>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate, marginTop: 12 }}>
-            {curr.client}
-          </div>
-        </div>
-
-        <div>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8 }}>
-            [ CASE STORY 0{slide + 1} // 03 ]
-          </div>
-          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.paper, margin: "0 0 14px" }}>
-            {curr.title}
-          </h3>
-          <p style={{ color: TOKENS.paper, fontSize: 15.5, lineHeight: 1.7, fontStyle: "italic", margin: "0 0 16px" }}>
-            "{curr.quote}"
-          </p>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, marginBottom: 20 }}>
-            TECH STACK: {curr.stack}
-          </div>
-
-          <div style={{ display: "flex", gap: 10 }}>
-            {testimonials.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSlide(idx)}
-                style={{
-                  background: slide === idx ? TOKENS.brass : "transparent",
-                  color: slide === idx ? TOKENS.ink : TOKENS.paper,
-                  border: `1px solid ${slide === idx ? TOKENS.brass : TOKENS.hair}`,
-                  borderRadius: 4,
-                  padding: "6px 14px",
-                  fontSize: 11,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: slide === idx ? 700 : 400,
-                  cursor: "pointer",
-                }}
-              >
-                0{idx + 1}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-/* ---------------------------- Live Security & Compliance Dashboard ---------------------------- */
-
-function SecurityStatusDashboard() {
-  const securityMetrics = [
-    { title: "AES-256 ENCRYPTION", status: "100% ACTIVE", badge: "ZERO-KNOWLEDGE" },
-    { title: "THREAT MITIGATION", status: "0 INCIDENTS", badge: "REAL-TIME MONITORING" },
-    { title: "COMPLIANCE STANDARDS", status: "SOC2 & ISO READY", badge: "AUDITED ARCHITECTURE" },
-    { title: "GLOBAL EDGE SSL", status: "TLS 1.3 SECURED", badge: "AUTOMATED RENEWAL" },
-  ];
-
-  return (
-    <Card style={{ background: TOKENS.panel }}>
-      <Eyebrow>Security & Compliance Dashboard</Eyebrow>
-      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
-        Enterprise security reviewed at the architecture layer
-      </h3>
-
-      <Grid min={220}>
-        {securityMetrics.map((m) => (
-          <div key={m.title} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#27c93f", boxShadow: "0 0 8px #27c93f" }} />
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>{m.badge}</span>
-            </div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 6 }}>{m.title}</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, fontWeight: 600 }}>{m.status}</div>
-          </div>
-        ))}
-      </Grid>
-    </Card>
-  );
-}
-
-/* ---------------------------- Interactive Tech Stack Explorer ---------------------------- */
-
-function TechStackExplorer() {
-  const [filter, setFilter] = useState("All");
-
-  const categories = ["All", "Frontend", "Backend", "AI / ML", "Cloud & DevOps", "Databases"];
-
-  const techData = [
-    { name: "React / Next.js", cat: "Frontend", rating: "99.4%", desc: "SSR and edge rendering for fast enterprise web applications." },
-    { name: "Flutter", cat: "Frontend", rating: "98.9%", desc: "Multi-platform iOS and Android mobile engineering from one codebase." },
-    { name: "Node.js / Express", cat: "Backend", rating: "99.8%", desc: "Event-driven asynchronous microservices and real-time APIs." },
-    { name: "Python / FastAPI", cat: "Backend", rating: "99.6%", desc: "High-performance REST & GraphQL APIs with native ML integration." },
-    { name: "PyTorch / GenAI", cat: "AI / ML", rating: "99.2%", desc: "Autonomous agentic workflows and LLM fine-tuning on operational data." },
-    { name: "TensorFlow", cat: "AI / ML", rating: "98.7%", desc: "Predictive neural networks and computer vision classification." },
-    { name: "AWS / Azure / GCP", cat: "Cloud & DevOps", rating: "99.999%", desc: "Multi-region cloud infrastructure with automated auto-scaling." },
-    { name: "Docker & Kubernetes", cat: "Cloud & DevOps", rating: "99.9%", desc: "Container orchestration with automated zero-downtime deployments." },
-    { name: "PostgreSQL & Redis", cat: "Databases", rating: "99.95%", desc: "ACID-compliant relational storage with sub-millisecond in-memory caching." },
-  ];
-
-  const filtered = filter === "All" ? techData : techData.filter((t) => t.cat === filter);
-
-  return (
-    <Card>
-      <Eyebrow>Technology Matrix Explorer</Eyebrow>
-      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 20px" }}>
-        Modern tech stacks chosen for maintainability & scale
-      </h3>
-
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
-        {categories.map((c) => (
-          <button
-            key={c}
-            onClick={() => setFilter(c)}
-            style={{
-              background: filter === c ? TOKENS.brass : "transparent",
-              color: filter === c ? TOKENS.ink : TOKENS.paper,
-              border: `1px solid ${filter === c ? TOKENS.brass : TOKENS.hair}`,
-              borderRadius: 999,
-              padding: "7px 16px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: filter === c ? 700 : 400,
-              cursor: "pointer",
-            }}
-          >
-            {c}
-          </button>
-        ))}
-      </div>
-
-      <Grid min={240}>
-        {filtered.map((t) => (
-          <div key={t.name} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>{t.cat.toUpperCase()}</span>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.brass }}>FIT SCORE: {t.rating}</span>
-            </div>
-            <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 6px" }}>{t.name}</h4>
-            <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{t.desc}</p>
-          </div>
-        ))}
-      </Grid>
-    </Card>
-  );
-}
-
-/* ---------------------------- Global Load Balancer & Traffic Director ---------------------------- */
-
-function LoadBalancerDashboard() {
-  const [algorithm, setAlgorithm] = useState("anycast");
-  const [spike, setSpike] = useState(false);
-  const [outage, setOutage] = useState(false);
-  const [rps, setRps] = useState(142850);
-  const [inspectNode, setInspectNode] = useState(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const base = spike ? 195000 : 142850;
-      const jitter = Math.floor(Math.random() * 3000) - 1500;
-      setRps(base + jitter);
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [spike]);
-
-  const NODES = [
-    {
-      id: "in-telangana",
-      name: "Telangana HQ (Hyderabad)",
-      region: "ap-south-1 (Primary Hub)",
-      latency: "4 ms",
-      status: "PRIMARY HUB",
-      healthy: true,
-      share: outage ? "58%" : "40%",
-      bgp: "103.21.244.0/24",
-      protocol: "TLS 1.3 / HTTP/3 QUIC",
-      sockets: "450,000 / 500,000 Active",
-      details: "Central R&D and Primary Anycast hub providing sub-5ms low latency connections across Indian and APAC enterprise backbones."
-    },
-    {
-      id: "us-east",
-      name: "US East (N. Virginia)",
-      region: "us-east-1",
-      latency: "12 ms",
-      status: "ACTIVE",
-      healthy: true,
-      share: outage ? "42%" : "25%",
-      bgp: "198.51.100.0/24",
-      protocol: "TLS 1.3 / HTTP/3 QUIC",
-      sockets: "310,000 / 500,000 Active",
-      details: "North American Anycast ingress edge with automated DDoS scrubbing and zero-trust API authorization filtering."
-    },
-    {
-      id: "eu-central",
-      name: "EU Central (Frankfurt)",
-      region: "eu-central-1",
-      latency: outage ? "OFFLINE" : "16 ms",
-      status: outage ? "FAILOVER ACTIVE" : "ACTIVE",
-      healthy: !outage,
-      share: outage ? "0%" : "20%",
-      bgp: "185.230.12.0/24",
-      protocol: "TLS 1.3 / HTTP/2",
-      sockets: outage ? "0 / 500,000 Active (Drained)" : "240,000 / 500,000 Active",
-      details: "European compliance edge compliant with GDPR data residency controls and health-checked automatic failover routing."
-    },
-    {
-      id: "ap-east",
-      name: "APAC East (Tokyo)",
-      region: "ap-northeast-1",
-      latency: "34 ms",
-      status: "ACTIVE",
-      healthy: true,
-      share: outage ? "20%" : "15%",
-      bgp: "203.0.113.0/24",
-      protocol: "TLS 1.3 / HTTP/3 QUIC",
-      sockets: "180,000 / 500,000 Active",
-      details: "East Asia edge acceleration node connected via submarine optical fiber to reduce round-trip time across Pacific markets."
-    }
-  ];
-
-  return (
-    <Card style={{ padding: 32 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 24 }}>
-        <div>
-          <Eyebrow>Edge Routing & Load Balancing Engine</Eyebrow>
-          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "6px 0 6px" }}>
-            Abhimanyu Anycast Global Load Balancer
-          </h3>
-          <p style={{ color: TOKENS.slate, fontSize: 14.5, margin: 0, maxWidth: 680 }}>
-            Real-time traffic director distributing requests across multi-region edge nodes. Click any node to inspect live BGP telemetry.
-          </p>
-        </div>
-        <div style={{ background: "rgba(79, 179, 255, 0.08)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 18px", textAlign: "right" }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, letterSpacing: "0.08em" }}>ACTIVE THROUGHPUT</div>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 22, color: TOKENS.paper, fontWeight: "bold" }}>
-            {rps.toLocaleString()} <span style={{ fontSize: 12, color: TOKENS.brass }}>RPS</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Control Toolbar */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 24, padding: 16, background: "rgba(15, 23, 42, 0.03)", borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>ALGORITHM:</span>
-          {["anycast", "weighted", "geo", "failover"].map((algo) => (
-            <button
-              key={algo}
-              onClick={() => { trackEvent("change_lb_algorithm", { algo }); setAlgorithm(algo); }}
-              style={{
-                background: algorithm === algo ? TOKENS.brass : "transparent",
-                color: algorithm === algo ? TOKENS.ink : TOKENS.paper,
-                border: `1px solid ${algorithm === algo ? TOKENS.brass : TOKENS.hair}`,
-                borderRadius: 4,
-                padding: "6px 12px",
-                fontSize: 11.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                cursor: "pointer",
-                fontWeight: algorithm === algo ? "bold" : "normal"
-              }}
-            >
-              {algo.toUpperCase()}
-            </button>
-          ))}
-        </div>
-
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          <button
-            onClick={() => { trackEvent("toggle_traffic_spike"); setSpike(!spike); }}
-            style={{
-              background: spike ? "rgba(239, 68, 68, 0.2)" : "rgba(15, 23, 42, 0.04)",
-              color: spike ? "#f87171" : TOKENS.paper,
-              border: `1px solid ${spike ? "#f87171" : TOKENS.hair}`,
-              borderRadius: 4,
-              padding: "6px 12px",
-              fontSize: 11.5,
-              fontFamily: "'JetBrains Mono', monospace",
-              cursor: "pointer"
-            }}
-          >
-            {spike ? "🔥 Spike Active (+50k RPS)" : "⚡ Simulate Traffic Spike"}
-          </button>
-          <button
-            onClick={() => { trackEvent("toggle_node_outage"); setOutage(!outage); }}
-            style={{
-              background: outage ? "rgba(239, 68, 68, 0.2)" : "rgba(15, 23, 42, 0.04)",
-              color: outage ? "#f87171" : TOKENS.paper,
-              border: `1px solid ${outage ? "#f87171" : TOKENS.hair}`,
-              borderRadius: 4,
-              padding: "6px 12px",
-              fontSize: 11.5,
-              fontFamily: "'JetBrains Mono', monospace",
-              cursor: "pointer"
-            }}
-          >
-            {outage ? "⚠️ Failover Active (Frankfurt Out)" : "🚨 Simulate Node Outage"}
-          </button>
-        </div>
-      </div>
-
-      {/* Nodes Status Grid */}
-      <Grid min={240}>
-        {NODES.map((n) => (
-          <div
-            key={n.id}
-            onClick={() => { trackEvent("inspect_node", { node: n.id }); setInspectNode(n); }}
-            style={{
-              background: TOKENS.panelAlt,
-              border: `1px solid ${n.healthy ? TOKENS.hair : "rgba(239, 68, 68, 0.5)"}`,
-              borderRadius: 6,
-              padding: 18,
-              position: "relative",
-              cursor: "pointer",
-              transition: "all 0.3s ease"
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: n.healthy ? TOKENS.teal : "#f87171", boxShadow: `0 0 8px ${n.healthy ? TOKENS.teal : "#f87171"}` }} />
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: n.healthy ? TOKENS.brass : "#f87171" }}>{n.status}</span>
-            </div>
-            <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, margin: "0 0 4px" }}>{n.name}</h4>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 10 }}>{n.region}</div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
-              <span style={{ color: TOKENS.teal }}>LATENCY: {n.latency}</span>
-              <span style={{ color: TOKENS.brass }}>TRAFFIC: {n.share}</span>
-            </div>
-            {/* Health Bar */}
-            <div style={{ marginTop: 12, height: 4, background: "rgba(15, 23, 42, 0.06)", borderRadius: 2, overflow: "hidden" }}>
-              <div style={{ width: n.share, height: "100%", background: n.healthy ? TOKENS.brass : "#f87171", transition: "width 0.5s ease" }} />
-            </div>
-            <div style={{ marginTop: 10, fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", textAlign: "right" }}>
-              Inspect Node →
-            </div>
-          </div>
-        ))}
-      </Grid>
-
-      {/* Edge Node Telemetry Modal */}
-      {inspectNode && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(12px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <Card style={{ maxWidth: 580, width: "100%", border: `1px solid ${TOKENS.brass}`, background: TOKENS.panelAlt, padding: 32 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal }}>NODE TELEMETRY INSPECTOR</span>
-              <button onClick={() => setInspectNode(null)} style={{ background: "transparent", border: "none", color: TOKENS.paper, fontSize: 22, cursor: "pointer" }}>✕</button>
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 4px" }}>{inspectNode.name}</h3>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 16 }}>{inspectNode.region}</div>
-            
-            <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, marginBottom: 20 }}>{inspectNode.details}</p>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, background: "rgba(15, 23, 42, 0.03)", padding: 16, borderRadius: 6, border: `1px solid ${TOKENS.hair}`, marginBottom: 24 }}>
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>BGP ANYCAST PREFIX</div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper }}>{inspectNode.bgp}</div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>SSL PROTOCOL</div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper }}>{inspectNode.protocol}</div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>PING LATENCY</div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.teal }}>{inspectNode.latency}</div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>SOCKET POOL</div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brass }}>{inspectNode.sockets}</div>
-              </div>
-            </div>
-
-            <Button onClick={() => setInspectNode(null)}>Close Telemetry Inspector</Button>
-          </Card>
-        </div>
-      )}
-    </Card>
-  );
-}
-
-/* ---------------------------- Global Nodes & Office Map ---------------------------- */
-
-function GlobalNodeMap() {
-  const nodes = [
-    { location: "Telangana, India (HQ)", type: "HEADQUARTERS & CORE R&D", ping: "4ms", status: "PRIMARY HUB" },
-    { location: "US East (N. Virginia)", type: "MULTI-REGION CLOUD NODE", ping: "12ms", status: "ACTIVE" },
-    { location: "EU Central (Frankfurt)", type: "MULTI-REGION CLOUD NODE", ping: "16ms", status: "ACTIVE" },
-    { location: "AP South (Singapore)", type: "MULTI-REGION CLOUD NODE", ping: "18ms", status: "ACTIVE" },
-  ];
-
-  return (
-    <Card>
-      <Eyebrow>Global Network Infrastructure</Eyebrow>
-      <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, margin: "0 0 24px" }}>
-        Abhimanyu Technologies Global Node Network
-      </h3>
-
-      <Grid min={240}>
-        {nodes.map((n) => (
-          <div key={n.location} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#4fb3ff", boxShadow: "0 0 8px #4fb3ff" }} />
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.brass }}>{n.status}</span>
-            </div>
-            <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 4px" }}>{n.location}</h4>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 8 }}>{n.type}</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>⚡ LATENCY: {n.ping}</div>
-          </div>
-        ))}
-      </Grid>
-    </Card>
-  );
-}
-
-/* ---------------------------- pages ---------------------------- */
-
-function Hero({ go }) {
-  const [searchTab, setSearchTab] = useState("products");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [parsedIntent, setParsedIntent] = useState(null);
-  const [location, setLocation] = useState("📍 Chennai");
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (!searchQuery) return;
-    trackEvent("ai_intent_search", { query: searchQuery, tab: searchTab });
-
-    const queryLower = searchQuery.toLowerCase();
-    const intent = {
-      material: queryLower.includes("stainless") ? "Stainless Steel 316" : queryLower.includes("aluminium") ? "Aluminium T6" : "Custom Spec Alloy",
-      qty: queryLower.includes("10,000") || queryLower.includes("10000") ? "10,000 Units" : queryLower.includes("5,000") || queryLower.includes("5000") ? "5,000 Units" : "Custom Batch",
-      location: queryLower.includes("chennai") ? "Chennai, Tamil Nadu" : queryLower.includes("hyderabad") || queryLower.includes("telangana") ? "Telangana HQ / Hyderabad" : "Pan-India / Global",
-      category: searchTab.toUpperCase()
-    };
-    setParsedIntent(intent);
-  };
-
-  const quickActions = [
-    { icon: "🛒", label: "Find Products", id: "products", accent: TOKENS.blue },
-    { icon: "🛠", label: "Find Services", id: "services", accent: TOKENS.teal },
-    { icon: "🏭", label: "Manufacturers", id: "manufacturers", accent: TOKENS.brass },
-    { icon: "🏢", label: "Find Business", id: "businesses", accent: "#7C3AED" },
-    { icon: "📋", label: "Post Request", id: "rfq-wizard", accent: "#059669" },
-  ];
-
-  return (
-    <div style={{
-      padding: "100px 24px 60px",
-      position: "relative",
-      overflow: "hidden",
-      background: `linear-gradient(160deg, #0B1F3A 0%, #0d2347 40%, #101828 100%)`,
-    }}>
-      {/* Decorative background grid */}
-      <div style={{
         position: "absolute",
         inset: 0,
-        backgroundImage: `radial-gradient(rgba(21, 101, 192, 0.15) 1px, transparent 1px)`,
-        backgroundSize: "40px 40px",
         pointerEvents: "none",
-      }} />
-      {/* Glow blobs */}
-      <div style={{ position: "absolute", top: "20%", right: "10%", width: 400, height: 400, borderRadius: "50%", background: "rgba(21, 101, 192, 0.08)", filter: "blur(80px)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: "10%", left: "5%", width: 300, height: 300, borderRadius: "50%", background: "rgba(0, 168, 150, 0.07)", filter: "blur(60px)", pointerEvents: "none" }} />
-
-      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
-        {/* Eyebrow */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-          <span style={{
-            background: "rgba(21, 101, 192, 0.2)",
-            border: `1px solid rgba(21, 101, 192, 0.4)`,
-            borderRadius: 999,
-            padding: "5px 14px",
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 11,
-            color: TOKENS.teal,
-            letterSpacing: "0.12em",
-          }}>
-            ● ENTERPRISE B2B MARKETPLACE · INDIA'S LARGEST PLATFORM
-          </span>
-        </div>
-
-        {/* Main Headline */}
-        <h1 style={{
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 600,
-          fontSize: "clamp(40px, 7vw, 72px)",
-          color: TOKENS.paper,
-          lineHeight: 1.0,
-          margin: "0 0 8px",
-          maxWidth: 800,
-          letterSpacing: "-0.01em",
-        }}>
-          ONE PLATFORM.
-        </h1>
-        <h1 style={{
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 600,
-          fontSize: "clamp(40px, 7vw, 72px)",
-          lineHeight: 1.0,
-          margin: "0 0 20px",
-          maxWidth: 800,
-          letterSpacing: "-0.01em",
-          background: `linear-gradient(90deg, ${TOKENS.brass} 0%, #00A896 60%, #1565C0 100%)`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-        }}>
-          EVERY INDUSTRY.
-        </h1>
-        <p style={{
-          color: TOKENS.slate,
-          fontSize: "clamp(15px, 2vw, 18px)",
-          lineHeight: 1.65,
-          margin: "0 0 36px",
-          maxWidth: 600,
-        }}>
-          Products · Services · Businesses · Manufacturing
-          <br />
-          <span style={{ color: TOKENS.paper, fontWeight: 500 }}>Find anything in 2–3 clicks. Verified suppliers. Instant RFQs.</span>
-        </p>
-
-        {/* Search Engine Bar */}
-        <div style={{
-          background: "rgba(16, 24, 40, 0.90)",
-          border: `1px solid rgba(212, 175, 55, 0.35)`,
-          borderRadius: 12,
-          padding: "18px 20px",
-          marginBottom: 28,
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)",
-          maxWidth: 820,
-        }}>
-          {/* Tab row */}
-          <div style={{ display: "flex", gap: 6, marginBottom: 14, overflowX: "auto" }}>
-            {[
-              { id: "products", label: "🛒 Products" },
-              { id: "services", label: "🛠 Services" },
-              { id: "manufacturers", label: "🏭 Manufacturers" },
-              { id: "businesses", label: "🏢 Businesses" },
-              { id: "rfq", label: "📋 Post RFQ" }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setSearchTab(tab.id)}
-                style={{
-                  background: searchTab === tab.id ? TOKENS.brass : "rgba(15, 23, 42, 0.045)",
-                  color: searchTab === tab.id ? TOKENS.ink : TOKENS.slate,
-                  border: `1px solid ${searchTab === tab.id ? TOKENS.brass : TOKENS.hair}`,
-                  borderRadius: 6,
-                  padding: "6px 14px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                  fontWeight: searchTab === tab.id ? "bold" : "normal",
-                  whiteSpace: "nowrap",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Search input row */}
-          <form onSubmit={handleSearch} style={{ display: "flex", gap: 10, alignItems: "stretch" }}>
-            {/* Location selector */}
-            <select
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              style={{
-                background: "rgba(15, 23, 42, 0.05)",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 8,
-                padding: "10px 12px",
-                color: TOKENS.paper,
-                fontSize: 13,
-                fontFamily: "'Inter', sans-serif",
-                cursor: "pointer",
-                flexShrink: 0,
-                minWidth: 150,
-              }}
-            >
-              {["📍 Chennai", "📍 Telangana", "📍 Hyderabad", "📍 Bengaluru", "📍 Mumbai", "📍 Delhi NCR", "📍 Pune", "📍 Pan-India", "📍 Global"].map((loc) => (
-                <option key={loc} value={loc}>{loc}</option>
-              ))}
-            </select>
-
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='e.g., "I need 10,000 stainless steel CNC parts in Chennai"'
-              style={{
-                flex: 1,
-                background: "rgba(15, 23, 42, 0.05)",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 8,
-                padding: "10px 16px",
-                color: TOKENS.paper,
-                fontSize: 14,
-                fontFamily: "'Inter', sans-serif",
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                background: `linear-gradient(135deg, ${TOKENS.blue} 0%, #1976D2 100%)`,
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                padding: "10px 22px",
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                boxShadow: "0 4px 16px rgba(21, 101, 192, 0.5)",
-              }}
-            >
-              🔍 Search
-            </button>
-          </form>
-
-          {/* AI Intent Breakdown */}
-          {parsedIntent && (
-            <div style={{ marginTop: 14, background: "rgba(0, 168, 150, 0.08)", border: `1px solid rgba(0, 168, 150, 0.35)`, borderRadius: 6, padding: "10px 14px" }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 6 }}>🤖 AI INTENT EXTRACTED</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 12, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
-                <span style={{ background: "rgba(15, 23, 42, 0.05)", padding: "3px 8px", borderRadius: 4 }}>SPEC: {parsedIntent.material}</span>
-                <span style={{ background: "rgba(15, 23, 42, 0.05)", padding: "3px 8px", borderRadius: 4 }}>QTY: {parsedIntent.qty}</span>
-                <span style={{ background: "rgba(15, 23, 42, 0.05)", padding: "3px 8px", borderRadius: 4 }}>📍 {parsedIntent.location}</span>
-              </div>
-              <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
-                <button onClick={() => go("manufacturers")} style={{ background: TOKENS.brass, color: TOKENS.ink, border: "none", borderRadius: 4, padding: "6px 12px", fontSize: 11.5, cursor: "pointer", fontWeight: "bold" }}>Find Matching Manufacturers →</button>
-                <button onClick={() => go("rfq-wizard")} style={{ background: "transparent", border: `1px solid ${TOKENS.brass}`, color: TOKENS.brass, borderRadius: 4, padding: "6px 12px", fontSize: 11.5, cursor: "pointer" }}>Auto-Generate RFQ →</button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Quick Action Cards */}
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
-          {quickActions.map((qa) => (
-            <button
-              key={qa.id}
-              onClick={() => go(qa.id)}
-              style={{
-                background: "rgba(16, 24, 40, 0.85)",
-                border: `1px solid rgba(255,255,255,0.12)`,
-                borderRadius: 10,
-                padding: "14px 20px",
-                cursor: "pointer",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 8,
-                transition: "all 0.2s ease",
-                backdropFilter: "blur(12px)",
-                minWidth: 110,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.border = `1px solid ${qa.accent}`;
-                e.currentTarget.style.transform = "translateY(-3px)";
-                e.currentTarget.style.boxShadow = `0 12px 28px rgba(0,0,0,0.4)`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.border = "1px solid rgba(255,255,255,0.12)";
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            >
-              <span style={{ fontSize: 24 }}>{qa.icon}</span>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, letterSpacing: "0.04em" }}>{qa.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Trust badges */}
-        <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" }}>
-          {[
-            { icon: "✓", text: "500+ Verified Suppliers" },
-            { icon: "✓", text: "ISO Certified Manufacturers" },
-            { icon: "✓", text: "Instant RFQ Matching" },
-            { icon: "✓", text: "Pan-India + Global Reach" },
-          ].map((badge) => (
-            <div key={badge.text} style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "'Inter', sans-serif", fontSize: 13, color: TOKENS.slate }}>
-              <span style={{ color: TOKENS.teal, fontWeight: 700 }}>{badge.icon}</span>
-              {badge.text}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function B2BPlatformMetricsStrip({ go }) {
-  const stats = [
-    { num: "500+", label: "Verified Manufacturers", note: "ISO 9001 & AS9100 Audited", color: TOKENS.brass },
-    { num: "$18.4M", label: "Gross RFQ Pipeline", note: "Active buyer sourcing value", color: "#60A5FA" },
-    { num: "< 4.2h", label: "Median Quote Turnaround", note: "AI-matched priority bidding", color: TOKENS.teal },
-    { num: "99.98%", label: "On-Time Delivery SLA", note: "Contract escrow protection", color: TOKENS.paper },
-  ];
-
-  const quickPills = [
-    { label: "CNC Machining", id: "manufacturers", icon: "⚙️" },
-    { label: "Sheet Metal Fab", id: "manufacturers", icon: "📐" },
-    { label: "Electronics & SMT", id: "manufacturers", icon: "⚡" },
-    { label: "Injection Molding", id: "manufacturers", icon: "🧪" },
-    { label: "Enterprise ERP & AI", id: "products", icon: "💻" },
-    { label: "Post a Requirement", id: "rfq-wizard", icon: "📋" },
-  ];
-
-  return (
-    <div style={{ background: "rgba(16, 24, 40, 0.8)", borderTop: `1px solid ${TOKENS.hair}`, borderBottom: `1px solid ${TOKENS.hair}`, padding: "28px 24px" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        {/* KPI Counter Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20, marginBottom: 24 }}>
-          {stats.map((s, i) => (
-            <div key={i} style={{ borderLeft: `2px solid ${s.color}`, paddingLeft: 14 }}>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 600, color: s.color, lineHeight: 1.1 }}>{s.num}</div>
-              <div style={{ fontSize: 13.5, color: TOKENS.paper, fontWeight: 500, marginTop: 4 }}>{s.label}</div>
-              <div style={{ fontSize: 11.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{s.note}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* 1-Click Directory Launchers */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", paddingTop: 16, borderTop: `1px solid rgba(255,255,255,0.06)` }}>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginRight: 6 }}>DIRECTORIES:</span>
-          {quickPills.map((p) => (
-            <button
-              key={p.label}
-              onClick={() => go(p.id)}
-              style={{
-                background: "rgba(15, 23, 42, 0.04)",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 999,
-                padding: "6px 14px",
-                fontSize: 12.5,
-                color: TOKENS.paper,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                transition: "all 0.15s ease"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = TOKENS.brass;
-                e.currentTarget.style.background = "rgba(212,175,55,0.1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = TOKENS.hair;
-                e.currentTarget.style.background = "rgba(15, 23, 42, 0.04)";
-              }}
-            >
-              <span>{p.icon}</span>
-              <span>{p.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function HomePage({ go }) {
-  return (
-    <>
-      <TelemetryTicker />
-      <Hero go={go} />
-      <B2BPlatformMetricsStrip go={go} />
-      <ArcDivider />
-
-      <Section eyebrow="Cybernetic Media Reel" title="Watch Abhimanyu platform in action" tight>
-        <VideoShowcase3D />
-      </Section>
-
-      <Section alt eyebrow="Client Impact Stories" title="Quantifiable Enterprise Outcomes" tight>
-        <ClientTestimonials />
-      </Section>
-
-      <Section eyebrow="Traffic Management" title="Global Edge Load Balancer & Traffic Director" tight>
-        <LoadBalancerDashboard />
-      </Section>
-
-      <Section alt eyebrow="System Architecture" title="4-Layer Enterprise Stack" tight>
-        <Architecture3DExplorer />
-      </Section>
-
-      <Section eyebrow="3D Data Flow" title="Real-Time Data Pipeline Stream" tight>
-        <DataPipeline3D />
-      </Section>
-
-      <Section alt eyebrow="Interactive CLI" title="AI System Command Console" tight>
-        <AICommandConsole />
-      </Section>
-
-      <Section eyebrow="Security & Governance" title="Audited Enterprise Security" tight>
-        <SecurityStatusDashboard />
-      </Section>
-
-      <Section alt eyebrow="Technology Matrix" title="Enterprise Technology Stack" tight>
-        <TechStackExplorer />
-      </Section>
-
-      <Section eyebrow="What We Do" title="Technology that solves a named problem" tight>
-        <Grid min={250}>
-          {WHAT_WE_DO.map((w) => (
-            <Card key={w.title}>
-              <Icon3D geometry={w.icon} size={48} />
-              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "14px 0 10px" }}>{w.title}</h3>
-              <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6, margin: 0 }}>{w.desc}</p>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-
-      <Section alt eyebrow="Global Operations" title="Multi-Region Node Network" tight>
-        <GlobalNodeMap />
-      </Section>
-
-      <Section alt eyebrow="ROI & Impact" title="Quantifiable efficiency gains" tight>
-        <ROICalculator />
-      </Section>
-
-      <Section alt eyebrow="Products" title="Software MyVault builds and maintains" sub="Reusable platforms, not one-off projects — each one supported after you buy it." tight>
-        <Grid min={260}>
-          {PRODUCTS.slice(0, 3).map((p) => (
-            <Card key={p.key}>
-              <Icon3D geometry={p.icon} size={44} />
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.1em", color: TOKENS.teal, margin: "12px 0 10px" }}>{p.tag.toUpperCase()}</div>
-              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 8px" }}>{p.name}</h3>
-              <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{p.desc}</p>
-            </Card>
-          ))}
-        </Grid>
-        <div style={{ marginTop: 28 }}>
-          <Button variant="ghost" onClick={() => go("products")}>See all products →</Button>
-        </div>
-      </Section>
-
-      <Section eyebrow="Industries" title="Built for how your industry actually works" tight>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-          {INDUSTRIES.map((ind) => (
-            <button
-              key={ind.name}
-              onClick={() => go("industries")}
-              style={{ background: "transparent", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, padding: "10px 18px", borderRadius: 999, fontSize: 14, cursor: "pointer" }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = TOKENS.brass)}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = TOKENS.hair)}
-            >
-              {ind.name}
-            </button>
-          ))}
-        </div>
-      </Section>
-
-      <Section alt eyebrow="Why MyVault" title="What we hold ourselves to" sub="Hover a card to flip it." tight>
-        <Grid min={200}>
-          {WHY.map((w) => <FlipCard key={w.title} title={w.title} desc={w.desc} icon={w.icon} />)}
-        </Grid>
-      </Section>
-
-      <CTA go={go} />
-    </>
-  );
-}
-
-/* Analytics Event Tracker Helper */
-const trackEvent = (eventName, data = {}) => {
-  try {
-    const log = JSON.parse(localStorage.getItem("abhimanu_analytics") || "[]");
-    log.push({ eventName, data, timestamp: new Date().toISOString() });
-    localStorage.setItem("abhimanu_analytics", JSON.stringify(log.slice(-100)));
-    console.log(`[Analytics Tracked] ${eventName}:`, data);
-  } catch (e) {
-    // Ignore storage errors
-  }
-};
-
-/* ---------------------------- Enhanced Sub-Pages ---------------------------- */
-
-function AboutPage({ go }) {
-  useEffect(() => { trackEvent("view_about_page"); }, []);
-
-  const TIMELINE = [
-    { year: "2020", title: "Foundation", desc: "Abhimanyu Technologies founded in Telangana, India with a vision to build resilient enterprise software." },
-    { year: "2022", title: "Multi-Region Cloud Scale", desc: "Expanded architecture practice across APAC & North America, deploying high-availability cloud platforms." },
-    { year: "2024", title: "AI & Neural Lab", desc: "Launched dedicated Artificial Intelligence and Data Engineering practice for enterprise automation." },
-    { year: "2026", title: "Global Enterprise Partner", desc: "Serving 100+ global clients across FinTech, Healthcare, Logistics, and E-Commerce with 99.999% uptime." }
-  ];
-
-  const LEADERSHIP = [
-    { name: "Shiva", role: "FOUNDER & CEO", focus: "Corporate Strategy, Global Scaling & Operations", bio: "Founded Abhimanyu Technologies to build software products and digital platforms that hold up under real enterprise load." },
-    { name: "Abhimanyu", role: "CO-FOUNDER & CTO", focus: "Artificial Intelligence, Neural Architectures & Systems Engineering", bio: "Leads engineering strategy, proprietary AI model fine-tuning, zero-trust cloud infrastructure, and core software architecture." },
-    { name: "Ananya Verma", role: "VP OF ENGINEERING", focus: "Enterprise Software & Microservices", bio: "Over 12 years directing large-scale distributed systems and cloud migrations for Fortune 500 partners." },
-    { name: "Rajesh Kumar", role: "HEAD OF CYBERSECURITY", focus: "Zero-Trust Architecture & Compliance", bio: "Directs SOC2 Type II, ISO 27001 compliance and penetration testing across all client deployments." }
-  ];
-
-  return (
-    <>
-      <Section eyebrow="About Abhimanyu Technologies" title="Software built by engineers who take pride in stability">
-        <p style={{ color: TOKENS.slate, fontSize: 17, lineHeight: 1.75, maxWidth: 780 }}>
-          Abhimanyu Technologies is an enterprise technology company building software products, AI systems, and digital
-          platforms for organizations that require absolute reliability. Sloganed with <strong style={{ color: TOKENS.brass }}>"Scale Your Business"</strong>,
-          we combine deep engineering discipline with modern cloud & AI architectures.
-        </p>
-      </Section>
-
-      <Section alt eyebrow="Mission & Vision" title="Our Core Purpose" tight>
-        <Grid min={280}>
-          <Card>
-            <div style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginBottom: 12, letterSpacing: "0.1em" }}>OUR MISSION</div>
-            <h3 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 22, margin: "0 0 10px" }}>Empower Enterprise Growth</h3>
-            <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: 0 }}>Build technology that businesses can depend on, engineered with the exact care and security we demand for our own critical operations.</p>
-          </Card>
-          <Card>
-            <div style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginBottom: 12, letterSpacing: "0.1em" }}>OUR VISION</div>
-            <h3 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 22, margin: "0 0 10px" }}>Global Architecture Standard</h3>
-            <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: 0 }}>To be the premier global technology partner growing businesses call before a technical bottleneck occurs, not after an outage.</p>
-          </Card>
-        </Grid>
-      </Section>
-
-      <Section eyebrow="Company Growth" title="Journey & Milestones" tight>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
-          {TIMELINE.map((t) => (
-            <Card key={t.year} style={{ position: "relative" }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 28, fontWeight: "bold", color: TOKENS.brass, marginBottom: 8 }}>{t.year}</div>
-              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 8px" }}>{t.title}</h4>
-              <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{t.desc}</p>
-            </Card>
-          ))}
-        </div>
-      </Section>
-
-      <Section alt eyebrow="Leadership" title="Executive Leadership Team" tight>
-        <Grid min={260}>
-          {LEADERSHIP.map((m) => (
-            <Card key={m.name}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.08em" }}>{m.role}</div>
-              <h4 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 22, margin: "0 0 4px" }}>{m.name}</h4>
-              <div style={{ color: TOKENS.brass, fontSize: 13, marginBottom: 12, fontWeight: 500 }}>{m.focus}</div>
-              <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{m.bio}</p>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-
-      <Section eyebrow="Engineering Manifesto" title="Architectural Principles We Uphold" tight>
-        <Grid min={260}>
-          {[
-            { title: "Reliability Over Novelty", desc: "We favor battle-tested boring technologies for core ledgers and stateful storage. Experimental stacks stay in sandbox environments.", badge: "RESILIENCE" },
-            { title: "Zero-Knowledge By Default", desc: "Data isolation with AES-256 multi-region encryption, strict RBAC permissions, and automated key rotation across all cloud origins.", badge: "SECURITY" },
-            { title: "Radical Telemetry & Observability", desc: "Every API call, message queue, and database transaction is metered with synthetic distributed tracing. Alerts trigger before customers notice.", badge: "MONITORING" },
-            { title: "Code Built to Last", desc: "We write clean, strictly typed, modular architectures intended to be extended over 5+ years without technical debt or rewrites.", badge: "ENGINEERING" }
-          ].map((v) => (
-            <Card key={v.title}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.08em" }}>{v.badge}</div>
-              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 8px" }}>{v.title}</h4>
-              <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{v.desc}</p>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-
-      <Section alt eyebrow="Global Infrastructure" title="12 Anycast Edge POPs Across 4 Continents" tight>
-        <div style={{ background: "rgba(16, 24, 40, 0.8)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 28, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20 }}>
-          <div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.brass }}>Telangana HQ</div>
-            <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>PRIMARY R&D & SYSTEM NOC</div>
-            <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>Core microservices engineering, neural AI lab, and tier-1 multi-cloud routing orchestrator.</p>
-          </div>
-          <div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: "#60A5FA" }}>APAC Core</div>
-            <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>SINGAPORE · CHENNAI · TOKYO</div>
-            <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>Sub-8ms regional Edge POPs serving Southeast Asia, Indian industrial corridors, and East Asia.</p>
-          </div>
-          <div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper }}>EMEA & Americas</div>
-            <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>FRANKFURT · LONDON · N. VIRGINIA</div>
-            <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>High-throughput transatlantic transit nodes with full SOC2 Type II and GDPR data boundary compliance.</p>
-          </div>
-        </div>
-      </Section>
-
-      <CTA go={go} label="Work With Our Team" />
-    </>
-  );
-}
-
-function ServicesPage({ go }) {
-  const [activeKey, setActiveKey] = useState(SERVICE_CATEGORIES[0].key);
-  useEffect(() => { trackEvent("view_services_page", { category: activeKey }); }, [activeKey]);
-  const cat = SERVICE_CATEGORIES.find((c) => c.key === activeKey) || SERVICE_CATEGORIES[0];
-
-  return (
-    <>
-      <Section eyebrow="Services & Solutions" title="Enterprise Engineering Disciplines" sub="Select a practice area to review the challenge, architectural solution, and deliverables.">
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 36 }}>
-          {SERVICE_CATEGORIES.map((c) => (
-            <button
-              key={c.key}
-              onClick={() => setActiveKey(c.key)}
-              style={{
-                background: activeKey === c.key ? TOKENS.brass : "rgba(255, 255, 255, 0.03)",
-                color: activeKey === c.key ? TOKENS.ink : TOKENS.paper,
-                border: `1px solid ${activeKey === c.key ? TOKENS.brass : TOKENS.hair}`,
-                borderRadius: 999, padding: "10px 18px", fontSize: 13.5, cursor: "pointer", fontWeight: activeKey === c.key ? 700 : 400,
-                transition: "all 0.2s ease"
-              }}
-            >
-              {c.label}
-            </button>
-          ))}
-        </div>
-
-        <Card style={{ padding: 32 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
-            <div>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.1em" }}>PRACTICE OVERVIEW</span>
-              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 28, margin: "6px 0 8px" }}>{cat.label}</h3>
-              <p style={{ color: TOKENS.slate, fontSize: 16, maxWidth: 700, margin: 0 }}>{cat.blurb}</p>
-            </div>
-            <Button onClick={() => go("contact")}>Schedule Consultation →</Button>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, margin: "28px 0" }}>
-            <div style={{ background: "rgba(239, 68, 68, 0.06)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: 6, padding: 20 }}>
-              <h4 style={{ color: "#f87171", fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0, marginBottom: 8 }}>COMMON INDUSTRY CHALLENGE</h4>
-              <p style={{ color: TOKENS.paper, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{cat.problem}</p>
-            </div>
-            <div style={{ background: "rgba(79, 179, 255, 0.06)", border: "1px solid rgba(79, 179, 255, 0.2)", borderRadius: 6, padding: 20 }}>
-              <h4 style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginTop: 0, marginBottom: 8 }}>ENGINEERED OUTCOME</h4>
-              <p style={{ color: TOKENS.paper, fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>{cat.outcome}</p>
-            </div>
-          </div>
-
-          <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, letterSpacing: "0.08em", marginBottom: 14 }}>DELIVERABLES & CAPABILITIES</h4>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-            {cat.items.map((item) => (
-              <span key={item} style={{ background: "rgba(255, 255, 255, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "8px 14px", fontSize: 13.5, color: TOKENS.paper }}>
-                {item}
-              </span>
-            ))}
-          </div>
-        </Card>
-      </Section>
-
-      <Section eyebrow="Scoping & Velocity Estimator" title="Interactive Engineering Scope Calculator" sub="Estimate team squad size, delivery velocity, and architectural milestones for your project.">
-        <InteractiveScopingEstimator go={go} />
-      </Section>
-
-      <Section alt eyebrow="Solutions by Objective" title="Targeted Business Outcomes" tight>
-        <Grid min={260}>
-          {SOLUTIONS.map((s) => (
-            <Card key={s.title}>
-              <h4 style={{ color: TOKENS.paper, fontFamily: "'Inter', sans-serif", fontSize: 18, marginBottom: 8 }}>{s.title}</h4>
-              <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{s.desc}</p>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-      <CTA go={go} label="Discuss Your Custom Architecture" />
-    </>
-  );
-}
-
-function InteractiveScopingEstimator({ go }) {
-  const [scopeType, setScopeType] = useState("full");
-  const [tier, setTier] = useState("ha");
-  const [compliance, setCompliance] = useState("soc2");
-
-  const scopes = {
-    mvp: { title: "MVP / Rapid Prototype", weeks: "4–6 Weeks", team: "Lead Architect + 2 Full-Stack Engineers", costRange: "$20,000 – $35,000" },
-    full: { title: "Enterprise Platform Build", weeks: "10–14 Weeks", team: "Staff Architect + 4 Engineers + QA Lead + DevOps", costRange: "$50,000 – $95,000" },
-    infra: { title: "Anycast & Edge Migration", weeks: "6–8 Weeks", team: "Cloud Infrastructure Lead + 2 SRE Engineers", costRange: "$30,000 – $48,000" },
-    partner: { title: "Ongoing Dedicated Pod", weeks: "Annual Retainer", team: "Dedicated 6-Person Engineering Pod", costRange: "$15,000 / month" }
-  };
-
-  const selected = scopes[scopeType];
-
-  return (
-    <Card style={{ padding: 32 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 28 }}>
-        {/* Left: Interactive Selectors */}
-        <div>
-          <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 10, letterSpacing: "0.08em" }}>
-            1. PROJECT SCOPE & OBJECTIVE
-          </label>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-            {Object.entries(scopes).map(([k, v]) => (
-              <button
-                key={k}
-                onClick={() => setScopeType(k)}
-                style={{
-                  textAlign: "left",
-                  background: scopeType === k ? "rgba(21, 101, 192, 0.15)" : "rgba(15, 23, 42, 0.03)",
-                  border: `1px solid ${scopeType === k ? TOKENS.blue : TOKENS.hair}`,
-                  borderRadius: 6,
-                  padding: "10px 14px",
-                  color: scopeType === k ? TOKENS.paper : TOKENS.slate,
-                  fontSize: 13.5,
-                  cursor: "pointer",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}
-              >
-                <span>{v.title}</span>
-                <span style={{ fontSize: 11, color: scopeType === k ? TOKENS.teal : TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>{v.weeks}</span>
-              </button>
-            ))}
-          </div>
-
-          <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 10, letterSpacing: "0.08em" }}>
-            2. HIGH-AVAILABILITY & SECURITY GRADE
-          </label>
-          <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
-            {[
-              { id: "std", label: "Standard Cloud (99.9%)" },
-              { id: "ha", label: "Multi-Region Anycast (99.99%)" },
-              { id: "zero", label: "Zero-Knowledge Defense" }
-            ].map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTier(t.id)}
-                style={{
-                  flex: 1,
-                  background: tier === t.id ? "rgba(0,168,150,0.12)" : "rgba(15, 23, 42, 0.03)",
-                  border: `1px solid ${tier === t.id ? TOKENS.teal : TOKENS.hair}`,
-                  borderRadius: 6,
-                  padding: "8px 10px",
-                  color: tier === t.id ? TOKENS.teal : TOKENS.slate,
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer"
-                }}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Right: Calculated Architectural Blueprint Envelope */}
-        <div style={{ background: "rgba(11, 31, 58, 0.7)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 24, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 6 }}>
-              ESTIMATED SCOPE ENVELOPE
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 16px" }}>
-              {selected.title}
-            </h3>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 16, marginBottom: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5 }}>
-                <span style={{ color: TOKENS.slate }}>Target Velocity:</span>
-                <span style={{ color: TOKENS.paper, fontWeight: 600 }}>{selected.weeks}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5 }}>
-                <span style={{ color: TOKENS.slate }}>Engineering Pod:</span>
-                <span style={{ color: TOKENS.paper, textAlign: "right", maxWidth: 200 }}>{selected.team}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5 }}>
-                <span style={{ color: TOKENS.slate }}>Infrastructure SLA:</span>
-                <span style={{ color: TOKENS.teal }}>
-                  {tier === "std" ? "99.9% Uptime" : tier === "ha" ? "99.99% Anycast Edge" : "Zero-Trust Military Grade"}
-                </span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 10 }}>
-                <span style={{ color: TOKENS.slate }}>Budget Envelope:</span>
-                <span style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                  {selected.costRange}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", gap: 10 }}>
-            <Button onClick={() => go("contact")}>
-              Lock Scope & Request Scoping Brief →
-            </Button>
-            <Button variant="ghost" onClick={() => go("rfq-wizard")}>
-              Post as RFQ
-            </Button>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-function ProductsPage({ go, currency = "INR" }) {
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [productTab, setProductTab] = useState("overview");
-
-  const renderPlanPrice = (rawPrice) => {
-    if (!rawPrice || rawPrice === "Custom" || currency === "INR") return rawPrice;
-    const match = rawPrice.match(/₹([\d,]+)(.*)/);
-    if (!match) return rawPrice;
-    const num = parseInt(match[1].replace(/,/g, ""), 10);
-    const suffix = match[2] || "";
-    return `${formatPrice(num, currency)}${suffix}`;
-  };
-
-  const PRODUCT_DETAILS = {
-    erp: {
-      tagline: "Unified Operations Platform",
-      overview: "Abhimanyu ERP unifies procurement, inventory, finance, HR, and operations into a single real-time data platform. Built for manufacturers, distributors, and enterprise service organizations.",
-      features: [
-        "Real-time multi-warehouse inventory tracking",
-        "AI-powered demand forecasting & auto-reorder",
-        "GST-compliant invoicing & e-Way Bill generation",
-        "Multi-currency & multi-branch support",
-        "Role-based access control with audit trails",
-        "Custom workflow automation builder",
-      ],
-      specs: ["Cloud-hosted: AWS / Azure", "Uptime SLA: 99.95%", "Data encryption: AES-256", "API: REST & GraphQL", "Mobile: iOS & Android apps", "Integrations: Tally, SAP, QuickBooks"],
-      pricing: [
-        { plan: "Starter", price: "₹4,999/mo", users: "Up to 10 users", notes: "Core modules: Inventory, Invoicing, HR" },
-        { plan: "Growth", price: "₹14,999/mo", users: "Up to 50 users", notes: "Full ERP + AI forecasting + API access" },
-        { plan: "Enterprise", price: "Custom", users: "Unlimited", notes: "On-premise / private cloud + SLA + custom modules" },
-      ]
-    },
-    crm: {
-      tagline: "Sales & Lead Intelligence Platform",
-      overview: "Abhimanyu CRM gives sales teams real-time pipeline visibility, AI lead scoring, and automated follow-up sequences — engineered for B2B industrial and enterprise sales cycles.",
-      features: [
-        "360° customer profile with interaction history",
-        "AI lead scoring & priority ranking",
-        "Multi-stage pipeline with drag-drop management",
-        "Automated email & WhatsApp follow-up sequences",
-        "Sales performance analytics & team leaderboards",
-        "RFQ & quote tracking integration",
-      ],
-      specs: ["Web app + Mobile", "CRM API: REST", "Integrations: Gmail, Outlook, WhatsApp Business", "Data export: CSV / Excel / PDF", "Uptime SLA: 99.9%", "GDPR-ready data handling"],
-      pricing: [
-        { plan: "Team", price: "₹2,999/mo", users: "Up to 5 users", notes: "Pipeline + Contact DB + Email sequences" },
-        { plan: "Business", price: "₹8,999/mo", users: "Up to 25 users", notes: "AI scoring + WhatsApp + full analytics" },
-        { plan: "Enterprise", price: "Custom", users: "Unlimited", notes: "SSO, custom integrations, dedicated CSM" },
-      ]
-    },
-    hrms: {
-      tagline: "Human Capital Management Platform",
-      overview: "Full-stack HR platform covering recruitment, onboarding, payroll, attendance, and performance management — with India-specific statutory compliance built in.",
-      features: [
-        "Biometric & geo-fence attendance tracking",
-        "Automated payroll with PF, ESI, TDS compliance",
-        "Recruitment pipeline + JD builder + offer letters",
-        "Employee self-service portal",
-        "Performance review cycles & OKR tracking",
-        "Leave management & holiday calendar",
-      ],
-      specs: ["Mobile app: iOS + Android", "Biometric SDK integration", "Payroll: India statutory compliant", "Exports: Form 16, PF ECR, ESI challan", "MIS reports: Excel / PDF", "Uptime SLA: 99.9%"],
-      pricing: [
-        { plan: "Basic", price: "₹199/employee/mo", users: "Min. 10 employees", notes: "Attendance + Payroll + Leave" },
-        { plan: "Pro", price: "₹349/employee/mo", users: "Any size", notes: "Full HRMS + Performance + Recruitment" },
-        { plan: "Enterprise", price: "Custom", users: "1000+ employees", notes: "On-premise + custom compliance + API" },
-      ]
-    },
-    ai: {
-      tagline: "Enterprise AI Automation Platform",
-      overview: "Deploy production-grade AI workflows — document intelligence, predictive analytics, NLP chatbots, and computer vision — without needing an internal ML team.",
-      features: [
-        "Pre-trained models: invoice OCR, fraud detection, demand forecasting",
-        "No-code AI workflow builder",
-        "LLM integration: GPT-4, Claude, Gemini via unified API",
-        "Real-time inference API (<10ms p95 latency)",
-        "Custom model fine-tuning on your data",
-        "AI audit trail for compliance & explainability",
-      ],
-      specs: ["Runtime: ONNX + TensorRT", "Latency: sub-10ms p95", "Uptime: 99.99% edge-deployed", "API: REST + gRPC", "Security: SOC2-ready audit logs", "Languages: Python, Node.js SDKs"],
-      pricing: [
-        { plan: "Developer", price: "₹9,999/mo", users: "1M API calls/mo", notes: "Pre-trained models + REST API access" },
-        { plan: "Business", price: "₹39,999/mo", users: "10M API calls/mo", notes: "Custom fine-tuning + SLA + monitoring" },
-        { plan: "Enterprise", price: "Custom", users: "Unlimited", notes: "On-premise deployment + dedicated GPUs" },
-      ]
-    },
-    iot: {
-      tagline: "Industrial IoT Fleet Manager",
-      overview: "Real-time monitoring, predictive maintenance, and remote control for industrial machinery, vehicle fleets, and connected devices — all in one unified dashboard.",
-      features: [
-        "Real-time sensor telemetry at 1-second intervals",
-        "Predictive maintenance ML alerts",
-        "Geo-fencing & location tracking for fleets",
-        "OTA firmware update management",
-        "Custom alert rules & escalation workflows",
-        "Digital twin simulation dashboard",
-      ],
-      specs: ["Protocols: MQTT, Modbus, OPC-UA, HTTP", "Edge compute: Raspberry Pi, ESP32, STM32", "Cloud: AWS IoT Core, Azure IoT Hub", "Dashboard refresh: 1s real-time", "Data retention: 5 years", "Uptime SLA: 99.95%"],
-      pricing: [
-        { plan: "Starter", price: "₹499/device/mo", users: "Up to 50 devices", notes: "Telemetry + alerts + basic dashboard" },
-        { plan: "Fleet", price: "₹299/device/mo", users: "50–500 devices", notes: "Predictive maintenance + OTA + geo" },
-        { plan: "Industrial", price: "Custom", users: "500+ devices", notes: "On-premise edge + SLA + integration" },
-      ]
-    }
-  };
-
-  const getProductDetails = (productKey) => {
-    return PRODUCT_DETAILS[productKey] || PRODUCT_DETAILS["erp"];
-  };
-
-  const PRODUCT_TABS = [
-    { id: "overview", label: "Overview" },
-    { id: "features", label: "Features" },
-    { id: "specs", label: "Tech Specs" },
-    { id: "pricing", label: "Pricing" },
-  ];
-
-  const detail = selectedProduct ? getProductDetails(selectedProduct.key) : null;
-
-  return (
-    <>
-      <Section eyebrow="Products & Platforms" title="Proprietary Platforms Built by Abhimanyu" sub="Turnkey, supported software platforms designed to replace fragmented legacy vendor stacks.">
-        <Grid min={280}>
-          {PRODUCTS.map((p) => (
-            <Card key={p.key} style={{ cursor: "pointer", transition: "all 0.2s ease" }}>
-              <Icon3D geometry={p.icon} size={48} />
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "0.1em", color: TOKENS.teal, margin: "14px 0 10px" }}>{p.tag.toUpperCase()}</div>
-              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 10px" }}>{p.name}</h3>
-              <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, margin: "0 0 20px" }}>{p.desc}</p>
-              <div style={{ display: "flex", gap: 10 }}>
-                <Button onClick={() => { setSelectedProduct(p); setProductTab("overview"); }}>View Details →</Button>
-                <Button variant="ghost" onClick={() => go("contact")}>Get Demo</Button>
-              </div>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-
-      {/* Product Detail Modal */}
-      {selectedProduct && detail && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 780, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(21,101,192,0.4)`, borderRadius: 12, boxShadow: "0 32px 80px rgba(0,0,0,0.8)" }}>
-            {/* Header */}
-            <div style={{ background: `linear-gradient(135deg, #0a1929 0%, ${TOKENS.panelAlt} 100%)`, padding: "28px 32px 0", borderBottom: `1px solid ${TOKENS.hair}`, borderRadius: "12px 12px 0 0" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <div style={{ width: 52, height: 52, borderRadius: 10, background: "rgba(21,101,192,0.15)", border: `1px solid rgba(21,101,192,0.3)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📦</div>
-                  <div>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 4, letterSpacing: "0.1em" }}>{selectedProduct.tag.toUpperCase()}</div>
-                    <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 4px" }}>{selectedProduct.name}</h2>
-                    <div style={{ fontSize: 13.5, color: TOKENS.slate }}>{detail.tagline}</div>
-                  </div>
-                </div>
-                <button onClick={() => setSelectedProduct(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
-              </div>
-
-              {/* Tab Bar */}
-              <div style={{ display: "flex", gap: 2 }}>
-                {PRODUCT_TABS.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setProductTab(t.id)}
-                    style={{
-                      background: "transparent", border: "none",
-                      borderBottom: `2px solid ${productTab === t.id ? TOKENS.teal : "transparent"}`,
-                      color: productTab === t.id ? TOKENS.teal : TOKENS.slate,
-                      fontSize: 13, fontFamily: "'JetBrains Mono', monospace",
-                      padding: "8px 18px 10px", cursor: "pointer", whiteSpace: "nowrap",
-                      fontWeight: productTab === t.id ? 700 : 400, transition: "all 0.15s ease",
-                    }}
-                  >{t.label}</button>
-                ))}
-              </div>
-            </div>
-
-            {/* Tab Content */}
-            <div style={{ padding: 32 }}>
-              {productTab === "overview" && (
-                <div>
-                  <p style={{ color: TOKENS.slate, fontSize: 15.5, lineHeight: 1.75, marginBottom: 24 }}>{detail.overview}</p>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                    {detail.features.slice(0, 4).map((f, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, background: "rgba(0,168,150,0.05)", border: `1px solid rgba(0,168,150,0.15)`, borderRadius: 6, padding: "10px 14px" }}>
-                        <span style={{ color: TOKENS.teal, fontWeight: "bold", flexShrink: 0 }}>✓</span>
-                        <span style={{ color: TOKENS.paper, fontSize: 13.5 }}>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {productTab === "features" && (
-                <div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Full Feature Set</h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    {detail.features.map((f, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
-                        <span style={{ color: TOKENS.teal, fontSize: 16, flexShrink: 0 }}>✓</span>
-                        <span style={{ color: TOKENS.paper, fontSize: 14 }}>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {productTab === "specs" && (
-                <div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Technical Specifications</h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                    {detail.specs.map((s, i) => {
-                      const [label, val] = s.includes(":") ? s.split(":") : [s, ""];
-                      return (
-                        <div key={i} style={{ background: "rgba(21,101,192,0.06)", border: `1px solid rgba(21,101,192,0.2)`, borderRadius: 6, padding: "12px 16px" }}>
-                          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate, marginBottom: 4 }}>{label.trim().toUpperCase()}</div>
-                          <div style={{ color: TOKENS.paper, fontSize: 13.5, fontWeight: 500 }}>{val.trim() || s}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {productTab === "pricing" && (
-                <div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Pricing Plans</h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
-                    {detail.pricing.map((plan, i) => (
-                      <div key={i} style={{
-                        background: i === 1 ? "rgba(21,101,192,0.12)" : "rgba(15, 23, 42, 0.04)",
-                        border: `1px solid ${i === 1 ? "rgba(21,101,192,0.4)" : TOKENS.hair}`,
-                        borderRadius: 8, padding: 20,
-                        boxShadow: i === 1 ? "0 0 0 1px rgba(21,101,192,0.2), 0 8px 24px rgba(0,0,0,0.3)" : "none"
-                      }}>
-                        {i === 1 && <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.1em" }}>MOST POPULAR</div>}
-                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, marginBottom: 4 }}>{plan.plan}</div>
-                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.brass, marginBottom: 8, fontWeight: 600 }}>{renderPlanPrice(plan.price)}</div>
-                        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 10 }}>{plan.users}</div>
-                        <div style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5 }}>{plan.notes}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* CTA */}
-              <div style={{ marginTop: 28, paddingTop: 24, borderTop: `1px solid ${TOKENS.hair}`, display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <Button onClick={() => { setSelectedProduct(null); go("contact"); }}>Request Demo & Pricing →</Button>
-                <Button variant="ghost" onClick={() => go("rfq-wizard")}>Get Custom Quote</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <Section alt eyebrow="Technology Stack" title="Core Engineering Stack" tight>
-        <Grid min={200}>
-          {TECH.map((t) => (
-            <div key={t.group}>
-              <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, letterSpacing: "0.08em", marginBottom: 10 }}>{t.group.toUpperCase()}</h4>
-              <p style={{ color: TOKENS.paper, fontSize: 14.5, lineHeight: 1.8, margin: 0 }}>{t.items.join(" · ")}</p>
-            </div>
-          ))}
-        </Grid>
-      </Section>
-      <CTA go={go} />
-    </>
-  );
-}
-
-function IndustriesPage({ go }) {
-  const [activeInd, setActiveInd] = useState("mfg");
-
-  const INDUSTRY_BLUEPRINTS = {
-    mfg: {
-      id: "mfg",
-      name: "Manufacturing & Industry 4.0",
-      tagline: "Sensor-to-Cloud Telemetry & Predictive OEE",
-      compliance: ["ISO 9001:2015", "IEC 62443 (OT Security)", "OPC-UA / Modbus TCP"],
-      challenge: "Isolated machine PLCs, manual whiteboard scrap tracking, and unplanned spindle/motor bearing downtime.",
-      blueprint: "Edge micro-gateways running on industrial ARM/x86 hardware collect vibrational and thermal telemetry via MQTT/Modbus. In-line ONNX anomaly models predict mechanical failure 36 hours prior to seizure, automatically generating maintenance work orders in Abhimanyu ERP.",
-      metric: "-78% Unplanned downtime · +14.2% Overall Equipment Effectiveness (OEE)",
-      stack: "Raspberry Pi CM4 · TimescaleDB · Grafana · ONNX · gRPC · Docker Edge"
-    },
-    fin: {
-      id: "fin",
-      name: "Banking, FinTech & Insurance",
-      tagline: "Sub-10ms Fraud Prevention & Core Ledger Integrity",
-      compliance: ["PCI-DSS Level 1", "SOC2 Type II", "RBI / ISO 27001", "FIPS 140-2"],
-      challenge: "High checkout abandonment due to manual KYC reviews and legacy batch fraud detection causing elevated chargeback exposure.",
-      blueprint: "Zero-knowledge distributed ledger with sub-8ms inline neural risk evaluation at Anycast edge POPs. Multi-region PostgreSQL with active-active synchronous replication guarantees zero double-spend anomalies even under network partition.",
-      metric: "99.999% High-Availability SLA · -91% Fraudulent transactions",
-      stack: "Rust · Go · Python PyTorch · PostgreSQL Citus · Redis Cluster · AWS KMS"
-    },
-    health: {
-      id: "health",
-      name: "Healthcare & MedTech Systems",
-      tagline: "HIPAA Compliant Telemetry & Real-Time Patient Analytics",
-      compliance: ["HIPAA / HITECH", "HL7 FHIR v4", "FDA 21 CFR Part 11", "ISO 13485"],
-      challenge: "Unintegrated electronic health records (EHR), non-compliant patient data transmission, and delayed vitals telemetry during emergency care.",
-      blueprint: "End-to-end encrypted WebSocket gateways streaming biometric vitals with AES-256 field-level column encryption. Automated FHIR resource adapters ingest hospital feeds into scalable clinical research data lakes.",
-      metric: "100% Audit trail coverage · Sub-200ms vital sign alarm dispatch",
-      stack: "React Native · Node.js · Kafka · AWS MedTech VPC · PostgreSQL · Docker"
-    },
-    logistics: {
-      id: "logistics",
-      name: "Logistics, Cold-Chain & Fleet Operations",
-      tagline: "Dynamic Geospatial Routing & Proof-of-Delivery Escrow",
-      compliance: ["GDP (Good Distribution Practice)", "DOT / ISO 28000", "e-Way Bill GST"],
-      challenge: "Refrigerated cargo temperature excursions going undetected until final delivery, causing millions in spoiled pharmaceutical and food cargo.",
-      blueprint: "LoRaWAN and cellular IoT temperature loggers transmitting heartbeat telemetry every 60 seconds. Smart geofencing engines trigger instant rerouting alerts if cold-chain thresholds deviate by more than ±0.5°C.",
-      metric: "-68% Spoilage claims · 14 Million daily tracking telemetry events",
-      stack: "Flutter Mobile · Go Microservices · Redis Geo · ClickHouse · AWS IoT Core"
-    },
-    aero: {
-      id: "aero",
-      name: "Aerospace & Defence Systems",
-      tagline: "Mission-Critical CNC Metrology & AS9100 Traceability",
-      compliance: ["AS9100D", "ITAR Compliant Vaults", "MIL-STD-810H", "NIST SP 800-171"],
-      challenge: "Strict raw material pedigree requirements, CMM coordinate measuring validation, and zero tolerance for defect contamination across suppliers.",
-      blueprint: "Full digital twin inspection logging linking raw material Mill Test Reports (MTR) directly to CNC machine toolpaths and AS9102 First Article Inspection reports stored in immutable audit vaults.",
-      metric: "100% Complete lot genealogy · Zero defect containment escapes",
-      stack: "SolidWorks API · Python · PostgreSQL · Vault Cryptography · Private Edge"
-    }
-  };
-
-  const selected = INDUSTRY_BLUEPRINTS[activeInd];
-
-  return (
-    <>
-      <Section eyebrow="Domain Engineering" title="Industry-Specific Architectural Blueprints" sub="Engineered compliance regimes, fault-tolerant topologies, and real-time data pipelines built for your exact operational domain.">
-        {/* Industry Selector Tabs */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 32 }}>
-          {Object.values(INDUSTRY_BLUEPRINTS).map((ind) => (
-            <button
-              key={ind.id}
-              onClick={() => setActiveInd(ind.id)}
-              style={{
-                background: activeInd === ind.id ? TOKENS.brass : "rgba(255, 255, 255, 0.03)",
-                color: activeInd === ind.id ? TOKENS.ink : TOKENS.paper,
-                border: `1px solid ${activeInd === ind.id ? TOKENS.brass : TOKENS.hair}`,
-                borderRadius: 999,
-                padding: "10px 20px",
-                fontSize: 13.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: activeInd === ind.id ? 700 : 400,
-                cursor: "pointer",
-                transition: "all 0.15s ease"
-              }}
-            >
-              {ind.name.split(" ")[0]}
-            </button>
-          ))}
-        </div>
-
-        {/* Detailed Blueprint Showcase Card */}
-        <Card style={{ padding: 36, marginBottom: 40, border: `1px solid rgba(212,175,55,0.3)` }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
-            <div>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.1em" }}>
-                ARCHITECTURAL BLUEPRINT
-              </span>
-              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 26, margin: "6px 0 6px" }}>
-                {selected.name}
-              </h2>
-              <div style={{ color: TOKENS.slate, fontSize: 14 }}>{selected.tagline}</div>
-            </div>
-
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {selected.compliance.map((c) => (
-                <span key={c} style={{ background: "rgba(21,101,192,0.12)", border: `1px solid rgba(21,101,192,0.3)`, padding: "5px 10px", borderRadius: 4, fontSize: 11, color: "#60A5FA", fontFamily: "'JetBrains Mono', monospace" }}>
-                  ✓ {c}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, margin: "24px 0" }}>
-            <div style={{ background: "rgba(239, 68, 68, 0.05)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: 6, padding: 20 }}>
-              <div style={{ color: "#f87171", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginBottom: 8 }}>
-                CRITICAL OPERATIONAL CHALLENGE
-              </div>
-              <p style={{ color: TOKENS.paper, fontSize: 14, lineHeight: 1.6, margin: 0 }}>
-                {selected.challenge}
-              </p>
-            </div>
-
-            <div style={{ background: "rgba(0, 168, 150, 0.05)", border: "1px solid rgba(0, 168, 150, 0.25)", borderRadius: 6, padding: 20 }}>
-              <div style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginBottom: 8 }}>
-                PRODUCTION PERFORMANCE METRIC
-              </div>
-              <div style={{ color: TOKENS.paper, fontSize: 15, fontWeight: 600, lineHeight: 1.5, margin: 0 }}>
-                {selected.metric}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ marginBottom: 24 }}>
-            <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginBottom: 8 }}>
-              ENGINEERED TOPOLOGY & DATA PIPELINE
-            </h4>
-            <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.7, margin: 0 }}>
-              {selected.blueprint}
-            </p>
-          </div>
-
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 14, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 20 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate }}>
-              TECH STACK: <span style={{ color: TOKENS.paper }}>{selected.stack}</span>
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <Button onClick={() => go("contact")}>Request Domain Blueprint Scope →</Button>
-              <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post {selected.name.split(" ")[0]} RFQ</Button>
-            </div>
-          </div>
-        </Card>
-
-        {/* All Industries Directory Overview Grid */}
-        <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 18px" }}>
-          All 10 Specialized Industry Coverage Areas
-        </h3>
-        <Grid min={260}>
-          {INDUSTRIES.map((ind) => (
-            <Card key={ind.name}>
-              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 8px" }}>{ind.name}</h4>
-              <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{ind.note}</p>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-      <CTA go={go} />
-    </>
-  );
-}
-
-function CaseStudiesPage({ go }) {
-  const [selectedCase, setSelectedCase] = useState(null);
-  const [indFilter, setIndFilter] = useState("All");
-
-  const EXTENDED_CASE_STUDIES = [
-    {
-      id: "cloud-unification",
-      client: "Global Logistics Leader",
-      industry: "Logistics",
-      title: "Unifying Pan-India Operations onto High-Throughput Event-Driven Cloud Engine",
-      challenge: "Disconnected legacy spreadsheets and fragmented SQL databases caused 4-hour latency in inventory reconciliation and high operational error rates during peak logistics hours.",
-      solution: "Abhimanyu Technologies engineered an event-driven microservice architecture with real-time WebSocket syncing, automated inventory reconciliation, and zero-downtime PostgreSQL multi-region replication.",
-      results: ["4.2x Throughput increase", "-68% Cloud infrastructure cost", "0ms Data sync latency", "99.999% SLA Uptime"],
-      stack: "Next.js · Node.js · PostgreSQL · AWS Kinesis · Docker · Terraform",
-      details: "By migrating away from monolithic batch-processing systems, the logistics network now processes over 14 million daily transaction events with instant tracking updates. Full audit logging ensures zero inventory discrepancies across 120 distribution warehouses.",
-      roi: "$1.4M Annual saved compute & labor overhead"
-    },
-    {
-      id: "lms-tracking",
-      client: "EdTech & University System",
-      industry: "EdTech",
-      title: "Student Progress & High-Concurrency Analytics Engine at 500k+ Scale",
-      challenge: "Legacy learning platform crashed under concurrent exam loads of 50k+ simultaneous users, lacking real-time progress verification and telemetry.",
-      solution: "Built a distributed mobile and web learning system utilizing Redis caching layers, auto-scaling Kubernetes worker pods, and granular telemetry verification.",
-      results: ["500,000+ Active concurrent users", "0 Crash incidents during peak exams", "-75% Server response latency", "Automated verified certificates"],
-      stack: "React Native · Flutter · Node.js · Redis · PostgreSQL · Kubernetes",
-      details: "The unified LMS tracks micro-learning interactions in real time, granting instant verified certificates while providing administrators with predictive student success analytics with sub-second response times.",
-      roi: "Zero exam downtime across 3 consecutive academic years"
-    },
-    {
-      id: "ai-fraud-detection",
-      client: "FinTech Banking Platform",
-      industry: "FinTech",
-      title: "Sub-10ms AI Fraud Detection & Risk Scoring API Deployed at Edge Nodes",
-      challenge: "Manual transaction screening created bottleneck delays in instant credit authorization, resulting in elevated fraud exposure.",
-      solution: "Developed an inline machine learning risk scoring engine deployed at edge nodes, scoring every transaction under 8 milliseconds.",
-      results: ["-91% Fraudulent transactions", "< 8ms Median prediction latency", "$12.4M Annual saved fraud losses", "SOC2 Type II Audit Certified"],
-      stack: "Python · PyTorch · ONNX Runtime · AWS Lambda Edge · Redis",
-      details: "The risk scoring neural model evaluates 120+ transaction signals concurrently, allowing seamless legitimate purchases while flagging anomalies before clearing.",
-      roi: "$12.4M Direct capital fraud preservation"
-    },
-    {
-      id: "industrial-iot-scada",
-      client: "Heavy Foundry & OEM Conglomerate",
-      industry: "Industry 4.0",
-      title: "IoT Edge Telemetry & Predictive Spindle Maintenance Across 14 Factories",
-      challenge: "Spindle bearing failures on CNC machining lines caused unscheduled assembly halts costing over $45,000 per hour of factory downtime.",
-      solution: "Deployed ruggedized ARM edge micro-gateways collecting vibrational and thermal telemetry over Modbus/OPC-UA, feeding into an inline ONNX anomaly detection engine.",
-      results: ["-78% Unplanned line downtime", "36 Hours advance bearing seizure warning", "100% Automated work-order dispatch", "ISO 9001 Audited"],
-      stack: "Raspberry Pi CM4 · TimescaleDB · ONNX · Modbus TCP · Grafana · Docker",
-      details: "Real-time edge compute monitors harmonics across 240 CNC machines, alerting maintenance supervisors via WhatsApp and Abhimanyu ERP hours before physical tolerance degradation occurs.",
-      roi: "$3.8M Annual avoidance of line halt losses"
-    },
-    {
-      id: "medtech-telemetry",
-      client: "Global MedTech Network",
-      industry: "Healthcare",
-      title: "HIPAA-Compliant Patient Telemetry Gateway with Field-Level Encryption",
-      challenge: "Hospital patient vitals monitors were isolated on legacy serial networks, delaying clinical response times during post-operative patient cardiac distress.",
-      solution: "Architected an end-to-end encrypted WebSocket telemetry bridge with AES-256 field-level encryption, FHIR v4 resource adapters, and sub-200ms vital sign alarm dispatch.",
-      results: ["Sub-200ms Vitals alarm latency", "100% HIPAA & HL7 FHIR v4 compliance", "Zero unencrypted data in transit", "FDA 21 CFR Part 11 Certified"],
-      stack: "Go · Kafka · React Native · PostgreSQL Citus · AWS MedTech VPC",
-      details: "Over 8,000 connected hospital patient beds stream real-time ECG and oxygen saturation data directly to central nursing stations with sub-second failover redundancy.",
-      roi: "Sub-200ms emergency alarm response across 18 regional hospital facilities"
-    }
-  ];
-
-  const industries = ["All", "Logistics", "EdTech", "FinTech", "Industry 4.0", "Healthcare"];
-
-  const filteredCases = EXTENDED_CASE_STUDIES.filter((c) => {
-    return indFilter === "All" || c.industry === indFilter;
-  });
-
-  return (
-    <>
-      <Section eyebrow="Case Studies & Success Stories" title="Proven Engineering Outcomes" sub="In-depth technical reviews of systems designed, built, and maintained by Abhimanyu Technologies across enterprise domains.">
-        {/* Industry Filter Pills */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
-          {industries.map((ind) => (
-            <button
-              key={ind}
-              onClick={() => setIndFilter(ind)}
-              style={{
-                background: indFilter === ind ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
-                border: `1px solid ${indFilter === ind ? TOKENS.brass : TOKENS.hair}`,
-                color: indFilter === ind ? TOKENS.ink : TOKENS.slate,
-                borderRadius: 999,
-                padding: "7px 16px",
-                fontSize: 12.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: indFilter === ind ? 700 : 400,
-                cursor: "pointer",
-                transition: "all 0.15s ease"
-              }}
-            >
-              {ind}
-            </button>
-          ))}
-        </div>
-
-        {/* Case Studies Grid */}
-        <Grid min={320}>
-          {filteredCases.map((c) => (
-            <Card key={c.id} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 4 }}>
-                    {c.client.toUpperCase()}
-                  </span>
-                  <span style={{ fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
-                    {c.industry}
-                  </span>
-                </div>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 12px", lineHeight: 1.35 }}>
-                  {c.title}
-                </h3>
-                <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 12, lineHeight: 1.6 }}>
-                  <b style={{ color: TOKENS.paper }}>Challenge: </b>{c.challenge}
-                </p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, margin: "14px 0", background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6 }}>
-                  {c.results.map((res, i) => (
-                    <div key={i} style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
-                      ✓ {res}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11.5, color: "#60A5FA", marginBottom: 16 }}>
-                  {c.stack}
-                </div>
-                <Button onClick={() => { trackEvent("open_case_study", { id: c.id }); setSelectedCase(c); }}>
-                  Read Full Case Study →
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-
-      {/* Case Study Modal Reader */}
-      {selectedCase && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 740, width: "100%", maxHeight: "90vh", overflowY: "auto", border: `1px solid rgba(212, 175, 55, 0.4)`, background: TOKENS.panelAlt, borderRadius: 12, overflow: "hidden", boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
-            {/* Header */}
-            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
-                  {selectedCase.client.toUpperCase()} · {selectedCase.industry}
-                </span>
-                <button onClick={() => setSelectedCase(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-              </div>
-              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
-                {selectedCase.title}
-              </h2>
-              <div style={{ fontSize: 12.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
-                ROI OUTCOME: {selectedCase.roi}
-              </div>
-            </div>
-
-            {/* Body */}
-            <div style={{ padding: 32 }}>
-              <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 18, marginBottom: 18 }}>
-                <h4 style={{ color: "#f87171", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginTop: 0, marginBottom: 6 }}>
-                  OPERATIONAL CHALLENGE
-                </h4>
-                <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.65, margin: 0 }}>
-                  {selectedCase.challenge}
-                </p>
-              </div>
-
-              <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 18, marginBottom: 18 }}>
-                <h4 style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginTop: 0, marginBottom: 6 }}>
-                  ARCHITECTURAL SOLUTION
-                </h4>
-                <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.65, marginBottom: 10 }}>
-                  {selectedCase.solution}
-                </p>
-                <p style={{ color: TOKENS.paper, fontSize: 14, lineHeight: 1.65, margin: 0 }}>
-                  {selectedCase.details}
-                </p>
-              </div>
-
-              <div style={{ marginBottom: 24 }}>
-                <h4 style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, marginTop: 0, marginBottom: 10 }}>
-                  VERIFIED PRODUCTION METRICS
-                </h4>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                  {selectedCase.results.map((r, idx) => (
-                    <div key={idx} style={{ background: "rgba(212, 175, 55, 0.08)", border: `1px solid ${TOKENS.hair}`, padding: "10px 14px", borderRadius: 6, color: TOKENS.paper, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
-                      ✓ {r}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 20 }}>
-                <span style={{ fontSize: 12, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
-                  Stack: {selectedCase.stack}
-                </span>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <Button variant="ghost" onClick={() => setSelectedCase(null)}>Close</Button>
-                  <Button onClick={() => { setSelectedCase(null); go("contact"); }}>
-                    Discuss Similar Architecture →
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <CTA go={go} />
-    </>
-  );
-}
-
-function InsightsPage({ go }) {
-  const [selectedTopic, setSelectedTopic] = useState("All");
-  const [selectedArticle, setSelectedArticle] = useState(null);
-
-  const ARTICLES = [
-    {
-      id: "ai-business",
-      category: "AI & ML",
-      title: "How Operational AI Is Transforming Day-to-Day Enterprise Workflows",
-      author: "Abhimanyu (CTO)",
-      readTime: "6 min read",
-      date: "September 2026",
-      summary: "Beyond conversational LLM toys: deploying inline neural risk authorization, automated manufacturing defect classifiers, and predictive supply chain telemetry.",
-      content: "Many enterprise leaders start AI initiatives by attempting to overhaul entire operational divisions at once. In practice, the highest ROI deployments isolate single high-friction decision bottlenecks — such as sub-10ms transaction anomaly scoring or automated CAD drawing geometric classification — where neural models work alongside human operators with zero disruption to core operations.",
-      codeSnippet: `# Inline ONNX Runtime Anomaly Evaluation
-import onnxruntime as ort
-import numpy as np
-
-session = ort.InferenceSession("models/risk_engine_v4.onnx", providers=['CUDAExecutionProvider'])
-def score_transaction(features: np.ndarray) -> float:
-    inputs = {session.get_inputs()[0].name: features.astype(np.float32)}
-    output = session.run(None, inputs)
-    return float(output[0][0]) # Returns risk score in <6ms`,
-      outcomes: ["-91% Manual screening overhead", "< 7.5ms p95 prediction latency at edge", "Zero false-positive downtime"],
-      takeaway: "Isolate single operational decision points, benchmark against deterministic baselines, and maintain human override gates for sensitive state transitions."
-    },
-    {
-      id: "cloud-migration",
-      category: "Cloud & DevOps",
-      title: "Zero-Downtime Cloud Migration for High-Throughput Distributed Microservices",
-      author: "Ananya Verma (VP Eng)",
-      readTime: "8 min read",
-      date: "August 2026",
-      summary: "How to decouple legacy monolithic systems into multi-cloud containerized services without dropping packets or inflating infrastructure budgets.",
-      content: "Migrating enterprise workloads requiring 99.999% uptime cannot rely on maintenance windows. We utilize the Strangler Fig pattern paired with Anycast route weighting: new stateless microservices are deployed alongside legacy monoliths behind an Envoy proxy gateway. Synthetic canaries gradually shift 1%, 5%, 25%, and finally 100% of live traffic once p99 latency parity is mathematically proven.",
-      codeSnippet: `# Envoy Route Weighted Canary Traffic Split
-route_config:
-  name: api_v1_routes
-  routes:
-    - match: { prefix: "/v1/orders" }
-      route:
-        weighted_clusters:
-          clusters:
-            - { name: monolith_legacy, weight: 10 }
-            - { name: microservice_v2, weight: 90 }
-        timeout: 0.5s`,
-      outcomes: ["100% Zero service interruptions during cutover", "-64% Idle server compute expenditure", "Automated rollbacks within 150ms"],
-      takeaway: "Decouple storage before compute, run shadow traffic side-by-side, and verify database replica lag before cutting write authority."
-    },
-    {
-      id: "zero-trust-security",
-      category: "Cybersecurity",
-      title: "Architecting Zero-Trust Identity Attestation Across Multi-Cloud Clusters",
-      author: "Rajesh Kumar (Head of Security)",
-      readTime: "7 min read",
-      date: "July 2026",
-      summary: "Why perimeter firewalls fail, and how to enforce mutual TLS (mTLS), SPIFFE workload identity, and ephemeral cryptographic key rotations.",
-      content: "Security is not a certification badge obtained before product launch — it is a foundational architectural constraint. In our cloud deployments, every inter-pod transaction across Kubernetes nodes must present a cryptographically verified X.509 certificate with a maximum lifetime of 12 hours, rotated automatically via SPIRE. If a node is compromised, lateral movement across the cluster is mathematically constrained.",
-      codeSnippet: `# SPIFFE / SPIRE Workload Attestation Filter
-apiVersion: security.istio.io/v1beta1
-kind: PeerAuthentication
-metadata:
-  name: default
-  namespace: prod-workloads
-spec:
-  mtls:
-    mode: STRICT # Rejects all non-mTLS plaintext calls`,
-      outcomes: ["SOC2 Type II & ISO 27001 audited architecture", "Zero lateral network propagation vectors", "100% Automated cryptographic rotation"],
-      takeaway: "Assume the perimeter is breached; enforce cryptographic identity and field-level encryption for every single remote procedure call."
-    },
-    {
-      id: "anycast-scaling",
-      category: "System Scaling",
-      title: "Scaling Anycast Edge Gateways to 50,000 Requests/Sec with Sub-10ms Latency",
-      author: "Shiva (Founder & CEO)",
-      readTime: "9 min read",
-      date: "June 2026",
-      summary: "Architecting global BGP Anycast routing nodes to terminate client TLS handshakes locally, diffusing DDoS attacks and serving cached assets at edge speeds.",
-      content: "Global users expect desktop and mobile interfaces to load instantaneously. By terminating client TCP/TLS connections at the closest Anycast POP rather than routing roundtrips back to an origin datacenter in North America or India, we eliminate 120ms to 240ms of latency per request. Cache invalidation is coordinated via a global Redis Pub/Sub mesh with sub-30ms propagation worldwide.",
-      codeSnippet: `# BGP Anycast Route Health Probe Daemon (Go)
-func monitorOriginHealth(origin string) {
-    for {
-        resp, err := client.Get(origin + "/healthz")
-        if err != nil || resp.StatusCode != 200 {
-            log.Warn("Origin degraded, withdrawing BGP prefix...")
-            withdrawRouteAnnouncement("203.0.113.0/24")
-        }
-        time.Sleep(500 * time.Millisecond)
-    }
-}`,
-      outcomes: ["50,000+ Requests/sec peak load sustained", "< 9.2ms Median global client roundtrip", "Seamless automatic DDoS packet absorption"],
-      takeaway: "Terminate handshakes at the edge, keep origins stateless, and automate BGP route withdrawals on health-check dips."
-    },
-    {
-      id: "iot-firmware",
-      category: "Hardware & IoT",
-      title: "Hardware-in-the-Loop (HIL) Automated Testing for Industrial IoT Gateways",
-      author: "Rohan Nair (VP Hardware Systems)",
-      readTime: "6 min read",
-      date: "May 2026",
-      summary: "How to automate embedded firmware regression testing on real STM32 and ESP32 silicon before deploying over-the-air (OTA) updates.",
-      content: "Pushing faulty firmware to thousands of deployed industrial telemetry nodes across remote factories can brick hardware and cost weeks of downtime. We designed an automated Hardware-in-the-Loop (HIL) testbed rack where real target microcontrollers are stimulated with synthetic I2C, SPI, and Modbus sensor signals, validating power consumption and memory leak profiles before OTA approval.",
-      codeSnippet: `# HIL Automated Test Runner Pipeline (Python)
-def test_modbus_crc_under_line_noise(dut_serial):
-    dut_serial.inject_electrical_noise(duration_ms=50)
-    response = dut_serial.send_modbus_frame(ADDR_TEMPERATURE_SENSOR)
-    assert response.crc_valid is True
-    assert dut_serial.read_current_draw_ma() < 45.0`,
-      outcomes: ["99.98% Field OTA update success rate", "0 Hardware bricking incidents across 50k+ nodes", "-80% Manual bench testing hours"],
-      takeaway: "Never test embedded code solely on emulators; real hardware tolerances, voltage fluctuations, and bus noise require physical automated testbeds."
-    },
-    {
-      id: "database-partitioning",
-      category: "System Scaling",
-      title: "PostgreSQL Multi-Tenant Sharding Strategies for High-Volume B2B Platforms",
-      author: "Vikram Sengupta (Lead Eng)",
-      readTime: "8 min read",
-      date: "April 2026",
-      summary: "Architecting schema-per-tenant vs. row-level security sharding across high-write B2B marketplaces handling millions of catalog items.",
-      content: "When a B2B platform scales to tens of thousands of buyers and suppliers, database contention quickly degrades search indexing and inventory lock performance. We partition PostgreSQL tables by tenant organization ID with declarative time-series partitions for audit trails, ensuring queries only scan the exact memory pages required.",
-      codeSnippet: `-- Declarative PostgreSQL Time-Series Partitioning
-CREATE TABLE audit_telemetry (
-    id BIGSERIAL,
-    tenant_id UUID NOT NULL,
-    event_name VARCHAR(64) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL,
-    payload JSONB
-) PARTITION BY RANGE (created_at);
-
-CREATE TABLE audit_telemetry_2026_09 PARTITION OF audit_telemetry
-    FOR VALUES FROM ('2026-09-01') TO ('2026-10-01');`,
-      outcomes: ["4.8x Query execution speedup", "-72% Buffer cache miss rates", "Zero tenant cross-talk data exposure"],
-      takeaway: "Design database schemas around write concurrency patterns, and separate historical audit telemetry from operational state tables."
-    }
-  ];
-
-  const topics = ["All", "AI & ML", "Cloud & DevOps", "Cybersecurity", "System Scaling", "Hardware & IoT"];
-
-  const filtered = ARTICLES.filter((a) => {
-    return selectedTopic === "All" || a.category === selectedTopic;
-  });
-
-  return (
-    <>
-      <Section eyebrow="Technical Insights & Blog" title="Engineering Perspective & Research" sub="Deep dives on distributed cloud architecture, inline machine learning, embedded IoT systems, and high-load scalability.">
-        {/* Topic Filter Pills */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
-          {topics.map((t) => (
-            <button
-              key={t}
-              onClick={() => setSelectedTopic(t)}
-              style={{
-                background: selectedTopic === t ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
-                border: `1px solid ${selectedTopic === t ? TOKENS.brass : TOKENS.hair}`,
-                color: selectedTopic === t ? TOKENS.ink : TOKENS.slate,
-                borderRadius: 999,
-                padding: "7px 16px",
-                fontSize: 12.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: selectedTopic === t ? 700 : 400,
-                cursor: "pointer",
-                transition: "all 0.15s ease"
-              }}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-
-        {/* Articles Grid */}
-        <Grid min={300}>
-          {filtered.map((a) => (
-            <Card key={a.id} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 12 }}>
-                  <span style={{ background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 4 }}>{a.category.toUpperCase()}</span>
-                  <span>{a.readTime} · {a.date}</span>
-                </div>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>
-                  {a.title}
-                </h3>
-                <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 16px" }}>
-                  {a.summary}
-                </p>
-              </div>
-
-              <div>
-                <div style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 14 }}>
-                  By {a.author}
-                </div>
-                <Button onClick={() => { trackEvent("read_insight", { id: a.id }); setSelectedArticle(a); }}>
-                  Read Technical Essay →
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-
-      {/* Deep Navy Technical Reader Modal */}
-      {selectedArticle && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
-            {/* Header */}
-            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
-                  {selectedArticle.category.toUpperCase()} · {selectedArticle.readTime} · {selectedArticle.date}
-                </span>
-                <button onClick={() => setSelectedArticle(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-              </div>
-              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
-                {selectedArticle.title}
-              </h2>
-              <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
-                Written by {selectedArticle.author}
-              </div>
-            </div>
-
-            {/* Body */}
-            <div style={{ padding: 32 }}>
-              <p style={{ color: TOKENS.paper, fontSize: 15.5, lineHeight: 1.8, marginBottom: 24 }}>
-                {selectedArticle.content}
-              </p>
-
-              {/* Code Snippet Blueprint */}
-              {selectedArticle.codeSnippet && (
-                <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 18, marginBottom: 24, overflowX: "auto" }}>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal, marginBottom: 8 }}>
-                    ARCHITECTURAL IMPLEMENTATION BLUEPRINT
-                  </div>
-                  <pre style={{ margin: 0, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#E2E8F0", lineHeight: 1.6 }}>
-                    {selectedArticle.codeSnippet}
-                  </pre>
-                </div>
-              )}
-
-              {/* Production Outcomes */}
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8, letterSpacing: "0.06em" }}>
-                  MEASURABLE PRODUCTION OUTCOMES
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 10 }}>
-                  {selectedArticle.outcomes.map((o, idx) => (
-                    <div key={idx} style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", fontSize: 12.5, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
-                      ✓ {o}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Key Takeaway Box */}
-              <div style={{ background: "rgba(212, 175, 55, 0.08)", borderLeft: `3px solid ${TOKENS.brass}`, padding: "14px 18px", borderRadius: "0 6px 6px 0", marginBottom: 28 }}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 4 }}>
-                  CORE ARCHITECTURAL TAKEAWAY
-                </div>
-                <p style={{ color: TOKENS.slate, fontSize: 14, margin: 0, lineHeight: 1.6 }}>
-                  {selectedArticle.takeaway}
-                </p>
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 20 }}>
-                <button
-                  onClick={() => {
-                    navigator.clipboard?.writeText(window.location.href);
-                    alert("Article link copied to clipboard!");
-                  }}
-                  style={{
-                    background: "transparent",
-                    border: `1px solid ${TOKENS.hair}`,
-                    color: TOKENS.paper,
-                    padding: "8px 14px",
-                    borderRadius: 6,
-                    fontSize: 12,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    cursor: "pointer"
-                  }}
-                >
-                  🔗 Share Article
-                </button>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <Button variant="ghost" onClick={() => setSelectedArticle(null)}>Close Reader</Button>
-                  <Button onClick={() => { setSelectedArticle(null); go("contact"); }}>
-                    Discuss Architecture with Author →
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <CTA go={go} />
-    </>
-  );
-}
-
-function CareersPage({ go }) {
-  const [deptFilter, setDeptFilter] = useState("All");
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [applied, setApplied] = useState(false);
-  const [appForm, setAppForm] = useState({ name: "", email: "", portfolio: "", notice: "Immediate / 15 Days", notes: "" });
-
-  const DETAILED_ROLES = [
-    {
-      id: "backend-lead",
-      title: "Staff Backend Engineer — Distributed Systems",
-      dept: "Engineering",
-      type: "Full-time · Telangana HQ / Remote",
-      experience: "5+ Years",
-      compensation: "₹24L – ₹38L + Equity",
-      stack: "Go · Node.js · PostgreSQL · Redis · Kafka · Kubernetes",
-      overview: "Lead the architectural design of high-throughput Anycast routing APIs, event-driven microservices, and multi-tenant database clusters operating at 99.999% uptime.",
-      responsibilities: [
-        "Design sub-10ms transactional microservices with strict ACID consistency",
-        "Implement automated zero-downtime database schema migrations for multi-region clusters",
-        "Profile memory leaks and optimize gRPC network payloads under 50k+ concurrent requests",
-        "Mentor mid-level engineers and conduct deep architectural design reviews"
-      ],
-      requirements: [
-        "Strong production experience in Go, Node.js/TypeScript, or Rust",
-        "Deep familiarity with distributed consensus, PostgreSQL partitioning, and Redis caching",
-        "Hands-on expertise with Docker, Kubernetes, and Terraform infrastructure as code"
-      ]
-    },
-    {
-      id: "ai-engineer",
-      title: "Senior AI / ML Research & Deployment Engineer",
-      dept: "AI & Data",
-      type: "Full-time · Hybrid / Remote",
-      experience: "4+ Years",
-      compensation: "₹22L – ₹36L + Equity",
-      stack: "Python · PyTorch · ONNX · TensorRT · HuggingFace · FastAPI",
-      overview: "Develop and deploy production-grade computer vision, fraud scoring neural models, and fine-tuned LLM agents integrated into Abhimanyu ERP and edge telemetry nodes.",
-      responsibilities: [
-        "Train and optimize computer vision models for automated manufacturing defect inspection",
-        "Deploy low-latency (<15ms) neural inference pipelines via ONNX Runtime and TensorRT",
-        "Fine-tune open-source LLMs (Llama, Mistral) on domain-specific procurement documents",
-        "Build continuous model evaluation pipelines and drift monitoring metrics"
-      ],
-      requirements: [
-        "Master's or Bachelor's in CS, AI, or equivalent practical experience",
-        "Proven experience deploying deep learning models to production Kubernetes environments",
-        "Familiarity with CUDA kernel optimizations and distributed training (DeepSpeed / FSDP)"
-      ]
-    },
-    {
-      id: "flutter-lead",
-      title: "Senior Mobile Engineer — Flutter / React Native",
-      dept: "Engineering",
-      type: "Full-time · Telangana HQ / Remote",
-      experience: "3+ Years",
-      compensation: "₹16L – ₹26L",
-      stack: "Flutter · Dart · React Native · WebSocket · SQLite · BLE",
-      overview: "Build industrial IoT field apps, warehouse inventory scanners, and executive mobile dashboards with smooth 60fps animations and offline-first synchronization.",
-      responsibilities: [
-        "Architect cross-platform iOS and Android applications for enterprise clients",
-        "Integrate Bluetooth Low Energy (BLE) sensors and hardware barcode scanners",
-        "Implement robust offline SQLite caching with automatic cloud background reconciliation",
-        "Ensure sub-second app cold-launch times and 99.9% crash-free sessions"
-      ],
-      requirements: [
-        "3+ years shipping commercial Flutter or React Native applications to App Store / Play Store",
-        "Deep understanding of reactive state management (Riverpod, Bloc, or Zustand)",
-        "Experience interfacing with native iOS (Swift) and Android (Kotlin) bridge modules"
-      ]
-    },
-    {
-      id: "devops-sre",
-      title: "Cloud Infrastructure & SRE Architect",
-      dept: "DevOps & SRE",
-      type: "Full-time · Remote",
-      experience: "4+ Years",
-      compensation: "₹20L – ₹32L",
-      stack: "AWS · Terraform · Kubernetes · Anycast BGP · Prometheus · Cilium",
-      overview: "Maintain and expand our 12 Anycast Edge POPs, automated multi-region failovers, and defense-grade zero-trust Kubernetes clusters.",
-      responsibilities: [
-        "Manage Anycast BGP edge routing nodes and global sub-second failover automations",
-        "Maintain Infrastructure as Code (Terraform / Terragrunt) across multi-cloud environments",
-        "Establish Prometheus, Grafana, and OpenTelemetry synthetic uptime monitoring",
-        "Drive SOC2 Type II, ISO 27001, and automated penetration testing remediations"
-      ],
-      requirements: [
-        "Strong experience managing Kubernetes in production with CNI plugins (Cilium / Calico)",
-        "Deep understanding of TCP/IP, BGP Anycast, DNSSEC, and TLS termination",
-        "Proficiency in shell scripting, Python, or Go for automated operational tooling"
-      ]
-    },
-    {
-      id: "product-designer",
-      title: "Staff Product Designer — Enterprise Systems",
-      dept: "Design",
-      type: "Full-time · Hybrid / Remote",
-      experience: "4+ Years",
-      compensation: "₹18L – ₹28L",
-      stack: "Figma · Design Systems · Prototyping · Information Architecture",
-      overview: "Craft high-density enterprise software interfaces for Abhimanyu ERP, CRM, and Industrial telemetry dashboards that simplify complex multi-step workflows.",
-      responsibilities: [
-        "Design scalable, accessible design systems and component libraries in Figma",
-        "Conduct user research interviews with factory operators, procurement leads, and engineers",
-        "Prototype high-fidelity micro-interactions for complex data tables and analytics charts",
-        "Partner closely with frontend engineers to guarantee pixel-perfect production parity"
-      ],
-      requirements: [
-        "Portfolio showcasing complex B2B enterprise SaaS or developer tool interfaces",
-        "Mastery of typography, visual hierarchy, information density, and accessibility (WCAG AA)",
-        "Understanding of frontend component constraints (React / CSS Grid / Flexbox)"
-      ]
-    }
-  ];
-
-  const departments = ["All", "Engineering", "AI & Data", "DevOps & SRE", "Design"];
-
-  const filteredRoles = DETAILED_ROLES.filter((r) => {
-    return deptFilter === "All" || r.dept === deptFilter;
-  });
-
-  const handleApply = (e) => {
-    e.preventDefault();
-    trackEvent("submit_job_application", { roleId: selectedRole?.id, email: appForm.email });
-    setApplied(true);
-    setTimeout(() => {
-      setApplied(false);
-      setSelectedRole(null);
-      setAppForm({ name: "", email: "", portfolio: "", notice: "Immediate / 15 Days", notes: "" });
-    }, 2400);
-  };
-
-  return (
-    <>
-      <Section eyebrow="Careers & Culture" title="Join Abhimanyu Technologies" sub="We are hiring passionate engineers, architects, and designers who build software and hardware systems to outlast the first release.">
-        {/* Department Filters */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
-          {departments.map((d) => (
-            <button
-              key={d}
-              onClick={() => setDeptFilter(d)}
-              style={{
-                background: deptFilter === d ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
-                border: `1px solid ${deptFilter === d ? TOKENS.brass : TOKENS.hair}`,
-                color: deptFilter === d ? TOKENS.ink : TOKENS.slate,
-                borderRadius: 999,
-                padding: "7px 16px",
-                fontSize: 12.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: deptFilter === d ? 700 : 400,
-                cursor: "pointer",
-                transition: "all 0.15s ease"
-              }}
-            >
-              {d}
-            </button>
-          ))}
-        </div>
-
-        {/* Roles List */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 48 }}>
-          {filteredRoles.map((r) => (
-            <Card key={r.id} style={{ padding: "24px 28px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14 }}>
-                <div style={{ flex: "1 1 400px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                    <span style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 4 }}>
-                      {r.dept.toUpperCase()}
-                    </span>
-                    <span style={{ fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
-                      {r.compensation}
-                    </span>
-                  </div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 6px" }}>
-                    {r.title}
-                  </h3>
-                  <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 10 }}>
-                    {r.type} · Exp: {r.experience}
-                  </div>
-                  <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: "0 0 12px" }}>
-                    {r.overview}
-                  </p>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#60A5FA" }}>
-                    STACK: {r.stack}
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, alignSelf: "center" }}>
-                  <Button onClick={() => setSelectedRole(r)}>View Role & Apply →</Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        {/* Engineering Culture & Benefits */}
-        <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 20px" }}>
-          Engineering Culture & Benefits
-        </h3>
-        <Grid min={260}>
-          {[
-            { icon: "💻", title: "Top-Tier Hardware", desc: "Latest Apple M3 Max or high-spec Linux development machines, dual 4K monitors, and cloud GPU clusters." },
-            { icon: "🌐", title: "Hybrid & Remote First", desc: "Work from our state-of-the-art Telangana campus or remotely anywhere across India with home office setup stipends." },
-            { icon: "📚", title: "Annual Learning Fund", desc: "₹1,50,000 annual budget for technical certifications (AWS, CKA, OCSC), technical books, and international conferences." },
-            { icon: "🏥", title: "Comprehensive Health", desc: "Full family health and medical coverage with zero deductible, mental health support, and wellness stipends." }
-          ].map((b) => (
-            <Card key={b.title}>
-              <div style={{ fontSize: 28, marginBottom: 12 }}>{b.icon}</div>
-              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 6px" }}>{b.title}</h4>
-              <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: 0 }}>{b.desc}</p>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-
-      {/* Interactive Quick-Apply Modal */}
-      {selectedRole && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 740, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
-            {/* Header */}
-            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
-                  {selectedRole.dept.toUpperCase()} · {selectedRole.experience}
-                </span>
-                <button onClick={() => setSelectedRole(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-              </div>
-              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px" }}>
-                {selectedRole.title}
-              </h2>
-              <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
-                Compensation: {selectedRole.compensation} · {selectedRole.type}
-              </div>
-            </div>
-
-            {/* Modal Body */}
-            <div style={{ padding: 32 }}>
-              {applied ? (
-                <div style={{ textAlign: "center", padding: "40px 0" }}>
-                  <div style={{ fontSize: 48, marginBottom: 14 }}>🎉</div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>
-                    Application Transmitted!
-                  </h3>
-                  <p style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }}>
-                    Our engineering leadership team will review your profile and reach out within 3 business days.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div style={{ marginBottom: 24 }}>
-                    <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 10px" }}>
-                      Key Responsibilities
-                    </h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      {selectedRole.responsibilities.map((resp, i) => (
-                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13.5, color: TOKENS.slate }}>
-                          <span style={{ color: TOKENS.teal }}>●</span>
-                          <span>{resp}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: 28 }}>
-                    <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 10px" }}>
-                      Mandatory Requirements
-                    </h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      {selectedRole.requirements.map((req, i) => (
-                        <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13.5, color: TOKENS.slate }}>
-                          <span style={{ color: TOKENS.brass }}>✓</span>
-                          <span>{req}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Application Form */}
-                  <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 24 }}>
-                    <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 16px" }}>
-                      Submit Direct Application
-                    </h4>
-                    <form onSubmit={handleApply} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                      <div>
-                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>FULL NAME *</label>
-                        <input required value={appForm.name} onChange={(e) => setAppForm({ ...appForm, name: e.target.value })} placeholder="John Doe" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
-                      </div>
-                      <div>
-                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>EMAIL ADDRESS *</label>
-                        <input required type="email" value={appForm.email} onChange={(e) => setAppForm({ ...appForm, email: e.target.value })} placeholder="john@domain.com" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
-                      </div>
-                      <div>
-                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>LINKEDIN / GITHUB / PORTFOLIO *</label>
-                        <input required value={appForm.portfolio} onChange={(e) => setAppForm({ ...appForm, portfolio: e.target.value })} placeholder="https://github.com/..." style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }} />
-                      </div>
-                      <div>
-                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>NOTICE PERIOD</label>
-                        <select value={appForm.notice} onChange={(e) => setAppForm({ ...appForm, notice: e.target.value })} style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5 }}>
-                          <option value="Immediate">Immediate</option>
-                          <option value="15 Days">15 Days</option>
-                          <option value="30 Days">30 Days</option>
-                          <option value="60+ Days">60+ Days</option>
-                        </select>
-                      </div>
-                      <div style={{ gridColumn: "1 / -1" }}>
-                        <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>BRIEF NOTE OR RECENT ARCHITECTURAL ACCOMPLISHMENT</label>
-                        <textarea rows={3} value={appForm.notes} onChange={(e) => setAppForm({ ...appForm, notes: e.target.value })} placeholder="Tell us about a distributed system or challenging technical problem you solved..." style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13.5, resize: "vertical" }} />
-                      </div>
-                      <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
-                        <span style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>Direct review by Shiva & Abhimanyu</span>
-                        <Button type="submit">Submit Application →</Button>
-                      </div>
-                    </form>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <CTA go={go} label="Ask About Openings" />
-    </>
-  );
-}
-
-/* ---------------------------- New B2B Marketplace Sub-Pages ---------------------------- */
-
-function RFQWizardPage({ go, openTracker, openDFM, openContractVault }) {
-  const [step, setStep] = useState(1);
-  const [rfq, setRfq] = useState({ category: "Custom CNC Machining", qty: "5,000 Units", location: "Telangana / Chennai", specs: "", cadFile: null, cadFileName: "", contactEmail: "" });
-  const [submittedId, setSubmittedId] = useState("");
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploading, setUploading] = useState(false);
-
-  const update = (k, v) => setRfq({ ...rfq, [k]: v });
-
-  const handleFinish = (e) => {
-    e.preventDefault();
-    const id = `RFQ-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-    setSubmittedId(id);
-    trackEvent("submit_rfq_wizard", { id, category: rfq.category });
-  };
-
-  const simulateUpload = (fileName) => {
-    setUploading(true);
-    setUploadProgress(0);
-    update("cadFileName", fileName);
-    let prog = 0;
-    const interval = setInterval(() => {
-      prog += Math.floor(Math.random() * 18) + 8;
-      if (prog >= 100) {
-        prog = 100;
-        clearInterval(interval);
-        setUploading(false);
-      }
-      setUploadProgress(prog);
-    }, 180);
-  };
-
-  const STEP_LABELS = ["Category", "Quantity", "Location", "Specs", "Upload CAD", "Review & Post"];
-
-  if (submittedId) {
-    return (
-      <Section eyebrow="RFQ Confirmation" title="Requirement Posted & Broadcasted">
-        <Card style={{ maxWidth: 580, margin: "0 auto", padding: 36, textAlign: "center", border: `1px solid ${TOKENS.brass}` }}>
-          <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(0, 168, 150, 0.15)", border: `1px solid ${TOKENS.teal}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", color: TOKENS.teal, fontSize: 28, fontWeight: "bold" }}>✓</div>
-          <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 8px" }}>RFQ {submittedId} Live</h3>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 16 }}>BROADCASTED TO 42 MATCHED SUPPLIERS</div>
-          <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.6, marginBottom: 8 }}>
-            Your requirement for <strong style={{ color: TOKENS.paper }}>{rfq.category} ({rfq.qty})</strong> has been verified and broadcasted instantly.
-          </p>
-          {rfq.cadFileName && (
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 20 }}>
-              📎 CAD FILE: {rfq.cadFileName}
-            </div>
-          )}
-          <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 16 }}>
-            <Button onClick={() => openTracker?.(submittedId)}>🔍 Track This RFQ in Real-Time →</Button>
-            <Button variant="ghost" onClick={() => go("requirements")}>View Public RFQ Hub</Button>
-            <Button variant="ghost" onClick={() => { setSubmittedId(""); setStep(1); }}>Post Another RFQ</Button>
-          </div>
-          <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", paddingTop: 16, borderTop: `1px solid ${TOKENS.hair}` }}>
-            <button
-              onClick={() => openDFM?.(submittedId, rfq.category)}
-              style={{
-                background: "rgba(0,168,150,0.15)",
-                border: `1px solid ${TOKENS.teal}`,
-                color: TOKENS.teal,
-                borderRadius: 6,
-                padding: "8px 16px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              🛠️ Automated DFM Feasibility Pre-Check →
-            </button>
-            <button
-              onClick={() => openContractVault?.("Bharat Aerospace & Dynamics", "Apex Precision Engineering Ltd.", submittedId)}
-              style={{
-                background: "rgba(212,175,55,0.15)",
-                border: `1px solid ${TOKENS.brass}`,
-                color: TOKENS.brass,
-                borderRadius: 6,
-                padding: "8px 16px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              📜 View Mutual NDA Protection →
-            </button>
-          </div>
-        </Card>
-      </Section>
-    );
-  }
-
-  return (
-    <Section eyebrow="Post a Requirement (RFQ)" title="6-Step Sourcing & RFQ Builder" sub="Fill out the requirements below to receive instant verified supplier quotes.">
-      <Card style={{ maxWidth: 700, margin: "0 auto", padding: 32 }}>
-        {/* Step Indicator Bar */}
-        <div style={{ overflowX: "auto", marginBottom: 28, paddingBottom: 16, borderBottom: `1px solid ${TOKENS.hair}` }}>
-          <div style={{ display: "flex", gap: 8, minWidth: 560 }}>
-            {STEP_LABELS.map((label, idx) => {
-              const i = idx + 1;
-              const done = step > i;
-              const active = step === i;
-              return (
-                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                  <div style={{
-                    width: 28, height: 28, borderRadius: "50%",
-                    background: done ? TOKENS.teal : active ? TOKENS.brass : "rgba(15, 23, 42, 0.05)",
-                    color: done || active ? TOKENS.ink : TOKENS.slate,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 12, fontWeight: "bold", fontFamily: "'JetBrains Mono', monospace",
-                    border: active ? `2px solid ${TOKENS.brass}` : "none",
-                  }}>
-                    {done ? "✓" : i}
-                  </div>
-                  <span style={{ fontSize: 10, color: active ? TOKENS.paper : done ? TOKENS.teal : TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", textAlign: "center", letterSpacing: "0.04em" }}>
-                    {label.toUpperCase()}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Step 1: Category */}
-        {step === 1 && (
-          <div>
-            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 1: Select Sourcing Category</h4>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              {["Custom CNC Machining", "Sheet Metal Fabrication", "Electronics & SMT Assembly", "AI & Software Development", "Industrial Automation", "Custom Plastic Injection"].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => update("category", cat)}
-                  style={{
-                    background: rfq.category === cat ? "rgba(212, 175, 55, 0.12)" : "rgba(15, 23, 42, 0.04)",
-                    border: `1px solid ${rfq.category === cat ? TOKENS.brass : TOKENS.hair}`,
-                    color: rfq.category === cat ? TOKENS.brass : TOKENS.paper,
-                    padding: "14px 16px", borderRadius: 6, textAlign: "left", cursor: "pointer", fontSize: 13.5, transition: "all 0.15s ease"
-                  }}
-                >
-                  {rfq.category === cat ? "✓ " : "○ "}{cat}
-                </button>
-              ))}
-            </div>
-            <div style={{ marginTop: 24, textAlign: "right" }}><Button onClick={() => setStep(2)}>Next: Quantity →</Button></div>
-          </div>
-        )}
-
-        {/* Step 2: Quantity */}
-        {step === 2 && (
-          <div>
-            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 2: Production Quantity & Batch Size</h4>
-            <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 16 }}>Enter the total quantity required. You may also specify prototype/sample quantities.</p>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
-              {["100 Units (Sample)", "500 Units", "1,000 Units", "5,000 Units", "10,000 Units", "50,000+ Units"].map((qty) => (
-                <button key={qty} onClick={() => update("qty", qty)} style={{ background: rfq.qty === qty ? "rgba(212,175,55,0.12)" : "rgba(15, 23, 42, 0.04)", border: `1px solid ${rfq.qty === qty ? TOKENS.brass : TOKENS.hair}`, color: rfq.qty === qty ? TOKENS.brass : TOKENS.paper, borderRadius: 6, padding: "8px 14px", fontSize: 13, cursor: "pointer" }}>
-                  {qty}
-                </button>
-              ))}
-            </div>
-            <input
-              style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14 }}
-              value={rfq.qty}
-              onChange={(e) => update("qty", e.target.value)}
-              placeholder="Or type custom quantity / Prototype Run"
-            />
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Button variant="ghost" onClick={() => setStep(1)}>← Back</Button>
-              <Button onClick={() => setStep(3)}>Next: Location →</Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Location */}
-        {step === 3 && (
-          <div>
-            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 3: Target Delivery Location</h4>
-            <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 16 }}>Select your preferred delivery destination or type a custom location.</p>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
-              {["Telangana", "Chennai", "Bengaluru", "Hyderabad", "Mumbai", "Delhi NCR", "Pan-India", "Global Export"].map((loc) => (
-                <button key={loc} onClick={() => update("location", loc)} style={{ background: rfq.location === loc ? "rgba(0,168,150,0.12)" : "rgba(15, 23, 42, 0.04)", border: `1px solid ${rfq.location === loc ? TOKENS.teal : TOKENS.hair}`, color: rfq.location === loc ? TOKENS.teal : TOKENS.paper, borderRadius: 6, padding: "8px 14px", fontSize: 13, cursor: "pointer" }}>
-                  📍 {loc}
-                </button>
-              ))}
-            </div>
-            <input
-              style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14 }}
-              value={rfq.location}
-              onChange={(e) => update("location", e.target.value)}
-              placeholder="Or type custom city / region"
-            />
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Button variant="ghost" onClick={() => setStep(2)}>← Back</Button>
-              <Button onClick={() => setStep(4)}>Next: Specifications →</Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Specs */}
-        {step === 4 && (
-          <div>
-            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 4: Technical Specifications</h4>
-            <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 16 }}>Describe material grades, tolerances, surface finish, and any special requirements.</p>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-              {["Stainless Steel 316", "Aluminium 6061", "Mild Steel", "HDPE Plastic", "PCB FR4", "Titanium Grade 5"].map((mat) => (
-                <button key={mat} onClick={() => update("specs", rfq.specs ? rfq.specs + ", " + mat : mat)} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.slate, borderRadius: 4, padding: "5px 10px", fontSize: 11.5, cursor: "pointer" }}>
-                  + {mat}
-                </button>
-              ))}
-            </div>
-            <textarea
-              rows={5}
-              style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, marginBottom: 16, fontSize: 14, resize: "vertical" }}
-              value={rfq.specs}
-              onChange={(e) => update("specs", e.target.value)}
-              placeholder="e.g. Stainless Steel 316, ±0.01mm tolerance, Ra 1.6 µm surface finish, anodized..."
-            />
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Button variant="ghost" onClick={() => setStep(3)}>← Back</Button>
-              <Button onClick={() => setStep(5)}>Next: Upload CAD →</Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 5: CAD/File Upload Simulation */}
-        {step === 5 && (
-          <div>
-            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 8px" }}>Step 5: Upload CAD / Technical Drawing</h4>
-            <p style={{ color: TOKENS.slate, fontSize: 13.5, marginBottom: 20 }}>Attach your CAD files, DXF drawings, PDF specs, or reference images. Supported: .STEP · .DXF · .PDF · .PNG · .DWG</p>
-
-            {/* Drag & Drop zone (simulated) */}
-            <div
-              style={{
-                border: `2px dashed ${rfq.cadFileName ? TOKENS.teal : TOKENS.hair}`,
-                borderRadius: 10,
-                padding: "40px 24px",
-                textAlign: "center",
-                cursor: "pointer",
-                background: rfq.cadFileName ? "rgba(0, 168, 150, 0.06)" : "rgba(15, 23, 42, 0.03)",
-                transition: "all 0.2s ease",
-                marginBottom: 16,
-              }}
-              onClick={() => {
-                if (!rfq.cadFileName && !uploading) {
-                  const files = ["part_drawing_v3.step", "valve_assy.dxf", "pcb_layout.dxf", "cad_model_final.pdf", "bracket_rev2.dwg"];
-                  simulateUpload(files[Math.floor(Math.random() * files.length)]);
-                }
-              }}
-            >
-              {rfq.cadFileName ? (
-                <>
-                  <div style={{ fontSize: 32, marginBottom: 10 }}>📄</div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.teal }}>{rfq.cadFileName}</div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 6 }}>FILE ATTACHED — UPLOAD COMPLETE ✓</div>
-                  <button onClick={(e) => { e.stopPropagation(); update("cadFileName", ""); setUploadProgress(0); }} style={{ background: "transparent", border: `1px solid ${TOKENS.hair}`, color: TOKENS.slate, borderRadius: 4, padding: "4px 10px", fontSize: 11, cursor: "pointer", marginTop: 12 }}>Remove File</button>
-                </>
-              ) : uploading ? (
-                <>
-                  <div style={{ fontSize: 28, marginBottom: 10 }}>⏳</div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper, marginBottom: 12 }}>Uploading {rfq.cadFileName || "file"}...</div>
-                  <div style={{ background: "rgba(15, 23, 42, 0.06)", borderRadius: 999, height: 6, overflow: "hidden", maxWidth: 240, margin: "0 auto" }}>
-                    <div style={{ height: "100%", width: `${uploadProgress}%`, background: `linear-gradient(90deg, ${TOKENS.teal}, ${TOKENS.blue})`, borderRadius: 999, transition: "width 0.2s ease" }} />
-                  </div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginTop: 8 }}>{uploadProgress}% UPLOADING</div>
-                </>
-              ) : (
-                <>
-                  <div style={{ fontSize: 36, marginBottom: 12 }}>📁</div>
-                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, marginBottom: 6 }}>Click to Upload CAD / Drawing</div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>STEP · DXF · PDF · DWG · PNG — max 50MB</div>
-                </>
-              )}
-            </div>
-
-            <div style={{ background: "rgba(212,175,55,0.06)", border: `1px solid rgba(212,175,55,0.2)`, borderRadius: 6, padding: 12, marginBottom: 20, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
-              💡 TIP: Attaching a CAD file increases quote accuracy by 85% and reduces quote turnaround time.
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Button variant="ghost" onClick={() => setStep(4)}>← Back</Button>
-              <div style={{ display: "flex", gap: 10 }}>
-                <button onClick={() => setStep(6)} style={{ background: "transparent", border: `1px solid ${TOKENS.hair}`, color: TOKENS.slate, borderRadius: 6, padding: "10px 16px", fontSize: 13, cursor: "pointer", fontFamily: "'JetBrains Mono', monospace" }}>Skip this step</button>
-                <Button onClick={() => setStep(6)}>Next: Review & Post →</Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 6: Review & Broadcast */}
-        {step === 6 && (
-          <form onSubmit={handleFinish}>
-            <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Step 6: Review & Broadcast RFQ</h4>
-
-            {/* Summary table */}
-            <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 8, marginBottom: 16 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: "10px 16px", fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>
-                <span style={{ color: TOKENS.slate }}>CATEGORY</span>
-                <span style={{ color: TOKENS.paper }}>{rfq.category}</span>
-                <span style={{ color: TOKENS.slate }}>QUANTITY</span>
-                <span style={{ color: TOKENS.paper }}>{rfq.qty}</span>
-                <span style={{ color: TOKENS.slate }}>LOCATION</span>
-                <span style={{ color: TOKENS.teal }}>📍 {rfq.location}</span>
-                <span style={{ color: TOKENS.slate }}>SPECS</span>
-                <span style={{ color: TOKENS.paper }}>{rfq.specs || "Standard Industry Tolerance"}</span>
-                {rfq.cadFileName && (
-                  <>
-                    <span style={{ color: TOKENS.slate }}>CAD FILE</span>
-                    <span style={{ color: TOKENS.brass }}>📎 {rfq.cadFileName}</span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: "block", color: TOKENS.slate, fontSize: 12, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em" }}>WORK EMAIL FOR QUOTE RESPONSES *</label>
-              <input
-                type="email"
-                required
-                style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: 12, color: TOKENS.paper, borderRadius: 6, fontSize: 14 }}
-                value={rfq.contactEmail}
-                onChange={(e) => update("contactEmail", e.target.value)}
-                placeholder="you@company.com"
-              />
-            </div>
-
-            <div style={{ background: "rgba(0, 168, 150, 0.06)", border: `1px solid rgba(0, 168, 150, 0.2)`, borderRadius: 6, padding: 12, marginBottom: 20, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
-              🚀 This RFQ will be instantly broadcasted to 42 verified suppliers matching your category and location.
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Button variant="ghost" onClick={() => setStep(5)}>← Back</Button>
-              <Button type="submit">Broadcast RFQ Now 🚀</Button>
-            </div>
-          </form>
-        )}
-      </Card>
-    </Section>
-  );
-}
-
-
-function ManufacturersPage({ go, openSupplierOnboarding, openVendorCompare, openRiskHeatmap, openContractVault, openQuoter }) {
-  const [selectedMfr, setSelectedMfr] = useState(null);
-  const [quoteForm, setQuoteForm] = useState({ material: "", qty: "", timeline: "", email: "" });
-  const [quoteSent, setQuoteSent] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
-  const [compareIds, setCompareIds] = useState(["mfr-1", "mfr-2"]);
-
-  const updateQuote = (k, v) => setQuoteForm({ ...quoteForm, [k]: v });
-
-  const toggleCompare = (id) => {
-    setCompareIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
-  const handleQuoteSubmit = (e) => {
-    e.preventDefault();
-    trackEvent("manufacturer_quote_request", { mfrId: selectedMfr?.id, ...quoteForm });
-    setQuoteSent(true);
-    setTimeout(() => { setQuoteSent(false); setSelectedMfr(null); setQuoteForm({ material: "", qty: "", timeline: "", email: "" }); }, 2500);
-  };
-
-  const EXTRA_MANUFACTURERS = [
-    {
-      id: "mfr-4",
-      name: "Bharat Rubber & Sealing Systems",
-      category: "Rubber & Gasket Manufacturing",
-      location: "Pune, Maharashtra",
-      rating: "★ 4.6 (38 reviews)",
-      capabilities: ["Custom Rubber Molding", "O-Ring Manufacturing", "Silicone Gaskets", "EPDM Seals", "Viton Compounds"],
-      responseRate: "⚡ Avg. quote turnaround: 10 hours",
-      certifications: ["ISO 9001:2015", "IATF 16949"],
-      moq: "500 pieces",
-      capacity: "2,00,000 units/month",
-    },
-    {
-      id: "mfr-5",
-      name: "Skylark Precision Castings",
-      category: "Investment Casting & Foundry",
-      location: "Coimbatore, Tamil Nadu",
-      rating: "★ 4.8 (61 reviews)",
-      capabilities: ["Lost-Wax Investment Casting", "Sand Casting", "Aluminum & Brass Alloys", "Heat Treatment", "CNC Post-Machining"],
-      responseRate: "⚡ Avg. quote turnaround: 6 hours",
-      certifications: ["ISO 9001:2015", "AS9100D (Aerospace)"],
-      moq: "200 pieces",
-      capacity: "50 tons/month",
-    },
-  ];
-
-  const allManufacturers = [...B2B_MANUFACTURERS, ...EXTRA_MANUFACTURERS];
-
-  const categories = ["All Categories", "CNC Machining", "Sheet Metal", "Electronics", "Rubber & Sealing", "Castings"];
-
-  const filteredManufacturers = allManufacturers.filter((m) => {
-    if (selectedCategory === "All Categories") return true;
-    const cat = selectedCategory.toLowerCase();
-    if (cat.includes("cnc")) return m.category.toLowerCase().includes("cnc") || m.capabilities.some((c) => c.toLowerCase().includes("cnc") || c.toLowerCase().includes("turn") || c.toLowerCase().includes("mill"));
-    if (cat.includes("sheet")) return m.category.toLowerCase().includes("sheet") || m.capabilities.some((c) => c.toLowerCase().includes("laser") || c.toLowerCase().includes("sheet"));
-    if (cat.includes("electron")) return m.category.toLowerCase().includes("electron") || m.capabilities.some((c) => c.toLowerCase().includes("pcb") || c.toLowerCase().includes("smt"));
-    if (cat.includes("rubber")) return m.category.toLowerCase().includes("rubber") || m.capabilities.some((c) => c.toLowerCase().includes("gasket") || c.toLowerCase().includes("seal"));
-    if (cat.includes("cast")) return m.category.toLowerCase().includes("cast") || m.capabilities.some((c) => c.toLowerCase().includes("cast") || c.toLowerCase().includes("foundry"));
-    return true;
-  });
-
-  return (
-    <>
-      <Section eyebrow="Verified Manufacturers" title="Industrial & OEM Manufacturing Partners" sub="Directly source custom manufacturing, CNC machining, metal fabrication, and electronics assembly.">
-        {/* Factory Verification Banner */}
-        <div style={{
-          background: "linear-gradient(135deg, rgba(212,175,55,0.12), rgba(21,101,192,0.14))",
-          border: `1px solid rgba(212,175,55,0.35)`,
-          borderRadius: 14,
-          padding: "18px 24px",
-          marginBottom: 24,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 16
-        }}>
-          <div style={{ maxWidth: 720 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-              <span style={{ fontSize: 20 }}>🏭</span>
-              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, fontWeight: 700, color: TOKENS.white, letterSpacing: "0.03em" }}>
-                Are you an OEM Manufacturer or Precision Machine Shop?
-              </span>
-              <span style={{ background: `${TOKENS.teal}22`, border: `1px solid ${TOKENS.teal}55`, color: TOKENS.teal, padding: "2px 8px", borderRadius: 999, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                BATCH Q4 ENROLLMENT OPEN
-              </span>
-            </div>
-            <p style={{ margin: 0, fontSize: 13, color: TOKENS.slate, lineHeight: 1.5 }}>
-              Register your production plant, machine capacity (CNC, VMC, EDM, SMT), and quality certifications (ISO 9001, AS9100D, IATF 16949) to receive direct corporate RFQs and escrow-guaranteed contracts.
-            </p>
-          </div>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <button
-              onClick={() => openQuoter && openQuoter()}
-              style={{
-                background: "rgba(217,119,6,0.18)",
-                border: `1px solid ${TOKENS.brass}`,
-                color: TOKENS.brass,
-                borderRadius: 8,
-                padding: "11px 18px",
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 12.5,
-                fontWeight: 700,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                whiteSpace: "nowrap"
-              }}
-            >
-              <span>⚡ Instant Pricing Calculator →</span>
-            </button>
-            <button
-              onClick={() => openRiskHeatmap && openRiskHeatmap()}
-              style={{
-                background: "rgba(21,101,192,0.25)",
-                border: `1px solid ${TOKENS.blue}`,
-                color: "#93C5FD",
-                borderRadius: 8,
-                padding: "11px 18px",
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 12.5,
-                fontWeight: 700,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                whiteSpace: "nowrap"
-              }}
-            >
-              <span>🌐 Supply Chain Risk Matrix →</span>
-            </button>
-            <button
-              onClick={() => openContractVault && openContractVault()}
-              style={{
-                background: "rgba(212,175,55,0.15)",
-                border: `1px solid ${TOKENS.brass}`,
-                color: TOKENS.brass,
-                borderRadius: 8,
-                padding: "11px 18px",
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 12.5,
-                fontWeight: 700,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                whiteSpace: "nowrap"
-              }}
-            >
-              <span>📜 Mutual NDA Vault →</span>
-            </button>
-            <button
-              onClick={() => openSupplierOnboarding && openSupplierOnboarding()}
-              style={{
-                background: `linear-gradient(135deg, ${TOKENS.brass}, #F59E0B)`,
-                color: "#080E1A",
-                border: "none",
-                borderRadius: 8,
-                padding: "11px 20px",
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 12.5,
-                fontWeight: 800,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                boxShadow: "0 4px 14px rgba(212,175,55,0.3)",
-                whiteSpace: "nowrap"
-              }}
-            >
-              <span>★ Register Plant & Get Verified →</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Filter Bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                style={{
-                  background: selectedCategory === cat ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
-                  border: `1px solid ${selectedCategory === cat ? TOKENS.brass : TOKENS.hair}`,
-                  color: selectedCategory === cat ? TOKENS.ink : TOKENS.slate,
-                  borderRadius: 999,
-                  padding: "7px 16px",
-                  fontSize: 12.5,
-                  cursor: "pointer",
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: selectedCategory === cat ? 700 : 400
-                }}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => openVendorCompare?.(compareIds.length >= 2 ? compareIds : ["mfr-1", "mfr-2", "mfr-3"])}
-            style={{
-              background: "rgba(212,175,55,0.12)",
-              border: `1px solid ${TOKENS.brass}`,
-              color: TOKENS.brass,
-              borderRadius: 8,
-              padding: "7px 16px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 700,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 6
-            }}
-          >
-            <span>⚖️ Open Vendor Compare Matrix ({compareIds.length}) →</span>
-          </button>
-        </div>
-
-        <Grid min={300}>
-          {filteredManufacturers.map((m) => {
-            const isCompared = compareIds.includes(m.id);
-            return (
-              <Card key={m.id} style={{ border: isCompared ? `1px solid ${TOKENS.brass}` : undefined }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <span style={{ background: "rgba(212, 175, 55, 0.12)", border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 4, padding: "4px 10px", fontSize: 11, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>✓ VERIFIED SUPPLIER</span>
-                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                    <button
-                      type="button"
-                      onClick={() => toggleCompare(m.id)}
-                      style={{
-                        background: isCompared ? "rgba(212,175,55,0.2)" : "rgba(15, 23, 42, 0.04)",
-                        border: `1px solid ${isCompared ? TOKENS.brass : TOKENS.hair}`,
-                        color: isCompared ? TOKENS.brass : TOKENS.slate,
-                        padding: "3px 8px",
-                        borderRadius: 4,
-                        fontSize: 10.5,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontWeight: 700,
-                        cursor: "pointer",
-                      }}
-                    >
-                      {isCompared ? "✓ Compared" : "⚖️ Compare"}
-                    </button>
-                    <span style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>{m.rating.split(" ")[0]}</span>
-                  </div>
-                </div>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 4px" }}>{m.name}</h3>
-                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 6 }}>📍 {m.location}</div>
-                <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginBottom: 12 }}>{m.category}</div>
-
-                <div style={{ borderTop: `1px solid ${TOKENS.hair}`, borderBottom: `1px solid ${TOKENS.hair}`, padding: "10px 0", margin: "10px 0" }}>
-                  <div style={{ fontSize: 11, color: TOKENS.paper, fontWeight: 600, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace" }}>CAPABILITIES</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                    {m.capabilities.map((c) => (
-                      <span key={c} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: "3px 7px", borderRadius: 3, fontSize: 11, color: TOKENS.slate }}>{c}</span>
-                    ))}
-                  </div>
-                </div>
-
-                {m.moq && (
-                  <div style={{ display: "flex", gap: 16, marginBottom: 8, fontFamily: "'JetBrains Mono', monospace", fontSize: 11 }}>
-                    <span style={{ color: TOKENS.slate }}>MOQ: <span style={{ color: TOKENS.paper }}>{m.moq}</span></span>
-                    <span style={{ color: TOKENS.slate }}>CAP: <span style={{ color: TOKENS.paper }}>{m.capacity}</span></span>
-                  </div>
-                )}
-
-                <div style={{ fontSize: 11.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 16 }}>{m.responseRate}</div>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <Button onClick={() => { setSelectedMfr(m); setQuoteSent(false); }}>Request Quote →</Button>
-                  <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post RFQ</Button>
-                </div>
-              </Card>
-            );
-          })}
-        </Grid>
-
-        {/* Floating Compare Dock */}
-        {compareIds.length > 0 && (
-          <div style={{
-            position: "fixed",
-            bottom: 24,
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 8900,
-            background: "rgba(11, 31, 58, 0.96)",
-            border: `1px solid ${TOKENS.brass}`,
-            borderRadius: 999,
-            padding: "10px 24px",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            boxShadow: "0 16px 40px rgba(0,0,0,0.85)",
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
-          }}>
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.paper }}>
-              ⚖️ <strong>{compareIds.length}</strong> {compareIds.length === 1 ? "Plant" : "Plants"} Selected
-            </span>
-            <button
-              onClick={() => openVendorCompare?.(compareIds)}
-              style={{
-                background: `linear-gradient(135deg, ${TOKENS.brass}, #F59E0B)`,
-                color: "#080E1A",
-                border: "none",
-                borderRadius: 999,
-                padding: "7px 18px",
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 12,
-                fontWeight: 800,
-                cursor: "pointer",
-              }}
-            >
-              Compare Side-by-Side →
-            </button>
-            <button
-              onClick={() => setCompareIds([])}
-              style={{
-                background: "transparent",
-                border: "none",
-                color: TOKENS.slate,
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                cursor: "pointer",
-                textDecoration: "underline",
-              }}
-            >
-              Clear
-            </button>
-          </div>
-        )}
-      </Section>
-
-      {/* Manufacturer Quick-Quote Modal */}
-      {selectedMfr && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 600, width: "100%", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.3)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}>
-            {/* Header */}
-            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "24px 28px", borderBottom: `1px solid ${TOKENS.hair}` }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.brass, marginBottom: 6, letterSpacing: "0.1em" }}>✓ VERIFIED MANUFACTURER</div>
-                  <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 4px" }}>{selectedMfr.name}</h2>
-                  <div style={{ fontSize: 13, color: TOKENS.slate }}>📍 {selectedMfr.location} · {selectedMfr.category}</div>
-                </div>
-                <button onClick={() => setSelectedMfr(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 16, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-              </div>
-            </div>
-
-            <div style={{ padding: 28 }}>
-              {quoteSent ? (
-                <div style={{ textAlign: "center", padding: "32px 0" }}>
-                  <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 8px" }}>Quote Request Sent!</h3>
-                  <p style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>Expect response within {selectedMfr.responseRate?.split(": ")[1] || "24 hours"}</p>
-                </div>
-              ) : (
-                <form onSubmit={handleQuoteSubmit}>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 20px" }}>Request Direct Quote from {selectedMfr.name.split(" ")[0]}</h3>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                    <div>
-                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, letterSpacing: "0.04em" }}>MATERIAL / PRODUCT *</label>
-                      <input required value={quoteForm.material} onChange={(e) => updateQuote("material", e.target.value)} placeholder="e.g. SS316 CNC Part" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }} />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, letterSpacing: "0.04em" }}>QUANTITY *</label>
-                      <input required value={quoteForm.qty} onChange={(e) => updateQuote("qty", e.target.value)} placeholder="e.g. 5,000 units" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }} />
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, letterSpacing: "0.04em" }}>REQUIRED DELIVERY TIMELINE</label>
-                    <select value={quoteForm.timeline} onChange={(e) => updateQuote("timeline", e.target.value)} style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }}>
-                      <option value="">Select timeline</option>
-                      <option value="Urgent (< 2 weeks)">Urgent (Less than 2 weeks)</option>
-                      <option value="1 Month">1 Month</option>
-                      <option value="2-3 Months">2–3 Months</option>
-                      <option value="Flexible">Flexible / Long-term</option>
-                    </select>
-                  </div>
-
-                  <div style={{ marginBottom: 20 }}>
-                    <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, letterSpacing: "0.04em" }}>YOUR WORK EMAIL *</label>
-                    <input required type="email" value={quoteForm.email} onChange={(e) => updateQuote("email", e.target.value)} placeholder="you@company.com" style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", color: TOKENS.paper, fontSize: 14 }} />
-                  </div>
-
-                  <div style={{ display: "flex", gap: 12 }}>
-                    <Button type="submit">Send Quote Request →</Button>
-                    <Button variant="ghost" onClick={() => go("rfq-wizard")}>Use Full RFQ Wizard</Button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <CTA go={go} label="List Your Manufacturing Business" />
-    </>
-  );
-}
-
-function BusinessesPage({ go }) {
-  const [selectedBiz, setSelectedBiz] = useState(null);
-  const [profileTab, setProfileTab] = useState("about");
-
-  const BIZ_PROFILES = {
-    "biz-1": {
-      about: "Abhimanyu Technologies is an enterprise technology company building AI systems, cloud infrastructure, and custom B2B software platforms for organizations that require absolute reliability. Founded in 2020, headquartered in Telangana, India.",
-      products: ["Abhimanyu ERP — Unified business operations", "Abhimanyu CRM — Sales & lead management", "Abhimanyu AI Platform — Enterprise AI automation", "Abhimanyu IoT Fleet Manager", "Abhimanyu Analytics Dashboard"],
-      services: ["Custom Software Engineering", "AI & Machine Learning Models", "Cloud & Anycast Load Balancing", "Zero-Trust Cybersecurity", "IoT & Embedded Systems"],
-      manufacturing: "Not applicable — Software & Cloud AI company",
-      certifications: ["ISO 9001:2015", "SOC2 Type II (In Progress)", "AWS Advanced Partner", "Microsoft Azure Partner"],
-      reviews: [
-        { client: "FinTech Corp", rating: "5★", text: "Built our sub-10ms AI fraud detection API. Exceptional architecture." },
-        { client: "Logistics Leader", rating: "5★", text: "Reduced cloud overhead by 64%. Zero downtime migration." },
-      ]
-    },
-    "biz-2": {
-      about: "Vertex Automation & Robotics Systems is a leading Industrial IoT and Robotics OEM headquartered in Pune, Maharashtra. Since 2018, we design and manufacture SCADA systems, PLC automation, and conveyor robotics for India's top manufacturers.",
-      products: ["SCADA Control System v5", "PLC Logic Controllers", "Industrial Conveyor Automation", "IoT Sensor Gateway", "Predictive Maintenance AI"],
-      services: ["Industrial Automation Design", "PLC Programming & Integration", "SCADA System Installation", "Robotic Line Commissioning", "Annual Maintenance Contracts"],
-      manufacturing: "In-house manufacturing of control panels, IoT sensor nodes, and conveyor systems. Capacity: 200 units/month.",
-      certifications: ["ISO 9001:2015", "CE Marked Products", "IEC 61131-3 PLC Standard", "UL Listed Components"],
-      reviews: [
-        { client: "Auto OEM", rating: "5★", text: "Reduced production line downtime by 78% with predictive maintenance." },
-        { client: "Steel Plant", rating: "4.8★", text: "Fully automated our conveyor system. Excellent support team." },
-      ]
-    }
-  };
-
-  const profile = selectedBiz ? (BIZ_PROFILES[selectedBiz.id] || BIZ_PROFILES["biz-1"]) : null;
-
-  const PROFILE_TABS = [
-    { id: "about", label: "About" },
-    { id: "products", label: "Products" },
-    { id: "services", label: "Services" },
-    { id: "manufacturing", label: "Manufacturing" },
-    { id: "certifications", label: "Certifications" },
-    { id: "reviews", label: "Reviews" },
-  ];
-
-  return (
-    <>
-      <Section eyebrow="B2B Business Directory" title="Verified Enterprises & Service Providers" sub="Search and connect with verified enterprise technology partners and industrial suppliers.">
-        <Grid min={320}>
-          {B2B_BUSINESSES.map((b) => (
-            <Card key={b.id}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-                <span style={{ background: "rgba(21,101,192,0.12)", border: `1px solid rgba(21,101,192,0.3)`, borderRadius: 4, padding: "4px 10px", fontSize: 11, color: "#60A5FA", fontFamily: "'JetBrains Mono', monospace" }}>{b.type.toUpperCase()}</span>
-                <span style={{ color: TOKENS.brass, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>✓ VERIFIED</span>
-              </div>
-              <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 6px" }}>{b.name}</h3>
-              <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 8 }}>📍 {b.location} · Est. {b.established}</div>
-              <div style={{ fontSize: 12.5, color: TOKENS.teal, marginBottom: 14 }}>{b.rating} · {b.employees}</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
-                {b.specialties.map((s) => (
-                  <span key={s} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, padding: "4px 8px", borderRadius: 4, fontSize: 11, color: TOKENS.slate }}>{s}</span>
-                ))}
-              </div>
-              <Button variant="ghost" onClick={() => { setSelectedBiz(b); setProfileTab("about"); }}>View Company Profile →</Button>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-
-      {/* Business Full Mini-Website Profile Modal */}
-      {selectedBiz && profile && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.3)`, borderRadius: 12, boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}>
-            {/* Profile Header */}
-            <div style={{ background: `linear-gradient(135deg, #0d2040 0%, ${TOKENS.panelAlt} 100%)`, padding: "28px 32px 0", borderBottom: `1px solid ${TOKENS.hair}`, borderRadius: "12px 12px 0 0" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                <div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8, letterSpacing: "0.1em" }}>✓ VERIFIED BUSINESS PROFILE</div>
-                  <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 26, margin: "0 0 6px" }}>{selectedBiz.name}</h2>
-                  <div style={{ fontSize: 14, color: TOKENS.teal, marginBottom: 8 }}>{selectedBiz.type}</div>
-                  <div style={{ display: "flex", gap: 16, fontSize: 13, color: TOKENS.slate }}>
-                    <span>📍 {selectedBiz.location}</span>
-                    <span>🏢 Est. {selectedBiz.established}</span>
-                    <span>👥 {selectedBiz.employees}</span>
-                  </div>
-                </div>
-                <button onClick={() => setSelectedBiz(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-              </div>
-              <div style={{ fontSize: 12.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 16 }}>{selectedBiz.rating}</div>
-
-              {/* Tab navigation */}
-              <div style={{ display: "flex", gap: 2, overflowX: "auto", paddingBottom: 0 }}>
-                {PROFILE_TABS.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setProfileTab(t.id)}
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      borderBottom: `2px solid ${profileTab === t.id ? TOKENS.brass : "transparent"}`,
-                      color: profileTab === t.id ? TOKENS.brass : TOKENS.slate,
-                      fontSize: 13,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      padding: "8px 16px 10px",
-                      cursor: "pointer",
-                      whiteSpace: "nowrap",
-                      transition: "all 0.15s ease",
-                      fontWeight: profileTab === t.id ? 700 : 400,
-                    }}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Tab Content */}
-            <div style={{ padding: 32 }}>
-              {profileTab === "about" && (
-                <div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 14px" }}>About {selectedBiz.name}</h3>
-                  <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.75, marginBottom: 24 }}>{profile.about}</p>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    {[
-                      { label: "Founded", value: selectedBiz.established },
-                      { label: "Team Size", value: selectedBiz.employees },
-                      { label: "Location", value: selectedBiz.location },
-                      { label: "Rating", value: selectedBiz.rating },
-                    ].map((item) => (
-                      <div key={item.label} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
-                        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate, marginBottom: 4 }}>{item.label.toUpperCase()}</div>
-                        <div style={{ color: TOKENS.paper, fontSize: 14, fontWeight: 500 }}>{item.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {profileTab === "products" && (
-                <div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Products & Platforms</h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    {profile.products.map((p, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px" }}>
-                        <span style={{ color: TOKENS.brass, fontSize: 16 }}>📦</span>
-                        <span style={{ color: TOKENS.paper, fontSize: 14 }}>{p}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {profileTab === "services" && (
-                <div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Services Offered</h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    {profile.services.map((s, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(0,168,150,0.05)", border: `1px solid rgba(0,168,150,0.2)`, borderRadius: 6, padding: "12px 16px" }}>
-                        <span style={{ color: TOKENS.teal, fontSize: 14 }}>✓</span>
-                        <span style={{ color: TOKENS.paper, fontSize: 14 }}>{s}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {profileTab === "manufacturing" && (
-                <div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 14px" }}>Manufacturing Capabilities</h3>
-                  <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.7 }}>{profile.manufacturing}</p>
-                </div>
-              )}
-
-              {profileTab === "certifications" && (
-                <div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Certifications & Compliance</h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                    {profile.certifications.map((cert, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(212,175,55,0.06)", border: `1px solid rgba(212,175,55,0.25)`, borderRadius: 6, padding: "12px 16px" }}>
-                        <span style={{ color: TOKENS.brass, fontSize: 16 }}>🏅</span>
-                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper }}>{cert}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {profileTab === "reviews" && (
-                <div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 16px" }}>Client Reviews</h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                    {profile.reviews.map((r, i) => (
-                      <div key={i} style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 20 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper }}>{r.client}</span>
-                          <span style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }}>{r.rating}</span>
-                        </div>
-                        <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>"{r.text}"</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* CTA Footer */}
-              <div style={{ marginTop: 28, paddingTop: 24, borderTop: `1px solid ${TOKENS.hair}`, display: "flex", gap: 12 }}>
-                <Button onClick={() => { setSelectedBiz(null); go("contact"); }}>Send Direct Enquiry →</Button>
-                <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post RFQ to This Supplier</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <CTA go={go} />
-    </>
-  );
-}
-
-function RequirementsPage({ go, openTracker, currency = "INR" }) {
-  const [selectedCat, setSelectedCat] = useState("All");
-  const [search, setSearch] = useState("");
-  const [quotingRfq, setQuotingRfq] = useState(null);
-  const [bidsMap, setBidsMap] = useState({});
-  const [quoteForm, setQuoteForm] = useState({ price: "", leadTime: "14 Days", notes: "", company: "", email: "" });
-  const [submittedBid, setSubmittedBid] = useState(false);
-
-  const categories = ["All", "Custom CNC Machining", "Electronics Assembly", "Custom Plastic Injection", "AI & Software Development"];
-
-  const filtered = PUBLIC_RFQS.filter((rfq) => {
-    const matchesCat = selectedCat === "All" || rfq.category === selectedCat;
-    const matchesQuery = rfq.title.toLowerCase().includes(search.toLowerCase()) ||
-                         rfq.location.toLowerCase().includes(search.toLowerCase()) ||
-                         rfq.id.toLowerCase().includes(search.toLowerCase());
-    return matchesCat && matchesQuery;
-  });
-
-  const handleQuoteSubmit = (e) => {
-    e.preventDefault();
-    trackEvent("submit_rfq_bid", { rfqId: quotingRfq.id, price: quoteForm.price, email: quoteForm.email });
-    setBidsMap((prev) => ({
-      ...prev,
-      [quotingRfq.id]: (prev[quotingRfq.id] || parseInt(quotingRfq.bidsCount) || 12) + 1
-    }));
-    setSubmittedBid(true);
-    setTimeout(() => {
-      setSubmittedBid(false);
-      setQuotingRfq(null);
-      setQuoteForm({ price: "", leadTime: "14 Days", notes: "", company: "", email: "" });
-    }, 2400);
-  };
-
-  return (
-    <>
-      <Section eyebrow="Public Requirements Hub" title="Live RFQs & Sourcing Inquiries" sub="Explore live buyer requirements, filter by manufacturing capability, and submit competitive quotations directly.">
-        {/* Top RFQ Tracker Banner */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, rgba(21,101,192,0.12) 0%, rgba(0,168,150,0.12) 100%)",
-            border: `1px solid rgba(0,168,150,0.35)`,
-            borderRadius: 8,
-            padding: "16px 22px",
-            marginBottom: 24,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 14,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 24 }}>🛰️</span>
-            <div>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, fontWeight: 600 }}>
-                Live RFQ Procurement & PO Status Tracker
-              </div>
-              <div style={{ fontSize: 12.5, color: TOKENS.slate }}>
-                Track automated DFM CAD mesh verification, evaluate competing supplier quotes, and generate digital Purchase Orders.
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={() => openTracker?.("RFQ-2026-9041")}
-            style={{
-              background: TOKENS.teal,
-              color: "#0B1F3A",
-              border: "none",
-              borderRadius: 5,
-              padding: "8px 16px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 700,
-              cursor: "pointer",
-            }}
-          >
-            🔍 Track RFQ Milestones & Bids →
-          </button>
-        </div>
-
-        {/* Controls: Search and Filter Tabs */}
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 14, marginBottom: 24 }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCat(cat)}
-                style={{
-                  background: selectedCat === cat ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
-                  border: `1px solid ${selectedCat === cat ? TOKENS.brass : TOKENS.hair}`,
-                  color: selectedCat === cat ? TOKENS.ink : TOKENS.slate,
-                  borderRadius: 999,
-                  padding: "6px 14px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: selectedCat === cat ? 700 : 400,
-                  cursor: "pointer",
-                  transition: "all 0.15s ease"
-                }}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ minWidth: 260, flex: "1 1 260px", maxWidth: 360 }}>
-            <input
-              type="text"
-              placeholder="Search RFQs by keyword or location..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                width: "100%",
-                background: "rgba(16, 24, 40, 0.8)",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 6,
-                padding: "8px 14px",
-                color: TOKENS.paper,
-                fontSize: 13,
-                fontFamily: "'Inter', sans-serif"
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Live RFQ Grid */}
-        <Grid min={320}>
-          {filtered.map((rfq) => {
-            const currentBids = bidsMap[rfq.id] || parseInt(rfq.bidsCount) || 12;
-            return (
-              <Card key={rfq.id}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", marginBottom: 12 }}>
-                  <span style={{ color: TOKENS.teal, background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 3 }}>{rfq.id}</span>
-                  <span style={{ color: rfq.status === "HIGH PRIORITY" ? "#EF4444" : TOKENS.brass, fontWeight: 700 }}>
-                    ● {rfq.status}
-                  </span>
-                </div>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>{rfq.title}</h3>
-                
-                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 5 }}>
-                  <b style={{ color: TOKENS.paper }}>Category:</b> {rfq.category}
-                </div>
-                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 5 }}>
-                  <b style={{ color: TOKENS.paper }}>Batch Size:</b> {rfq.quantity}
-                </div>
-                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 5 }}>
-                  <b style={{ color: TOKENS.paper }}>Target:</b> {rfq.location.replace("Target Delivery: ", "")}
-                </div>
-                <div style={{ fontSize: 13, color: TOKENS.slate, marginBottom: 5 }}>
-                  <b style={{ color: TOKENS.paper }}>Tolerance / Material:</b> {rfq.tolerance || "Standard Spec"}
-                </div>
-                <div style={{ fontSize: 13, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 8, marginBottom: 14 }}>
-                  Estimated Budget: {rfq.budget} · {rfq.deadline}
-                </div>
-
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14, marginTop: 12, flexWrap: "wrap", gap: 8 }}>
-                  <span style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
-                    ⚡ {currentBids} Bids Submitted
-                  </span>
-                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                    <button
-                      onClick={() => openTracker?.(rfq.id)}
-                      style={{
-                        background: "rgba(15, 23, 42, 0.04)",
-                        border: `1px solid ${TOKENS.hair}`,
-                        color: TOKENS.paper,
-                        padding: "7px 12px",
-                        borderRadius: 4,
-                        fontSize: 11.5,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Inspect Timeline →
-                    </button>
-                    <Button onClick={() => setQuotingRfq(rfq)}>Submit Quotation →</Button>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
-        </Grid>
-      </Section>
-
-      {/* Interactive Quotation Submission Modal */}
-      {quotingRfq && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(16px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 620, width: "100%", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.8)" }}>
-            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "20px 28px", borderBottom: `1px solid ${TOKENS.hair}` }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginBottom: 4, letterSpacing: "0.1em" }}>OFFICIAL QUOTATION SUBMISSION</div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: 0 }}>{quotingRfq.id}: {quotingRfq.title}</h3>
-                </div>
-                <button onClick={() => setQuotingRfq(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 16, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-              </div>
-            </div>
-
-            <div style={{ padding: 28 }}>
-              {submittedBid ? (
-                <div style={{ textAlign: "center", padding: "32px 0" }}>
-                  <div style={{ fontSize: 44, marginBottom: 12 }}>🚀</div>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 8px" }}>Quotation Broadcasted Successfully!</h3>
-                  <p style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>
-                    Your proposal for {quotingRfq.id} has been transmitted to buyer "{quotingRfq.buyer || "Enterprise Buyer"}".
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleQuoteSubmit}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                    <div>
-                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>PROPOSED TOTAL BID PRICE *</label>
-                      <input
-                        required
-                        placeholder="e.g. $48,500 USD or ₹38,00,000"
-                        value={quoteForm.price}
-                        onChange={(e) => setQuoteForm({ ...quoteForm, price: e.target.value })}
-                        style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>PRODUCTION LEAD TIME</label>
-                      <select
-                        value={quoteForm.leadTime}
-                        onChange={(e) => setQuoteForm({ ...quoteForm, leadTime: e.target.value })}
-                        style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                      >
-                        <option value="7 Days">7 Business Days (Express)</option>
-                        <option value="14 Days">14 Business Days (Standard)</option>
-                        <option value="21 Days">21 Business Days</option>
-                        <option value="30+ Days">30+ Business Days</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                    <div>
-                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>MANUFACTURER / VENDOR NAME *</label>
-                      <input
-                        required
-                        placeholder="Your Enterprise Name"
-                        value={quoteForm.company}
-                        onChange={(e) => setQuoteForm({ ...quoteForm, company: e.target.value })}
-                        style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>WORK EMAIL FOR DIRECT CONTACT *</label>
-                      <input
-                        required
-                        type="email"
-                        placeholder="sales@yourcompany.com"
-                        value={quoteForm.email}
-                        onChange={(e) => setQuoteForm({ ...quoteForm, email: e.target.value })}
-                        style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                      />
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: 18 }}>
-                    <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6 }}>TECHNICAL QUALIFICATIONS & SCOPE NOTES</label>
-                    <textarea
-                      rows={3}
-                      placeholder="Specify CNC machines, material traceability certificates (MTR), surface coating tolerances..."
-                      value={quoteForm.notes}
-                      onChange={(e) => setQuoteForm({ ...quoteForm, notes: e.target.value })}
-                      style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13, resize: "vertical" }}
-                    />
-                  </div>
-
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>🔒 Verified SSL Encrypted Bid</span>
-                    <Button type="submit">Transmit Formal Quote →</Button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <CTA go={go} label="Post Your Own Requirement" />
-    </>
-  );
-}
-
-function BusinessDashboardPage({ go, currency = "INR", currentUser, openTracker, openAuth, openCAD, openEscrow, openTraceability }) {
-  const [timeframe, setTimeframe] = useState("30D");
-  const [leadsState, setLeadsState] = useState(
-    PUBLIC_RFQS.map((item) => ({ ...item, quoted: false, dismissed: false }))
-  );
-  const [notification, setNotification] = useState("⚡ Live: 2 new buyers posted RFQs in CNC & SMT in the last 15 mins");
-
-  const metrics = {
-    "7D": { views: "680", leads: "28", quotes: "14", pipeline: "$142,000", winRate: "34%" },
-    "30D": { views: "2,450", leads: "120", quotes: "45", pipeline: "$480,000", winRate: "38%" },
-    "Q1": { views: "8,920", leads: "390", quotes: "148", pipeline: "$1,620,000", winRate: "41%" },
-    "ALL": { views: "24,800", leads: "1,140", quotes: "482", pipeline: "$5,240,000", winRate: "42%" }
-  }[timeframe];
-
-  const handleAction = (id, type) => {
-    trackEvent(`dashboard_lead_${type}`, { rfqId: id });
-    setLeadsState((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, quoted: type === "quote", dismissed: type === "dismiss" } : l))
-    );
-  };
-
-  const activeLeads = leadsState.filter((l) => !l.dismissed);
-
-  return (
-    <Section eyebrow="Seller & Business Dashboard" title="Enterprise Account Command Center" sub="Manage inbound buyer leads, active product listings, RFQ submissions, and performance telemetry.">
-      <Card style={{ padding: 32 }}>
-        {/* Live Notification Strip */}
-        {notification && (
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(21, 101, 192, 0.15)", border: `1px solid rgba(21, 101, 192, 0.4)`, borderRadius: 6, padding: "10px 16px", marginBottom: 24, fontSize: 13, color: TOKENS.paper, fontFamily: "'JetBrains Mono', monospace" }}>
-            <span>{notification}</span>
-            <button onClick={() => setNotification(null)} style={{ background: "transparent", border: "none", color: TOKENS.slate, cursor: "pointer", fontSize: 14 }}>✕</button>
-          </div>
-        )}
-
-        {/* Timeframe Selector & Export Bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
-          <div style={{ display: "flex", gap: 6 }}>
-            {["7D", "30D", "Q1", "ALL"].map((t) => (
-              <button
-                key={t}
-                onClick={() => setTimeframe(t)}
-                style={{
-                  background: timeframe === t ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
-                  border: `1px solid ${timeframe === t ? TOKENS.brass : TOKENS.hair}`,
-                  color: timeframe === t ? TOKENS.ink : TOKENS.paper,
-                  padding: "5px 12px",
-                  borderRadius: 4,
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: timeframe === t ? 700 : 400,
-                  cursor: "pointer"
-                }}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ display: "flex", gap: 10 }}>
-            <button
-              onClick={() => {
-                trackEvent("export_dashboard_csv");
-                alert("Downloading CSV report for " + timeframe + " telemetry data...");
-              }}
-              style={{
-                background: "transparent",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 4,
-                padding: "6px 12px",
-                color: TOKENS.slate,
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                cursor: "pointer"
-              }}
-            >
-              📥 Export CSV Report
-            </button>
-            <Button onClick={() => go("rfq-wizard")}>➕ Broadcast New RFQ</Button>
-          </div>
-        </div>
-
-        {/* KPI Metrics Strip */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 14, marginBottom: 32 }}>
-          <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 6 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>PROFILE VIEWS ({timeframe})</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, marginTop: 6 }}>{metrics.views}</div>
-          </div>
-          <div style={{ background: "rgba(0,168,150,0.06)", border: `1px solid rgba(0,168,150,0.25)`, padding: 18, borderRadius: 6 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal }}>INBOUND LEADS</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.teal, marginTop: 6 }}>{metrics.leads}</div>
-          </div>
-          <div style={{ background: "rgba(212,175,55,0.06)", border: `1px solid rgba(212,175,55,0.25)`, padding: 18, borderRadius: 6 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass }}>SUBMITTED QUOTES</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.brass, marginTop: 6 }}>{metrics.quotes}</div>
-          </div>
-          <div style={{ background: "rgba(21,101,192,0.08)", border: `1px solid rgba(21,101,192,0.3)`, padding: 18, borderRadius: 6 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: "#60A5FA" }}>PIPELINE VALUE</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: "#60A5FA", marginTop: 6 }}>{metrics.pipeline}</div>
-          </div>
-          <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, padding: 18, borderRadius: 6 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>WIN RATIO</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: TOKENS.paper, marginTop: 6 }}>{metrics.winRate}</div>
-          </div>
-        </div>
-
-        {/* Escrow & Banking Operations Banner */}
-        <div style={{
-          background: "linear-gradient(135deg, rgba(212,175,55,0.1), rgba(21,101,192,0.12))",
-          border: `1px solid rgba(212,175,55,0.35)`,
-          borderRadius: 8,
-          padding: "16px 20px",
-          marginBottom: 32,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 16
-        }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <span style={{ fontSize: 16 }}>🔐</span>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>
-                ABHIMANYU INDUSTRIAL ESCROW VAULT (SBI / ICICI GATEWAY)
-              </span>
-              <span style={{ background: "rgba(0,168,150,0.18)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 999, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                ● 100% CAPITAL PROTECTED
-              </span>
-            </div>
-            <p style={{ margin: 0, fontSize: 12.5, color: TOKENS.slate }}>
-              Active Escrow Pool: <strong>{formatPrice(485000, currency)}</strong> across 3 production POs. Stage-gate milestones are disbursed automatically upon DFM, FAI CMM, and GRN dock approvals.
-            </p>
-          </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <button
-              onClick={() => openEscrow?.("PO-2026-9041", "Apex Precision Engineering Ltd.", 485000)}
-              style={{
-                background: TOKENS.brass,
-                color: TOKENS.ink,
-                border: "none",
-                borderRadius: 4,
-                padding: "8px 14px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 700,
-                cursor: "pointer"
-              }}
-            >
-              🔐 Open Escrow Vault →
-            </button>
-            <button
-              onClick={() => openTraceability?.("RFQ-2026-9041", "SS 316L Stainless Steel")}
-              style={{
-                background: "transparent",
-                border: `1px solid ${TOKENS.teal}`,
-                color: TOKENS.teal,
-                borderRadius: 4,
-                padding: "8px 14px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 600,
-                cursor: "pointer"
-              }}
-            >
-              🔬 Material MTRs →
-            </button>
-          </div>
-        </div>
-
-        {/* Visual Pipeline Funnel Telemetry */}
-        <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 18, marginBottom: 32 }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 12 }}>DEAL PIPELINE CONVERSION FUNNEL</div>
-          <div style={{ display: "flex", height: 16, borderRadius: 8, overflow: "hidden", background: "rgba(15, 23, 42, 0.045)" }}>
-            <div style={{ width: "45%", background: TOKENS.blue, title: "Initial Scope" }} />
-            <div style={{ width: "30%", background: TOKENS.teal, title: "Tech Spec Review" }} />
-            <div style={{ width: "18%", background: TOKENS.brass, title: "Negotiation" }} />
-            <div style={{ width: "7%", background: "#10B981", title: "Won Contract" }} />
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 8, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-            <span>● 45% Scoping</span>
-            <span>● 30% Tech Audit</span>
-            <span>● 18% Price Negotiating</span>
-            <span>● 7% Won Deals</span>
-          </div>
-        </div>
-
-        {/* Live Inbound RFQ Leads Table */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: 0 }}>
-            Matched Inbound Buyer RFQs ({activeLeads.length})
-          </h4>
-          <span style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>⚡ AI Match Engine Active</span>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {activeLeads.map((item) => (
-            <div
-              key={item.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "16px 20px",
-                background: item.quoted ? "rgba(0,168,150,0.08)" : "rgba(15, 23, 42, 0.03)",
-                border: `1px solid ${item.quoted ? TOKENS.teal : TOKENS.hair}`,
-                borderRadius: 6,
-                flexWrap: "wrap",
-                gap: 14
-              }}
-            >
-              <div style={{ flex: "1 1 300px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.teal }}>{item.id}</span>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass }}>● {item.status}</span>
-                </div>
-                <div style={{ fontSize: 15, color: TOKENS.paper, fontWeight: 600 }}>{item.title}</div>
-                <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>
-                  {item.category} · Qty: {item.quantity} · Budget: {item.budget} · {item.location}
-                </div>
-              </div>
-
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                <button
-                  onClick={() => openTracker?.(item.id)}
-                  style={{
-                    background: "rgba(15, 23, 42, 0.045)",
-                    border: `1px solid ${TOKENS.hair}`,
-                    color: TOKENS.paper,
-                    padding: "7px 12px",
-                    borderRadius: 4,
-                    fontSize: 12,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    cursor: "pointer",
-                  }}
-                >
-                  🔍 Inspect RFQ
-                </button>
-                {item.quoted ? (
-                  <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, border: `1px solid ${TOKENS.teal}`, padding: "6px 12px", borderRadius: 4, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
-                    ✓ Quote Submitted
-                  </span>
-                ) : (
-                  <>
-                    <Button onClick={() => handleAction(item.id, "quote")}>Send Quote →</Button>
-                    <button
-                      onClick={() => handleAction(item.id, "dismiss")}
-                      style={{
-                        background: "transparent",
-                        border: `1px solid ${TOKENS.hair}`,
-                        color: TOKENS.slate,
-                        padding: "8px 12px",
-                        borderRadius: 4,
-                        fontSize: 12,
-                        cursor: "pointer"
-                      }}
-                    >
-                      Decline
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
-    </Section>
-  );
-}
-
-function KnowledgePage({ go }) {
-  const [domainFilter, setDomainFilter] = useState("All");
-  const [selectedGuide, setSelectedGuide] = useState(null);
-
-  const GUIDES = [
-    {
-      id: "cnc-machining",
-      domain: "CNC & Machining",
-      title: "How Contract CNC Machining Works: 5-Axis Milling, Tolerances & Ra Finish",
-      readTime: "8 min read",
-      author: "Vikram Sengupta (Lead Manufacturing Eng)",
-      summary: "A practical engineer's guide to 5-axis milling, choosing tolerances (ISO 2768-mK), toolpath optimization, and surface finishing for contract parts.",
-      content: "When outsourcing CNC manufacturing, understanding machine capabilities drastically affects cost and lead time. 3-axis milling is optimal for flat surfaces and prismatic geometries, while 5-axis continuous milling enables complex aerodynamic profiles without multiple re-fixturing steps. Key tolerance considerations: standard commercial tolerance is ±0.05 mm; high-precision aerospace and medical components demand ±0.005 mm with CMM (Coordinate Measuring Machine) verification reports.",
-      takeaways: [
-        "Use ISO 2768-mK as default tolerance standard unless tight fit is mandatory",
-        "Specify Ra 1.6 µm for standard machined parts, Ra 0.4 µm for hydraulic sealing surfaces",
-        "Design internal corner radii to at least 1/3 of cavity depth to avoid tool chatter",
-        "Provide STEP or IGES 3D models alongside PDF 2D drawings with GD&T callouts"
-      ],
-      relatedCategory: "Custom CNC Machining"
-    },
-    {
-      id: "anycast-lb",
-      domain: "Cloud & Anycast",
-      title: "Multi-Region Anycast Load Balancing: BGP Routing & Sub-Second Failovers",
-      readTime: "11 min read",
-      author: "Abhimanyu (CTO)",
-      summary: "How BGP Anycast IP routing directs global user requests to the closest edge node, reducing latency and achieving instantaneous server failovers.",
-      content: "Traditional DNS-based load balancing suffers from client-side TTL caching delays, often leaving traffic stranded on unresponsive server pools for minutes after an outage. With BGP (Border Gateway Protocol) Anycast, multiple edge points-of-presence (POPs) announce the exact same public IP prefix to upstream tier-1 transit providers. When a regional server cluster fails health check thresholds, BGP withdraws the route advertisement in under 400 milliseconds, automatically diverting incoming packets to the next closest healthy point.",
-      takeaways: [
-        "BGP route withdrawals achieve sub-second global traffic rerouting",
-        "Edge nodes terminate TLS sessions closer to clients, saving 80–120ms roundtrip handshakes",
-        "DDoS attack volume is naturally diffused across dozens of edge POPs simultaneously",
-        "Health check daemons poll backend origins every 500ms using synthetic gRPC probes"
-      ],
-      relatedCategory: "AI & Software Development"
-    },
-    {
-      id: "smt-assembly",
-      domain: "Electronics & SMT",
-      title: "SMT Electronics Assembly Handbook: Stencil Design, Reflow & IPC-A-610",
-      readTime: "9 min read",
-      author: "Rohan Nair (VP Hardware Systems)",
-      summary: "Best practices for surface mount technology: laser-cut stencil thickness, solder paste chemistry (SAC305), pick-and-place fiducials, and IPC Class 3 quality standards.",
-      content: "Surface Mount Technology (SMT) turnkey manufacturing requires disciplined Design for Manufacturing (DFM) rules at the schematic and layout phase. Fiducial markers must be placed diagonally across board edges to provide optical alignment for high-speed pick-and-place robots. Solder paste volume transfer efficiency depends on the area ratio of stencil apertures (target > 0.66). Reflow oven thermal profiling must maintain peak temperatures of 245°C for lead-free SAC305 alloys without thermal shock to delicate QFN or BGA dies.",
-      takeaways: [
-        "Include three global fiducial markers on panel rails for optical calibration",
-        "Follow IPC-7351B land pattern guidelines to minimize tombstoning during reflow",
-        "Require Automated Optical Inspection (AOI) and X-ray inspection for bottom-terminated components (BGA/QFN)",
-        "Specify conformal coating (acrylic or silicone) for industrial and outdoor telemetry nodes"
-      ],
-      relatedCategory: "Electronics Assembly"
-    },
-    {
-      id: "plastic-injection",
-      domain: "Plastic Injection",
-      title: "Plastic Injection Molding Design Guide: Draft Angles, Ribs & Shrinkage",
-      readTime: "7 min read",
-      author: "Kavita Rao (Tooling Director)",
-      summary: "How to avoid sink marks, warping, and costly tool modifications by designing proper draft angles, uniform wall thickness, and strategic gate placement.",
-      content: "In custom plastic injection molding, tooling costs represent the largest upfront capital investment. Ensuring parts eject cleanly from hardened steel or aluminum tool cavities requires consistent draft angles — minimum 1° to 2° per side, and up to 5° for heavy textured finishes. Non-uniform wall thickness causes uneven cooling and severe warpage; wall transitions should always be tapered with generous fillets. Rib thickness should not exceed 60% of the nominal wall thickness to eliminate sink marks on visible exterior surfaces.",
-      takeaways: [
-        "Maintain nominal wall thickness between 1.5 mm and 3.0 mm for standard ABS/PC blends",
-        "Incorporate minimum 1.5° draft on exterior core and cavity surfaces",
-        "Design rib heights under 3× nominal wall thickness with 0.5° draft",
-        "Select P20 steel tooling for prototype runs (<50k) and H13 hardened steel for >500k parts"
-      ],
-      relatedCategory: "Custom Plastic Injection"
-    },
-    {
-      id: "zero-trust",
-      domain: "Cloud & Anycast",
-      title: "Zero-Trust Microservices: Mutual TLS, gRPC & Distributed Tracing",
-      readTime: "10 min read",
-      author: "Rajesh Kumar (Head of Cybersecurity)",
-      summary: "Architecting zero-trust perimeter security for internal service meshes using SPIFFE/SPIRE identity attestation, automated certificate rotation, and Jaeger telemetry.",
-      content: "Perimeter firewalls are insufficient for enterprise cloud platforms. Zero-trust architecture mandates that every inter-service call across the cluster verify identity and encryption independently. Utilizing mutual TLS (mTLS) with short-lived X.509 certificates ensures that compromised worker nodes cannot eavesdrop or impersonate other microservices. Distributed tracing via OpenTelemetry and Jaeger propagates W3C trace context headers across asynchronous message queues (Kafka, RabbitMQ), providing end-to-end auditability.",
-      takeaways: [
-        "Enforce mTLS across all pod-to-pod communication within the Kubernetes cluster",
-        "Implement automated token rotation with maximum 24-hour credential lifetimes",
-        "Log structured audit events for every administrative configuration mutation",
-        "Deploy rate-limiting token buckets at both ingress edge gateways and internal service meshes"
-      ],
-      relatedCategory: "AI & Software Development"
-    },
-    {
-      id: "supplier-audit",
-      domain: "Quality & ISO",
-      title: "ISO 9001:2015 & AS9100D Supplier Audit Checklist for Enterprise Sourcing",
-      readTime: "6 min read",
-      author: "Anita Sharma (Director of Quality Assurance)",
-      summary: "A comprehensive vendor qualification checklist for procurement leaders evaluating contract manufacturers, OEM suppliers, and calibration certifications.",
-      content: "Before awarding production purchase orders, enterprise procurement teams must perform structured supplier audits. Critical areas include raw material traceability (Mill Test Reports), calibration logs for metrology instruments (micrometers, height gauges, CMM), First Article Inspection (FAI) reports conforming to AS9102 standards, and documented Non-Conformance Report (NCR) workflows. Verifying that a supplier maintains controlled segregation of scrap material prevents defective parts from contaminating production batches.",
-      takeaways: [
-        "Verify material test reports (MTR) against heat numbers stamped on raw billet stock",
-        "Ensure inspection tools have valid calibration seals conforming to ISO/IEC 17025",
-        "Audit Corrective and Preventive Action (CAPA) documentation from previous quarters",
-        "Require Certificates of Conformance (CoC) shipped with every delivery batch"
-      ],
-      relatedCategory: "Custom CNC Machining"
-    }
-  ];
-
-  const domains = ["All", "CNC & Machining", "Electronics & SMT", "Cloud & Anycast", "Plastic Injection", "Quality & ISO"];
-
-  const filteredGuides = GUIDES.filter((g) => {
-    return domainFilter === "All" || g.domain === domainFilter;
-  });
-
-  return (
-    <>
-      <Section eyebrow="Knowledge Base & Guides" title="Technical & Manufacturing Resource Hub" sub="In-depth engineering playbooks, tolerance standards, cloud architectural blueprints, and procurement checklists.">
-        {/* Domain Filter Pills */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
-          {domains.map((d) => (
-            <button
-              key={d}
-              onClick={() => setDomainFilter(d)}
-              style={{
-                background: domainFilter === d ? TOKENS.brass : "rgba(15, 23, 42, 0.04)",
-                border: `1px solid ${domainFilter === d ? TOKENS.brass : TOKENS.hair}`,
-                color: domainFilter === d ? TOKENS.ink : TOKENS.slate,
-                borderRadius: 999,
-                padding: "7px 16px",
-                fontSize: 12.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: domainFilter === d ? 700 : 400,
-                cursor: "pointer",
-                transition: "all 0.15s ease"
-              }}
-            >
-              {d}
-            </button>
-          ))}
-        </div>
-
-        {/* Guides Grid */}
-        <Grid min={320}>
-          {filteredGuides.map((guide) => (
-            <Card key={guide.id} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <span style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", background: "rgba(0,168,150,0.1)", padding: "3px 8px", borderRadius: 4 }}>
-                    {guide.domain.toUpperCase()}
-                  </span>
-                  <span style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
-                    {guide.readTime}
-                  </span>
-                </div>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 10px", lineHeight: 1.35 }}>
-                  {guide.title}
-                </h3>
-                <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 16px" }}>
-                  {guide.summary}
-                </p>
-              </div>
-
-              <div>
-                <div style={{ fontSize: 12, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace", marginBottom: 14 }}>
-                  By {guide.author}
-                </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <Button onClick={() => setSelectedGuide(guide)}>Read Full Playbook →</Button>
-                  <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post RFQ</Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </Grid>
-      </Section>
-
-      {/* In-Depth Technical Guide Reader Modal */}
-      {selectedGuide && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", background: TOKENS.panelAlt, border: `1px solid rgba(212,175,55,0.4)`, borderRadius: 12, overflow: "hidden", boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
-            {/* Modal Header */}
-            <div style={{ background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)", padding: "26px 32px", borderBottom: `1px solid ${TOKENS.hair}` }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
-                  {selectedGuide.domain.toUpperCase()} · {selectedGuide.readTime}
-                </span>
-                <button onClick={() => setSelectedGuide(null)} style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 34, height: 34, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-              </div>
-              <h2 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 6px", lineHeight: 1.3 }}>
-                {selectedGuide.title}
-              </h2>
-              <div style={{ fontSize: 13, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
-                Authored by {selectedGuide.author}
-              </div>
-            </div>
-
-            {/* Modal Body */}
-            <div style={{ padding: 32 }}>
-              <div style={{ background: "rgba(21, 101, 192, 0.1)", borderLeft: `3px solid ${TOKENS.blue}`, padding: "14px 18px", borderRadius: "0 6px 6px 0", marginBottom: 24 }}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#60A5FA", marginBottom: 4 }}>EXECUTIVE SUMMARY</div>
-                <p style={{ color: TOKENS.paper, fontSize: 14, lineHeight: 1.6, margin: 0 }}>
-                  {selectedGuide.summary}
-                </p>
-              </div>
-
-              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 19, margin: "0 0 12px" }}>
-                Engineering Deep-Dive & Methodologies
-              </h4>
-              <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.8, marginBottom: 28 }}>
-                {selectedGuide.content}
-              </p>
-
-              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.brass, fontSize: 18, margin: "0 0 14px" }}>
-                Key Technical Takeaways & Quality Checklist
-              </h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
-                {selectedGuide.takeaways.map((t, idx) => (
-                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, padding: "12px 16px", borderRadius: 6 }}>
-                    <span style={{ color: TOKENS.teal, fontSize: 14, fontWeight: "bold", flexShrink: 0 }}>✓</span>
-                    <span style={{ color: TOKENS.paper, fontSize: 13.5, lineHeight: 1.5 }}>{t}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-                <button
-                  onClick={() => {
-                    trackEvent("download_guide_pdf", { id: selectedGuide.id });
-                    alert(`Preparing technical PDF export: "${selectedGuide.title}"...`);
-                  }}
-                  style={{
-                    background: "transparent",
-                    border: `1px solid ${TOKENS.hair}`,
-                    color: TOKENS.paper,
-                    padding: "10px 16px",
-                    borderRadius: 6,
-                    fontSize: 13,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    cursor: "pointer"
-                  }}
-                >
-                  📄 Download PDF Handbook
-                </button>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <Button variant="ghost" onClick={() => setSelectedGuide(null)}>Close Playbook</Button>
-                  <Button onClick={() => { setSelectedGuide(null); go("rfq-wizard"); }}>
-                    Post RFQ in {selectedGuide.relatedCategory.split(" ")[0]} →
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <CTA go={go} />
-    </>
-  );
-}
-
-function ContactPage({ go }) {
-  const [submitting, setSubmitting] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [refId, setRefId] = useState("");
-  const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", country: "", service: "Custom CNC Machining & Manufacturing", budget: "$25k - $50k", timeline: "1-3 Months", requirements: "" });
-
-  const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
-  const inputStyle = { width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", color: TOKENS.paper, fontSize: 14.5, fontFamily: "inherit", boxSizing: "border-box" };
-  const labelStyle = { display: "block", color: TOKENS.slate, fontSize: 11.5, marginBottom: 6, fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em" };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    trackEvent("submit_contact_form", { email: form.email, service: form.service });
-
-    const newRef = `REF-ABH-${Math.floor(10000 + Math.random() * 90000)}`;
-    setRefId(newRef);
-
-    try {
-      await fetch("https://httpbin.org/post", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, refId: newRef, submittedAt: new Date().toISOString() })
-      }).catch(() => {});
-    } catch (err) {}
-
-    setTimeout(() => {
-      setSubmitting(false);
-      setSent(true);
-    }, 800);
-  };
-
-  if (sent) {
-    return (
-      <Section eyebrow="Contact Confirmation" title="Inquiry Received Successfully">
-        <Card style={{ maxWidth: 580, margin: "0 auto", padding: 40, textAlign: "center", border: `1px solid ${TOKENS.brass}` }}>
-          <div style={{ width: 60, height: 60, borderRadius: 999, background: "rgba(0, 168, 150, 0.15)", border: `1px solid ${TOKENS.teal}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 18px", color: TOKENS.teal, fontSize: 26, fontWeight: "bold" }}>✓</div>
-          <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>Thank You, {form.name || "Client"}!</h3>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.teal, marginBottom: 16 }}>OFFICIAL INTAKE REF: {refId}</div>
-          <p style={{ color: TOKENS.slate, fontSize: 15, lineHeight: 1.65, margin: "0 0 24px" }}>
-            Your scope inquiry has been assigned to an Abhimanyu Technologies solution architect. We will follow up at <strong style={{ color: TOKENS.paper }}>{form.email}</strong> within 12 business hours.
-          </p>
-          <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-            <Button onClick={() => setSent(false)}>Send Another Message</Button>
-            <Button variant="ghost" onClick={() => go("rfq-wizard")}>Post Live RFQ Requirement</Button>
-          </div>
-        </Card>
-      </Section>
-    );
-  }
-
-  return (
-    <>
-      <Section eyebrow="Contact Abhimanyu Technologies" title="Scale Your Business With Us" sub="Direct engineering consultations, contract manufacturing inquiries, and custom software scoping.">
-        {/* Fast Switcher Banner to RFQ Wizard */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 14,
-          background: "rgba(21, 101, 192, 0.1)",
-          border: `1px solid rgba(21, 101, 192, 0.3)`,
-          borderRadius: 8,
-          padding: "16px 20px",
-          marginBottom: 36,
-          maxWidth: 960,
-          margin: "0 auto 36px"
-        }}>
-          <div>
-            <div style={{ color: TOKENS.paper, fontWeight: 600, fontSize: 14.5 }}>
-              ⚡ Sourcing Custom Manufactured Parts or Electronics?
-            </div>
-            <div style={{ color: TOKENS.slate, fontSize: 13 }}>
-              Broadcast your CAD files and drawings to 500+ verified suppliers with automated instant quotes.
-            </div>
-          </div>
-          <button
-            onClick={() => go("rfq-wizard")}
-            style={{
-              background: TOKENS.brass,
-              color: TOKENS.ink,
-              border: "none",
-              borderRadius: 6,
-              padding: "9px 18px",
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 12.5,
-              fontWeight: 700,
-              cursor: "pointer"
-            }}
-          >
-            Launch 6-Step RFQ Wizard →
-          </button>
-        </div>
-
-        <div style={{ maxWidth: 960, margin: "0 auto", display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 36 }} className="contact-grid">
-          {/* Main Inquiry Form */}
-          <Card style={{ padding: 32 }}>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 20, margin: "0 0 20px" }}>Project Scope Intake Form</h3>
-            <form onSubmit={handleSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              <div>
-                <label style={labelStyle}>FULL NAME *</label>
-                <input required style={inputStyle} value={form.name} onChange={update("name")} placeholder="John Doe" />
-              </div>
-              <div>
-                <label style={labelStyle}>WORK EMAIL *</label>
-                <input required type="email" style={inputStyle} value={form.email} onChange={update("email")} placeholder="john@company.com" />
-              </div>
-              <div>
-                <label style={labelStyle}>COMPANY / ORGANIZATION</label>
-                <input style={inputStyle} value={form.company} onChange={update("company")} placeholder="Enterprise Ltd" />
-              </div>
-              <div>
-                <label style={labelStyle}>PHONE / WHATSAPP NUMBER</label>
-                <input style={inputStyle} value={form.phone} onChange={update("phone")} placeholder="+91 / +1 000-000-0000" />
-              </div>
-              <div style={{ gridColumn: "1 / -1" }}>
-                <label style={labelStyle}>PRIMARY SERVICE / SOURCING PRACTICE</label>
-                <select style={inputStyle} value={form.service} onChange={update("service")}>
-                  <option value="Custom CNC Machining & Manufacturing">Custom CNC Machining & Manufacturing</option>
-                  <option value="Electronics & SMT Assembly">Electronics & SMT Assembly</option>
-                  <option value="Custom Software Development">Custom Software Development</option>
-                  <option value="AI & Machine Learning Engine">AI & Machine Learning Engine</option>
-                  <option value="Cloud Anycast & Infrastructure">Cloud Anycast & Infrastructure</option>
-                  <option value="IoT & Industrial Embedded Systems">IoT & Industrial Embedded Systems</option>
-                  <option value="SOC2 & Cybersecurity Compliance">SOC2 & Cybersecurity Compliance</option>
-                </select>
-              </div>
-              <div>
-                <label style={labelStyle}>ESTIMATED BUDGET</label>
-                <select style={inputStyle} value={form.budget} onChange={update("budget")}>
-                  <option value="< $25k">&lt; $25,000 / &lt; ₹20 Lakhs</option>
-                  <option value="$25k - $50k">$25,000 - $50,000</option>
-                  <option value="$50k - $100k">$50,000 - $100,000</option>
-                  <option value="$100k+">$100,000+ / Custom Enterprise</option>
-                </select>
-              </div>
-              <div>
-                <label style={labelStyle}>TIMELINE EXPECTATION</label>
-                <select style={inputStyle} value={form.timeline} onChange={update("timeline")}>
-                  <option value="Immediate (< 1 month)">Immediate (Less than 1 Month)</option>
-                  <option value="1-3 Months">1–3 Months (Standard)</option>
-                  <option value="3-6 Months">3–6 Months</option>
-                  <option value="Ongoing Partnership">Ongoing Strategic Partnership</option>
-                </select>
-              </div>
-              <div style={{ gridColumn: "1 / -1" }}>
-                <label style={labelStyle}>PROJECT REQUIREMENTS & SCOPE *</label>
-                <textarea required rows={4} style={{ ...inputStyle, resize: "vertical" }} value={form.requirements} onChange={update("requirements")} placeholder="Describe technical specifications, batch sizes, target outcomes, or software architecture..." />
-              </div>
-              <div style={{ gridColumn: "1 / -1" }}>
-                <Button type="submit" disabled={submitting}>
-                  {submitting ? "Transmitting Scope..." : "Submit Project Inquiry →"}
-                </Button>
-              </div>
-            </form>
-          </Card>
-
-          {/* Regional Hubs & Contact Metadata */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <Card style={{ padding: 24 }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass, marginBottom: 8, letterSpacing: "0.08em" }}>
-                HEADQUARTERS & R&D LAB
-              </div>
-              <h4 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 18, margin: "0 0 6px" }}>
-                Telangana Enterprise Campus
-              </h4>
-              <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 12px" }}>
-                Telangana, India · Core Software, Neural Architecture Lab, and Distributed Cloud NOC.
-              </p>
-              <div style={{ fontSize: 12, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>
-                Direct Hotline: +91 (Available 24/7 for Outages)
-              </div>
-            </Card>
-
-            <Card style={{ padding: 24 }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: "#60A5FA", marginBottom: 8, letterSpacing: "0.08em" }}>
-                SOURCING & REGIONAL HUBS
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 13, color: TOKENS.slate }}>
-                <div>
-                  <b style={{ color: TOKENS.paper }}>Chennai Corridor:</b> Industrial Machining, Foundry & Sheet Metal Supplier Hub
-                </div>
-                <div>
-                  <b style={{ color: TOKENS.paper }}>Hyderabad & Bengaluru:</b> SMT Electronics Assembly & Cloud Software Practice
-                </div>
-                <div>
-                  <b style={{ color: TOKENS.paper }}>Pune & Mumbai:</b> Automotive IoT & Injection Molding Hub
-                </div>
-              </div>
-            </Card>
-
-            <Card style={{ padding: 24, background: "rgba(0,168,150,0.06)", border: `1px solid rgba(0,168,150,0.25)` }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 6 }}>
-                ⚡ 12-HOUR ARCHITECT SLA
-              </div>
-              <p style={{ color: TOKENS.paper, fontSize: 13, lineHeight: 1.5, margin: 0 }}>
-                Every inquiry is reviewed by an active Solutions Architect, not an SDR queue. You will receive an initial feasibility and architectural scope within 12 business hours.
-              </p>
-            </Card>
-          </div>
-        </div>
-      </Section>
-    </>
-  );
-}
-
-function CTA({ go, label = "Contact Us" }) {
-  return (
-    <div style={{ padding: "90px 24px", textAlign: "center", borderTop: `1px solid ${TOKENS.hair}`, position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", opacity: 0.16, pointerEvents: "none" }}>
-        <Vault3D size={280} variant="ring" />
-      </div>
-      <div style={{ position: "relative" }}>
-        <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(26px,4vw,36px)", color: TOKENS.paper, margin: "0 0 28px" }}>
-          Let's build the thing you keep meaning to build.
-        </h2>
-        <Button onClick={() => go("contact")}>{label} →</Button>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- header (logo + full nav) ---------------------------- */
-
-function TransparentLogo({ src, height = 40, alt = "MyVault Logo" }) {
-  const [cleanSrc, setCleanSrc] = useState(src);
-
-  useEffect(() => {
-    let cancelled = false;
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.onload = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imgData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          if (data[i] > 220 && data[i + 1] > 220 && data[i + 2] > 220) data[i + 3] = 0;
-        }
-        ctx.putImageData(imgData, 0, 0);
-        if (!cancelled) setCleanSrc(canvas.toDataURL("image/png"));
-      } catch (err) {
-        if (!cancelled) setCleanSrc(src);
-      }
-    };
-    img.onerror = () => { if (!cancelled) setCleanSrc(src); };
-    img.src = src;
-    return () => { cancelled = true; };
-  }, [src]);
-
-  return (
-    <img
-      src={cleanSrc}
-      alt={alt}
-      style={{ height, width: "auto", objectFit: "contain", filter: "drop-shadow(0 0 14px rgba(79,179,255,0.4))" }}
+        zIndex: 0,
+        opacity: 0.85,
+      }}
     />
   );
 }
 
-function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setCurrentUser, openAuth, openTracker, openSpotlight, openQuoter, theme = "light", setTheme }) {
-  const [open, setOpen] = useState(false);
-  const [megaOpen, setMegaOpen] = useState(false);
-  const [currencyOpen, setCurrencyOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+/* ---------------------------- Universal Header ---------------------------- */
 
-  const megaMenuCols = [
-    {
-      title: "🛒 Products",
-      links: [
-        { label: "Browse All Products", id: "products" },
-        { label: "Abhimanyu ERP", id: "products" },
-        { label: "Abhimanyu CRM", id: "products" },
-        { label: "Abhimanyu HRMS", id: "products" },
-        { label: "Abhimanyu AI Platform", id: "products" },
-        { label: "Abhimanyu IoT", id: "products" },
-      ]
-    },
-    {
-      title: "🛠 Services",
-      links: [
-        { label: "Software Engineering", id: "services" },
-        { label: "AI & Machine Learning", id: "services" },
-        { label: "Cloud & DevOps", id: "services" },
-        { label: "Cybersecurity", id: "services" },
-        { label: "IoT & Embedded", id: "services" },
-        { label: "Data & Analytics", id: "services" },
-      ]
-    },
-    {
-      title: "🏢 Businesses",
-      links: [
-        { label: "Business Directory", id: "businesses" },
-        { label: "Post Your Business", id: "contact" },
-        { label: "Verified Partners", id: "businesses" },
-        { label: "Seller Dashboard", id: "dashboard" },
-        { label: "Knowledge Base", id: "knowledge" },
-        { label: "Case Studies", id: "case-studies" },
-      ]
-    },
-    {
-      title: "🏭 Manufacturing",
-      links: [
-        { label: "Find Manufacturers", id: "manufacturers" },
-        { label: "CNC Machining", id: "manufacturers" },
-        { label: "Sheet Metal Fab", id: "manufacturers" },
-        { label: "Electronics Assembly", id: "manufacturers" },
-        { label: "Post RFQ Requirement", id: "rfq-wizard" },
-        { label: "Browse Live RFQs", id: "requirements" },
-      ]
-    }
-  ];
-
-  const primaryNav = [
-    { id: "products", label: "Products" },
-    { id: "services", label: "Services" },
-    { id: "manufacturers", label: "Manufacturers" },
-    { id: "businesses", label: "Businesses" },
-    { id: "requirements", label: "RFQs" },
-    { id: "dashboard", label: "Dashboard" },
-  ];
+function SiteHeader({
+  page,
+  go,
+  currency = "INR",
+  setCurrency,
+  currentUser,
+  openAuth,
+  openEstimator,
+  openTracker,
+  openSpotlight,
+  theme = "light",
+  setTheme,
+}) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [servicesDropdown, setServicesDropdown] = useState(false);
+  const [currencyDropdown, setCurrencyDropdown] = useState(false);
 
   return (
-    <header style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: `rgba(255, 255, 255, 0.94)`, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderBottom: `1px solid ${TOKENS.hair}`, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
-        {/* Logo */}
-        <button onClick={() => go("home")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 12, padding: 0, flexShrink: 0 }}>
+    <header
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: theme === "dark" ? "rgba(19, 34, 56, 0.94)" : "rgba(255, 255, 255, 0.94)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        borderBottom: `1px solid ${TOKENS.hair}`,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: "0 20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: 64,
+        }}
+      >
+        {/* Brand Logo */}
+        <button
+          onClick={() => go("home")}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: 0,
+          }}
+        >
           <TransparentLogo src="/logo.png" height={36} />
           <div style={{ textAlign: "left" }}>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 600, color: TOKENS.paper, letterSpacing: "0.01em", lineHeight: 1.1 }}>Abhimanyu</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 8, color: TOKENS.teal, letterSpacing: "0.20em", textTransform: "uppercase" }}>SCALE YOUR BUSINESS</div>
+            <div
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 17.5,
+                fontWeight: 700,
+                color: TOKENS.paper,
+                letterSpacing: "-0.01em",
+                lineHeight: 1.1,
+              }}
+            >
+              Abhimanyu
+            </div>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 8.5,
+                color: TOKENS.teal,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                fontWeight: 600,
+              }}
+            >
+              IT SERVICES & PRODUCTS
+            </div>
           </div>
         </button>
 
-        {/* Desktop Nav */}
+        {/* Desktop Navigation Links */}
         <nav className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {/* Explore Mega Menu trigger */}
+          {/* Services Dropdown */}
           <div style={{ position: "relative" }}>
             <button
-              onMouseEnter={() => setMegaOpen(true)}
-              onMouseLeave={() => setMegaOpen(false)}
-              onClick={() => setMegaOpen(!megaOpen)}
+              onMouseEnter={() => setServicesDropdown(true)}
+              onMouseLeave={() => setServicesDropdown(false)}
+              onClick={() => { go("services"); setServicesDropdown(false); }}
               style={{
-                background: megaOpen ? `rgba(21, 101, 192, 0.15)` : "transparent",
-                border: megaOpen ? `1px solid rgba(21, 101, 192, 0.4)` : "1px solid transparent",
+                background: page === "services" ? TOKENS.badgeBg : "transparent",
+                border: "none",
                 borderRadius: 6,
-                cursor: "pointer",
-                color: megaOpen ? TOKENS.brass : TOKENS.paper,
+                color: page === "services" ? TOKENS.blue : TOKENS.paper,
                 fontSize: 13,
-                fontFamily: "'JetBrains Mono', monospace",
-                padding: "7px 14px",
-                display: "flex",
-                alignItems: "center",
-                gap: 5,
-                transition: "all 0.2s ease",
-              }}
-            >
-              🧭 Explore <span style={{ fontSize: 9 }}>▼</span>
-            </button>
-
-            {/* Mega Menu Dropdown */}
-            {megaOpen && (
-              <div
-                onMouseEnter={() => setMegaOpen(true)}
-                onMouseLeave={() => setMegaOpen(false)}
-                style={{
-                  position: "absolute",
-                  top: "calc(100% + 6px)",
-                  left: "-20px",
-                  width: 760,
-                  background: `#FFFFFF`,
-                  backdropFilter: "blur(20px)",
-                  WebkitBackdropFilter: "blur(20px)",
-                  border: `1px solid ${TOKENS.hair}`,
-                  borderRadius: 10,
-                  boxShadow: "0 20px 50px rgba(0,0,0,0.10), 0 0 0 1px rgba(217,119,6,0.15)",
-                  display: "grid",
-                  gridTemplateColumns: "repeat(4, 1fr)",
-                  gap: 0,
-                  padding: 8,
-                  zIndex: 100,
-                }}
-              >
-                {megaMenuCols.map((col, ci) => (
-                  <div key={ci} style={{ padding: "12px 16px", borderRight: ci < 3 ? `1px solid ${TOKENS.hair}` : "none" }}>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, letterSpacing: "0.08em", marginBottom: 12, fontWeight: 700 }}>
-                      {col.title}
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                      {col.links.map((lnk, li) => (
-                        <button
-                          key={li}
-                          onClick={() => { go(lnk.id); setMegaOpen(false); }}
-                          style={{
-                            background: "transparent",
-                            border: "none",
-                            textAlign: "left",
-                            color: TOKENS.slate,
-                            fontSize: 13,
-                            cursor: "pointer",
-                            padding: "6px 8px",
-                            borderRadius: 4,
-                            transition: "all 0.15s ease",
-                            fontFamily: "'Inter', sans-serif",
-                          }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = "#F1F5F9"; e.currentTarget.style.color = TOKENS.paper; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = TOKENS.slate; }}
-                        >
-                          {lnk.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                {/* Mega Menu Footer CTA */}
-                <div style={{ gridColumn: "1 / -1", borderTop: `1px solid ${TOKENS.hair}`, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
-                    📍 Chennai • Telangana • Pan-India • Global
-                  </div>
-                  <button
-                    onClick={() => { go("rfq-wizard"); setMegaOpen(false); }}
-                    style={{ background: TOKENS.brass, color: TOKENS.ink, border: "none", borderRadius: 5, padding: "7px 16px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, cursor: "pointer" }}
-                  >
-                    ➕ Post RFQ →
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Quick Search Shortcut Pill */}
-          <button
-            onClick={openSpotlight}
-            style={{
-              background: "rgba(15, 23, 42, 0.04)",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              color: TOKENS.slate,
-              fontSize: 12,
-              fontFamily: "'Inter', sans-serif",
-              padding: "6px 12px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              transition: "all 0.15s ease",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = TOKENS.paper; e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = TOKENS.slate; e.currentTarget.style.borderColor = TOKENS.hair; }}
-            title="Press Ctrl+K or ⌘K to search anywhere"
-          >
-            <span>🔍 Search</span>
-            <kbd style={{ background: "rgba(15, 23, 42, 0.06)", border: `1px solid ${TOKENS.hair}`, borderRadius: 3, padding: "1px 5px", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper }}>
-              Ctrl+K
-            </kbd>
-          </button>
-
-          {/* Primary nav links */}
-          {primaryNav.map((n) => (
-            <button
-              key={n.id}
-              onClick={() => go(n.id)}
-              style={{
-                background: page === n.id ? "rgba(21, 101, 192, 0.15)" : "transparent",
-                border: "1px solid transparent",
-                borderRadius: 6,
-                cursor: "pointer",
-                color: page === n.id ? TOKENS.brass : TOKENS.slate,
-                fontSize: 13,
-                fontFamily: "'JetBrains Mono', monospace",
-                padding: "7px 12px",
-                transition: "all 0.15s ease",
-              }}
-              onMouseEnter={(e) => { if (page !== n.id) { e.currentTarget.style.color = TOKENS.paper; e.currentTarget.style.background = "rgba(15, 23, 42, 0.045)"; } }}
-              onMouseLeave={(e) => { if (page !== n.id) { e.currentTarget.style.color = TOKENS.slate; e.currentTarget.style.background = "transparent"; } }}
-            >
-              {n.label}
-            </button>
-          ))}
-        </nav>
-
-        {/* Desktop CTA & Controls */}
-        <div className="desktop-nav" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          {/* Theme Switcher */}
-          <button
-            onClick={() => setTheme?.((prev) => (prev === "light" ? "dark" : "light"))}
-            style={{
-              background: "rgba(15, 23, 42, 0.045)",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              color: TOKENS.paper,
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              padding: "6px 10px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 5,
-              transition: "all 0.15s ease",
-            }}
-            title={`Switch to ${theme === "light" ? "Dark (Deep Navy)" : "Light (Clean White)"} Theme`}
-          >
-            <span>{theme === "light" ? "🌙 Dark" : "☀️ Light"}</span>
-          </button>
-
-          {/* Currency Switcher */}
-          <div style={{ position: "relative" }}>
-            <button
-              onClick={() => setCurrencyOpen(!currencyOpen)}
-              style={{
-                background: "rgba(15, 23, 42, 0.04)",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 6,
-                color: TOKENS.paper,
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                padding: "6px 10px",
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 600,
+                padding: "8px 12px",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 gap: 4,
               }}
-              title="Select Platform Currency"
             >
-              <span>{CURRENCIES[currency]?.label || currency}</span>
-              <span style={{ fontSize: 9 }}>▼</span>
+              IT Services <span style={{ fontSize: 9 }}>▼</span>
             </button>
-            {currencyOpen && (
+            {servicesDropdown && (
+              <div
+                onMouseEnter={() => setServicesDropdown(true)}
+                onMouseLeave={() => setServicesDropdown(false)}
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  left: 0,
+                  width: 320,
+                  background: TOKENS.panel,
+                  border: `1px solid ${TOKENS.hair}`,
+                  borderRadius: 10,
+                  boxShadow: "0 14px 40px rgba(0,0,0,0.12)",
+                  padding: 8,
+                  zIndex: 200,
+                }}
+              >
+                {IT_SERVICES.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => { go("services"); setServicesDropdown(false); }}
+                    style={{
+                      width: "100%",
+                      background: "transparent",
+                      border: "none",
+                      padding: "8px 10px",
+                      borderRadius: 6,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      textAlign: "left",
+                      cursor: "pointer",
+                      transition: "all 0.12s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = TOKENS.panelAlt)}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  >
+                    <span style={{ fontSize: 16 }}>{s.icon}</span>
+                    <div>
+                      <div style={{ fontSize: 12.5, fontWeight: 600, color: TOKENS.paper }}>{s.title}</div>
+                      <div style={{ fontSize: 10, color: TOKENS.slate }}>{s.category}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => go("products")}
+            style={{
+              background: page === "products" ? TOKENS.badgeBg : "transparent",
+              border: "none",
+              borderRadius: 6,
+              color: page === "products" ? TOKENS.blue : TOKENS.paper,
+              fontSize: 13,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+          >
+            Products
+          </button>
+
+          <button
+            onClick={() => go("case-studies")}
+            style={{
+              background: page === "case-studies" ? TOKENS.badgeBg : "transparent",
+              border: "none",
+              borderRadius: 6,
+              color: page === "case-studies" ? TOKENS.blue : TOKENS.paper,
+              fontSize: 13,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+          >
+            Case Studies
+          </button>
+
+          <button
+            onClick={() => go("knowledge")}
+            style={{
+              background: page === "knowledge" ? TOKENS.badgeBg : "transparent",
+              border: "none",
+              borderRadius: 6,
+              color: page === "knowledge" ? TOKENS.blue : TOKENS.paper,
+              fontSize: 13,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+          >
+            Tech Hub
+          </button>
+
+          <button
+            onClick={() => go("about")}
+            style={{
+              background: page === "about" ? TOKENS.badgeBg : "transparent",
+              border: "none",
+              borderRadius: 6,
+              color: page === "about" ? TOKENS.blue : TOKENS.paper,
+              fontSize: 13,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+          >
+            About
+          </button>
+
+          <button
+            onClick={() => go("careers")}
+            style={{
+              background: page === "careers" ? TOKENS.badgeBg : "transparent",
+              border: "none",
+              borderRadius: 6,
+              color: page === "careers" ? TOKENS.blue : TOKENS.paper,
+              fontSize: 13,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+          >
+            Careers
+          </button>
+        </nav>
+
+        {/* Desktop Actions */}
+        <div className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {/* Spotlight Search Pill */}
+          <button
+            onClick={openSpotlight}
+            style={{
+              background: "rgba(15,23,42,0.04)",
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              padding: "6px 10px",
+              fontSize: 12,
+              fontFamily: "'Inter', sans-serif",
+              color: TOKENS.slate,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+            title="Press Ctrl+K to Search Services, Products & Tech"
+          >
+            <span>🔍 Search</span>
+            <kbd style={{ background: "rgba(15,23,42,0.06)", border: `1px solid ${TOKENS.hair}`, borderRadius: 3, padding: "1px 4px", fontSize: 10, fontFamily: "'JetBrains Mono', monospace" }}>Ctrl+K</kbd>
+          </button>
+
+          {/* Theme Toggle Pill */}
+          <button
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            style={{
+              background: "rgba(15,23,42,0.04)",
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              padding: "6px 10px",
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              color: TOKENS.paper,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+            title={`Switch to ${theme === "light" ? "Dark Mode" : "Light Mode"}`}
+          >
+            {theme === "light" ? "🌙 Dark" : "☀️ Light"}
+          </button>
+
+          {/* Currency Switcher */}
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setCurrencyDropdown(!currencyDropdown)}
+              style={{
+                background: "rgba(15,23,42,0.04)",
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 6,
+                padding: "6px 10px",
+                fontSize: 12,
+                fontFamily: "'JetBrains Mono', monospace",
+                color: TOKENS.paper,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <span>{CURRENCIES[currency]?.label.split(" ")[0]}</span>
+              <span style={{ fontSize: 8 }}>▼</span>
+            </button>
+            {currencyDropdown && (
               <div
                 style={{
                   position: "absolute",
-                  top: "calc(100% + 6px)",
+                  top: "100%",
                   right: 0,
                   background: TOKENS.panel,
                   border: `1px solid ${TOKENS.hair}`,
                   borderRadius: 6,
                   padding: 4,
-                  zIndex: 100,
-                  boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
-                  minWidth: 140,
+                  boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
+                  zIndex: 200,
+                  minWidth: 130,
                 }}
               >
                 {Object.keys(CURRENCIES).map((cKey) => (
                   <button
                     key={cKey}
-                    onClick={() => { setCurrency?.(cKey); setCurrencyOpen(false); }}
+                    onClick={() => { setCurrency(cKey); setCurrencyDropdown(false); }}
                     style={{
                       width: "100%",
-                      background: currency === cKey ? "rgba(217,119,6,0.15)" : "transparent",
+                      background: currency === cKey ? TOKENS.badgeBg : "transparent",
                       border: "none",
-                      color: currency === cKey ? TOKENS.brass : TOKENS.paper,
-                      padding: "7px 10px",
-                      textAlign: "left",
-                      fontSize: 12,
+                      color: currency === cKey ? TOKENS.blue : TOKENS.paper,
+                      padding: "6px 10px",
+                      fontSize: 11.5,
                       fontFamily: "'JetBrains Mono', monospace",
+                      textAlign: "left",
                       cursor: "pointer",
                       borderRadius: 4,
                     }}
@@ -6618,247 +1157,121 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
             )}
           </div>
 
-          {/* Instant Quote Button */}
+          {/* Interactive Project Cost Estimator */}
           <button
-            onClick={openQuoter}
+            onClick={openEstimator}
             style={{
-              background: "rgba(217, 119, 6, 0.12)",
-              border: "1px solid rgba(217, 119, 6, 0.35)",
+              background: "rgba(217,119,6,0.12)",
+              border: `1px solid ${TOKENS.brass}`,
               borderRadius: 6,
               color: TOKENS.brass,
+              padding: "6px 12px",
               fontSize: 12,
               fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 600,
-              padding: "6px 11px",
+              fontWeight: 700,
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              gap: 5,
-              transition: "all 0.15s ease",
-            }}
-            title="Parametric Instant Manufacturing Quoting Calculator"
-          >
-            <span>⚡</span> Instant Quote
-          </button>
-
-          {/* Track RFQ Button */}
-          <button
-            onClick={() => openTracker?.("RFQ-2026-9041")}
-            style={{
-              background: "rgba(0,168,150,0.12)",
-              border: `1px solid rgba(0,168,150,0.35)`,
-              borderRadius: 6,
-              color: TOKENS.teal,
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              padding: "6px 12px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 5,
-            }}
-            title="Inspect Real-time RFQ Status, Competing Quotes & Digital POs"
-          >
-            <span>🔍</span> Track RFQ
-          </button>
-
-          {/* User Profile / Auth Button */}
-          {currentUser ? (
-            <div style={{ position: "relative" }}>
-              <button
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                style={{
-                  background: "rgba(21,101,192,0.15)",
-                  border: `1px solid rgba(21,101,192,0.4)`,
-                  borderRadius: 6,
-                  color: TOKENS.paper,
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  padding: "6px 12px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
-              >
-                <span>{currentUser.avatar}</span>
-                <span style={{ maxWidth: 110, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {currentUser.company.split(" ")[0]}
-                </span>
-                <span style={{ fontSize: 9, color: TOKENS.teal }}>●</span>
-              </button>
-
-              {userMenuOpen && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "calc(100% + 6px)",
-                    right: 0,
-                    width: 250,
-                    background: TOKENS.panel,
-                    border: `1px solid ${TOKENS.hair}`,
-                    borderRadius: 8,
-                    padding: 12,
-                    zIndex: 100,
-                    boxShadow: "0 16px 40px rgba(0,0,0,0.18)",
-                  }}
-                >
-                  <div style={{ paddingBottom: 8, borderBottom: `1px solid ${TOKENS.hair}`, marginBottom: 8 }}>
-                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: TOKENS.paper }}>{currentUser.name}</div>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.brass }}>{currentUser.company}</div>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal, marginTop: 2 }}>{currentUser.badge}</div>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                    <button
-                      onClick={() => { go("dashboard"); setUserMenuOpen(false); }}
-                      style={{ background: "transparent", border: "none", color: TOKENS.paper, textAlign: "left", padding: "6px 8px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", borderRadius: 4 }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42, 0.05)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                    >
-                      📊 Seller & Buyer Dashboard
-                    </button>
-                    <button
-                      onClick={() => { openTracker?.("RFQ-2026-9041"); setUserMenuOpen(false); }}
-                      style={{ background: "transparent", border: "none", color: TOKENS.paper, textAlign: "left", padding: "6px 8px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", borderRadius: 4 }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42, 0.05)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                    >
-                      📋 Track Live RFQs ({currentUser.activeRFQs})
-                    </button>
-                    <button
-                      onClick={() => { openAuth?.(); setUserMenuOpen(false); }}
-                      style={{ background: "transparent", border: "none", color: TOKENS.teal, textAlign: "left", padding: "6px 8px", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", borderRadius: 4 }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42, 0.05)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                    >
-                      ⚙️ Manage Account / Switch Role
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button
-              onClick={openAuth}
-              style={{
-                background: "rgba(15, 23, 42, 0.045)",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 6,
-                color: TOKENS.paper,
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                padding: "6px 12px",
-                cursor: "pointer",
-              }}
-            >
-              🔑 Sign In
-            </button>
-          )}
-
-          <button
-            onClick={() => go("contact")}
-            style={{
-              background: "transparent",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              color: TOKENS.paper,
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              padding: "6px 12px",
-              cursor: "pointer",
+              gap: 4,
             }}
           >
-            Contact
+            <span>⚡ Cost Estimator</span>
           </button>
-          <Button onClick={() => go("rfq-wizard")} style={{ padding: "7px 14px", fontSize: 12 }}>Post RFQ →</Button>
+
+          {/* Primary CTA */}
+          <Button onClick={() => go("rfq-wizard")} style={{ padding: "7px 14px", fontSize: 12 }}>
+            Start a Project →
+          </Button>
         </div>
 
-        {/* Mobile Toggle */}
-        <button className="mobile-toggle" onClick={() => setOpen(!open)} style={{ display: "none", background: "none", border: "none", color: TOKENS.paper, fontSize: 22 }}>
-          {open ? "×" : "≡"}
+        {/* Mobile Hamburger Toggle */}
+        <button
+          className="mobile-toggle"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          style={{
+            display: "none",
+            background: "none",
+            border: "none",
+            fontSize: 24,
+            color: TOKENS.paper,
+            cursor: "pointer",
+          }}
+        >
+          {mobileMenuOpen ? "×" : "≡"}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {open && (
-        <div className="mobile-menu" style={{ padding: "0 20px 20px", display: "flex", flexDirection: "column", gap: 4, background: TOKENS.panel, borderTop: `1px solid ${TOKENS.hair}`, maxHeight: "75vh", overflowY: "auto" }}>
-          {/* Mobile Search Button */}
-          <button
-            onClick={() => { openSpotlight?.(); setOpen(false); }}
-            style={{
-              background: "rgba(15, 23, 42, 0.045)",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              color: TOKENS.paper,
-              padding: "10px 14px",
-              fontSize: 13,
-              fontFamily: "'JetBrains Mono', monospace",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginTop: 10,
-              marginBottom: 4,
-            }}
-          >
-            <span>🔍 Search Entire Platform</span>
-            <kbd style={{ background: "rgba(15, 23, 42, 0.06)", padding: "2px 6px", borderRadius: 3, fontSize: 10 }}>Ctrl+K</kbd>
-          </button>
-
-          {/* Quick Mobile Action Bar */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, padding: "10px 0", borderBottom: `1px solid ${TOKENS.hair}` }}>
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div
+          style={{
+            background: TOKENS.panel,
+            borderTop: `1px solid ${TOKENS.hair}`,
+            padding: "16px 20px 24px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
             <button
-              onClick={() => { openQuoter?.(); setOpen(false); }}
-              style={{ background: "rgba(217,119,6,0.12)", border: `1px solid ${TOKENS.brass}`, color: TOKENS.brass, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", fontWeight: 700 }}
+              onClick={() => { openEstimator(); setMobileMenuOpen(false); }}
+              style={{
+                background: "rgba(217,119,6,0.12)",
+                border: `1px solid ${TOKENS.brass}`,
+                color: TOKENS.brass,
+                borderRadius: 6,
+                padding: "8px",
+                fontSize: 11.5,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
             >
-              ⚡ Instant Quote
+              ⚡ Cost Estimator
             </button>
             <button
-              onClick={() => setTheme?.((prev) => (prev === "light" ? "dark" : "light"))}
-              style={{ background: "rgba(15,23,42,0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
+              onClick={() => { setTheme(theme === "light" ? "dark" : "light"); setMobileMenuOpen(false); }}
+              style={{
+                background: TOKENS.panelAlt,
+                border: `1px solid ${TOKENS.hair}`,
+                color: TOKENS.paper,
+                borderRadius: 6,
+                padding: "8px",
+                fontSize: 11.5,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
             >
               {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
-            </button>
-            <button
-              onClick={() => { openTracker?.("RFQ-2026-9041"); setOpen(false); }}
-              style={{ background: "rgba(0,168,150,0.15)", border: `1px solid ${TOKENS.teal}`, color: TOKENS.teal, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
-            >
-              🔍 Track RFQ
-            </button>
-            <button
-              onClick={() => { openAuth?.(); setOpen(false); }}
-              style={{ background: "rgba(21,101,192,0.15)", border: `1px solid ${TOKENS.blue}`, color: TOKENS.paper, padding: "8px", borderRadius: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer" }}
-            >
-              {currentUser ? `👤 ${currentUser.company.split(" ")[0]}` : "🔑 Sign In"}
             </button>
           </div>
 
           {[
             { id: "home", label: "🏠 Home" },
-            { id: "products", label: "🛒 Products" },
-            { id: "services", label: "🛠 Services" },
-            { id: "manufacturers", label: "🏭 Manufacturers" },
-            { id: "businesses", label: "🏢 Businesses" },
-            { id: "requirements", label: "📋 Requirements (RFQ)" },
-            { id: "rfq-wizard", label: "➕ Post a Requirement" },
-            { id: "dashboard", label: "📊 Dashboard" },
-            { id: "knowledge", label: "📚 Knowledge" },
-            { id: "about", label: "ℹ️ About" },
-            { id: "contact", label: "📞 Contact" },
+            { id: "services", label: "🛠 IT Services" },
+            { id: "products", label: "📦 Products" },
+            { id: "rfq-wizard", label: "➕ Project Scope Planner" },
+            { id: "case-studies", label: "📈 Case Studies" },
+            { id: "dashboard", label: "📊 Client Portal" },
+            { id: "knowledge", label: "📚 Tech Hub" },
+            { id: "about", label: "ℹ️ About Us" },
+            { id: "careers", label: "💼 Careers" },
+            { id: "contact", label: "📞 Contact & Consult" },
           ].map((n) => (
             <button
               key={n.id}
-              onClick={() => { go(n.id); setOpen(false); }}
+              onClick={() => { go(n.id); setMobileMenuOpen(false); }}
               style={{
-                background: page === n.id ? "rgba(21, 101, 192, 0.15)" : "transparent",
+                background: page === n.id ? TOKENS.badgeBg : "transparent",
                 border: "none",
                 textAlign: "left",
-                color: page === n.id ? TOKENS.brass : TOKENS.paper,
-                fontSize: 15,
+                color: page === n.id ? TOKENS.blue : TOKENS.paper,
+                fontSize: 14.5,
                 fontFamily: "'Inter', sans-serif",
-                padding: "12px 10px",
-                cursor: "pointer",
+                fontWeight: page === n.id ? 700 : 500,
+                padding: "10px 8px",
                 borderRadius: 6,
+                cursor: "pointer",
               }}
             >
               {n.label}
@@ -6870,5370 +1283,72 @@ function SiteHeader({ page, go, currency = "INR", setCurrency, currentUser, setC
   );
 }
 
-function Footer({ go }) {
-  const cols = [
-    {
-      title: "Sourcing & Manufacturing",
-      items: [
-        ["CNC Machining", "manufacturers"],
-        ["Sheet Metal Fabrication", "manufacturers"],
-        ["SMT Electronics Assembly", "manufacturers"],
-        ["Rubber & Sealing Systems", "manufacturers"],
-        ["Post a Requirement (RFQ)", "rfq-wizard"],
-        ["Browse Live RFQs", "requirements"]
-      ]
-    },
-    {
-      title: "Enterprise Software",
-      items: [
-        ["Abhimanyu ERP Platform", "products"],
-        ["Abhimanyu CRM & Sales", "products"],
-        ["Abhimanyu HRMS & Payroll", "products"],
-        ["Abhimanyu AI Neural Engine", "products"],
-        ["Abhimanyu IoT Fleet Manager", "products"],
-        ["Seller & Vendor Dashboard", "dashboard"]
-      ]
-    },
-    {
-      title: "Engineering Services",
-      items: [
-        ["Custom Software Architecture", "services"],
-        ["Machine Learning & Vision AI", "services"],
-        ["Cloud & Anycast Load Balancing", "services"],
-        ["Zero-Trust Cybersecurity", "services"],
-        ["Technical Case Studies", "case-studies"],
-        ["Engineering Insights Blog", "insights"]
-      ]
-    },
-    {
-      title: "Regional Industrial Hubs",
-      items: [
-        ["Telangana Enterprise HQ", "contact"],
-        ["Chennai Industrial Corridor", "manufacturers"],
-        ["Bengaluru Tech & Hardware", "services"],
-        ["Pune & Mumbai OEM Hub", "manufacturers"],
-        ["Delhi NCR Sourcing Hub", "requirements"],
-        ["Global Edge Anycast Routing", "home"]
-      ]
-    }
-  ];
-
-  return (
-    <footer style={{ borderTop: `1px solid ${TOKENS.hair}`, background: "#F1F5F9", padding: "70px 24px 36px" }}>
-      <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-        {/* Pre-footer Callout Banner */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 16,
-          background: "linear-gradient(135deg, rgba(29,78,216,0.06) 0%, rgba(13,148,136,0.06) 100%)",
-          border: `1px solid ${TOKENS.hair}`,
-          borderRadius: 8,
-          padding: "24px 30px",
-          marginBottom: 48
-        }}>
-          <div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, color: TOKENS.paper, marginBottom: 4 }}>
-              Scale Your Sourcing & Manufacturing Operations
-            </div>
-            <div style={{ fontSize: 13.5, color: TOKENS.slate }}>
-              Join 500+ verified enterprise buyers, OEM manufacturers, and technology suppliers.
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <Button onClick={() => go("rfq-wizard")}>Post RFQ in 6 Steps →</Button>
-            <Button variant="ghost" onClick={() => go("contact")}>Contact Leadership</Button>
-          </div>
-        </div>
-
-        {/* 5-Column Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1.4fr repeat(4, 1fr)", gap: 32, marginBottom: 48 }} className="footer-grid">
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-              <TransparentLogo src="/logo.png" height={32} />
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, fontWeight: 600 }}>Abhimanyu</div>
-            </div>
-            <p style={{ color: TOKENS.slate, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 16px", maxWidth: 240 }}>
-              One Platform. Every Industry. Sloganed to <b style={{ color: TOKENS.brass }}>"Scale Your Business"</b>.
-            </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              <span style={{ background: "rgba(212,175,55,0.1)", border: `1px solid rgba(212,175,55,0.3)`, padding: "3px 8px", borderRadius: 3, fontSize: 10.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>ISO 9001:2015</span>
-              <span style={{ background: "rgba(0,168,150,0.1)", border: `1px solid rgba(0,168,150,0.3)`, padding: "3px 8px", borderRadius: 3, fontSize: 10.5, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>SOC2 TYPE II</span>
-              <span style={{ background: "rgba(21,101,192,0.12)", border: `1px solid rgba(21,101,192,0.3)`, padding: "3px 8px", borderRadius: 3, fontSize: 10.5, color: "#60A5FA", fontFamily: "'JetBrains Mono', monospace" }}>99.999% SLA</span>
-            </div>
-          </div>
-
-          {cols.map((c) => (
-            <div key={c.title}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, letterSpacing: "0.08em", marginBottom: 16 }}>{c.title.toUpperCase()}</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-                {c.items.map(([label, id]) => (
-                  <button
-                    key={label}
-                    onClick={() => go(id)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: TOKENS.slate,
-                      fontSize: 13,
-                      textAlign: "left",
-                      cursor: "pointer",
-                      padding: 0,
-                      transition: "color 0.15s ease"
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = TOKENS.paper)}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = TOKENS.slate)}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom Legal & Telemetry Line */}
-        <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, color: TOKENS.slate, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
-          <div>
-            <span>© 2026 Abhimanyu Technologies Pvt Ltd. All rights reserved.</span>
-            <span style={{ margin: "0 10px", color: TOKENS.hair }}>|</span>
-            <span>Telangana HQ, India</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <span style={{ color: TOKENS.teal }}>● 12 Edge Nodes Live (Anycast)</span>
-            <span>Privacy Policy · Terms of Sourcing · Security</span>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-/* ---------------------------- 3D AI Agent Avatar Icon ---------------------------- */
-
-function AIAgent3DAvatarIcon({ onClick }) {
-  const mountRef = useRef(null);
-
-  useEffect(() => {
-    const mount = mountRef.current;
-    if (!mount) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 20);
-    camera.position.set(0, 0, 3.2);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(60, 60);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    mount.appendChild(renderer.domElement);
-
-    scene.add(new THREE.AmbientLight(0x40465c, 1.5));
-    const key = new THREE.PointLight(0xf3e5ab, 2.5, 30);
-    key.position.set(3, 3, 4);
-    scene.add(key);
-    const rim = new THREE.PointLight(0x4fb3ff, 1.4, 30);
-    rim.position.set(-3, -2, -3);
-    scene.add(rim);
-
-    const group = new THREE.Group();
-    scene.add(group);
-
-    // AI Avatar head sphere / octahedron core
-    const brassMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.2, emissive: 0x4a3808, emissiveIntensity: 0.4 });
-    const blueMat = new THREE.MeshStandardMaterial({ color: 0x4fb3ff, emissive: 0x4fb3ff, emissiveIntensity: 0.6, metalness: 0.8, roughness: 0.2 });
-
-    const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.75, 1), brassMat);
-    group.add(core);
-
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.035, 12, 60), blueMat);
-    ring.rotation.x = Math.PI / 3;
-    group.add(ring);
-
-    // Avatar eyes / visor
-    const eye1 = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 12), blueMat);
-    const eye2 = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 12), blueMat);
-    eye1.position.set(-0.25, 0.15, 0.65);
-    eye2.position.set(0.25, 0.15, 0.65);
-    group.add(eye1, eye2);
-
-    let raf;
-    const start = performance.now();
-    const animate = (t) => {
-      const elapsed = (t - start) / 1000;
-      if (!reduced) {
-        group.rotation.y = elapsed * 0.8;
-        ring.rotation.z = -elapsed * 0.6;
-        core.position.y = Math.sin(elapsed * 2) * 0.08;
-        raf = requestAnimationFrame(animate);
-      }
-      renderer.render(scene, camera);
-    };
-    raf = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      brassMat.dispose(); blueMat.dispose();
-      renderer.dispose();
-      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
-    };
-  }, []);
-
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      <div
-        style={{
-          background: "rgba(11, 31, 58, 0.9)",
-          border: "1px solid rgba(212,175,55,0.4)",
-          borderRadius: 999,
-          padding: "6px 14px",
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 11,
-          color: TOKENS.paper,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
-          pointerEvents: "none",
-        }}
-      >
-        🤖 AI AGENT ONLINE
-      </div>
-      <button
-        onClick={onClick}
-        style={{
-          background: "#F1F5F9",
-          backdropFilter: "blur(12px)",
-          border: "1px solid rgba(212, 175, 55, 0.5)",
-          borderRadius: "50%",
-          width: 68,
-          height: 68,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          cursor: "pointer",
-          boxShadow: "0 10px 32px -4px rgba(212,175,55,0.6), 0 0 16px rgba(79,179,255,0.4)",
-          padding: 0,
-          position: "relative",
-          transition: "transform 0.2s ease",
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-        title="Open AI Agent"
-      >
-        <div ref={mountRef} style={{ width: 60, height: 60, pointerEvents: "none" }} />
-        <span
-          style={{
-            position: "absolute",
-            top: 2,
-            right: 2,
-            width: 12,
-            height: 12,
-            borderRadius: "50%",
-            background: "#4fb3ff",
-            border: "2px solid #0B1F3A",
-            boxShadow: "0 0 8px #4fb3ff",
-          }}
-        />
-      </button>
-    </div>
-  );
-}
-
-/* ---------------------------- site-wide AI Agent widget ---------------------------- */
-
-function AIAgentWidget({ go }) {
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      sender: "ai",
-      text: "Greetings! I am the MyVault AI Assistant. How can I assist you with our engineering services, products, or security architecture today?",
-    },
-  ]);
-  const [inputVal, setInputVal] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-
-  const suggestions = [
-    { label: "What services do you offer?", text: "What services does MyVault offer?" },
-    { label: "How does Vault security work?", text: "Explain MyVault zero-knowledge security." },
-    { label: "View Products", text: "Show me MyVault products." },
-    { label: "Get a Project Proposal", text: "How do I request a project proposal?" },
-  ];
-
-  const getAIResponse = (userQuery) => {
-    const q = userQuery.toLowerCase();
-    if (q.includes("service") || q.includes("offer") || q.includes("build")) {
-      return {
-        text: "MyVault specializes in Software Engineering, AI & Machine Learning, Cloud & DevOps, Cybersecurity, Data Engineering, IoT, and Quality Assurance. We offer Fixed-Scope, Dedicated Team, and Ongoing Partner engagement models.",
-        actionLabel: "Explore Services",
-        actionTarget: "services",
-      };
-    }
-    if (q.includes("security") || q.includes("vault") || q.includes("aes")) {
-      return {
-        text: "MyVault systems implement Zero-Knowledge Architecture with AES-256 multi-region encryption, automated rate-limiting, gRPC/GraphQL event gateways, and continuous threat monitoring.",
-        actionLabel: "Read System Architecture",
-        actionTarget: "home",
-      };
-    }
-    if (q.includes("product") || q.includes("erp") || q.includes("crm")) {
-      return {
-        text: "We build and maintain enterprise software platforms including MyVault ERP, MyVault CRM, MyVault HRMS, MyVault AI Agent Platform, and MyVault IoT Fleet Manager.",
-        actionLabel: "View All Products",
-        actionTarget: "products",
-      };
-    }
-    if (q.includes("proposal") || q.includes("contact") || q.includes("hire") || q.includes("quote")) {
-      return {
-        text: "Ready to start your project? You can submit your requirements directly to our engineering leadership team.",
-        actionLabel: "Open Contact Form",
-        actionTarget: "contact",
-      };
-    }
-    return {
-      text: "Thank you for reaching out! MyVault provides enterprise-grade software development, AI models, and cloud infrastructure engineered for long-term reliability. How else can I assist your team?",
-      actionLabel: "Talk to an Expert",
-      actionTarget: "contact",
-    };
-  };
-
-  const handleSend = (textToSend) => {
-    const query = textToSend || inputVal;
-    if (!query.trim()) return;
-
-    setMessages((prev) => [...prev, { sender: "user", text: query }]);
-    if (!textToSend) setInputVal("");
-    setIsTyping(true);
-
-    setTimeout(() => {
-      const resp = getAIResponse(query);
-      setMessages((prev) => [...prev, { sender: "ai", text: resp.text, actionLabel: resp.actionLabel, actionTarget: resp.actionTarget }]);
-      setIsTyping(false);
-    }, 600);
-  };
-
-  return (
-    <div style={{ position: "fixed", bottom: 24, right: 24, zIndex: 9999 }}>
-      {/* Floating 3D Avatar Icon Trigger */}
-      {!open && <AIAgent3DAvatarIcon onClick={() => setOpen(true)} />}
-
-      {/* Expanded Chat Widget */}
-      {open && (
-        <div
-          style={{
-            width: 360,
-            height: 480,
-            background: "rgba(11, 31, 58, 0.96)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid rgba(212, 175, 55, 0.4)",
-            borderRadius: 8,
-            boxShadow: "0 24px 60px -12px rgba(0,0,0,0.85)",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
-        >
-          {/* Header */}
-          <div
-            style={{
-              padding: "14px 18px",
-              background: "rgba(16, 21, 31, 0.9)",
-              borderBottom: `1px solid ${TOKENS.hair}`,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: TOKENS.teal }} />
-              <div>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: TOKENS.paper, fontWeight: 600 }}>
-                  MyVault AI Agent
-                </div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>
-                  NEURAL MODEL v4.8 ACTIVE
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={() => setOpen(false)}
-              style={{ background: "none", border: "none", color: TOKENS.paper, fontSize: 18, cursor: "pointer" }}
-            >
-              ×
-            </button>
-          </div>
-
-          {/* Messages Body */}
-          <div style={{ flex: 1, padding: 14, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12 }}>
-            {messages.map((m, idx) => (
-              <div
-                key={idx}
-                style={{
-                  alignSelf: m.sender === "user" ? "flex-end" : "flex-start",
-                  maxWidth: "85%",
-                  background: m.sender === "user" ? TOKENS.brass : "rgba(15, 23, 42, 0.045)",
-                  color: m.sender === "user" ? TOKENS.ink : TOKENS.paper,
-                  border: m.sender === "user" ? "none" : `1px solid ${TOKENS.hair}`,
-                  borderRadius: 6,
-                  padding: "10px 14px",
-                  fontSize: 13,
-                  lineHeight: 1.5,
-                }}
-              >
-                {m.text}
-                {m.actionLabel && (
-                  <div style={{ marginTop: 10 }}>
-                    <button
-                      onClick={() => {
-                        go(m.actionTarget);
-                        setOpen(false);
-                      }}
-                      style={{
-                        background: TOKENS.teal,
-                        color: TOKENS.ink,
-                        border: "none",
-                        borderRadius: 3,
-                        padding: "5px 10px",
-                        fontSize: 11,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {m.actionLabel} →
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-            {isTyping && (
-              <div style={{ alignSelf: "flex-start", color: TOKENS.slate, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
-                AI Assistant is typing...
-              </div>
-            )}
-          </div>
-
-          {/* Prompt Chips */}
-          <div style={{ padding: "8px 12px", background: "rgba(16, 21, 31, 0.6)", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", gap: 6, overflowX: "auto" }}>
-            {suggestions.map((s, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSend(s.text)}
-                style={{
-                  background: "transparent",
-                  border: `1px solid ${TOKENS.hair}`,
-                  borderRadius: 999,
-                  color: TOKENS.slate,
-                  fontSize: 10,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  padding: "4px 10px",
-                  whiteSpace: "nowrap",
-                  cursor: "pointer",
-                }}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Input Box */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSend();
-            }}
-            style={{ padding: 12, borderTop: `1px solid ${TOKENS.hair}`, display: "flex", gap: 8 }}
-          >
-            <input
-              type="text"
-              placeholder="Ask AI Assistant anything..."
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-              style={{
-                flex: 1,
-                background: TOKENS.ink,
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 4,
-                padding: "8px 12px",
-                color: TOKENS.paper,
-                fontSize: 13,
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                background: TOKENS.brass,
-                color: TOKENS.ink,
-                border: "none",
-                borderRadius: 4,
-                padding: "8px 14px",
-                fontSize: 13,
-                fontWeight: "bold",
-                cursor: "pointer",
-              }}
-            >
-              Send
-            </button>
-          </form>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function LeadCaptureModal() {
-  const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  useEffect(() => {
-    const isSub = localStorage.getItem("abhimanu_subscribed");
-    if (isSub) setSubscribed(true);
-  }, []);
-
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (!email || !email.includes("@")) return;
-    localStorage.setItem("abhimanu_subscribed", "true");
-    setSubscribed(true);
-    trackEvent("lead_capture_subscribe", { email });
-    setTimeout(() => setOpen(false), 2000);
-  };
-
-  if (subscribed && !open) return null;
-
-  return (
-    <>
-      {/* Floating Trigger Pill */}
-      {!open && !subscribed && (
-        <button
-          onClick={() => setOpen(true)}
-          className="lead-trigger-pill"
-          style={{
-            position: "fixed",
-            bottom: "clamp(80px, 10vh, 24px)",
-            left: 20,
-            zIndex: 9990,
-            background: "rgba(16, 24, 40, 0.95)",
-            border: `1px solid ${TOKENS.brass}`,
-            borderRadius: 999,
-            padding: "9px 16px",
-            color: TOKENS.paper,
-            fontSize: 12,
-            fontFamily: "'JetBrains Mono', monospace",
-            cursor: "pointer",
-            backdropFilter: "blur(14px)",
-            boxShadow: "0 12px 32px rgba(0,0,0,0.6)",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span style={{ color: TOKENS.brass }}>★</span> Architecture Blueprint Guide 2026
-        </button>
-      )}
-
-      {/* Modal Dialog */}
-      {open && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(18px)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <div style={{ maxWidth: 480, width: "100%", border: `1px solid rgba(212,175,55,0.4)`, background: TOKENS.panelAlt, borderRadius: 12, overflow: "hidden", position: "relative", padding: 36, boxShadow: "0 24px 60px rgba(0,0,0,0.15)" }}>
-            <button onClick={() => setOpen(false)} style={{ position: "absolute", top: 16, right: 16, background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, color: TOKENS.paper, fontSize: 18, cursor: "pointer", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-
-            {subscribed ? (
-              <div style={{ textAlign: "center", padding: "16px 0" }}>
-                <div style={{ fontSize: 36, color: TOKENS.teal, marginBottom: 12 }}>✓</div>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 8px" }}>Blueprint Dispatched!</h3>
-                <p style={{ color: TOKENS.slate, fontSize: 14, margin: 0, lineHeight: 1.6 }}>Check your inbox shortly for the Enterprise Architecture Blueprint 2026 PDF.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, marginBottom: 8, letterSpacing: "0.08em" }}>FREE ENTERPRISE WHITEPAPER</div>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: "0 0 10px" }}>Enterprise Architecture Blueprint</h3>
-                <p style={{ color: TOKENS.slate, fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
-                  Download our 2026 whitepaper on building resilient microservices, zero-trust security, and sub-10ms AI engines.
-                </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your work email..."
-                    style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", color: TOKENS.paper, fontSize: 14 }}
-                  />
-                  <Button type="submit">Download Blueprint PDF →</Button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-/* ---------------------------- Interactive B2B RFQ & PO Lifecycle Inspector Modal ---------------------------- */
-
-function RFQTrackerModal({ rfqId, isOpen, onClose, currency = "INR", go, openCAD, openEscrow, openTraceability, openFreight, openDFM, openContractVault, openRiskHeatmap, openAudit }) {
-  const [activeId, setActiveId] = useState(rfqId || "RFQ-2026-9041");
-  const [customInput, setCustomInput] = useState("");
-  const [acceptedBid, setAcceptedBid] = useState(null);
-  const [generatingPo, setGeneratingPo] = useState(false);
-
-  useEffect(() => {
-    if (rfqId) setActiveId(rfqId);
-  }, [rfqId]);
-
-  if (!isOpen) return null;
-
-  const knownRfq = PUBLIC_RFQS.find((r) => r.id === activeId) || {
-    id: activeId,
-    title: `Precision Engineered Component Batch — ${activeId}`,
-    category: "Custom CNC Machining",
-    quantity: "5,000 Units",
-    location: "Target Delivery: Telangana / Chennai",
-    budget: "$40,000 - $65,000",
-    deadline: "14 Days",
-    status: "OPEN FOR QUOTES",
-    bidsCount: "12 Bids Submitted",
-    tolerance: "±0.010 mm",
-    material: "Aluminium 6061-T6 / SS 316L",
-    buyer: "Verified Enterprise Buyer",
-  };
-
-  const sampleBids = [
-    {
-      id: "BID-1",
-      supplier: "Apex Precision Engineering Ltd.",
-      hub: "Chennai Corridor, Tamil Nadu",
-      inrPrice: 1840000,
-      leadTime: "14 Business Days",
-      oee: "99.4%",
-      certs: ["AS9100D", "ISO 9001:2015"],
-      rating: "4.9/5 (142 Deliveries)",
-      status: "TOP MATCH",
-    },
-    {
-      id: "BID-2",
-      supplier: "Deccan High-Precision Engineering",
-      hub: "Hyderabad Aerospace Hub, Telangana",
-      inrPrice: 1920000,
-      leadTime: "12 Business Days",
-      oee: "98.8%",
-      certs: ["ISO 9001:2015", "IATF 16949"],
-      rating: "4.8/5 (88 Deliveries)",
-      status: "FASTEST LEAD",
-    },
-    {
-      id: "BID-3",
-      supplier: "Bengaluru Micro-Machining Ltd.",
-      hub: "Peenya Industrial Area, Bengaluru",
-      inrPrice: 1790000,
-      leadTime: "16 Business Days",
-      oee: "99.1%",
-      certs: ["ISO 13485", "ISO 9001:2015"],
-      rating: "4.9/5 (210 Deliveries)",
-      status: "BEST VALUE",
-    },
-  ];
-
-  const handleAcceptBid = (bid) => {
-    setGeneratingPo(true);
-    setTimeout(() => {
-      setAcceptedBid({
-        ...bid,
-        poNumber: `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-        issuedAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-      });
-      setGeneratingPo(false);
-      trackEvent("accept_rfq_bid", { rfqId: activeId, supplier: bid.supplier, po: `PO-2026-${activeId.slice(-4)}` });
-    }, 700);
-  };
-
-  const milestones = [
-    { step: 1, label: "RFQ Broadcasted", desc: "Broadcasted to 42 verified plants", done: true, current: false },
-    { step: 2, label: "DFM Feasibility Audit", desc: "CAD mesh ±0.005mm verified", done: true, current: false },
-    { step: 3, label: "Competitive Bidding", desc: "3 live quotes evaluated", done: !acceptedBid, current: !acceptedBid },
-    { step: 4, label: "PO & FAI Prototype", desc: acceptedBid ? `Issued ${acceptedBid.poNumber}` : "Pending buyer acceptance", done: !!acceptedBid, current: !!acceptedBid },
-    { step: 5, label: "Batch Dispatch", desc: "14-day production cycle", done: false, current: false },
-  ];
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-        zIndex: 9999,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 880,
-          width: "100%",
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(212,175,55,0.4)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
-        }}
-      >
-        {/* Modal Top Header */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
-            padding: "24px 28px",
-            borderBottom: `1px solid ${TOKENS.hair}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: 16,
-          }}
-        >
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8, flexWrap: "wrap" }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em" }}>
-                LIVE PROCUREMENT LIFECYCLE & PO TRACKER
-              </span>
-              <span
-                style={{
-                  background: acceptedBid ? "rgba(0,168,150,0.2)" : "rgba(212,175,55,0.15)",
-                  color: acceptedBid ? TOKENS.teal : TOKENS.brass,
-                  border: `1px solid ${acceptedBid ? TOKENS.teal : TOKENS.brass}`,
-                  fontSize: 10.5,
-                  padding: "3px 8px",
-                  borderRadius: 4,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 700,
-                }}
-              >
-                {acceptedBid ? `● ${acceptedBid.poNumber} ISSUED` : `● ${knownRfq.status}`}
-              </span>
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
-              {knownRfq.id}: {knownRfq.title}
-            </h3>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.slate, marginTop: 4 }}>
-              Buyer: <span style={{ color: TOKENS.paper }}>{knownRfq.buyer}</span> • {knownRfq.location}
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: "rgba(0,0,0,0.04)",
-              border: `1px solid ${TOKENS.hair}`,
-              color: TOKENS.paper,
-              fontSize: 18,
-              cursor: "pointer",
-              width: 34,
-              height: 34,
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Quick Switcher & Lookup */}
-        <div style={{ padding: "14px 28px", background: "rgba(15, 23, 42, 0.03)", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>Switch RFQ:</span>
-            {PUBLIC_RFQS.map((r) => (
-              <button
-                key={r.id}
-                onClick={() => { setActiveId(r.id); setAcceptedBid(null); }}
-                style={{
-                  background: activeId === r.id ? TOKENS.brass : "transparent",
-                  color: activeId === r.id ? TOKENS.ink : TOKENS.paper,
-                  border: `1px solid ${activeId === r.id ? TOKENS.brass : TOKENS.hair}`,
-                  borderRadius: 4,
-                  padding: "4px 8px",
-                  fontSize: 11,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                }}
-              >
-                {r.id.split("-")[2]}
-              </button>
-            ))}
-          </div>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (customInput.trim()) {
-                setActiveId(customInput.trim().toUpperCase());
-                setAcceptedBid(null);
-                setCustomInput("");
-              }
-            }}
-            style={{ display: "flex", gap: 6 }}
-          >
-            <input
-              type="text"
-              placeholder="Enter RFQ / Ref ID..."
-              value={customInput}
-              onChange={(e) => setCustomInput(e.target.value)}
-              style={{
-                background: "rgba(15, 23, 42, 0.04)",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 4,
-                padding: "4px 10px",
-                color: TOKENS.paper,
-                fontSize: 11,
-                fontFamily: "'JetBrains Mono', monospace",
-                width: 140,
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                background: TOKENS.blue,
-                color: "#fff",
-                border: "none",
-                borderRadius: 4,
-                padding: "4px 10px",
-                fontSize: 11,
-                cursor: "pointer",
-                fontFamily: "'JetBrains Mono', monospace",
-              }}
-            >
-              Lookup
-            </button>
-          </form>
-        </div>
-
-        {/* Modal Body */}
-        <div style={{ padding: "24px 28px" }}>
-          {/* Milestone Stepper */}
-          <div style={{ marginBottom: 28, background: "rgba(15, 23, 42, 0.03)", padding: "18px 20px", borderRadius: 8, border: `1px solid ${TOKENS.hair}` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
-              {milestones.map((m, idx) => (
-                <div key={idx} style={{ flex: 1, minWidth: 120, position: "relative" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                    <div
-                      style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: "50%",
-                        background: m.done ? TOKENS.teal : m.current ? TOKENS.brass : "rgba(15, 23, 42, 0.06)",
-                        color: m.done || m.current ? TOKENS.ink : TOKENS.slate,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 11,
-                        fontWeight: "bold",
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
-                    >
-                      {m.done ? "✓" : m.step}
-                    </div>
-                    <span style={{ fontSize: 11.5, fontFamily: "'Inter', sans-serif", fontWeight: 600, color: m.done || m.current ? TOKENS.paper : TOKENS.slate }}>
-                      {m.label}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 10.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", paddingLeft: 32 }}>
-                    {m.desc}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* PO Issued Banner */}
-          {acceptedBid && (
-            <div
-              style={{
-                marginBottom: 24,
-                background: "linear-gradient(135deg, rgba(0, 168, 150, 0.15) 0%, rgba(21, 101, 192, 0.15) 100%)",
-                border: `1px solid ${TOKENS.teal}`,
-                borderRadius: 8,
-                padding: "20px 24px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: 16,
-              }}
-            >
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.teal, fontWeight: 700, marginBottom: 4 }}>
-                  ✓ B2B PURCHASE ORDER ISSUED: {acceptedBid.poNumber}
-                </div>
-                <div style={{ color: TOKENS.paper, fontSize: 14 }}>
-                  Awarded to <strong>{acceptedBid.supplier}</strong> for {formatPrice(acceptedBid.inrPrice, currency)}. Shop floor dispatch scheduled in {acceptedBid.leadTime}.
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <button
-                  onClick={() => openEscrow?.(acceptedBid.poNumber, acceptedBid.supplier, acceptedBid.inrPrice)}
-                  style={{
-                    background: "linear-gradient(135deg, #D4AF37 0%, #F59E0B 100%)",
-                    color: "#080E1A",
-                    border: "none",
-                    borderRadius: 6,
-                    padding: "8px 18px",
-                    fontSize: 12,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontWeight: 800,
-                    cursor: "pointer",
-                    boxShadow: "0 4px 12px rgba(212,175,55,0.3)",
-                  }}
-                >
-                  🔐 Escrow Ledger & Releases →
-                </button>
-                <button
-                  onClick={() => openFreight?.(knownRfq.id, acceptedBid.poNumber)}
-                  style={{
-                    background: "rgba(21,101,192,0.25)",
-                    border: `1px solid ${TOKENS.blue}`,
-                    color: "#93C5FD",
-                    borderRadius: 6,
-                    padding: "8px 18px",
-                    fontSize: 12,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
-                >
-                  🚚 Track Live Freight →
-                </button>
-                <button
-                  onClick={() => alert(`Simulating Secure PDF Download for Purchase Order ${acceptedBid.poNumber} (Includes Digital Escrow & CMM GD&T Inspection Report)...`)}
-                  style={{
-                    background: TOKENS.teal,
-                    color: "#0B1F3A",
-                    border: "none",
-                    borderRadius: 6,
-                    padding: "8px 18px",
-                    fontSize: 12,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
-                >
-                  📄 Download PO ({acceptedBid.poNumber}) →
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* RFQ Specs Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 28 }}>
-            <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>BATCH QUANTITY</div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: TOKENS.paper, fontWeight: 600, marginTop: 4 }}>{knownRfq.quantity}</div>
-            </div>
-            <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>REQUIRED TOLERANCE</div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: TOKENS.teal, fontWeight: 600, marginTop: 4 }}>{knownRfq.tolerance}</div>
-            </div>
-            <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CERTIFIED MATERIAL</div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4, flexWrap: "wrap", gap: 6 }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brass, fontWeight: 600 }}>{knownRfq.material}</span>
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  <button
-                    onClick={() => openAudit?.(knownRfq.id, knownRfq.title, knownRfq.material)}
-                    style={{
-                      background: "rgba(29,78,216,0.12)",
-                      border: `1px solid ${TOKENS.blue}`,
-                      color: TOKENS.blue,
-                      borderRadius: 4,
-                      padding: "3px 8px",
-                      fontSize: 10.5,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      cursor: "pointer",
-                      fontWeight: 700,
-                    }}
-                  >
-                    🛡️ AS9102 FAI Dossier →
-                  </button>
-                  <button
-                    onClick={() => openTraceability?.(knownRfq.id, knownRfq.material)}
-                    style={{
-                      background: "rgba(0,168,150,0.15)",
-                      border: `1px solid ${TOKENS.teal}`,
-                      color: TOKENS.teal,
-                      borderRadius: 4,
-                      padding: "3px 8px",
-                      fontSize: 10.5,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      cursor: "pointer",
-                      fontWeight: 700,
-                    }}
-                  >
-                    🔬 View MTR & Heat # →
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CAD MESH ATTACHMENT</div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4, flexWrap: "wrap", gap: 6 }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper }}>
-                  📎 {knownRfq.id.toLowerCase()}_cad.step
-                </span>
-                <button
-                  onClick={() => openCAD?.(knownRfq.id, knownRfq.title)}
-                  style={{
-                    background: "rgba(212,175,55,0.15)",
-                    border: `1px solid ${TOKENS.brass}`,
-                    color: TOKENS.brass,
-                    borderRadius: 4,
-                    padding: "3px 8px",
-                    fontSize: 10.5,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    cursor: "pointer",
-                    fontWeight: 700,
-                  }}
-                >
-                  👁️ Inspect 3D Mesh →
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Competing Vetted Supplier Quotes */}
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
-                Competing Supplier Bids ({sampleBids.length})
-              </h4>
-              <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-                Currency: <strong style={{ color: TOKENS.brass }}>{currency}</strong>
-              </span>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {sampleBids.map((bid) => {
-                const isAwarded = acceptedBid?.id === bid.id;
-                return (
-                  <div
-                    key={bid.id}
-                    style={{
-                      background: isAwarded ? "rgba(0,168,150,0.08)" : "rgba(15, 23, 42, 0.035)",
-                      border: `1px solid ${isAwarded ? TOKENS.teal : TOKENS.hair}`,
-                      borderRadius: 8,
-                      padding: "16px 20px",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      gap: 14,
-                      transition: "all 0.2s ease",
-                    }}
-                  >
-                    <div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, fontWeight: 600 }}>
-                          {bid.supplier}
-                        </span>
-                        <span style={{ background: "rgba(21,101,192,0.15)", color: TOKENS.teal, fontSize: 10, padding: "2px 6px", borderRadius: 4, fontFamily: "'JetBrains Mono', monospace" }}>
-                          {bid.status}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: 12, color: TOKENS.slate, marginBottom: 6 }}>
-                        📍 {bid.hub} • ⭐ {bid.rating} • OEE: {bid.oee}
-                      </div>
-                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                        {bid.certs.map((c) => (
-                          <span key={c} style={{ background: "rgba(15, 23, 42, 0.045)", color: TOKENS.slate, fontSize: 10, padding: "2px 6px", borderRadius: 3, fontFamily: "'JetBrains Mono', monospace" }}>
-                            {c}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
-                      <div>
-                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, color: TOKENS.brassBright, fontWeight: 700 }}>
-                          {formatPrice(bid.inrPrice, currency)}
-                        </div>
-                        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
-                          ⏱ Lead: {bid.leadTime}
-                        </div>
-                      </div>
-
-                      {acceptedBid ? (
-                        isAwarded ? (
-                          <span style={{ background: TOKENS.teal, color: TOKENS.ink, padding: "6px 14px", borderRadius: 4, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                            ✓ PO AWARDED
-                          </span>
-                        ) : (
-                          <span style={{ color: TOKENS.slate, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
-                            Bid Closed
-                          </span>
-                        )
-                      ) : (
-                        <button
-                          disabled={generatingPo}
-                          onClick={() => handleAcceptBid(bid)}
-                          style={{
-                            background: TOKENS.brass,
-                            color: TOKENS.ink,
-                            border: "none",
-                            borderRadius: 4,
-                            padding: "7px 14px",
-                            fontSize: 11.5,
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontWeight: 700,
-                            cursor: "pointer",
-                          }}
-                        >
-                          {generatingPo ? "Issuing PO..." : "Accept Bid & Issue PO →"}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Modal Bottom Actions */}
-          <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 18, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <button
-                onClick={() => openDFM?.(knownRfq.id, knownRfq.title)}
-                style={{
-                  background: "rgba(0,168,150,0.15)",
-                  border: `1px solid ${TOKENS.teal}`,
-                  color: TOKENS.teal,
-                  borderRadius: 4,
-                  padding: "8px 14px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                  fontWeight: 700,
-                }}
-              >
-                🛠️ DFM Diagnostic Audit →
-              </button>
-              <button
-                onClick={() => openContractVault?.("Bharat Aerospace & Dynamics", acceptedBid ? acceptedBid.supplier : "Apex Precision Engineering Ltd.", knownRfq.id)}
-                style={{
-                  background: "rgba(212,175,55,0.12)",
-                  border: `1px solid rgba(212,175,55,0.4)`,
-                  color: TOKENS.brass,
-                  borderRadius: 4,
-                  padding: "8px 14px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-              >
-                📜 Mutual NDA & IP Vault →
-              </button>
-              <button
-                onClick={() => openRiskHeatmap?.()}
-                style={{
-                  background: "rgba(21,101,192,0.12)",
-                  border: `1px solid rgba(21,101,192,0.4)`,
-                  color: "#93C5FD",
-                  borderRadius: 4,
-                  padding: "8px 14px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-              >
-                🌐 Supply Chain Risk Matrix →
-              </button>
-              <button
-                onClick={() => openEscrow?.(acceptedBid ? acceptedBid.poNumber : "PO-2026-9041", acceptedBid ? acceptedBid.supplier : "Apex Precision Engineering Ltd.", acceptedBid ? acceptedBid.inrPrice : 485000)}
-                style={{
-                  background: "rgba(212,175,55,0.12)",
-                  border: `1px solid rgba(212,175,55,0.4)`,
-                  color: TOKENS.brass,
-                  borderRadius: 4,
-                  padding: "8px 14px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-              >
-                🔐 Escrow Vault & Terms →
-              </button>
-              <button
-                onClick={() => openFreight?.(knownRfq.id, acceptedBid ? acceptedBid.poNumber : "PO-2026-9041")}
-                style={{
-                  background: "rgba(21,101,192,0.12)",
-                  border: `1px solid rgba(21,101,192,0.4)`,
-                  color: "#93C5FD",
-                  borderRadius: 4,
-                  padding: "8px 14px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-              >
-                🚚 Live Freight Tracking →
-              </button>
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <Button variant="ghost" onClick={() => { onClose(); go("requirements"); }}>Browse Other Live RFQs</Button>
-              <Button onClick={onClose}>Done</Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Enterprise B2B Buyer & Supplier Access Portal ---------------------------- */
-
-function AuthModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
-  const [tab, setTab] = useState("signin");
-  const [role, setRole] = useState("buyer");
-  const [form, setForm] = useState({
-    name: "",
-    company: "",
-    email: "",
-    hub: "Telangana Enterprise Campus",
-    gstin: "",
-    industry: "Aerospace & Defence",
-  });
-  const [toast, setToast] = useState("");
-
-  if (!isOpen) return null;
-
-  const handleDemoLogin = (demoRole) => {
-    let profile;
-    if (demoRole === "buyer") {
-      profile = {
-        name: "Dr. K. S. Rao",
-        company: "Bharat Aerospace & Dynamics",
-        role: "buyer",
-        location: "Telangana & Chennai Hub",
-        avatar: "🏢",
-        badge: "Enterprise Procurement Lead",
-        tier: "Tier-1 Defence & Space",
-        activeRFQs: 3,
-        email: "ksrao@bharataero.gov.in",
-      };
-    } else {
-      profile = {
-        name: "S. Venkatesh",
-        company: "Apex Precision Engineering Ltd.",
-        role: "supplier",
-        location: "Ambattur Corridor, Chennai",
-        avatar: "🏭",
-        badge: "Verified OEM Manufacturer",
-        tier: "AS9100D Certified Plant",
-        activeRFQs: 8,
-        email: "venkatesh@apexprecision.in",
-      };
-    }
-    onLogin(profile);
-    setToast(`Logged in as ${profile.company} (${profile.role.toUpperCase()})`);
-    setTimeout(() => {
-      setToast("");
-      onClose();
-    }, 900);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const profile = {
-      name: form.name || (role === "buyer" ? "Enterprise Buyer" : "Industrial Supplier"),
-      company: form.company || "Enterprise Corp Ltd.",
-      role: role,
-      location: form.hub,
-      avatar: role === "buyer" ? "🏢" : "🏭",
-      badge: role === "buyer" ? "Procurement Director" : "Verified Manufacturer",
-      tier: "Verified Member",
-      activeRFQs: 1,
-      email: form.email,
-    };
-    onLogin(profile);
-    setToast(`Welcome, ${profile.name}! Account synced.`);
-    setTimeout(() => {
-      setToast("");
-      onClose();
-    }, 900);
-  };
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-        zIndex: 9999,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 520,
-          width: "100%",
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(212,175,55,0.4)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
-          position: "relative",
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
-            padding: "24px 28px",
-            borderBottom: `1px solid ${TOKENS.hair}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", marginBottom: 4 }}>
-              ENTERPRISE ACCESS PORTAL
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
-              {currentUser ? "Manage Enterprise Profile" : tab === "signin" ? "Sign In to Your Workspace" : "Register Enterprise Account"}
-            </h3>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: "rgba(0,0,0,0.04)",
-              border: `1px solid ${TOKENS.hair}`,
-              color: TOKENS.paper,
-              fontSize: 18,
-              cursor: "pointer",
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Toast Notification */}
-        {toast && (
-          <div style={{ background: "rgba(0,168,150,0.2)", borderBottom: `1px solid ${TOKENS.teal}`, color: TOKENS.teal, padding: "10px 24px", fontSize: 13, fontFamily: "'JetBrains Mono', monospace", textAlign: "center" }}>
-            ✓ {toast}
-          </div>
-        )}
-
-        {currentUser ? (
-          /* Active Account State */
-          <div style={{ padding: "28px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 18, marginBottom: 20 }}>
-              <div style={{ fontSize: 36 }}>{currentUser.avatar}</div>
-              <div>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>{currentUser.company}</div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass }}>{currentUser.badge} ({currentUser.role.toUpperCase()})</div>
-                <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 4 }}>📍 {currentUser.location} • {currentUser.email}</div>
-              </div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 24 }}>
-              <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, padding: 12, borderRadius: 6, textAlign: "center" }}>
-                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>ACTIVE RFQs</div>
-                <div style={{ fontSize: 20, fontFamily: "'Inter', sans-serif", color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>{currentUser.activeRFQs} Live</div>
-              </div>
-              <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, padding: 12, borderRadius: 6, textAlign: "center" }}>
-                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>SECURITY STATUS</div>
-                <div style={{ fontSize: 13, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginTop: 8 }}>✓ MFA VERIFIED</div>
-              </div>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <button
-                onClick={() => {
-                  const newRole = currentUser.role === "buyer" ? "supplier" : "buyer";
-                  handleDemoLogin(newRole);
-                }}
-                style={{
-                  background: "rgba(21, 101, 192, 0.15)",
-                  border: `1px solid ${TOKENS.blue}`,
-                  color: TOKENS.paper,
-                  padding: "10px 16px",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                  fontSize: 13,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  textAlign: "center",
-                }}
-              >
-                Switch Role to {currentUser.role === "buyer" ? "🏭 Verified Supplier" : "🏢 Enterprise Buyer"} →
-              </button>
-
-              <button
-                onClick={() => {
-                  onLogout();
-                  setToast("Signed out successfully.");
-                  setTimeout(() => { setToast(""); onClose(); }, 800);
-                }}
-                style={{
-                  background: "transparent",
-                  border: `1px solid ${TOKENS.hair}`,
-                  color: "#f87171",
-                  padding: "10px 16px",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                  fontSize: 13,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  textAlign: "center",
-                }}
-              >
-                Sign Out of Workspace
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* Sign In / Register Forms */
-          <div style={{ padding: "24px 28px" }}>
-            {/* Quick 1-Click Demo Logins */}
-            <div style={{ marginBottom: 20, background: "rgba(212, 175, 55, 0.08)", border: `1px solid rgba(212, 175, 55, 0.3)`, borderRadius: 8, padding: 14 }}>
-              <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, marginBottom: 8, fontWeight: 700 }}>
-                ⚡ 1-CLICK INSTANT TEST LOGIN
-              </div>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <button
-                  onClick={() => handleDemoLogin("buyer")}
-                  style={{
-                    flex: 1,
-                    background: "rgba(15, 23, 42, 0.05)",
-                    border: `1px solid ${TOKENS.hair}`,
-                    color: TOKENS.paper,
-                    padding: "8px 12px",
-                    borderRadius: 6,
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    textAlign: "left",
-                  }}
-                >
-                  🏢 <strong>Buyer:</strong> Bharat Aerospace
-                </button>
-                <button
-                  onClick={() => handleDemoLogin("supplier")}
-                  style={{
-                    flex: 1,
-                    background: "rgba(15, 23, 42, 0.05)",
-                    border: `1px solid ${TOKENS.hair}`,
-                    color: TOKENS.paper,
-                    padding: "8px 12px",
-                    borderRadius: 6,
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    textAlign: "left",
-                  }}
-                >
-                  🏭 <strong>Supplier:</strong> Apex Precision
-                </button>
-              </div>
-            </div>
-
-            {/* Mode Switcher Tabs */}
-            <div style={{ display: "flex", borderBottom: `1px solid ${TOKENS.hair}`, marginBottom: 20 }}>
-              <button
-                onClick={() => setTab("signin")}
-                style={{
-                  flex: 1,
-                  background: "transparent",
-                  border: "none",
-                  borderBottom: `2px solid ${tab === "signin" ? TOKENS.brass : "transparent"}`,
-                  color: tab === "signin" ? TOKENS.brass : TOKENS.slate,
-                  padding: "8px 0",
-                  cursor: "pointer",
-                  fontSize: 13,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 600,
-                }}
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => setTab("register")}
-                style={{
-                  flex: 1,
-                  background: "transparent",
-                  border: "none",
-                  borderBottom: `2px solid ${tab === "register" ? TOKENS.brass : "transparent"}`,
-                  color: tab === "register" ? TOKENS.brass : TOKENS.slate,
-                  padding: "8px 0",
-                  cursor: "pointer",
-                  fontSize: 13,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 600,
-                }}
-              >
-                Register Business
-              </button>
-            </div>
-
-            {/* Role Selection */}
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 6 }}>
-                SELECT YOUR ENTERPRISE ROLE
-              </label>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                <button
-                  type="button"
-                  onClick={() => setRole("buyer")}
-                  style={{
-                    background: role === "buyer" ? "rgba(21, 101, 192, 0.2)" : "rgba(15, 23, 42, 0.04)",
-                    border: `1px solid ${role === "buyer" ? TOKENS.blue : TOKENS.hair}`,
-                    color: role === "buyer" ? TOKENS.paper : TOKENS.slate,
-                    padding: "10px",
-                    borderRadius: 6,
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    textAlign: "center",
-                  }}
-                >
-                  🏢 Enterprise Buyer
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole("supplier")}
-                  style={{
-                    background: role === "supplier" ? "rgba(0, 168, 150, 0.2)" : "rgba(15, 23, 42, 0.04)",
-                    border: `1px solid ${role === "supplier" ? TOKENS.teal : TOKENS.hair}`,
-                    color: role === "supplier" ? TOKENS.paper : TOKENS.slate,
-                    padding: "10px",
-                    borderRadius: 6,
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    textAlign: "center",
-                  }}
-                >
-                  🏭 Verified Supplier
-                </button>
-              </div>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {tab === "register" && (
-                <div>
-                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                    FULL NAME / REPRESENTATIVE
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Ramesh Chandra"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                  />
-                </div>
-              )}
-
-              <div>
-                <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                  WORK EMAIL (CORPORATE DOMAIN)
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="name@company.com"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                />
-              </div>
-
-              {tab === "register" && (
-                <>
-                  <div>
-                    <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                      COMPANY / ENTITY NAME
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Apex Industrial Solutions Ltd."
-                      value={form.company}
-                      onChange={(e) => setForm({ ...form, company: e.target.value })}
-                      style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                      PRIMARY OPERATIONAL HUB
-                    </label>
-                    <select
-                      value={form.hub}
-                      onChange={(e) => setForm({ ...form, hub: e.target.value })}
-                      style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                    >
-                      <option value="Telangana Enterprise Campus">Telangana Enterprise Campus (Hyderabad)</option>
-                      <option value="Chennai Machining Corridor">Chennai Machining Corridor (Tamil Nadu)</option>
-                      <option value="Bengaluru Tech & Hardware Hub">Bengaluru Tech & Hardware Hub (Karnataka)</option>
-                      <option value="Pune & Mumbai Industrial Belt">Pune & Mumbai Industrial Belt (Maharashtra)</option>
-                      <option value="Delhi NCR Sourcing Belt">Delhi NCR Sourcing Belt</option>
-                      <option value="International / Global Export">International / Global Export</option>
-                    </select>
-                  </div>
-                </>
-              )}
-
-              <Button type="submit">
-                {tab === "signin" ? "Sign In to Workspace →" : "Create Enterprise Account →"}
-              </Button>
-
-              {/* Corporate SSO */}
-              <div style={{ textAlign: "center", marginTop: 8 }}>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin(role)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    color: TOKENS.slate,
-                    fontSize: 11.5,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                  }}
-                >
-                  ⚡ Continue with Corporate SSO (Okta / Azure AD / SAML)
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Interactive 3D Three.js CAD Mesh & GD&T Inspector ---------------------------- */
-
-function CADViewerModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "Stainless Steel 316 Valve Manifold", openTraceability, openDFM }) {
-  const mountRef = useRef(null);
-  const [renderMode, setRenderMode] = useState("solid");
-  const [autoRotate, setAutoRotate] = useState(true);
-  const [activeDatum, setActiveDatum] = useState("A");
-
-  useEffect(() => {
-    if (!isOpen || !mountRef.current) return;
-
-    const mount = mountRef.current;
-    const width = mount.clientWidth || 540;
-    const height = mount.clientHeight || 420;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(4, 3, 5);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    mount.appendChild(renderer.domElement);
-
-    const ambLight = new THREE.AmbientLight(0xffffff, 1.2);
-    scene.add(ambLight);
-
-    const dirLight1 = new THREE.DirectionalLight(0xf3e5ab, 2.5);
-    dirLight1.position.set(5, 8, 5);
-    scene.add(dirLight1);
-
-    const dirLight2 = new THREE.DirectionalLight(0x4fb3ff, 1.8);
-    dirLight2.position.set(-5, -4, -4);
-    scene.add(dirLight2);
-
-    const cadGroup = new THREE.Group();
-    scene.add(cadGroup);
-
-    const bodyMat = new THREE.MeshStandardMaterial({
-      color: renderMode === "wireframe" ? 0x4fb3ff : renderMode === "xray" ? 0x00a896 : 0xd4af37,
-      metalness: renderMode === "solid" ? 0.85 : 0.2,
-      roughness: renderMode === "solid" ? 0.25 : 0.5,
-      wireframe: renderMode === "wireframe",
-      transparent: renderMode === "xray",
-      opacity: renderMode === "xray" ? 0.45 : 1,
-    });
-
-    const mainBody = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 2.2, 32), bodyMat);
-    cadGroup.add(mainBody);
-
-    const flange = new THREE.Mesh(new THREE.CylinderGeometry(1.7, 1.7, 0.35, 32), bodyMat);
-    flange.position.y = -1.1;
-    cadGroup.add(flange);
-
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 0.8, 24), bodyMat);
-    neck.position.y = 1.4;
-    cadGroup.add(neck);
-
-    const portMat = new THREE.MeshStandardMaterial({
-      color: renderMode === "wireframe" ? 0x4fb3ff : 0x1565c0,
-      metalness: 0.9,
-      roughness: 0.2,
-      wireframe: renderMode === "wireframe",
-      transparent: renderMode === "xray",
-      opacity: renderMode === "xray" ? 0.35 : 1,
-    });
-
-    const port1 = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 2.8, 20), portMat);
-    port1.rotation.z = Math.PI / 2;
-    cadGroup.add(port1);
-
-    const port2 = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 2.8, 20), portMat);
-    port2.rotation.x = Math.PI / 2;
-    cadGroup.add(port2);
-
-    for (let i = 0; i < 6; i++) {
-      const angle = (i * Math.PI * 2) / 6;
-      const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.45, 12), new THREE.MeshBasicMaterial({ color: 0x070e1a }));
-      hole.position.set(Math.cos(angle) * 1.45, -1.1, Math.sin(angle) * 1.45);
-      cadGroup.add(hole);
-    }
-
-    const grid = new THREE.GridHelper(6, 12, 0x1565c0, 0x1b2838);
-    grid.position.y = -1.35;
-    scene.add(grid);
-
-    let isDragging = false;
-    let prevMouseX = 0;
-    let prevMouseY = 0;
-
-    const onMouseDown = (e) => {
-      isDragging = true;
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
-    };
-
-    const onMouseMove = (e) => {
-      if (!isDragging) return;
-      const deltaX = e.clientX - prevMouseX;
-      const deltaY = e.clientY - prevMouseY;
-      cadGroup.rotation.y += deltaX * 0.01;
-      cadGroup.rotation.x += deltaY * 0.01;
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
-    };
-
-    const onMouseUp = () => {
-      isDragging = false;
-    };
-
-    const domEl = renderer.domElement;
-    domEl.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-
-    let animId;
-    const animate = () => {
-      if (autoRotate && !isDragging) {
-        cadGroup.rotation.y += 0.008;
-      }
-      renderer.render(scene, camera);
-      animId = requestAnimationFrame(animate);
-    };
-    animate();
-
-    const handleResize = () => {
-      if (!mount) return;
-      const w = mount.clientWidth;
-      const h = mount.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      domEl.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-      window.removeEventListener("resize", handleResize);
-      renderer.dispose();
-      if (mount.contains(domEl)) mount.removeChild(domEl);
-    };
-  }, [isOpen, renderMode, autoRotate]);
-
-  if (!isOpen) return null;
-
-  const datums = [
-    { id: "A", label: "Datum [A] Primary Face", spec: "Flatness 0.005 mm", measured: "0.002 mm (Pass)", status: "COMPLIANT" },
-    { id: "B", label: "Datum [B] Valve Bore", spec: "Ø24.000 ±0.005 mm", measured: "24.002 mm (Pass)", status: "COMPLIANT" },
-    { id: "C", label: "Datum [C] Flange Circle", spec: "6x Ø8.00 True Pos 0.012 mm", measured: "0.006 mm (Pass)", status: "COMPLIANT" },
-    { id: "D", label: "Surface Finish", spec: "Ra 0.4 µm Mirror Grind", measured: "0.32 µm (Pass)", status: "COMPLIANT" },
-  ];
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 960,
-          width: "100%",
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(212,175,55,0.4)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
-            padding: "20px 24px",
-            borderBottom: `1px solid ${TOKENS.hair}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", marginBottom: 4 }}>
-              3D CAD MESH & GD&T TOLERANCE INSPECTOR · WEBGL ENGINE
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
-              {rfqId}: {partName}
-            </h3>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: "rgba(0,0,0,0.04)",
-              border: `1px solid ${TOKENS.hair}`,
-              color: TOKENS.paper,
-              fontSize: 18,
-              cursor: "pointer",
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* CAD Canvas + Sidebar */}
-        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", minHeight: 440 }} className="hero-grid">
-          {/* Left Canvas Viewport */}
-          <div style={{ position: "relative", background: "#F8FAFC", display: "flex", flexDirection: "column" }}>
-            <div ref={mountRef} style={{ width: "100%", height: 420, cursor: "grab" }} />
-
-            {/* Viewport Control Overlay */}
-            <div
-              style={{
-                position: "absolute",
-                top: 14,
-                left: 14,
-                right: 14,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                pointerEvents: "none",
-              }}
-            >
-              <div style={{ pointerEvents: "auto", display: "flex", gap: 6 }}>
-                {[
-                  { id: "solid", label: "Solid Metal" },
-                  { id: "wireframe", label: "CAD Wireframe" },
-                  { id: "xray", label: "X-Ray Volume" },
-                ].map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setRenderMode(m.id)}
-                    style={{
-                      background: renderMode === m.id ? TOKENS.brass : "rgba(16,24,40,0.85)",
-                      color: renderMode === m.id ? TOKENS.ink : TOKENS.paper,
-                      border: `1px solid ${TOKENS.hair}`,
-                      borderRadius: 4,
-                      padding: "5px 10px",
-                      fontSize: 10.5,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontWeight: renderMode === m.id ? 700 : 400,
-                      cursor: "pointer",
-                    }}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ pointerEvents: "auto" }}>
-                <button
-                  onClick={() => setAutoRotate(!autoRotate)}
-                  style={{
-                    background: autoRotate ? "rgba(0,168,150,0.2)" : "rgba(16,24,40,0.85)",
-                    color: autoRotate ? TOKENS.teal : TOKENS.slate,
-                    border: `1px solid ${autoRotate ? TOKENS.teal : TOKENS.hair}`,
-                    borderRadius: 4,
-                    padding: "5px 10px",
-                    fontSize: 10.5,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    cursor: "pointer",
-                  }}
-                >
-                  {autoRotate ? "● Rotate: ON" : "○ Rotate: PAUSED"}
-                </button>
-              </div>
-            </div>
-
-            <div style={{ padding: "8px 16px", background: "#F1F5F9", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-              <span>🖱 Drag to rotate · Scroll to zoom</span>
-              <span style={{ color: TOKENS.teal }}>● 3D Mesh Integrity: 100% Manifold</span>
-            </div>
-          </div>
-
-          {/* Right Inspection & Telemetry Panel */}
-          <div style={{ padding: "20px 24px", borderLeft: `1px solid ${TOKENS.hair}`, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-            <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, marginBottom: 8, fontWeight: 700 }}>
-                GD&T TOLERANCE CALLOUTS (CMM VERIFIED)
-              </div>
-              <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, margin: "0 0 16px" }}>
-                128 discrete coordinate measurement points verified against ASME Y14.5M standard.
-              </p>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-                {datums.map((d) => {
-                  const isSelected = activeDatum === d.id;
-                  return (
-                    <div
-                      key={d.id}
-                      onClick={() => setActiveDatum(d.id)}
-                      style={{
-                        background: isSelected ? "rgba(21,101,192,0.15)" : "rgba(15, 23, 42, 0.035)",
-                        border: `1px solid ${isSelected ? TOKENS.blue : TOKENS.hair}`,
-                        borderRadius: 6,
-                        padding: "10px 12px",
-                        cursor: "pointer",
-                        transition: "all 0.15s ease",
-                      }}
-                    >
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.paper }}>
-                          {d.label}
-                        </span>
-                        <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 6px", borderRadius: 3, fontSize: 9.5, fontFamily: "'JetBrains Mono', monospace" }}>
-                          {d.status}
-                        </span>
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, fontSize: 11.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
-                        <span>Target: {d.spec}</span>
-                        <span style={{ color: TOKENS.teal }}>Actual: {d.measured}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Inspection Box */}
-              <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px", marginBottom: 20 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>MATERIAL TEST REPORT (MTR)</div>
-                  <button
-                    onClick={() => openTraceability?.(rfqId, "SS 316L Stainless Steel")}
-                    style={{
-                      background: "rgba(0,168,150,0.15)",
-                      border: `1px solid ${TOKENS.teal}`,
-                      color: TOKENS.teal,
-                      borderRadius: 4,
-                      padding: "2px 6px",
-                      fontSize: 9.5,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      cursor: "pointer",
-                      fontWeight: 700,
-                    }}
-                  >
-                    Inspect Spectroscopy →
-                  </button>
-                </div>
-                <div style={{ fontSize: 12.5, color: TOKENS.paper, marginTop: 4, fontWeight: 600 }}>SS 316L Stainless (Marine Grade)</div>
-                <div style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>Heat #8942A · Tensile 580 MPa · Hardness HRB 79</div>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <button
-                onClick={() => alert(`Simulating STEP CAD file download (valves_assembly_v3.step · 14.2 MB)...`)}
-                style={{
-                  background: TOKENS.brass,
-                  color: TOKENS.ink,
-                  border: "none",
-                  borderRadius: 6,
-                  padding: "10px 16px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                📥 Download .STEP 3D CAD File (14.2 MB) →
-              </button>
-              <button
-                onClick={() => alert(`Generating Certified CMM GD&T Dimensional Report for ${rfqId}...`)}
-                style={{
-                  background: "transparent",
-                  border: `1px solid ${TOKENS.hair}`,
-                  color: TOKENS.paper,
-                  borderRadius: 6,
-                  padding: "8px 16px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                }}
-              >
-                📄 Export CMM Inspection Report (PDF)
-              </button>
-              <button
-                onClick={() => {
-                  onClose();
-                  openDFM?.(rfqId, partName);
-                }}
-                style={{
-                  background: "linear-gradient(135deg, rgba(21,101,192,0.3) 0%, rgba(0,168,150,0.2) 100%)",
-                  border: `1px solid ${TOKENS.teal}`,
-                  color: TOKENS.paper,
-                  borderRadius: 6,
-                  padding: "10px 16px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                  fontWeight: 700,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                }}
-              >
-                🛠️ Run Automated AI DFM Feasibility Audit →
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- 4-Stage Supplier Onboarding & Shop Floor Verification Wizard ---------------------------- */
-
-function SupplierOnboardingModal({ isOpen, onClose }) {
-  const [step, setStep] = useState(1);
-  const [form, setForm] = useState({
-    companyName: "",
-    hub: "Chennai Machining Corridor (Tamil Nadu)",
-    yearEstablished: "2014",
-    floorArea: "25,000 sq. ft.",
-    machines: ["5-Axis CNC Milling", "CNC Turning Lathes"],
-    certifications: ["ISO 9001:2015", "AS9100D"],
-    tolerance: "±0.005 mm",
-    email: "",
-    phone: "",
-  });
-  const [verifiedBadge, setVerifiedBadge] = useState("");
-
-  if (!isOpen) return null;
-
-  const machineOptions = [
-    "5-Axis CNC Milling",
-    "CNC Turning Lathes",
-    "Wire EDM Cutting",
-    "Sheet Metal Laser & Bending",
-    "Surface & Cylindrical Grinding",
-    "SMT Pick-and-Place Assembly",
-    "Cleanroom ISO Class 7",
-    "Plastic Injection Tooling (80T - 450T)",
-  ];
-
-  const certOptions = [
-    "ISO 9001:2015 (Quality Management)",
-    "AS9100D (Aerospace & Defence)",
-    "IATF 16949 (Automotive Standard)",
-    "ISO 13485 (Medical Devices)",
-    "ISO 14001 (Environmental Safety)",
-    "ITAR Registered Compliance",
-  ];
-
-  const toggleItem = (listName, val) => {
-    const list = form[listName];
-    if (list.includes(val)) {
-      setForm({ ...form, [listName]: list.filter((i) => i !== val) });
-    } else {
-      setForm({ ...form, [listName]: [...list, val] });
-    }
-  };
-
-  const handleFinish = (e) => {
-    e.preventDefault();
-    const certNum = `VMFG-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-    setVerifiedBadge(certNum);
-    trackEvent("supplier_plant_verified", { company: form.companyName, certNum });
-  };
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-        zIndex: 9999,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 680,
-          width: "100%",
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(212,175,55,0.4)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
-            padding: "24px 28px",
-            borderBottom: `1px solid ${TOKENS.hair}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", marginBottom: 4 }}>
-              SUPPLIER ONBOARDING & SHOP FLOOR VERIFICATION
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
-              {verifiedBadge ? "Plant Verified & Onboarded" : "4-Stage Factory Verification Wizard"}
-            </h3>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: "rgba(0,0,0,0.04)",
-              border: `1px solid ${TOKENS.hair}`,
-              color: TOKENS.paper,
-              fontSize: 18,
-              cursor: "pointer",
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            ✕
-          </button>
-        </div>
-
-        {verifiedBadge ? (
-          /* Confirmation & Certificate Preview */
-          <div style={{ padding: "32px 28px", textAlign: "center" }}>
-            <div style={{ width: 68, height: 68, borderRadius: "50%", background: "rgba(0,168,150,0.15)", border: `2px solid ${TOKENS.teal}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: TOKENS.teal, fontSize: 32 }}>
-              ✓
-            </div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.brass, marginBottom: 6 }}>
-              OFFICIAL VERIFICATION CERTIFICATE ISSUED
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 24, margin: "0 0 10px" }}>
-              {form.companyName || "Your Manufacturing Plant"}
-            </h3>
-            <div style={{ display: "inline-block", background: "rgba(212,175,55,0.12)", border: `1px solid ${TOKENS.brass}`, borderRadius: 6, padding: "8px 18px", fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brassBright, marginBottom: 20 }}>
-              ★ {verifiedBadge} · AS9100D & ISO VERIFIED
-            </div>
-
-            <p style={{ color: TOKENS.slate, fontSize: 14.5, lineHeight: 1.6, maxWidth: 520, margin: "0 auto 24px" }}>
-              Your factory capabilities and certifications have been authenticated. Your plant profile is now live in the Abhimanyu Verified Directory and actively matched against inbound enterprise RFQs.
-            </p>
-
-            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-              <button
-                onClick={() => alert(`Simulating PDF Certificate Download for Verified Supplier ${verifiedBadge}...`)}
-                style={{
-                  background: TOKENS.teal,
-                  color: "#0B1F3A",
-                  border: "none",
-                  borderRadius: 6,
-                  padding: "10px 18px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                📄 Download Verification Certificate (PDF) →
-              </button>
-              <Button onClick={onClose}>Done</Button>
-            </div>
-          </div>
-        ) : (
-          /* Wizard Stepper Body */
-          <div style={{ padding: "24px 28px" }}>
-            {/* Step Bar */}
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 14 }}>
-              {[
-                { s: 1, label: "Plant Details" },
-                { s: 2, label: "Machinery" },
-                { s: 3, label: "Quality & Certs" },
-                { s: 4, label: "Contact & Review" },
-              ].map((st) => (
-                <div key={st.s} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: "50%",
-                      background: step > st.s ? TOKENS.teal : step === st.s ? TOKENS.brass : "rgba(15, 23, 42, 0.05)",
-                      color: step >= st.s ? TOKENS.ink : TOKENS.slate,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 11,
-                      fontWeight: "bold",
-                      fontFamily: "'JetBrains Mono', monospace",
-                    }}
-                  >
-                    {step > st.s ? "✓" : st.s}
-                  </div>
-                  <span style={{ fontSize: 11.5, color: step === st.s ? TOKENS.paper : TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
-                    {st.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Step 1: Plant Identity */}
-            {step === 1 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
-                  Step 1: Facility Identity & Industrial Corridor
-                </h4>
-                <div>
-                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                    MANUFACTURING PLANT / COMPANY NAME
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Precision CNC Works Pvt. Ltd."
-                    value={form.companyName}
-                    onChange={(e) => setForm({ ...form, companyName: e.target.value })}
-                    style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                    PRIMARY INDUSTRIAL HUB / CORRIDOR
-                  </label>
-                  <select
-                    value={form.hub}
-                    onChange={(e) => setForm({ ...form, hub: e.target.value })}
-                    style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                  >
-                    <option value="Chennai Machining Corridor (Tamil Nadu)">Chennai Machining Corridor (Tamil Nadu)</option>
-                    <option value="Hyderabad Aerospace & Defence Hub (Telangana)">Hyderabad Aerospace & Defence Hub (Telangana)</option>
-                    <option value="Bengaluru Tech & Precision Machining (Karnataka)">Bengaluru Tech & Precision Machining (Karnataka)</option>
-                    <option value="Pune & Mumbai OEM Auto Belt (Maharashtra)">Pune & Mumbai OEM Auto Belt (Maharashtra)</option>
-                    <option value="Coimbatore Precision Foundry (Tamil Nadu)">Coimbatore Precision Foundry (Tamil Nadu)</option>
-                    <option value="Delhi NCR Industrial Sourcing Hub">Delhi NCR Industrial Sourcing Hub</option>
-                  </select>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                      YEAR ESTABLISHED
-                    </label>
-                    <input
-                      type="text"
-                      value={form.yearEstablished}
-                      onChange={(e) => setForm({ ...form, yearEstablished: e.target.value })}
-                      style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                      SHOP FLOOR AREA
-                    </label>
-                    <input
-                      type="text"
-                      value={form.floorArea}
-                      onChange={(e) => setForm({ ...form, floorArea: e.target.value })}
-                      style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                    />
-                  </div>
-                </div>
-                <div style={{ textAlign: "right", marginTop: 10 }}>
-                  <Button onClick={() => setStep(2)}>Next: Machinery & Capabilities →</Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Machinery */}
-            {step === 2 && (
-              <div>
-                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
-                  Step 2: Machine Shop Capabilities
-                </h4>
-                <p style={{ color: TOKENS.slate, fontSize: 13, marginBottom: 16 }}>
-                  Select all active equipment and process capabilities deployed on your shop floor.
-                </p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 20 }}>
-                  {machineOptions.map((opt) => {
-                    const active = form.machines.includes(opt);
-                    return (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => toggleItem("machines", opt)}
-                        style={{
-                          background: active ? "rgba(0,168,150,0.15)" : "rgba(15, 23, 42, 0.04)",
-                          border: `1px solid ${active ? TOKENS.teal : TOKENS.hair}`,
-                          color: active ? TOKENS.teal : TOKENS.paper,
-                          padding: "10px 12px",
-                          borderRadius: 6,
-                          fontSize: 12,
-                          fontFamily: "'JetBrains Mono', monospace",
-                          textAlign: "left",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {active ? "✓ " : "○ "} {opt}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <Button variant="ghost" onClick={() => setStep(1)}>← Back</Button>
-                  <Button onClick={() => setStep(3)}>Next: Quality & Certs →</Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Certifications */}
-            {step === 3 && (
-              <div>
-                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
-                  Step 3: Quality Standards & Audited Tolerances
-                </h4>
-                <p style={{ color: TOKENS.slate, fontSize: 13, marginBottom: 16 }}>
-                  Select accredited certifications held by your facility.
-                </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
-                  {certOptions.map((opt) => {
-                    const active = form.certifications.some((c) => opt.startsWith(c));
-                    return (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => toggleItem("certifications", opt.split(" ")[0])}
-                        style={{
-                          background: active ? "rgba(212,175,55,0.12)" : "rgba(15, 23, 42, 0.04)",
-                          border: `1px solid ${active ? TOKENS.brass : TOKENS.hair}`,
-                          color: active ? TOKENS.brass : TOKENS.paper,
-                          padding: "10px 14px",
-                          borderRadius: 6,
-                          fontSize: 12.5,
-                          fontFamily: "'JetBrains Mono', monospace",
-                          textAlign: "left",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {active ? "✓ " : "○ "} {opt}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                    VERIFIED CMM REPEATABILITY TOLERANCE
-                  </label>
-                  <select
-                    value={form.tolerance}
-                    onChange={(e) => setForm({ ...form, tolerance: e.target.value })}
-                    style={{ width: "100%", background: "#101828", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                  >
-                    <option value="±0.002 mm (Ultra-Precision Aerospace)">±0.002 mm (Ultra-Precision Aerospace)</option>
-                    <option value="±0.005 mm (High-Precision CNC)">±0.005 mm (High-Precision CNC)</option>
-                    <option value="±0.010 mm (Standard Mechanical)">±0.010 mm (Standard Mechanical)</option>
-                    <option value="±0.050 mm (Heavy Fabrication)">±0.050 mm (Heavy Fabrication)</option>
-                  </select>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <Button variant="ghost" onClick={() => setStep(2)}>← Back</Button>
-                  <Button onClick={() => setStep(4)}>Next: Contact & Review →</Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: Contact & Review */}
-            {step === 4 && (
-              <form onSubmit={handleFinish} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: 0 }}>
-                  Step 4: Contact & Verification Review
-                </h4>
-                <div>
-                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                    OFFICIAL WORK EMAIL (FOR RFQ BROADCASTS)
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="tooling@precisioncnc.in"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                    PLANT TELEPHONE / WHATSAPP NUMBER
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="+91 98400 12345"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    style={{ width: "100%", background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", color: TOKENS.paper, fontSize: 13 }}
-                  />
-                </div>
-
-                <div style={{ background: "rgba(15, 23, 42, 0.035)", border: `1px solid ${TOKENS.hair}`, padding: 14, borderRadius: 6, fontSize: 12 }}>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, marginBottom: 4 }}>
-                    PLANT SUMMARY TO BE VERIFIED:
-                  </div>
-                  <div style={{ color: TOKENS.paper }}>
-                    <strong>{form.companyName || "Plant"}</strong> · {form.hub} · {form.floorArea}
-                  </div>
-                  <div style={{ color: TOKENS.slate, marginTop: 4 }}>
-                    Capabilities: {form.machines.join(", ")}
-                  </div>
-                  <div style={{ color: TOKENS.teal, marginTop: 2 }}>
-                    Certs: {form.certifications.join(", ")} · Tolerance: {form.tolerance}
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
-                  <Button variant="ghost" onClick={() => setStep(3)}>← Back</Button>
-                  <Button type="submit">Submit & Issue Verification Seal →</Button>
-                </div>
-              </form>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Industrial Escrow & Milestone Settlement Ledger Modal ---------------------------- */
-
-function EscrowSettlementModal({
-  isOpen,
-  onClose,
-  poNumber = "PO-2026-9041",
-  supplier = "Apex Precision Engineering Ltd.",
-  totalInr = 485000,
-  currency = "INR",
-}) {
-  const [milestones, setMilestones] = useState([
-    {
-      id: 1,
-      step: "01",
-      title: "DFM Sign-Off & Raw Material Lock",
-      pct: 20,
-      amount: Math.round(totalInr * 0.2),
-      status: "released",
-      desc: "Raw material ingot allocated and certified with MTR spectroscopic chemical assay.",
-      date: "24 Sep 2026, 14:32 IST",
-      txHash: "0x78ab4...99c1",
-      proof: "MTR-316L-HT8942A.pdf",
-    },
-    {
-      id: 2,
-      step: "02",
-      title: "First Article Inspection (FAI) & CMM Approval",
-      pct: 30,
-      amount: Math.round(totalInr * 0.3),
-      status: "ready",
-      desc: "First 5 prototype units measured on Zeiss CMM. All ASME Y14.5M datums pass within ±0.005mm.",
-      date: "Pending Buyer 2FA Disbursal Authorization",
-      txHash: null,
-      proof: "CMM-FAI-DEVIATION-PASS.pdf",
-    },
-    {
-      id: 3,
-      step: "03",
-      title: "Batch Production & Pre-Shipment Audit",
-      pct: 40,
-      amount: Math.round(totalInr * 0.4),
-      status: "pending",
-      desc: "Full production run of 5,000 units on 5-axis CNC machining centers. Shop floor OEE 94.8%.",
-      date: "Scheduled: Est. 7-10 Days",
-      txHash: null,
-      proof: "Shopfloor-Batch-OEE-94.8.log",
-    },
-    {
-      id: 4,
-      step: "04",
-      title: "Goods Receipt Note (GRN) & Plant Clearance",
-      pct: 10,
-      amount: Math.round(totalInr * 0.1),
-      status: "locked",
-      desc: "Destination incoming QC at Bharat Aerospace dock. Final 10% retention warranty release.",
-      date: "Scheduled: Est. 14 Days",
-      txHash: null,
-      proof: "GRN-Destination-Dock.pdf",
-    },
-  ]);
-
-  const [activeTab, setActiveTab] = useState("milestones");
-  const [otpOpen, setOtpOpen] = useState(false);
-  const [selectedMilestone, setSelectedMilestone] = useState(null);
-  const [otpCode, setOtpCode] = useState("");
-  const [verifyingOtp, setVerifyingOtp] = useState(false);
-  const [releaseSuccess, setReleaseSuccess] = useState(null);
-
-  if (!isOpen) return null;
-
-  const totalDisbursed = milestones
-    .filter((m) => m.status === "released")
-    .reduce((acc, m) => acc + m.amount, 0);
-
-  const lockedBalance = totalInr - totalDisbursed;
-
-  const handleOpenOtp = (m) => {
-    setSelectedMilestone(m);
-    setOtpCode("");
-    setReleaseSuccess(null);
-    setOtpOpen(true);
-  };
-
-  const handleVerifyOtp = (e) => {
-    e.preventDefault();
-    if (!otpCode || otpCode.length < 4) return;
-    setVerifyingOtp(true);
-
-    setTimeout(() => {
-      setVerifyingOtp(false);
-      setMilestones((prev) =>
-        prev.map((m) =>
-          m.id === selectedMilestone.id
-            ? {
-                ...m,
-                status: "released",
-                date: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " IST",
-                txHash: "0x" + Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join("") + "...escrow",
-              }
-            : m
-        )
-      );
-      setReleaseSuccess(
-        `Disbursement of ${formatPrice(selectedMilestone.amount, currency)} successfully released from Vault to ${supplier}. Clearance Ref: #ICICI-ESC-${Math.floor(100000 + Math.random() * 900000)}`
-      );
-      setTimeout(() => {
-        setOtpOpen(false);
-      }, 2000);
-    }, 1100);
-  };
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          maxWidth: 820,
-          width: "100%",
-          maxHeight: "90vh",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(212,175,55,0.4)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 28px 70px rgba(0,0,0,0.85)",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Header */}
-        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 22 }}>🔐</span>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
-                  Industrial Escrow Vault & Settlement Ledger
-                </h3>
-                <span style={{ background: "rgba(0,168,150,0.18)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                  SBI/ICICI API ACTIVE
-                </span>
-              </div>
-              <div style={{ fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginTop: 2 }}>
-                Order #{poNumber} · Beneficiary: {supplier}
-              </div>
-            </div>
-          </div>
-          <button onClick={onClose} style={{ background: "transparent", border: "none", color: TOKENS.slate, fontSize: 20, cursor: "pointer" }}>✕</button>
-        </div>
-
-        {/* Telemetry Metrics Cards */}
-        <div style={{ padding: "16px 24px", background: "rgba(0,0,0,0.25)", borderBottom: `1px solid ${TOKENS.hair}`, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
-          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>TOTAL CONTRACT VALUE</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.brassBright, marginTop: 4 }}>
-              {formatPrice(totalInr, currency)}
-            </div>
-          </div>
-          <div style={{ background: "rgba(0,168,150,0.05)", border: `1px solid rgba(0,168,150,0.3)`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.teal }}>DISBURSED TO PLANT</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.teal, marginTop: 4 }}>
-              {formatPrice(totalDisbursed, currency)}
-            </div>
-          </div>
-          <div style={{ background: "rgba(21,101,192,0.08)", border: `1px solid rgba(21,101,192,0.35)`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: "#60A5FA" }}>LOCKED IN ESCROW</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: "#60A5FA", marginTop: 4 }}>
-              {formatPrice(lockedBalance, currency)}
-            </div>
-          </div>
-          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>SETTLEMENT CLAUSE</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper, marginTop: 6 }}>
-              Reverse Charge: No · HSN 8481
-            </div>
-          </div>
-        </div>
-
-        {/* Tab Navigation */}
-        <div style={{ display: "flex", borderBottom: `1px solid ${TOKENS.hair}`, padding: "0 24px", background: "rgba(255,255,255,0.01)" }}>
-          {[
-            { id: "milestones", label: "Stage-Gate Milestones (4)" },
-            { id: "tax", label: "GST & Tax Invoice Breakdown" },
-            { id: "audit", label: "Cryptographic Audit Ledger" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                background: "transparent",
-                border: "none",
-                borderBottom: `2px solid ${activeTab === tab.id ? TOKENS.brass : "transparent"}`,
-                color: activeTab === tab.id ? TOKENS.brass : TOKENS.slate,
-                padding: "12px 16px",
-                cursor: "pointer",
-                fontSize: 12.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: activeTab === tab.id ? 700 : 400,
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Scrollable Content Body */}
-        <div style={{ overflowY: "auto", padding: "20px 24px", flex: 1 }}>
-          {activeTab === "milestones" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              {milestones.map((m) => {
-                const isReleased = m.status === "released";
-                const isReady = m.status === "ready";
-                return (
-                  <div
-                    key={m.id}
-                    style={{
-                      background: isReleased ? "rgba(0,168,150,0.06)" : isReady ? "rgba(212,175,55,0.08)" : "rgba(15, 23, 42, 0.03)",
-                      border: `1px solid ${isReleased ? TOKENS.teal : isReady ? TOKENS.brass : TOKENS.hair}`,
-                      borderRadius: 8,
-                      padding: "16px 20px",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      gap: 16,
-                    }}
-                  >
-                    <div style={{ flex: "1 1 340px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                        <span style={{
-                          background: isReleased ? TOKENS.teal : isReady ? TOKENS.brass : "rgba(15, 23, 42, 0.06)",
-                          color: isReleased || isReady ? TOKENS.ink : TOKENS.paper,
-                          width: 24,
-                          height: 24,
-                          borderRadius: 4,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: 11,
-                          fontWeight: "bold",
-                          fontFamily: "'JetBrains Mono', monospace"
-                        }}>
-                          {isReleased ? "✓" : m.step}
-                        </span>
-                        <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper, margin: 0 }}>
-                          {m.title}
-                        </h4>
-                        <span style={{
-                          background: isReleased ? "rgba(0,168,150,0.2)" : isReady ? "rgba(212,175,55,0.2)" : "rgba(15, 23, 42, 0.045)",
-                          color: isReleased ? TOKENS.teal : isReady ? TOKENS.brass : TOKENS.slate,
-                          fontSize: 10.5,
-                          fontFamily: "'JetBrains Mono', monospace",
-                          padding: "2px 8px",
-                          borderRadius: 3,
-                          fontWeight: 700,
-                        }}>
-                          {isReleased ? "DISBURSED ✓" : isReady ? "READY FOR BUYER 2FA" : "LOCKED"}
-                        </span>
-                      </div>
-                      <p style={{ margin: "4px 0 6px", color: TOKENS.slate, fontSize: 12.5, lineHeight: 1.4 }}>
-                        {m.desc}
-                      </p>
-                      <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, display: "flex", gap: 12, flexWrap: "wrap" }}>
-                        <span>⏱ {m.date}</span>
-                        {m.txHash && <span style={{ color: TOKENS.teal }}>Hash: {m.txHash}</span>}
-                        <span>Proof: {m.proof}</span>
-                      </div>
-                    </div>
-
-                    <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
-                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, fontWeight: 700 }}>
-                        {formatPrice(m.amount, currency)} <span style={{ fontSize: 12, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>({m.pct}%)</span>
-                      </div>
-                      {isReleased ? (
-                        <span style={{ color: TOKENS.teal, fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                          ● Funds Cleared
-                        </span>
-                      ) : isReady ? (
-                        <button
-                          onClick={() => handleOpenOtp(m)}
-                          style={{
-                            background: `linear-gradient(135deg, ${TOKENS.brass}, #F59E0B)`,
-                            color: "#080E1A",
-                            border: "none",
-                            borderRadius: 6,
-                            padding: "8px 16px",
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontSize: 11.5,
-                            fontWeight: 800,
-                            cursor: "pointer",
-                            boxShadow: "0 4px 12px rgba(212,175,55,0.3)",
-                          }}
-                        >
-                          🔓 Authorize 30% Disbursal →
-                        </button>
-                      ) : (
-                        <span style={{ color: TOKENS.slate, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
-                          🔒 Inactive Milestone
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {activeTab === "tax" && (
-            <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 24px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper, margin: 0 }}>
-                  Official B2B Tax Invoice Spec (GST Act Compliant)
-                </h4>
-                <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass }}>
-                  INVOICE #TI-2026-8812
-                </span>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
-                <div>
-                  <div style={{ color: TOKENS.slate }}>BUYER GSTIN:</div>
-                  <div style={{ color: TOKENS.paper, fontWeight: 600 }}>36AAACB1234D1Z5 (Bharat Aerospace Dynamics)</div>
-                  <div style={{ color: TOKENS.slate, marginTop: 6 }}>STATE / CORRIDOR:</div>
-                  <div style={{ color: TOKENS.paper }}>Telangana (36)</div>
-                </div>
-                <div>
-                  <div style={{ color: TOKENS.slate }}>SUPPLIER GSTIN:</div>
-                  <div style={{ color: TOKENS.paper, fontWeight: 600 }}>33AAACP9876E1Z2 (Apex Precision Ltd.)</div>
-                  <div style={{ color: TOKENS.slate, marginTop: 6 }}>STATE / CORRIDOR:</div>
-                  <div style={{ color: TOKENS.paper }}>Tamil Nadu (33)</div>
-                </div>
-              </div>
-
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, color: TOKENS.slate, textAlign: "left" }}>
-                    <th style={{ padding: "8px 4px" }}>DESCRIPTION</th>
-                    <th style={{ padding: "8px 4px" }}>HSN</th>
-                    <th style={{ padding: "8px 4px" }}>BASE VALUE</th>
-                    <th style={{ padding: "8px 4px" }}>IGST (18%)</th>
-                    <th style={{ padding: "8px 4px", textAlign: "right" }}>TOTAL</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, color: TOKENS.paper }}>
-                    <td style={{ padding: "10px 4px" }}>SS316 Multi-Port Valve Manifold Batch</td>
-                    <td style={{ padding: "10px 4px" }}>8481</td>
-                    <td style={{ padding: "10px 4px" }}>{formatPrice(Math.round(totalInr / 1.18), currency)}</td>
-                    <td style={{ padding: "10px 4px" }}>{formatPrice(Math.round(totalInr - totalInr / 1.18), currency)}</td>
-                    <td style={{ padding: "10px 4px", textAlign: "right", fontWeight: 700, color: TOKENS.brassBright }}>
-                      {formatPrice(totalInr, currency)}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {activeTab === "audit" && (
-            <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 12 }}>
-                IMMUTABLE MULTI-SIG ESCROW LOGS (VERIFIED BY STATE BANK ESCROW GATEWAY)
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {[
-                  { time: "24 Sep 2026 10:00:12 IST", event: "Smart Contract Escrow Vault Initialized", actor: "SBI / ICICI Gateway", hash: "0x12d4a...88ff" },
-                  { time: "24 Sep 2026 10:14:50 IST", event: "100% Contract Capital Deposited into Multi-Sig Vault", actor: "Bharat Aerospace Dynamics", hash: "0x33e8b...12aa" },
-                  { time: "24 Sep 2026 14:32:01 IST", event: "Milestone 1 (20% Advance) Released to Apex Precision", actor: "Dr. K. S. Rao (Auth Token #8849)", hash: "0x78ab4...99c1" },
-                  { time: "26 Sep 2026 11:20:44 IST", event: "Zeiss CMM FAI Telemetry Deviation Log Ingested", actor: "Apex Precision Quality Lab", hash: "0x90f1c...4432" },
-                ].map((log, idx) => (
-                  <div key={idx} style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", color: TOKENS.slate }}>
-                      <span>{log.time}</span>
-                      <span style={{ color: TOKENS.teal }}>{log.actor}</span>
-                    </div>
-                    <div style={{ color: TOKENS.paper, margin: "4px 0", fontWeight: 600 }}>{log.event}</div>
-                    <div style={{ color: TOKENS.brass, fontSize: 10.5 }}>SHA-256 Hash: {log.hash}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
-          <button
-            onClick={() => {
-              trackEvent("export_escrow_ledger");
-              alert(`Exporting cryptographic Escrow Settlement Ledger for ${poNumber} (JSON / CSV format)...`);
-            }}
-            style={{
-              background: "transparent",
-              border: `1px solid ${TOKENS.hair}`,
-              color: TOKENS.paper,
-              borderRadius: 4,
-              padding: "7px 12px",
-              fontSize: 11.5,
-              fontFamily: "'JetBrains Mono', monospace",
-              cursor: "pointer",
-            }}
-          >
-            📥 Export Escrow Audit Trail (CSV)
-          </button>
-          <Button onClick={onClose}>Close Ledger</Button>
-        </div>
-
-        {/* 2FA OTP Prompt Submodal */}
-        {otpOpen && (
-          <div
-            onClick={() => setOtpOpen(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,0.8)",
-              backdropFilter: "blur(8px)",
-              zIndex: 11000,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: 16,
-            }}
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                maxWidth: 440,
-                width: "100%",
-                background: TOKENS.panelAlt,
-                border: `1px solid ${TOKENS.brass}`,
-                borderRadius: 10,
-                padding: 24,
-                boxShadow: "0 20px 50px rgba(0,0,0,0.9)",
-              }}
-            >
-              <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper, margin: "0 0 8px" }}>
-                Authorize Milestone Disbursal
-              </h4>
-              <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.5, margin: "0 0 16px" }}>
-                Authorizing <strong>{formatPrice(selectedMilestone?.amount, currency)}</strong> to <strong>{supplier}</strong> for {selectedMilestone?.title}.
-              </p>
-
-              {releaseSuccess ? (
-                <div style={{ background: "rgba(0,168,150,0.15)", border: `1px solid ${TOKENS.teal}`, borderRadius: 6, padding: 14, color: TOKENS.teal, fontSize: 12.5, fontFamily: "'JetBrains Mono', monospace" }}>
-                  ✓ {releaseSuccess}
-                </div>
-              ) : (
-                <form onSubmit={handleVerifyOtp} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  <div style={{ background: "rgba(212,175,55,0.08)", border: `1px solid rgba(212,175,55,0.25)`, padding: 10, borderRadius: 6, fontSize: 11.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>
-                    🔒 2FA Token sent to Procurement Lead (+91 98*** 4210).
-                  </div>
-                  <div>
-                    <label style={{ display: "block", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginBottom: 4 }}>
-                      ENTER 6-DIGIT CORPORATE OTP
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      maxLength={6}
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value)}
-                      placeholder="e.g. 849201"
-                      style={{
-                        width: "100%",
-                        background: "rgba(15, 23, 42, 0.045)",
-                        border: `1px solid ${TOKENS.hair}`,
-                        borderRadius: 6,
-                        padding: "10px 12px",
-                        color: TOKENS.paper,
-                        fontSize: 16,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        letterSpacing: "0.2em",
-                        textAlign: "center",
-                      }}
-                    />
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <button
-                      type="button"
-                      onClick={() => setOtpCode("849201")}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        color: TOKENS.teal,
-                        fontSize: 11,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                      }}
-                    >
-                      ⚡ Use Test OTP: 849201
-                    </button>
-                  </div>
-                  <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-                    <Button variant="ghost" type="button" onClick={() => setOtpOpen(false)}>Cancel</Button>
-                    <Button type="submit" disabled={verifyingOtp}>
-                      {verifyingOtp ? "Verifying with Gateway..." : "Confirm & Release Funds →"}
-                    </Button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- AS9100D / ISO 13485 Material Traceability & MTR Inspector Modal ---------------------------- */
-
-function TraceabilityModal({
-  isOpen,
-  onClose,
-  rfqId = "RFQ-2026-9041",
-  material = "SS 316L Stainless Steel",
-  heatNumber = "HT-316L-98421",
-}) {
-  const [activeTab, setActiveTab] = useState("chem");
-  const [copiedHash, setCopiedHash] = useState(false);
-
-  if (!isOpen) return null;
-
-  const cryptoHash = "SHA256: 7f8a9e4b112c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789";
-
-  const chemElements = [
-    { element: "Carbon (C)", target: "≤ 0.030%", measured: "0.022%", margin: 73, status: "PASS ✓" },
-    { element: "Chromium (Cr)", target: "16.00 - 18.00%", measured: "17.48%", margin: 87, status: "PASS ✓" },
-    { element: "Nickel (Ni)", target: "10.00 - 14.00%", measured: "12.24%", margin: 56, status: "PASS ✓" },
-    { element: "Molybdenum (Mo)", target: "2.00 - 3.00%", measured: "2.45%", margin: 45, status: "PASS ✓" },
-    { element: "Manganese (Mn)", target: "≤ 2.00%", measured: "1.62%", margin: 81, status: "PASS ✓" },
-    { element: "Silicon (Si)", target: "≤ 1.00%", measured: "0.48%", margin: 48, status: "PASS ✓" },
-    { element: "Phosphorus (P)", target: "≤ 0.045%", measured: "0.028%", margin: 62, status: "PASS ✓" },
-    { element: "Sulfur (S)", target: "≤ 0.030%", measured: "0.012%", margin: 40, status: "PASS ✓" },
-    { element: "Nitrogen (N)", target: "≤ 0.100%", measured: "0.045%", margin: 45, status: "PASS ✓" },
-    { element: "Iron (Fe)", target: "Balance", measured: "65.62%", margin: 100, status: "PASS ✓" },
-  ];
-
-  const mechProperties = [
-    { prop: "Yield Strength (Rp 0.2%)", spec: "≥ 205 MPa", measured: "318 MPa", rating: "+55.1% safety margin" },
-    { prop: "Tensile Strength (Rm)", spec: "≥ 515 MPa", measured: "628 MPa", rating: "+21.9% safety margin" },
-    { prop: "Elongation (A5)", spec: "≥ 30.0%", measured: "48.5%", rating: "High Ductility Pass" },
-    { prop: "Reduction of Area (Z)", spec: "≥ 50.0%", measured: "68.2%", rating: "Pass" },
-    { prop: "Hardness (Rockwell B)", spec: "≤ 95 HRB", measured: "81 HRB", rating: "Pass" },
-    { prop: "Charpy V-Notch Impact (-196°C)", spec: "≥ 60 J", measured: "114 J", rating: "Aerospace Cryo Certified" },
-  ];
-
-  const ndtTests = [
-    { method: "Ultrasonic Testing (UT)", standard: "AMS-STD-2154 Class A", result: "No internal voids, zero inclusions detected" },
-    { method: "Liquid Penetrant (LPI)", standard: "ASTM E1417 Level 4 Ultra-Sensitive", result: "Zero linear or rounded indications" },
-    { method: "Intergranular Corrosion", standard: "ASTM A262 Practice E", result: "No sensitization or grain boundary carbide precipitation" },
-    { method: "Ferrite Number (DeLong)", standard: "AWS A4.2M / ISO 8249", result: "4.8 FN (Optimal corrosion & weldability balance)" },
-  ];
-
-  const copyHash = () => {
-    navigator.clipboard?.writeText(cryptoHash);
-    setCopiedHash(true);
-    setTimeout(() => setCopiedHash(false), 2000);
-  };
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          maxWidth: 820,
-          width: "100%",
-          maxHeight: "90vh",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(0,168,150,0.45)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 28px 70px rgba(0,0,0,0.85)",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Header */}
-        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 22 }}>🔬</span>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
-                  Raw Material Test Report (MTR) & Traceability
-                </h3>
-                <span style={{ background: "rgba(0,168,150,0.18)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                  AS9100D / EN 10204 3.1
-                </span>
-              </div>
-              <div style={{ fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginTop: 2 }}>
-                Heat #{heatNumber} · Specification: {material}
-              </div>
-            </div>
-          </div>
-          <button onClick={onClose} style={{ background: "transparent", border: "none", color: TOKENS.slate, fontSize: 20, cursor: "pointer" }}>✕</button>
-        </div>
-
-        {/* Mill & Ingot Overview Strip */}
-        <div style={{ padding: "14px 24px", background: "rgba(0,0,0,0.25)", borderBottom: `1px solid ${TOKENS.hair}`, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>MELT MILL SOURCE</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.paper, fontWeight: 600, marginTop: 2 }}>Jindal Stainless Special Steels</div>
-          </div>
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>MELT METHOD</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.paper, fontWeight: 600, marginTop: 2 }}>EAF + AOD Refining</div>
-          </div>
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>HEAT LOT NUMBER</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.brass, fontWeight: 700, marginTop: 2 }}>{heatNumber}</div>
-          </div>
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>ORIGIN AUDIT</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.teal, fontWeight: 600, marginTop: 2 }}>Make In India · ISO 14001</div>
-          </div>
-        </div>
-
-        {/* Tab Navigation */}
-        <div style={{ display: "flex", borderBottom: `1px solid ${TOKENS.hair}`, padding: "0 24px", background: "rgba(255,255,255,0.01)" }}>
-          {[
-            { id: "chem", label: "Optical Emission Spectroscopy (OES)" },
-            { id: "mech", label: "Mechanical & Cryo Tensile Tests" },
-            { id: "ndt", label: "NDT & Microstructure Inspection" },
-            { id: "custody", label: "Chain of Custody & ESG Scope 3" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                background: "transparent",
-                border: "none",
-                borderBottom: `2px solid ${activeTab === tab.id ? TOKENS.teal : "transparent"}`,
-                color: activeTab === tab.id ? TOKENS.teal : TOKENS.slate,
-                padding: "12px 16px",
-                cursor: "pointer",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: activeTab === tab.id ? 700 : 400,
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Scrollable Content Body */}
-        <div style={{ overflowY: "auto", padding: "20px 24px", flex: 1 }}>
-          {activeTab === "chem" && (
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
-                  CHEMICAL COMPOSITION ASSAY VS. ASTM A276 / ASME SA479 GRADE 316L
-                </span>
-                <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 700 }}>
-                  ● 100% SPEC CONFORMITY CONFIRMED
-                </span>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 10 }}>
-                {chemElements.map((item) => (
-                  <div key={item.element} style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, fontWeight: 700, color: TOKENS.paper }}>
-                        {item.element}
-                      </span>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 700 }}>
-                        {item.status}
-                      </span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-                      <span>Target: {item.target}</span>
-                      <span style={{ color: TOKENS.brassBright, fontWeight: 600 }}>Actual: {item.measured}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeTab === "mech" && (
-            <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 14 }}>
-                ROOM TEMPERATURE & CRYOGENIC MECHANICAL PROPERTY CERTIFICATION
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {mechProperties.map((p) => (
-                  <div key={p.prop} style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-                    <div>
-                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>
-                        {p.prop}
-                      </div>
-                      <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginTop: 2 }}>
-                        Standard Spec: {p.spec}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 15, fontWeight: 700, color: TOKENS.teal }}>
-                        {p.measured}
-                      </div>
-                      <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass }}>
-                        {p.rating}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeTab === "ndt" && (
-            <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 14 }}>
-                NON-DESTRUCTIVE TESTING (NDT) & VOLUMETRIC SOUNDNESS CLEARANCES
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {ndtTests.map((t) => (
-                  <div key={t.method} style={{ background: "rgba(0,168,150,0.04)", border: `1px solid rgba(0,168,150,0.25)`, borderRadius: 6, padding: "14px 16px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13.5, fontWeight: 700, color: TOKENS.paper }}>
-                        {t.method}
-                      </span>
-                      <span style={{ background: "rgba(0,168,150,0.2)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 3, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                        AUDITED & PASSED ✓
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-                      Standard: {t.standard}
-                    </div>
-                    <div style={{ fontSize: 12, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, marginTop: 4 }}>
-                      Observations: {t.result}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeTab === "custody" && (
-            <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 24px" }}>
-              <h4 style={{ fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper, margin: "0 0 14px" }}>
-                Digital Twin Chain of Custody & Circular Metallurgy
-              </h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 8 }}>
-                  <span style={{ color: TOKENS.slate }}>Heat Annealing Cycle:</span>
-                  <span style={{ color: TOKENS.paper }}>1065°C Solution Anneal + Deionized Water Quench</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 8 }}>
-                  <span style={{ color: TOKENS.slate }}>Recycled Ferrous Ingot Share:</span>
-                  <span style={{ color: TOKENS.teal, fontWeight: 700 }}>78.4% (Green Steel Standard)</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 8 }}>
-                  <span style={{ color: TOKENS.slate }}>Scope 3 Carbon Footprint:</span>
-                  <span style={{ color: TOKENS.paper }}>1.42 kg CO2e / kg SS316L (68% below global avg)</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ color: TOKENS.slate }}>Cryptographic Audit Hash:</span>
-                  <button
-                    onClick={copyHash}
-                    style={{
-                      background: "rgba(21,101,192,0.15)",
-                      border: `1px solid ${TOKENS.blue}`,
-                      color: TOKENS.paper,
-                      padding: "4px 10px",
-                      borderRadius: 4,
-                      fontSize: 11,
-                      cursor: "pointer",
-                      fontFamily: "'JetBrains Mono', monospace",
-                    }}
-                  >
-                    {copiedHash ? "✓ Hash Copied!" : "📋 Copy SHA-256 Hash"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
-          <button
-            onClick={() => {
-              trackEvent("download_mtr_pdf");
-              alert(`Downloading Certified EN 10204 3.1 Material Test Report for Heat #${heatNumber} (PDF)...`);
-            }}
-            style={{
-              background: TOKENS.teal,
-              color: "#0B1F3A",
-              border: "none",
-              borderRadius: 4,
-              padding: "8px 16px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 700,
-              cursor: "pointer",
-            }}
-          >
-            📑 Download Certified MTR (PDF) →
-          </button>
-          <Button onClick={onClose}>Close Inspector</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Interactive Vendor & Machine Shop Comparison Matrix Modal ---------------------------- */
-
-function VendorComparisonModal({
-  isOpen,
-  onClose,
-  initialSupplierIds = ["mfr-1", "mfr-2"],
-  allManufacturers = [],
-  go,
-}) {
-  const [selectedIds, setSelectedIds] = useState(
-    initialSupplierIds.length >= 2 ? initialSupplierIds : ["mfr-1", "mfr-2", "mfr-3"]
-  );
-
-  useEffect(() => {
-    if (initialSupplierIds && initialSupplierIds.length > 0) {
-      setSelectedIds(initialSupplierIds);
-    }
-  }, [initialSupplierIds]);
-
-  if (!isOpen) return null;
-
-  const mfrPool = allManufacturers.length > 0 ? allManufacturers : [
-    {
-      id: "mfr-1",
-      name: "Apex Precision Engineering Ltd.",
-      category: "CNC Machining & Turning",
-      location: "Ambattur Corridor, Chennai, Tamil Nadu",
-      rating: "★ 4.9 (94 reviews)",
-      spindles: "18x DMG MORI 5-Axis (20,000 RPM) + Mazak Integrex",
-      tolerance: "±0.002 mm (Ultra-Precision Aerospace)",
-      certifications: ["ISO 9001:2015", "AS9100D (Aerospace)", "IATF 16949"],
-      metrology: "Zeiss Contura 3D Optical CMM + Ra 0.2µm Profilometer",
-      escrow: "✓ 100% Milestone Escrow Accepted",
-      otif: "98.6% On-Time In-Full",
-      turnaround: "⚡ 4 Hours Avg. Quote",
-      moq: "100 pieces",
-      capacity: "1,50,000 units/mo",
-    },
-    {
-      id: "mfr-2",
-      name: "Deccan High-Precision Tooling",
-      category: "Aerospace 5-Axis Milling",
-      location: "Adibatla Aerospace SEZ, Hyderabad, Telangana",
-      rating: "★ 4.8 (82 reviews)",
-      spindles: "12x Hermle 5-Axis Milling + Makino Wire EDM",
-      tolerance: "±0.003 mm (Precision Defense)",
-      certifications: ["ISO 9001:2015", "AS9100D", "ISO 13485 (Medical)"],
-      metrology: "Mitutoyo Crysta-Apex S9106 CMM + Hexagon Laser Arm",
-      escrow: "✓ 100% Milestone Escrow Accepted",
-      otif: "96.8% On-Time In-Full",
-      turnaround: "⚡ 6 Hours Avg. Quote",
-      moq: "50 pieces",
-      capacity: "80,000 units/mo",
-    },
-    {
-      id: "mfr-3",
-      name: "Bangalore Micro-Machining Systems",
-      category: "Micro-Turning & Swiss Machining",
-      location: "Peenya Industrial Area, Bengaluru, Karnataka",
-      rating: "★ 4.7 (54 reviews)",
-      spindles: "14x Citizen Cincom Swiss Lathes (Ø0.5 - 32mm)",
-      tolerance: "±0.001 mm (Sub-Micron Swiss)",
-      certifications: ["ISO 9001:2015", "ISO 13485"],
-      metrology: "Keyence IM-8000 Image Dimension Measurement",
-      escrow: "✓ 100% Milestone Escrow Accepted",
-      otif: "97.4% On-Time In-Full",
-      turnaround: "⚡ 8 Hours Avg. Quote",
-      moq: "250 pieces",
-      capacity: "5,00,000 units/mo",
-    },
-    {
-      id: "mfr-4",
-      name: "Bharat Rubber & Sealing Systems",
-      category: "Rubber & Gasket Manufacturing",
-      location: "Bhosari Industrial Estate, Pune, Maharashtra",
-      rating: "★ 4.6 (38 reviews)",
-      spindles: "10x Vacuum Compression Presses + Cryo Deflashing",
-      tolerance: "±0.015 mm (Elastomer Precision)",
-      certifications: ["ISO 9001:2015", "IATF 16949"],
-      metrology: "Micro-Vu Optical Comparator + Rheometer MDR",
-      escrow: "✓ 100% Milestone Escrow Accepted",
-      otif: "95.2% On-Time In-Full",
-      turnaround: "⚡ 10 Hours Avg. Quote",
-      moq: "500 pieces",
-      capacity: "2,00,000 units/mo",
-    },
-    {
-      id: "mfr-5",
-      name: "Skylark Precision Castings",
-      category: "Investment Casting & Foundry",
-      location: "Coimbatore Industrial Corridor, Tamil Nadu",
-      rating: "★ 4.8 (61 reviews)",
-      spindles: "Induction Melting Furnaces + Haas VF-4 CNC",
-      tolerance: "±0.010 mm (Investment Cast + Post CNC)",
-      certifications: ["ISO 9001:2015", "AS9100D (Aerospace)"],
-      metrology: "100-Ton Universal Tensile Machine + Optical Spectrometer",
-      escrow: "✓ 100% Milestone Escrow Accepted",
-      otif: "97.1% On-Time In-Full",
-      turnaround: "⚡ 6 Hours Avg. Quote",
-      moq: "200 pieces",
-      capacity: "50 tons/mo",
-    },
-  ];
-
-  const activeMfrs = mfrPool.filter((m) => selectedIds.includes(m.id));
-
-  const removeMfr = (id) => {
-    if (selectedIds.length <= 1) return;
-    setSelectedIds((prev) => prev.filter((x) => x !== id));
-  };
-
-  const addMfr = (id) => {
-    if (!selectedIds.includes(id)) {
-      setSelectedIds((prev) => [...prev, id]);
-    }
-  };
-
-  const unselectedMfrs = mfrPool.filter((m) => !selectedIds.includes(m.id));
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          maxWidth: 960,
-          width: "100%",
-          maxHeight: "90vh",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(212,175,55,0.45)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 28px 70px rgba(0,0,0,0.85)",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Header */}
-        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 22 }}>⚖️</span>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
-                  Supplier & Machine Shop Comparison Matrix
-                </h3>
-                <span style={{ background: "rgba(212,175,55,0.18)", color: TOKENS.brass, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                  {activeMfrs.length} PLANTS COMPARED
-                </span>
-              </div>
-              <div style={{ fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginTop: 2 }}>
-                Side-by-side audit of machining tolerances, AS9100D credentials, and SLA lead times
-              </div>
-            </div>
-          </div>
-          <button onClick={onClose} style={{ background: "transparent", border: "none", color: TOKENS.slate, fontSize: 20, cursor: "pointer" }}>✕</button>
-        </div>
-
-        {/* Quick Add Bar */}
-        {unselectedMfrs.length > 0 && (
-          <div style={{ padding: "10px 24px", background: "rgba(0,0,0,0.25)", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>+ Add to comparison:</span>
-            {unselectedMfrs.map((m) => (
-              <button
-                key={m.id}
-                onClick={() => addMfr(m.id)}
-                style={{
-                  background: "rgba(15, 23, 42, 0.04)",
-                  border: `1px solid ${TOKENS.hair}`,
-                  color: TOKENS.paper,
-                  padding: "4px 10px",
-                  borderRadius: 4,
-                  fontSize: 11,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  cursor: "pointer",
-                }}
-              >
-                + {m.name.split(" ")[0]}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Comparison Table */}
-        <div style={{ overflowX: "auto", overflowY: "auto", flex: 1, padding: "20px 24px" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
-            <thead>
-              <tr style={{ borderBottom: `2px solid ${TOKENS.hair}` }}>
-                <th style={{ textAlign: "left", padding: "12px 14px", width: "22%", color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", fontSize: 11 }}>
-                  METRICS / CRITERIA
-                </th>
-                {activeMfrs.map((m) => (
-                  <th key={m.id} style={{ textAlign: "left", padding: "12px 14px", width: `${78 / activeMfrs.length}%` }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <div>
-                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: TOKENS.paper }}>{m.name}</div>
-                        <div style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{m.category}</div>
-                        <div style={{ fontSize: 11, color: TOKENS.slate, marginTop: 2 }}>📍 {m.location.split(",")[0]}</div>
-                      </div>
-                      {activeMfrs.length > 1 && (
-                        <button
-                          onClick={() => removeMfr(m.id)}
-                          style={{ background: "transparent", border: "none", color: TOKENS.slate, cursor: "pointer", fontSize: 14 }}
-                          title="Remove from comparison"
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody style={{ fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
-              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)" }}>
-                <td style={{ padding: "12px 14px", color: TOKENS.brass, fontWeight: 700 }}>Tolerance Repeatability</td>
-                {activeMfrs.map((m) => (
-                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.paper, fontWeight: 600 }}>
-                    {m.tolerance}
-                  </td>
-                ))}
-              </tr>
-              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
-                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Primary Spindle / Machine Fleet</td>
-                {activeMfrs.map((m) => (
-                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.paper }}>
-                    {m.spindles}
-                  </td>
-                ))}
-              </tr>
-              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)" }}>
-                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Quality Accreditations</td>
-                {activeMfrs.map((m) => (
-                  <td key={m.id} style={{ padding: "12px 14px" }}>
-                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                      {m.certifications.map((c) => (
-                        <span key={c} style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 6px", borderRadius: 3, fontSize: 10 }}>
-                          {c}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                ))}
-              </tr>
-              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
-                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Metrology & Inspection Labs</td>
-                {activeMfrs.map((m) => (
-                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.slate }}>
-                    {m.metrology}
-                  </td>
-                ))}
-              </tr>
-              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)" }}>
-                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>On-Time Delivery (OTIF)</td>
-                {activeMfrs.map((m) => (
-                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.teal, fontWeight: 700 }}>
-                    {m.otif}
-                  </td>
-                ))}
-              </tr>
-              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
-                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Avg. RFQ Turnaround</td>
-                {activeMfrs.map((m) => (
-                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.brass }}>
-                    {m.turnaround}
-                  </td>
-                ))}
-              </tr>
-              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)" }}>
-                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>MOQ & Capacity</td>
-                {activeMfrs.map((m) => (
-                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.paper }}>
-                    MOQ: {m.moq} · Cap: {m.capacity}
-                  </td>
-                ))}
-              </tr>
-              <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
-                <td style={{ padding: "12px 14px", color: TOKENS.slate }}>Escrow Protection</td>
-                {activeMfrs.map((m) => (
-                  <td key={m.id} style={{ padding: "12px 14px", color: TOKENS.teal }}>
-                    {m.escrow}
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td style={{ padding: "16px 14px", color: TOKENS.slate }}>Procurement Action</td>
-                {activeMfrs.map((m) => (
-                  <td key={m.id} style={{ padding: "16px 14px" }}>
-                    <button
-                      onClick={() => {
-                        onClose();
-                        go?.("rfq-wizard");
-                      }}
-                      style={{
-                        background: TOKENS.brass,
-                        color: TOKENS.ink,
-                        border: "none",
-                        borderRadius: 4,
-                        padding: "8px 12px",
-                        fontSize: 11.5,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontWeight: 700,
-                        cursor: "pointer",
-                        width: "100%",
-                      }}
-                    >
-                      Dispatch RFQ →
-                    </button>
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        {/* Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
-          <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-            All compared facilities are ISO/AS9100D audited by Abhimanyu Technologies Engineering Operations.
-          </span>
-          <Button onClick={onClose}>Done</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Supply Chain Logistics & Live Freight Tracking Modal ---------------------------- */
-
-function FreightTrackerModal({
-  isOpen,
-  onClose,
-  rfqId = "RFQ-2026-9041",
-  poNumber = "PO-2026-9041",
-}) {
-  if (!isOpen) return null;
-
-  const telemetry = {
-    consignmentId: "CN-ABH-882190",
-    carrier: "Abhimanyu Express Logistics (BlueDart Aviation Cargo)",
-    origin: "Apex Precision Machining Hub, Ambattur Corridor, Chennai (MAA)",
-    destination: "Bharat Aerospace & Dynamics Dock #4, Adibatla Aerospace Hub, Telangana (HYD)",
-    status: "IN-TRANSIT · AIR & HIGHWAY CORRIDOR",
-    eta: "Today at 18:30 IST (On Schedule)",
-    currentLocation: "NH-44 Expressway Corridor (14°18'N, 79°41'E)",
-    speed: "68 km/h",
-    temp: "21.8°C",
-    tempStatus: "NORMAL (15°C - 28°C allowable)",
-    humidity: "38% RH",
-    humidityStatus: "DRY PASS (< 55% RH rust prevention)",
-    shock: "0.14 G",
-    shockStatus: "ZERO DROP / SHOCK (Max threshold: 1.5 G)",
-    battery: "94%",
-    eWayBill: "EWAY-GST-362026-89104",
-  };
-
-  const stages = [
-    {
-      step: 1,
-      title: "Factory Gate Pack & Nitrogen Purged Crating",
-      location: "Ambattur Machining Facility, Chennai",
-      time: "27 Sep 2026, 16:00 IST",
-      done: true,
-      desc: "Machined parts cleaned, VCI rust inhibitor applied, wooden crates sealed.",
-    },
-    {
-      step: 2,
-      title: "E-Way Bill Generation & Commercial Customs Seal",
-      location: "Chennai Air Cargo Logistics Hub",
-      time: "27 Sep 2026, 18:45 IST",
-      done: true,
-      desc: "Official GST e-way bill #362026-89104 verified with commercial tax clearance.",
-    },
-    {
-      step: 3,
-      title: "Climate-Controlled Air & Dedicated Ground Freight",
-      location: "En Route to Hyderabad Aerospace Hub",
-      time: "In-Transit (Live Telemetry Active)",
-      current: true,
-      desc: "GPS node tracking active. Environmental and 3-axis accelerometer sensors streaming.",
-    },
-    {
-      step: 4,
-      title: "Destination Receiving Dock & CMM Verification",
-      location: "Bharat Aerospace Dock #4, Telangana",
-      time: "Est. 18:30 IST",
-      pending: true,
-      desc: "Incoming Goods Receipt Note (GRN) inspection and final 10% retention release.",
-    },
-  ];
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          maxWidth: 820,
-          width: "100%",
-          maxHeight: "90vh",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(21,101,192,0.45)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 28px 70px rgba(0,0,0,0.85)",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Header */}
-        <div style={{ padding: "18px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 22 }}>🚚</span>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, color: TOKENS.paper, margin: 0 }}>
-                  Consignment GPS & Environmental Telemetry
-                </h3>
-                <span style={{ background: "rgba(0,168,150,0.18)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                  LIVE SENSORS STREAMING
-                </span>
-              </div>
-              <div style={{ fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, marginTop: 2 }}>
-                Consignment #{telemetry.consignmentId} · PO #{poNumber} · {telemetry.carrier}
-              </div>
-            </div>
-          </div>
-          <button onClick={onClose} style={{ background: "transparent", border: "none", color: TOKENS.slate, fontSize: 20, cursor: "pointer" }}>✕</button>
-        </div>
-
-        {/* Live Status Strip */}
-        <div style={{ padding: "16px 24px", background: "rgba(0,0,0,0.25)", borderBottom: `1px solid ${TOKENS.hair}`, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
-          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CONSIGNMENT STATUS</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>
-              ● {telemetry.status}
-            </div>
-          </div>
-          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>CORRIDOR SPEED & GPS</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.paper, fontWeight: 600, marginTop: 4 }}>
-              {telemetry.speed} · {telemetry.currentLocation.split("(")[0]}
-            </div>
-          </div>
-          <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>ESTIMATED DOCK ARRIVAL</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, color: TOKENS.brassBright, fontWeight: 700, marginTop: 4 }}>
-              {telemetry.eta}
-            </div>
-          </div>
-        </div>
-
-        {/* Sensor Gauges Grid */}
-        <div style={{ padding: "16px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
-          <div style={{ background: "rgba(0,168,150,0.05)", border: `1px solid rgba(0,168,150,0.3)`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-              <span>INTERNAL TEMP</span>
-              <span style={{ color: TOKENS.teal }}>PASS ✓</span>
-            </div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.teal, margin: "4px 0" }}>
-              {telemetry.temp}
-            </div>
-            <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{telemetry.tempStatus}</div>
-          </div>
-
-          <div style={{ background: "rgba(21,101,192,0.05)", border: `1px solid rgba(21,101,192,0.3)`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-              <span>RELATIVE HUMIDITY</span>
-              <span style={{ color: "#60A5FA" }}>PASS ✓</span>
-            </div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: "#60A5FA", margin: "4px 0" }}>
-              {telemetry.humidity}
-            </div>
-            <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{telemetry.humidityStatus}</div>
-          </div>
-
-          <div style={{ background: "rgba(212,175,55,0.05)", border: `1px solid rgba(212,175,55,0.3)`, borderRadius: 6, padding: "12px 14px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-              <span>3-AXIS SHOCK SENSOR</span>
-              <span style={{ color: TOKENS.brass }}>ZERO SHOCK ✓</span>
-            </div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.brassBright, margin: "4px 0" }}>
-              {telemetry.shock}
-            </div>
-            <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{telemetry.shockStatus}</div>
-          </div>
-        </div>
-
-        {/* Stepper Content */}
-        <div style={{ overflowY: "auto", padding: "20px 24px", flex: 1 }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 14 }}>
-            CORRIDOR TRANSIT MILESTONES (CHENNAI ➔ HYDERABAD AEROSPACE SEZ)
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {stages.map((s) => (
-              <div
-                key={s.step}
-                style={{
-                  background: s.done ? "rgba(0,168,150,0.06)" : s.current ? "rgba(21,101,192,0.12)" : "rgba(15, 23, 42, 0.03)",
-                  border: `1px solid ${s.done ? TOKENS.teal : s.current ? TOKENS.blue : TOKENS.hair}`,
-                  borderRadius: 8,
-                  padding: "14px 18px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: 12,
-                }}
-              >
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                    <span style={{
-                      background: s.done ? TOKENS.teal : s.current ? TOKENS.blue : "rgba(15, 23, 42, 0.05)",
-                      color: s.done || s.current ? TOKENS.ink : TOKENS.paper,
-                      width: 20,
-                      height: 20,
-                      borderRadius: 3,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 10.5,
-                      fontWeight: 700,
-                      fontFamily: "'JetBrains Mono', monospace",
-                    }}>
-                      {s.done ? "✓" : s.step}
-                    </span>
-                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: TOKENS.paper }}>{s.title}</span>
-                    <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: s.done ? TOKENS.teal : s.current ? "#60A5FA" : TOKENS.slate }}>
-                      {s.time}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 12, color: TOKENS.slate, marginLeft: 28 }}>{s.desc}</div>
-                </div>
-                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-                  📍 {s.location}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)" }}>
-          <button
-            onClick={() => {
-              trackEvent("download_eway_bill");
-              alert(`Downloading GST E-Way Bill & Delivery Challan for Consignment ${telemetry.consignmentId} (PDF)...`);
-            }}
-            style={{
-              background: "transparent",
-              border: `1px solid ${TOKENS.hair}`,
-              color: TOKENS.paper,
-              borderRadius: 4,
-              padding: "7px 12px",
-              fontSize: 11.5,
-              fontFamily: "'JetBrains Mono', monospace",
-              cursor: "pointer",
-            }}
-          >
-            📄 Download E-Way Bill ({telemetry.eWayBill})
-          </button>
-          <Button onClick={onClose}>Close Tracker</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Automated AI Design for Manufacturability (DFM) Diagnostic Engine ---------------------------- */
-
-function DFMAnalysisModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "SS316 Multi-Port Valve Manifold", material = "SS 316L Stainless Steel", openCAD, openTracker, openQuoter }) {
-  const [optimized, setOptimized] = useState(false);
-  const [activeRule, setActiveRule] = useState("wall_thickness");
-  const [activeTab, setActiveTab] = useState("rules");
-
-  if (!isOpen) return null;
-
-  const rules = [
-    {
-      id: "wall_thickness",
-      name: "Minimum Wall Thickness",
-      severity: optimized ? "COMPLIANT" : "WARNING",
-      measured: optimized ? "0.85 mm (Pass)" : "0.58 mm (Deflection Risk)",
-      threshold: "Min 0.80 mm for SS 316L",
-      description: "Thin internal fluid barrier wall detected between Port B and Relief Gallery.",
-      risk: optimized
-        ? "Deflection eliminated. Optimal stiffness maintained for 12,000 RPM high-feed milling."
-        : "Spindle chatter and radial wall deflection risk during machining, leading to out-of-round bores.",
-      fix: "Algorithmically thickened boundary wall from 0.58 mm to 0.85 mm with a 0.25 mm fillet blending.",
-      costImpact: optimized ? "-12% cycle time" : "+18% scrap risk",
-    },
-    {
-      id: "internal_radii",
-      name: "Internal Pocket Corner Radii",
-      severity: optimized ? "COMPLIANT" : "CRITICAL",
-      measured: optimized ? "R 1.50 mm (Pass)" : "R 0.45 mm (Micro-Tooling)",
-      threshold: "Min R 1.50 mm (Ratio to depth < 4:1)",
-      description: "Sharp 90° internal vertical corners in manifold cavities require micro endmills.",
-      risk: optimized
-        ? "Enables standard Ø3.0 mm 4-flute solid carbide rougher with 40% feed rate acceleration."
-        : "Requires Ø0.8 mm micro endmill at 22,000 RPM. Risk of premature tool breakage and 28% cycle penalty.",
-      fix: "Automatically expanded corner radii from R0.45 mm to R1.50 mm with 5° draft on non-functional walls.",
-      costImpact: optimized ? "-22% tooling wear" : "+28% machining time",
-    },
-    {
-      id: "aspect_ratio",
-      name: "Deep Hole Aspect Ratio",
-      severity: optimized ? "COMPLIANT" : "WARNING",
-      measured: optimized ? "5.8:1 Aspect Ratio (Pass)" : "9.2:1 Aspect Ratio (Gun-Drill Flag)",
-      threshold: "Max 8:1 without dedicated gun-drilling",
-      description: "Secondary bypass cross-drilled passage (Ø3.8 mm x 35.0 mm deep).",
-      risk: optimized
-        ? "Standard coolant-through parabolic peck drilling sequence verified with 0.003 mm runout."
-        : "Risk of drill wander, chip packing, and surface scoring. Requires specialized gun-drilling setup.",
-      fix: "Counterbored outer entry bore to 12 mm depth, shortening effective L/D ratio to 5.8:1.",
-      costImpact: optimized ? "-15% drilling setup" : "+35% tooling overhead",
-    },
-    {
-      id: "tolerance_cost",
-      name: "GD&T Tight Tolerance Distribution",
-      severity: optimized ? "COMPLIANT" : "INFO",
-      measured: optimized ? "±0.012 mm general, ±0.005 mm spool (Pass)" : "Uniform ±0.005 mm (High Cost)",
-      threshold: "ASME Y14.5M tiered callouts",
-      description: "Over-constrained dimensional tolerances applied indiscriminately across all exterior flanges.",
-      risk: optimized
-        ? "Targeted precision: 5-axis finish pass on valve spool bore; rapid mill on exterior chassis."
-        : "Tight ±0.005 mm callouts across exterior unsealed surfaces require grinding and slow CMM audit.",
-      fix: "Relaxed non-critical mounting bolt circle tolerances to ±0.015 mm while maintaining ±0.005 mm on bore.",
-      costImpact: optimized ? "-35% metrology time" : "+42% cycle cost",
-    },
-    {
-      id: "surface_finish",
-      name: "Surface Roughness (Ra Feasibility)",
-      severity: "COMPLIANT",
-      measured: "Ra 0.38 µm (Bore) / Ra 1.6 µm (Exterior)",
-      threshold: "Ra 0.40 µm achievable via electro-polish",
-      description: "Internal hydraulic fluid bore specified at Ra 0.4 µm mirror finish.",
-      risk: "Achievable via verified supplier's two-stage diamond burnishing and electro-polish bath.",
-      fix: "No geometric change required. Standard operating procedure mapped to Apex Precision cleanroom.",
-      costImpact: "Standard electro-polish pass",
-    },
-  ];
-
-  const currentRuleObj = rules.find((r) => r.id === activeRule) || rules[0];
-  const dfmScore = optimized ? 99 : 92;
-  const grade = optimized ? "A+ EXCELLENT" : "A- HIGH FEASIBILITY";
-  const unitCost = optimized ? 3780 : 4850;
-  const cycleTime = optimized ? 29 : 42;
-  const batchSavings = (4850 - 3780) * 5000;
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 980,
-          width: "100%",
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(0, 168, 150, 0.4)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
-            padding: "20px 24px",
-            borderBottom: `1px solid ${TOKENS.hair}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 12,
-          }}
-        >
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-              <span style={{ fontSize: 18 }}>🛠️</span>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", fontWeight: 700 }}>
-                AUTOMATED AI DFM FEASIBILITY & CAD RULE AUDIT ENGINE
-              </span>
-              <span style={{ background: optimized ? "rgba(0,168,150,0.2)" : "rgba(212,175,55,0.2)", border: `1px solid ${optimized ? TOKENS.teal : TOKENS.brass}`, color: optimized ? TOKENS.teal : TOKENS.brass, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                {grade}
-              </span>
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
-              {rfqId}: {partName}
-            </h3>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>
-              Material: {material} · ASME Y14.5M GD&T · 5-Axis Milling Machine Profile
-            </div>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <button
-              onClick={() => {
-                trackEvent("toggle_dfm_optimize", { optimized: !optimized });
-                setOptimized(!optimized);
-              }}
-              style={{
-                background: optimized
-                  ? `linear-gradient(135deg, ${TOKENS.teal}, #00897B)`
-                  : "rgba(15, 23, 42, 0.05)",
-                border: `1px solid ${optimized ? TOKENS.teal : TOKENS.brass}`,
-                color: optimized ? "#080E1A" : TOKENS.brass,
-                borderRadius: 8,
-                padding: "8px 14px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 700,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                boxShadow: optimized ? "0 4px 14px rgba(0,168,150,0.4)" : "none",
-                transition: "all 0.2s ease",
-              }}
-            >
-              <span>{optimized ? "✓ Algorithmic Fixes Applied" : "⚡ Apply Algorithmic DFM Fixes"}</span>
-            </button>
-            <button
-              onClick={onClose}
-              style={{
-                background: "rgba(15, 23, 42, 0.05)",
-                border: `1px solid ${TOKENS.hair}`,
-                color: TOKENS.paper,
-                fontSize: 18,
-                cursor: "pointer",
-                width: 32,
-                height: 32,
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        {/* Telemetry KPI Cards Bar */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, padding: "16px 24px", background: "rgba(15, 23, 42, 0.03)", borderBottom: `1px solid ${TOKENS.hair}` }}>
-          <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>DFM READINESS SCORE</div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
-              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, color: optimized ? TOKENS.teal : TOKENS.brass, fontWeight: 700 }}>
-                {dfmScore}
-              </span>
-              <span style={{ fontSize: 13, color: TOKENS.slate }}>/ 100</span>
-              {optimized && <span style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>(+7 pts)</span>}
-            </div>
-          </div>
-
-          <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>ESTIMATED UNIT MACHINING</div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
-              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.paper, fontWeight: 700 }}>
-                ₹{unitCost.toLocaleString("en-IN")}
-              </span>
-              {optimized && <span style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>(-22%)</span>}
-            </div>
-          </div>
-
-          <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>SPINDLE CYCLE TIME / PART</div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
-              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.brassBright, fontWeight: 700 }}>
-                {cycleTime} mins
-              </span>
-              {optimized && <span style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>(-31%)</span>}
-            </div>
-          </div>
-
-          <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate }}>BATCH (5K UNITS) SAVINGS</div>
-            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: TOKENS.teal, fontWeight: 700, marginTop: 4 }}>
-              {optimized ? `₹${(batchSavings / 100000).toFixed(1)} Lakhs` : "₹0.0"}
-            </div>
-          </div>
-        </div>
-
-        {/* Tab Selector */}
-        <div style={{ display: "flex", gap: 12, padding: "12px 24px 0", borderBottom: `1px solid ${TOKENS.hair}` }}>
-          {[
-            { id: "rules", label: "Diagnostic Geometric Rule Audit (5 Checks)" },
-            { id: "cost", label: "Cycle Time & Tooling Breakdown" },
-            { id: "notes", label: "Machining Playbook & Metrology Instructions" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              style={{
-                background: "transparent",
-                border: "none",
-                borderBottom: `2px solid ${activeTab === t.id ? TOKENS.teal : "transparent"}`,
-                color: activeTab === t.id ? TOKENS.paper : TOKENS.slate,
-                padding: "8px 12px",
-                fontSize: 12.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: activeTab === t.id ? 700 : 400,
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Main Content Area */}
-        <div style={{ padding: "20px 24px", flex: 1 }}>
-          {activeTab === "rules" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              {/* Rules List */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 4 }}>
-                  GEOMETRIC FEATURE CHECKS
-                </div>
-                {rules.map((rule) => {
-                  const isSelected = activeRule === rule.id;
-                  const isCompliant = rule.severity === "COMPLIANT";
-                  const isCrit = rule.severity === "CRITICAL";
-                  return (
-                    <div
-                      key={rule.id}
-                      onClick={() => setActiveRule(rule.id)}
-                      style={{
-                        background: isSelected ? "rgba(21,101,192,0.18)" : "rgba(15, 23, 42, 0.03)",
-                        border: `1px solid ${isSelected ? TOKENS.teal : TOKENS.hair}`,
-                        borderRadius: 8,
-                        padding: "12px 14px",
-                        cursor: "pointer",
-                        transition: "all 0.15s ease",
-                      }}
-                    >
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                        <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600, color: TOKENS.paper }}>
-                          {rule.name}
-                        </span>
-                        <span
-                          style={{
-                            background: isCompliant
-                              ? "rgba(0,168,150,0.15)"
-                              : isCrit
-                              ? "rgba(239,68,68,0.15)"
-                              : "rgba(212,175,55,0.15)",
-                            color: isCompliant ? TOKENS.teal : isCrit ? "#F87171" : TOKENS.brass,
-                            border: `1px solid ${isCompliant ? TOKENS.teal : isCrit ? "#EF4444" : TOKENS.brass}44`,
-                            padding: "2px 8px",
-                            borderRadius: 4,
-                            fontSize: 10,
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontWeight: 700,
-                          }}
-                        >
-                          {rule.severity}
-                        </span>
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-                        <span>Target: {rule.threshold}</span>
-                        <span style={{ color: isCompliant ? TOKENS.teal : isCrit ? "#F87171" : TOKENS.brass }}>
-                          {rule.measured}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Inspector Detail Box */}
-              <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 22px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <h4 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>
-                      {currentRuleObj.name}
-                    </h4>
-                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
-                      Impact: {currentRuleObj.costImpact}
-                    </span>
-                  </div>
-
-                  <p style={{ color: TOKENS.slate, fontSize: 13, lineHeight: 1.6, margin: "0 0 14px" }}>
-                    {currentRuleObj.description}
-                  </p>
-
-                  <div style={{ background: "rgba(15, 23, 42, 0.04)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px 14px", marginBottom: 14 }}>
-                    <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginBottom: 4 }}>
-                      ⚠️ MANUFACTURING RISK ANALYSIS
-                    </div>
-                    <div style={{ fontSize: 12.5, color: TOKENS.paper, lineHeight: 1.5 }}>
-                      {currentRuleObj.risk}
-                    </div>
-                  </div>
-
-                  <div style={{ background: "rgba(0,168,150,0.08)", border: `1px solid ${TOKENS.teal}44`, borderRadius: 6, padding: "12px 14px" }}>
-                    <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 700, marginBottom: 4 }}>
-                      ⚡ ALGORITHMIC DFM REMEDIATION
-                    </div>
-                    <div style={{ fontSize: 12.5, color: TOKENS.paper, lineHeight: 1.5 }}>
-                      {currentRuleObj.fix}
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px solid ${TOKENS.hair}`, display: "flex", gap: 10 }}>
-                  <button
-                    onClick={() => {
-                      onClose();
-                      openCAD?.(rfqId, partName);
-                    }}
-                    style={{
-                      flex: 1,
-                      background: "rgba(21,101,192,0.2)",
-                      border: `1px solid ${TOKENS.blue}`,
-                      color: "#93C5FD",
-                      borderRadius: 6,
-                      padding: "8px 12px",
-                      fontSize: 12,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                    }}
-                  >
-                    📐 Inspect 3D Mesh in CAD →
-                  </button>
-                  <button
-                    onClick={() => {
-                      onClose();
-                      openTracker?.(rfqId);
-                    }}
-                    style={{
-                      flex: 1,
-                      background: "transparent",
-                      border: `1px solid ${TOKENS.hair}`,
-                      color: TOKENS.paper,
-                      borderRadius: 6,
-                      padding: "8px 12px",
-                      fontSize: 12,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      cursor: "pointer",
-                    }}
-                  >
-                    🔍 View Live RFQ Quotes →
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "cost" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-                <h4 style={{ margin: "0 0 14px", fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper }}>
-                  Machining Cycle Time Breakdown (Per Part)
-                </h4>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {[
-                    { op: "1. 5-Axis Facing & Billet Prep", before: "6.5 min", after: "5.0 min", change: "-23%" },
-                    { op: "2. Rough Milling Internal Pockets", before: "14.0 min", after: "9.2 min", change: "-34%" },
-                    { op: "3. Micro-Bore & Port Gun-Drilling", before: "11.5 min", after: "7.1 min", change: "-38%" },
-                    { op: "4. Fine Contour Finish & De-burr", before: "6.0 min", after: "4.5 min", change: "-25%" },
-                    { op: "5. In-Machine CMM Probe & Wash", before: "4.0 min", after: "3.2 min", change: "-20%" },
-                  ].map((row, i) => (
-                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 10px", background: "rgba(15, 23, 42, 0.03)", borderRadius: 6, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
-                      <span style={{ color: TOKENS.paper }}>{row.op}</span>
-                      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                        <span style={{ color: TOKENS.slate, textDecoration: optimized ? "line-through" : "none" }}>{row.before}</span>
-                        {optimized && <span style={{ color: TOKENS.teal, fontWeight: 700 }}>{row.after}</span>}
-                        {optimized && <span style={{ color: TOKENS.teal }}>({row.change})</span>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-                <h4 style={{ margin: "0 0 14px", fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper }}>
-                  Tooling & Wear Optimization
-                </h4>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 12.5, lineHeight: 1.6, color: TOKENS.slate }}>
-                  <p style={{ margin: 0 }}>
-                    By eliminating micro-tooling (replacing Ø0.8mm with Ø3.0mm endmills) and relaxing non-contact exterior tolerances, tool changeover downtime drops by <strong style={{ color: TOKENS.teal }}>74%</strong>.
-                  </p>
-                  <div style={{ background: "rgba(15, 23, 42, 0.04)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                    <div style={{ color: TOKENS.paper, fontWeight: 600, marginBottom: 4 }}>Alloy Scrap & Defect Rate:</div>
-                    <div style={{ color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>Estimated Scrap: 0.2% (Optimized) vs. 4.8% (Unoptimized)</div>
-                  </div>
-                  <div style={{ background: "rgba(15, 23, 42, 0.04)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                    <div style={{ color: TOKENS.paper, fontWeight: 600, marginBottom: 4 }}>Batch Scale Economy:</div>
-                    <div style={{ color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>At 5,000 units, production timeline accelerates from 38 calendar days to 26 days.</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "notes" && (
-            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-              <h4 style={{ margin: "0 0 12px", fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper }}>
-                Machining Playbook & Metrology Instructions
-              </h4>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.6 }}>
-                <div>
-                  <div style={{ color: TOKENS.brass, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", marginBottom: 6 }}>1. FIXTURING & WORKHOLDING</div>
-                  <p style={{ margin: "0 0 10px" }}>Use 5-axis hydraulic self-centering vice with dovetail bottom clamping to allow complete 5-sided spindle access in a single setup, eliminating datum transfer stack-up error.</p>
-                  <div style={{ color: TOKENS.brass, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", marginBottom: 6 }}>2. COOLANT & THERMAL DRIFT</div>
-                  <p style={{ margin: 0 }}>High-pressure (70 bar) through-spindle synthetic coolant required during SS 316L deep bore operations to prevent work-hardening and maintain temperature within ±1.5°C.</p>
-                </div>
-                <div>
-                  <div style={{ color: TOKENS.brass, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", marginBottom: 6 }}>3. CMM TOUCH PROBE PROTOCOL</div>
-                  <p style={{ margin: "0 0 10px" }}>Perform 100% CMM inspection on first 5 parts (FAI) using Renishaw SP25M scanning probe. Sample 1 in 25 parts during ongoing batch production.</p>
-                  <div style={{ color: TOKENS.brass, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", marginBottom: 6 }}>4. CLEANROOM & DEBURRING</div>
-                  <p style={{ margin: 0 }}>Electrochemical deburring (ECD) specified for all intersecting internal cross-bores followed by ultrasonic solvent degreasing and ISO Class 7 cleanroom packaging.</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)", flexWrap: "wrap", gap: 12 }}>
-          <button
-            onClick={() => {
-              trackEvent("download_dfm_report", { rfqId, score: dfmScore });
-              alert(`Generating Certified DFM Engineering Feasibility Report for ${rfqId} (PDF · Score: ${dfmScore}/100)...`);
-            }}
-            style={{
-              background: "transparent",
-              border: `1px solid ${TOKENS.hair}`,
-              color: TOKENS.paper,
-              borderRadius: 6,
-              padding: "8px 16px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              cursor: "pointer",
-            }}
-          >
-            📥 Download DFM Audit Certificate (PDF)
-          </button>
-
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <button
-              onClick={() => {
-                onClose();
-                openQuoter?.();
-              }}
-              style={{
-                background: "rgba(217,119,6,0.18)",
-                border: `1px solid ${TOKENS.brass}`,
-                color: TOKENS.brass,
-                borderRadius: 6,
-                padding: "8px 16px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              ⚡ Calculate Instant Machining Cost →
-            </button>
-            <button
-              onClick={() => {
-                onClose();
-                openCAD?.(rfqId, partName);
-              }}
-              style={{
-                background: "rgba(21,101,192,0.25)",
-                border: `1px solid ${TOKENS.blue}`,
-                color: "#93C5FD",
-                borderRadius: 6,
-                padding: "8px 16px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              📐 Open 3D WebGL CAD Inspector →
-            </button>
-            <Button onClick={onClose}>Close DFM Auditor</Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Multi-Tier Supply Chain Digital Twin & Risk Heatmap Matrix ---------------------------- */
-
-function SupplyChainRiskModal({ isOpen, onClose, go, openTracker, openVendorCompare }) {
-  const [activeHub, setActiveHub] = useState("chennai");
-  const [simulatedDisruption, setSimulatedDisruption] = useState(false);
-  const [activeTab, setActiveTab] = useState("hubs");
-
-  if (!isOpen) return null;
-
-  const hubs = [
-    {
-      id: "chennai",
-      name: "Chennai Precision Machining Corridor",
-      state: "Tamil Nadu",
-      spindles: 210,
-      powerUptime: simulatedDisruption ? "91.2%" : "99.4%",
-      portDwell: simulatedDisruption ? "4.8 Days (Bottleneck)" : "1.2 Days (Normal)",
-      riskScore: simulatedDisruption ? "64.2% (DISRUPTED)" : "96.8% (OPTIMAL)",
-      riskStatus: simulatedDisruption ? "ALERT" : "STABLE",
-      plants: ["Apex Precision Engineering Ltd.", "Skylark Precision Castings"],
-      specialty: "5-Axis CNC Milling, Aerospace SS316, Investment Casting",
-      weather: simulatedDisruption ? "Severe Coastal Inundation / Port Delay" : "Nominal (28°C / Dry)",
-      allocation: simulatedDisruption ? "0% (Rerouted)" : "75% Primary Load",
-    },
-    {
-      id: "telangana",
-      name: "Telangana Aerospace & Defence Hub",
-      state: "Hyderabad",
-      spindles: 142,
-      powerUptime: "99.85%",
-      portDwell: "Air Cargo: 6 Hours",
-      riskScore: "99.4% (EXCELLENT)",
-      riskStatus: "STABLE",
-      plants: ["Deccan High-Precision Engineering", "Bharat Aerospace Pod"],
-      specialty: "Titanium & Inconel Machining, AS9100D Defence Assemblies",
-      weather: "Clear (26°C)",
-      allocation: simulatedDisruption ? "55% Failover Absorption" : "25% Secondary Load",
-    },
-    {
-      id: "pune",
-      name: "Pune & Western Industrial Belt",
-      state: "Maharashtra",
-      spindles: 185,
-      powerUptime: "98.9%",
-      portDwell: "Nhava Sheva: 1.8 Days",
-      riskScore: "98.1% (LOW RISK)",
-      riskStatus: "STABLE",
-      plants: ["Bharat Rubber & Sealing Systems", "Western Tooling Hub"],
-      specialty: "Automotive Precision, Rubber Gaskets, Sheet Metal Laser",
-      weather: "Normal (24°C)",
-      allocation: simulatedDisruption ? "45% Failover Absorption" : "Standby Reserve",
-    },
-    {
-      id: "bengaluru",
-      name: "Bengaluru Electronics & SMT Corridor",
-      state: "Karnataka",
-      spindles: 95,
-      powerUptime: "99.2%",
-      portDwell: "BLR Air Cargo: 4 Hours",
-      riskScore: "98.9% (LOW RISK)",
-      riskStatus: "STABLE",
-      plants: ["Bangalore Micro-Machining Ltd.", "Southern SMT Assembly"],
-      specialty: "Cleanroom Micro-Machining, Medical SMT PCB Assembly",
-      weather: "Clear (22°C)",
-      allocation: "Independent SMT Line",
-    },
-    {
-      id: "hisar",
-      name: "Hisar Raw Metallurgy & Ingot Corridor",
-      state: "Haryana",
-      spindles: 64,
-      powerUptime: "98.4%",
-      portDwell: "Dry Port: 2.1 Days",
-      riskScore: "97.5% (LOW RISK)",
-      riskStatus: "STABLE",
-      plants: ["Jindal Stainless Special Steels Plant"],
-      specialty: "SS 316L Billets, Electric Arc Furnace (EAF) Melting",
-      weather: "Clear (29°C)",
-      allocation: "Raw Material Feeder",
-    },
-  ];
-
-  const currentHubObj = hubs.find((h) => h.id === activeHub) || hubs[0];
-
-  const commodities = [
-    { name: "SS 316L (Nickel/Moly Stainless)", price: "₹242 / kg", trend: "+2.4%", status: "UP", desc: "Driven by LME nickel spot price uptick (+3.1%)" },
-    { name: "Aluminium 6061-T6 (Extruded)", price: "₹218 / kg", trend: "-0.8%", status: "DOWN", desc: "Domestic smelter inventory surplus in Odisha & Gujarat" },
-    { name: "Inconel 718 Aerospace Superalloy", price: "₹2,840 / kg", trend: "+4.1%", status: "UP", desc: "High global defence demand and niobium alloy tightening" },
-    { name: "Copper Cathode (SMT PCB Grade)", price: "₹792 / kg", trend: "+1.2%", status: "UP", desc: "Global electronics green transition demand" },
-  ];
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 980,
-          width: "100%",
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(21, 101, 192, 0.45)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
-            padding: "20px 24px",
-            borderBottom: `1px solid ${TOKENS.hair}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 12,
-          }}
-        >
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-              <span style={{ fontSize: 18 }}>🌐</span>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, letterSpacing: "0.08em", fontWeight: 700 }}>
-                MULTI-TIER SUPPLY CHAIN DIGITAL TWIN & RESILIENCE HEATMAP
-              </span>
-              <span style={{ background: simulatedDisruption ? "rgba(239,68,68,0.2)" : "rgba(0,168,150,0.2)", border: `1px solid ${simulatedDisruption ? "#EF4444" : TOKENS.teal}`, color: simulatedDisruption ? "#F87171" : TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                {simulatedDisruption ? "FAILOVER REROUTE ACTIVE" : "NETWORK HEALTH: 98.2%"}
-              </span>
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
-              National Industrial Corridors & Dual-Sourcing Telemetry
-            </h3>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>
-              Pan-India Geofenced Hubs · 5 Regional Clusters · 696 Verified CNC Spindles
-            </div>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <button
-              onClick={() => {
-                trackEvent("toggle_disruption_sim", { disrupted: !simulatedDisruption });
-                setSimulatedDisruption(!simulatedDisruption);
-              }}
-              style={{
-                background: simulatedDisruption
-                  ? "rgba(239,68,68,0.2)"
-                  : "linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(21,101,192,0.3) 100%)",
-                border: `1px solid ${simulatedDisruption ? "#EF4444" : TOKENS.brass}`,
-                color: simulatedDisruption ? "#FCA5A5" : TOKENS.brass,
-                borderRadius: 8,
-                padding: "8px 14px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 700,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                transition: "all 0.2s ease",
-              }}
-            >
-              <span>{simulatedDisruption ? "🔄 Reset Disruption Simulation" : "⚡ Simulate Chennai Corridor Disruption"}</span>
-            </button>
-            <button
-              onClick={onClose}
-              style={{
-                background: "rgba(15, 23, 42, 0.05)",
-                border: `1px solid ${TOKENS.hair}`,
-                color: TOKENS.paper,
-                fontSize: 18,
-                cursor: "pointer",
-                width: 32,
-                height: 32,
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        {/* Dynamic Failover Banner */}
-        {simulatedDisruption && (
-          <div style={{ background: "linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(212,175,55,0.15) 100%)", borderBottom: `1px solid #EF444455`, padding: "14px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 20 }}>⚠️</span>
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#F87171", fontWeight: 700 }}>
-                  AUTOMATED FAILOVER EXECUTED · 0 DAYS PROCUREMENT DELAY
-                </div>
-                <div style={{ fontSize: 12.5, color: TOKENS.paper }}>
-                  75% load rerouted from Chennai to <strong>Telangana Hub (55%)</strong> and <strong>Pune Hub (45%)</strong> with 100% reserved 5-axis DMG MORI spindle capacity.
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={() => openVendorCompare?.(["mfr-1", "mfr-2", "mfr-3"])}
-              style={{
-                background: TOKENS.brass,
-                color: "#080E1A",
-                border: "none",
-                borderRadius: 6,
-                padding: "6px 14px",
-                fontSize: 11.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              ⚖️ View Failover Comparison Matrix →
-            </button>
-          </div>
-        )}
-
-        {/* Tab Bar */}
-        <div style={{ display: "flex", gap: 12, padding: "12px 24px 0", borderBottom: `1px solid ${TOKENS.hair}` }}>
-          {[
-            { id: "hubs", label: "Regional Hubs & Spindle Fleets (5 Corridors)" },
-            { id: "commodities", label: "Live Metal Commodity Volatility Ticker" },
-            { id: "esg", label: "ESG Scope 1, 2, 3 Carbon Intensity" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              style={{
-                background: "transparent",
-                border: "none",
-                borderBottom: `2px solid ${activeTab === t.id ? TOKENS.teal : "transparent"}`,
-                color: activeTab === t.id ? TOKENS.paper : TOKENS.slate,
-                padding: "8px 12px",
-                fontSize: 12.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: activeTab === t.id ? 700 : 400,
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Main Body */}
-        <div style={{ padding: "20px 24px", flex: 1 }}>
-          {activeTab === "hubs" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              {/* Hub Cards */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 4 }}>
-                  SELECT INDUSTRIAL CORRIDOR
-                </div>
-                {hubs.map((hub) => {
-                  const isSelected = activeHub === hub.id;
-                  const isDisrupted = hub.riskStatus === "ALERT";
-                  return (
-                    <div
-                      key={hub.id}
-                      onClick={() => setActiveHub(hub.id)}
-                      style={{
-                        background: isSelected ? "rgba(21,101,192,0.18)" : "rgba(15, 23, 42, 0.03)",
-                        border: `1px solid ${isSelected ? (isDisrupted ? "#EF4444" : TOKENS.teal) : TOKENS.hair}`,
-                        borderRadius: 8,
-                        padding: "12px 14px",
-                        cursor: "pointer",
-                        transition: "all 0.15s ease",
-                      }}
-                    >
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                        <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600, color: TOKENS.paper }}>
-                          {hub.name}
-                        </span>
-                        <span
-                          style={{
-                            background: isDisrupted ? "rgba(239,68,68,0.15)" : "rgba(0,168,150,0.15)",
-                            color: isDisrupted ? "#F87171" : TOKENS.teal,
-                            padding: "2px 8px",
-                            borderRadius: 4,
-                            fontSize: 10,
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontWeight: 700,
-                          }}
-                        >
-                          {hub.riskScore}
-                        </span>
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-                        <span>Fleet: {hub.spindles} CNC Spindles</span>
-                        <span style={{ color: isDisrupted ? "#F87171" : TOKENS.brass }}>Load: {hub.allocation}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Hub Inspector Panel */}
-              <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px 22px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <div>
-                      <h4 style={{ margin: 0, fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>
-                        {currentHubObj.name}
-                      </h4>
-                      <div style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>
-                        Region: {currentHubObj.state} · Specialized: {currentHubObj.specialty}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, margin: "14px 0" }}>
-                    <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                      <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>POWER GRID UPTIME</div>
-                      <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 700, marginTop: 2 }}>{currentHubObj.powerUptime}</div>
-                    </div>
-                    <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                      <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>PORT / LOGISTICS DWELL</div>
-                      <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: currentHubObj.riskStatus === "ALERT" ? "#F87171" : TOKENS.paper, fontWeight: 700, marginTop: 2 }}>{currentHubObj.portDwell}</div>
-                    </div>
-                    <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                      <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>CLIMATE & MONSOON RISK</div>
-                      <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 2 }}>{currentHubObj.weather}</div>
-                    </div>
-                    <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 10, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                      <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>CURRENT PO ALLOCATION</div>
-                      <div style={{ fontSize: 13, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginTop: 2 }}>{currentHubObj.allocation}</div>
-                    </div>
-                  </div>
-
-                  <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                    <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginBottom: 6 }}>
-                      VERIFIED PLANTS IN THIS CORRIDOR
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                      {currentHubObj.plants.map((p, i) => (
-                        <div key={i} style={{ fontSize: 12.5, color: TOKENS.paper, display: "flex", alignItems: "center", gap: 6 }}>
-                          <span style={{ color: TOKENS.teal }}>✓</span> {p}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px solid ${TOKENS.hair}`, display: "flex", gap: 10 }}>
-                  <button
-                    onClick={() => openVendorCompare?.(["mfr-1", "mfr-2", "mfr-3"])}
-                    style={{
-                      flex: 1,
-                      background: "rgba(21,101,192,0.2)",
-                      border: `1px solid ${TOKENS.blue}`,
-                      color: "#93C5FD",
-                      borderRadius: 6,
-                      padding: "8px 12px",
-                      fontSize: 12,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                    }}
-                  >
-                    ⚖️ Side-by-Side Plant Comparison →
-                  </button>
-                  <button
-                    onClick={() => openTracker?.("RFQ-2026-9041")}
-                    style={{
-                      flex: 1,
-                      background: "transparent",
-                      border: `1px solid ${TOKENS.hair}`,
-                      color: TOKENS.paper,
-                      borderRadius: 6,
-                      padding: "8px 12px",
-                      fontSize: 12,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      cursor: "pointer",
-                    }}
-                  >
-                    🔍 Inspect Live RFQ Bids →
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "commodities" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
-                {commodities.map((c, i) => (
-                  <div key={i} style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "16px" }}>
-                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600, color: TOKENS.paper, marginBottom: 4 }}>
-                      {c.name}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: 8 }}>
-                      <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, color: TOKENS.paper, fontWeight: 700 }}>
-                        {c.price}
-                      </span>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: c.status === "UP" ? "#F87171" : TOKENS.teal }}>
-                        {c.trend} (30d)
-                      </span>
-                    </div>
-                    <p style={{ margin: "8px 0 0", fontSize: 11.5, color: TOKENS.slate, lineHeight: 1.4 }}>
-                      {c.desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ background: "rgba(15, 23, 42, 0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "16px 20px" }}>
-                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 700, marginBottom: 4 }}>
-                  AUTOMATED RAW ALLOY INDEX LOCK-IN (SBI / ICICI ESCROW VAULT)
-                </div>
-                <p style={{ margin: 0, fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.5 }}>
-                  The Abhimanyu platform locks in raw metal ingot spot pricing at the moment of PO confirmation. Suppliers are protected against intraday commodity spikes via our guaranteed melt mill hedge agreements with Jindal Stainless and Vedanta Aluminum.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "esg" && (
-            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-              <h4 style={{ margin: "0 0 12px", fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>
-                ESG Scope 1, 2, and 3 Carbon Intensity Tracking
-              </h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 16 }}>
-                <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>SCOPE 1 (DIRECT SMELT/EAF)</div>
-                  <div style={{ fontSize: 18, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>0.38 kg CO₂e / kg</div>
-                  <div style={{ fontSize: 10.5, color: TOKENS.teal, marginTop: 2 }}>-42% vs Blast Furnace Avg</div>
-                </div>
-                <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>SCOPE 2 (SHOP FLOOR GRID)</div>
-                  <div style={{ fontSize: 18, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>0.62 kg CO₂e / kg</div>
-                  <div style={{ fontSize: 10.5, color: TOKENS.teal, marginTop: 2 }}>42% Rooftop Solar Offset</div>
-                </div>
-                <div style={{ background: "rgba(15, 23, 42, 0.035)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>SCOPE 3 (FREIGHT LOGISTICS)</div>
-                  <div style={{ fontSize: 18, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>0.42 kg CO₂e / kg</div>
-                  <div style={{ fontSize: 10.5, color: TOKENS.teal, marginTop: 2 }}>Dedicated Electric Corridors</div>
-                </div>
-                <div style={{ background: "rgba(0,168,150,0.08)", padding: 14, borderRadius: 6, border: `1px solid ${TOKENS.teal}44` }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 700 }}>NET CONSIGNMENT INTENSITY</div>
-                  <div style={{ fontSize: 18, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 800, marginTop: 4 }}>1.42 kg CO₂e / kg</div>
-                  <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 2 }}>38% below global benchmark</div>
-                </div>
-              </div>
-              <p style={{ margin: 0, fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.5 }}>
-                78.4% of all stainless steel processed across the network is circular green scrap melted in zero-emission Electric Arc Furnaces (EAF). Compliant with European CBAM and ISO 14064 GHG verification.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)", flexWrap: "wrap", gap: 12 }}>
-          <button
-            onClick={() => {
-              trackEvent("export_risk_dossier");
-              alert("Generating Comprehensive Supply Chain Digital Twin & Risk Resilience Dossier (PDF)...");
-            }}
-            style={{
-              background: "transparent",
-              border: `1px solid ${TOKENS.hair}`,
-              color: TOKENS.paper,
-              borderRadius: 6,
-              padding: "8px 16px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              cursor: "pointer",
-            }}
-          >
-            📄 Export Resilience Dossier (PDF)
-          </button>
-          <Button onClick={onClose}>Close Risk Monitor</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Bilateral Enterprise NDA & Cryptographic IP Protection Vault ---------------------------- */
-
-function ContractVaultModal({ isOpen, onClose, buyerName = "Bharat Aerospace & Dynamics", supplierName = "Apex Precision Engineering Ltd.", rfqId = "RFQ-2026-9041" }) {
-  const [buyerSigned, setBuyerSigned] = useState(true);
-  const [supplierSigned, setSupplierSigned] = useState(false);
-  const [signing, setSigning] = useState(false);
-  const [activeTab, setActiveTab] = useState("agreement");
-
-  if (!isOpen) return null;
-
-  const isFullyExecuted = buyerSigned && supplierSigned;
-
-  const handleSupplierSign = () => {
-    setSigning(true);
-    setTimeout(() => {
-      setSupplierSigned(true);
-      setSigning(false);
-      trackEvent("sign_bilateral_nda", { rfqId, supplierName });
-    }, 1200);
-  };
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 960,
-          width: "100%",
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(212, 175, 55, 0.4)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)",
-            padding: "20px 24px",
-            borderBottom: `1px solid ${TOKENS.hair}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 12,
-          }}
-        >
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-              <span style={{ fontSize: 18 }}>📜</span>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.brass, letterSpacing: "0.08em", fontWeight: 700 }}>
-                BILATERAL ENTERPRISE NDA & PROPRIETARY CAD IP PROTECTION VAULT
-              </span>
-              <span style={{ background: isFullyExecuted ? "rgba(0,168,150,0.2)" : "rgba(212,175,55,0.2)", border: `1px solid ${isFullyExecuted ? TOKENS.teal : TOKENS.brass}`, color: isFullyExecuted ? TOKENS.teal : TOKENS.brass, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                {isFullyExecuted ? "FULLY EXECUTED & COUNTERSIGNED ✓" : "PENDING SUPPLIER COUNTERSIGNATURE"}
-              </span>
-            </div>
-            <h3 style={{ fontFamily: "'Inter', sans-serif", color: TOKENS.paper, fontSize: 22, margin: 0 }}>
-              Agreement Ref: #NDA-2026-9041 · {rfqId}
-            </h3>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>
-              Disclosing Party: {buyerName} ↔ Receiving Party: {supplierName}
-            </div>
-          </div>
-
-          <button
-            onClick={onClose}
-            style={{
-              background: "rgba(0,0,0,0.04)",
-              border: `1px solid ${TOKENS.hair}`,
-              color: TOKENS.paper,
-              fontSize: 18,
-              cursor: "pointer",
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Signature Status Stepper Bar */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, padding: "16px 24px", background: "rgba(15, 23, 42, 0.03)", borderBottom: `1px solid ${TOKENS.hair}` }}>
-          {/* Buyer Signature Box */}
-          <div style={{ background: "rgba(0,168,150,0.08)", border: `1px solid ${TOKENS.teal}55`, borderRadius: 8, padding: "14px 16px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 700 }}>
-                ✓ ENTERPRISE BUYER (EXECUTED)
-              </span>
-              <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-                2026-09-27 10:14:02 IST
-              </span>
-            </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper }}>{buyerName}</div>
-            <div style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>
-              Signatory: K.S. Rao (VP Procurement) · SHA-256: 8f02e9...a4c1
-            </div>
-          </div>
-
-          {/* Supplier Signature Box */}
-          <div style={{ background: supplierSigned ? "rgba(0,168,150,0.08)" : "rgba(212,175,55,0.08)", border: `1px solid ${supplierSigned ? TOKENS.teal : TOKENS.brass}55`, borderRadius: 8, padding: "14px 16px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: supplierSigned ? TOKENS.teal : TOKENS.brass, fontWeight: 700 }}>
-                {supplierSigned ? "✓ SUPPLIER (COUNTERSIGNED)" : "⏳ SUPPLIER COUNTERSIGNATURE"}
-              </span>
-              <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-                {supplierSigned ? "2026-09-28 00:26:15 IST" : "ACTION REQUIRED"}
-              </span>
-            </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper }}>{supplierName}</div>
-            {supplierSigned ? (
-              <div style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>
-                Signatory: M. Narayanan (Managing Director) · SHA-256: e4c99a...81b2
-              </div>
-            ) : (
-              <button
-                disabled={signing}
-                onClick={handleSupplierSign}
-                style={{
-                  marginTop: 6,
-                  background: TOKENS.brass,
-                  color: "#080E1A",
-                  border: "none",
-                  borderRadius: 6,
-                  padding: "6px 14px",
-                  fontSize: 11.5,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 800,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
-              >
-                <span>{signing ? "Cryptographically Signing..." : "✍️ Authenticate & Countersign as Apex Precision →"}</span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Tab Header */}
-        <div style={{ display: "flex", gap: 12, padding: "12px 24px 0", borderBottom: `1px solid ${TOKENS.hair}` }}>
-          {[
-            { id: "agreement", label: "Executive Agreement Overview" },
-            { id: "terms", label: "Clauses & Defense Export Regulations (ITAR/EAR)" },
-            { id: "hash", label: "Cryptographic Audit Ledger & Legal Hashes" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              style={{
-                background: "transparent",
-                border: "none",
-                borderBottom: `2px solid ${activeTab === t.id ? TOKENS.brass : "transparent"}`,
-                color: activeTab === t.id ? TOKENS.paper : TOKENS.slate,
-                padding: "8px 12px",
-                fontSize: 12.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: activeTab === t.id ? 700 : 400,
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Body Content */}
-        <div style={{ padding: "20px 24px", flex: 1 }}>
-          {activeTab === "agreement" && (
-            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px", display: "flex", flexDirection: "column", gap: 16 }}>
-              <div>
-                <h4 style={{ margin: "0 0 8px", fontFamily: "'Inter', sans-serif", fontSize: 18, color: TOKENS.paper }}>
-                  Mutual Non-Disclosure & Technical IP Covenant
-                </h4>
-                <p style={{ margin: 0, fontSize: 13, color: TOKENS.slate, lineHeight: 1.6 }}>
-                  This Bilateral Mutual Non-Disclosure Agreement governs all confidential 3D STEP engineering models, ASME Y14.5M tolerance drawings, CNC G-code toolpaths, and proprietary metallurgy specifications shared in connection with RFQ <strong style={{ color: TOKENS.brass }}>{rfqId}</strong>.
-                </p>
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
-                <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>CONFIDENTIALITY TERM</div>
-                  <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>36 Months (3 Years)</div>
-                  <div style={{ fontSize: 11, color: TOKENS.teal, marginTop: 2 }}>Survives RFQ completion</div>
-                </div>
-
-                <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>PROTECTED ASSETS</div>
-                  <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>3D CAD & Tooling G-Code</div>
-                  <div style={{ fontSize: 11, color: TOKENS.teal, marginTop: 2 }}>Zero-knowledge encrypted</div>
-                </div>
-
-                <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>ARBITRATION JURISDICTION</div>
-                  <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontWeight: 700, marginTop: 4 }}>High Court Bench (Chennai)</div>
-                  <div style={{ fontSize: 11, color: TOKENS.teal, marginTop: 2 }}>Indian Arbitration Act 1996</div>
-                </div>
-
-                <div style={{ background: "rgba(15, 23, 42, 0.03)", padding: 12, borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>LIQUIDATED DAMAGES CAP</div>
-                  <div style={{ fontSize: 14, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginTop: 4 }}>₹5,00,00,000 INR</div>
-                  <div style={{ fontSize: 11, color: TOKENS.slate, marginTop: 2 }}>Pre-agreed breach liability</div>
-                </div>
-              </div>
-
-              <div style={{ background: "rgba(0,168,150,0.06)", border: `1px solid ${TOKENS.teal}33`, borderRadius: 6, padding: "12px 16px" }}>
-                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 700, marginBottom: 4 }}>
-                  🔒 AIR-GAPPED WORKSTATION COMPLIANCE GUARANTEE
-                </div>
-                <div style={{ fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.5 }}>
-                  The receiving party agrees that all digital CAD files downloaded for manufacturing shall reside solely on encrypted on-premise CAD/CAM workstations without external USB or cloud replication.
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "terms" && (
-            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px", display: "flex", flexDirection: "column", gap: 14 }}>
-              {[
-                { title: "Clause 1: Non-Disclosure & Zero-Dissemination", text: "Neither party shall disclose, transmit, publish, or duplicate any 3D Solid Model, DXF blueprint, or bill of materials to third-party sub-contractors without prior written consent from the Disclosing Enterprise." },
-                { title: "Clause 2: Prohibition on Reverse Engineering & Scanning", text: "The Receiving Party expressly covenants that it shall not use 3D laser optical scanning, destructive CMM reverse engineering, or chemical assay reconstruction to replicate proprietary geometrical contours." },
-                { title: "Clause 3: Indian SCOMET & Defence Export Controls", text: "Components classified under Dual-Use or Munitions List (SCOMET Category 6 / EAR99) shall be machined exclusively on Indian soil by verified personnel holding valid security clearance." },
-                { title: "Clause 4: Return or Certified Purge of Digital Assets", text: "Within 14 calendar days of batch delivery or RFQ cancellation, all intermediate CNC toolpath files (.NC / G-code) must be purged from machine memories with written certification." },
-              ].map((c, i) => (
-                <div key={i} style={{ borderBottom: i < 3 ? `1px solid ${TOKENS.hair}` : "none", paddingBottom: i < 3 ? 12 : 0 }}>
-                  <div style={{ fontSize: 12.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, fontWeight: 700, marginBottom: 4 }}>
-                    {c.title}
-                  </div>
-                  <div style={{ fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.5 }}>
-                    {c.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === "hash" && (
-            <div style={{ background: "#F8FAFC", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "20px" }}>
-              <h4 style={{ margin: "0 0 14px", fontFamily: "'Inter', sans-serif", fontSize: 17, color: TOKENS.paper }}>
-                Cryptographic Audit Ledger & Legal Signatures
-              </h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {[
-                  { label: "Document Canonical SHA-256", hash: "4a8e2b8109f3c71a0d8e41bb7c29e18f921d7e48b1932e67a08b5e28491c1092" },
-                  { label: "Buyer Signer Public Key", hash: "0x8F02E9A4C17B988234D09184B29014E290481239" },
-                  { label: "Supplier Signer Public Key", hash: supplierSigned ? "0xE4C99A81B209148E2819024D98014E0918239014" : "Awaiting signature verification token..." },
-                  { label: "Blockchain Verification Block", hash: "Polygon POS Block #61829041 · Timestamped" },
-                ].map((row, i) => (
-                  <div key={i} style={{ padding: "10px 12px", background: "rgba(15, 23, 42, 0.03)", borderRadius: 6, border: `1px solid ${TOKENS.hair}` }}>
-                    <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{row.label}</div>
-                    <div style={{ fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, wordBreak: "break-all", marginTop: 2 }}>{row.hash}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Modal Footer */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.03)", flexWrap: "wrap", gap: 12 }}>
-          <button
-            onClick={() => {
-              trackEvent("download_signed_nda", { rfqId });
-              alert(`Downloading Legally Binding Executed Bilateral NDA for ${buyerName} & ${supplierName} (PDF with Cryptographic Timestamp Stamp)...`);
-            }}
-            style={{
-              background: TOKENS.brass,
-              color: "#080E1A",
-              border: "none",
-              borderRadius: 6,
-              padding: "8px 16px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 800,
-              cursor: "pointer",
-            }}
-          >
-            📄 Download Signed NDA (PDF)
-          </button>
-          <Button onClick={onClose}>Close Legal Vault</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Parametric Instant Quoting Modal ---------------------------- */
-
-function InstantQuoterModal({ isOpen, onClose, currency = "INR", openCAD, openDFM, go }) {
-  const [process, setProcess] = useState("cnc");
-  const [material, setMaterial] = useState("al6061");
-  const [quantity, setQuantity] = useState(100);
-  const [lengthMm, setLengthMm] = useState(120);
-  const [widthMm, setWidthMm] = useState(80);
-  const [heightMm, setHeightMm] = useState(45);
-  const [tolerance, setTolerance] = useState("precision");
-  const [finish, setFinish] = useState("anodize");
-  const [leadTime, setLeadTime] = useState("standard");
-  const [activeTab, setActiveTab] = useState("calculator");
+/* ---------------------------- Interactive Project Scope & Cost Estimator Modal ---------------------------- */
+
+function ProjectEstimatorModal({ isOpen, onClose, currency = "INR", go }) {
+  const [platform, setPlatform] = useState("web");
+  const [complexity, setComplexity] = useState("medium");
+  const [timeline, setTimeline] = useState("standard");
+  const [selectedFeatures, setSelectedFeatures] = useState(["auth", "db", "api"]);
   const [copied, setCopied] = useState(false);
 
   if (!isOpen) return null;
 
-  const PROCESS_OPTIONS = [
-    { id: "cnc", label: "CNC Machining", sub: "3/4/5-Axis Milling & Turning", icon: "⚙️", baseRate: 1400, setup: 8500 },
-    { id: "sheet_metal", label: "Sheet Metal Fab", sub: "Fiber Laser & CNC Bending", icon: "✂️", baseRate: 950, setup: 4500 },
-    { id: "injection", label: "Injection Molding", sub: "Rapid Tooling & Part Run", icon: "💉", baseRate: 650, setup: 125000 },
-    { id: "3d_print", label: "Industrial 3D Print", sub: "DMLS Metal & SLS Nylon", icon: "🖨️", baseRate: 2200, setup: 3000 },
+  const PLATFORM_OPTIONS = [
+    { id: "web", name: "Web Application", icon: "🌐", baseCost: 150000, weeks: 4, desc: "Responsive portal, Next.js / React SPA, PWA" },
+    { id: "android", name: "Native Android App", icon: "🤖", baseCost: 180000, weeks: 5, desc: "Native Kotlin, Jetpack Compose, Material 3" },
+    { id: "cross", name: "Cross-Platform Mobile", icon: "📱", baseCost: 220000, weeks: 6, desc: "Flutter or React Native for Android & iOS" },
+    { id: "fullstack", name: "Full Stack Web + Mobile", icon: "⚡", baseCost: 350000, weeks: 8, desc: "Next.js Web + Android/iOS App + Backend" },
+    { id: "backend", name: "Backend Microservices", icon: "⚙️", baseCost: 160000, weeks: 4, desc: "High-throughput APIs in Node.js, Python or Go" },
   ];
 
-  const MATERIAL_OPTIONS = [
-    { id: "al6061", label: "Aluminum 6061-T6", density: 2.70, pricePerKg: 420, machinability: 1.0, icon: "🛡️", desc: "Aerospace & structural" },
-    { id: "ss316", label: "Stainless Steel 316L", density: 8.00, pricePerKg: 680, machinability: 1.85, icon: "⚓", desc: "Marine, medical valves" },
-    { id: "ti_gr5", label: "Titanium Gr. 5 (Ti-6Al-4V)", density: 4.43, pricePerKg: 4800, machinability: 3.2, icon: "🚀", desc: "Flight-critical aerospace" },
-    { id: "brass_c360", label: "Brass C360", density: 8.50, pricePerKg: 720, machinability: 0.7, icon: "✨", desc: "High machinability, fittings" },
-    { id: "delrin", label: "POM Delrin / Acetal", density: 1.41, pricePerKg: 550, machinability: 0.65, icon: "🧪", desc: "Low friction polymer" },
-    { id: "ms2062", label: "Mild Steel IS 2062", density: 7.85, pricePerKg: 95, machinability: 1.15, icon: "🏗️", desc: "Structural & heavy weldments" },
+  const FEATURE_MODULES = [
+    { id: "auth", name: "User Authentication & RBAC", cost: 25000, icon: "🔐" },
+    { id: "db", name: "Database Modeling & Cloud Sync", cost: 35000, icon: "💾" },
+    { id: "api", name: "RESTful & GraphQL API Suite", cost: 40000, icon: "🔌" },
+    { id: "payments", name: "Payment Gateway (Stripe/Razorpay)", cost: 30000, icon: "💳" },
+    { id: "chat", name: "Real-Time Chat & Push Alerts", cost: 45000, icon: "💬" },
+    { id: "admin", name: "Custom Admin CMS & Analytics", cost: 50000, icon: "📊" },
+    { id: "ai", name: "AI Assistant & RAG Integration", cost: 65000, icon: "🤖" },
+    { id: "devops", name: "Docker & CI/CD Cloud Pipeline", cost: 35000, icon: "☁️" },
   ];
 
-  const TOLERANCE_OPTIONS = [
-    { id: "standard", label: "ISO 2768-m (±0.1 mm)", mult: 1.0, sub: "General commercial machining" },
-    { id: "precision", label: "ISO 2768-f (±0.05 mm)", mult: 1.25, sub: "Precision machine interfaces" },
-    { id: "aerospace", label: "AS9100 / GD&T (±0.01 mm)", mult: 1.65, sub: "Aerospace CMM 100% verified" },
-  ];
+  const COMPLEXITY_MULTIPLIERS = {
+    mvp: { label: "MVP Prototype", mult: 0.85, tag: "Rapid Launch" },
+    medium: { label: "Production Grade", mult: 1.0, tag: "Standard Scale" },
+    enterprise: { label: "Enterprise Distributed", mult: 1.45, tag: "High Security & Scale" },
+  };
 
-  const FINISH_OPTIONS = [
-    { id: "as_machined", label: "As-Machined (Ra 3.2µm)", pricePerUnit: 0 },
-    { id: "bead_blast", label: "Bead Blasted (Ra 1.6µm)", pricePerUnit: 120 },
-    { id: "anodize", label: "Anodized Type II/III Hardcoat", pricePerUnit: 340 },
-    { id: "electropolish", label: "Electropolished (Pharma Ra 0.4µm)", pricePerUnit: 580 },
-    { id: "plating", label: "Zinc / Nickel Flash Plating", pricePerUnit: 260 },
-  ];
+  const TIMELINE_MULTIPLIERS = {
+    standard: { label: "Standard Delivery", mult: 1.0, tag: "Normal Cadence" },
+    accelerated: { label: "Accelerated Sprint", mult: 1.25, tag: "+25% Priority Pod" },
+    rush: { label: "Rapid 3-Week Blitz", mult: 1.5, tag: "+50% Dedicated Sprint" },
+  };
 
-  const LEAD_OPTIONS = [
-    { id: "standard", label: "Standard (12-15 Business Days)", mult: 1.0, tag: "Standard Rate" },
-    { id: "expedited", label: "Expedited (5-7 Business Days)", mult: 1.25, tag: "+25% Priority" },
-    { id: "rush", label: "Rapid Prototype (72 Hours)", mult: 1.50, tag: "+50% Express" },
-  ];
+  const toggleFeature = (fId) => {
+    setSelectedFeatures((prev) =>
+      prev.includes(fId) ? prev.filter((x) => x !== fId) : [...prev, fId]
+    );
+  };
 
-  const curProc = PROCESS_OPTIONS.find((p) => p.id === process) || PROCESS_OPTIONS[0];
-  const curMat = MATERIAL_OPTIONS.find((m) => m.id === material) || MATERIAL_OPTIONS[0];
-  const curTol = TOLERANCE_OPTIONS.find((t) => t.id === tolerance) || TOLERANCE_OPTIONS[1];
-  const curFin = FINISH_OPTIONS.find((f) => f.id === finish) || FINISH_OPTIONS[2];
-  const curLead = LEAD_OPTIONS.find((l) => l.id === leadTime) || LEAD_OPTIONS[0];
+  const currentPlatform = PLATFORM_OPTIONS.find((p) => p.id === platform) || PLATFORM_OPTIONS[0];
+  const comp = COMPLEXITY_MULTIPLIERS[complexity] || COMPLEXITY_MULTIPLIERS.medium;
+  const time = TIMELINE_MULTIPLIERS[timeline] || TIMELINE_MULTIPLIERS.standard;
 
-  // Engineering calculations
-  const volumeCm3 = (lengthMm * widthMm * heightMm) / 1000;
-  const rawWeightKg = Math.max(0.05, (volumeCm3 * curMat.density * 1.25) / 1000);
-  const rawMaterialUnitInr = Math.round(rawWeightKg * curMat.pricePerKg);
-  
-  const baseCycleHours = Math.max(0.2, Math.min(3.5, volumeCm3 * 0.0016));
-  const machineUnitInr = Math.round(baseCycleHours * curMat.machinability * (curProc.baseRate / 2) * curTol.mult);
-  const setupUnitInr = Math.round(curProc.setup / Math.max(1, quantity));
-  const finishUnitInr = curFin.pricePerUnit;
-  const qcUnitInr = Math.round((rawMaterialUnitInr + machineUnitInr) * (curTol.id === "aerospace" ? 0.22 : 0.08));
+  const featuresTotal = selectedFeatures.reduce((acc, fId) => {
+    const f = FEATURE_MODULES.find((m) => m.id === fId);
+    return acc + (f ? f.cost : 0);
+  }, 0);
 
-  const unitCostInr = Math.round((rawMaterialUnitInr + machineUnitInr + setupUnitInr + finishUnitInr + qcUnitInr) * curLead.mult);
-  const totalBatchInr = unitCostInr * quantity;
-
-  // Percentage cost breakdown
-  const totalCalc = Math.max(1, rawMaterialUnitInr + machineUnitInr + setupUnitInr + finishUnitInr + qcUnitInr);
-  const matPct = Math.round((rawMaterialUnitInr / totalCalc) * 100);
-  const machPct = Math.round((machineUnitInr / totalCalc) * 100);
-  const setupPct = Math.round((setupUnitInr / totalCalc) * 100);
-  const finishQcPct = Math.max(0, 100 - matPct - machPct - setupPct);
+  const baseCalculated = (currentPlatform.baseCost + featuresTotal) * comp.mult * time.mult;
+  const totalCostInr = Math.round(baseCalculated);
+  const estimatedSprints = Math.max(2, Math.round(currentPlatform.weeks * comp.mult));
 
   const handleCopySpec = () => {
-    const text = `Abhimanyu Technologies - Parametric Instant Quote\nProcess: ${curProc.label}\nMaterial: ${curMat.label}\nEnvelope: ${lengthMm}x${widthMm}x${heightMm} mm (Billet: ${rawWeightKg.toFixed(2)} kg)\nTolerance: ${curTol.label}\nFinish: ${curFin.label}\nQuantity: ${quantity} units\nEst. Unit Cost: ${formatPrice(unitCostInr, currency)}\nEst. Batch Total: ${formatPrice(totalBatchInr, currency)}\nLead Time: ${curLead.label}`;
-    navigator.clipboard?.writeText(text);
+    const spec = `Abhimanyu Technologies - Project Estimate\nPlatform: ${currentPlatform.name}\nComplexity: ${comp.label}\nFeatures: ${selectedFeatures.join(", ")}\nTimeline: ${time.label} (~${estimatedSprints} weeks)\nEstimated Budget: ${formatPrice(totalCostInr, currency)}`;
+    navigator.clipboard?.writeText(spec);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2200);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -12244,8 +1359,7 @@ function InstantQuoterModal({ isOpen, onClose, currency = "INR", openCAD, openDF
         inset: 0,
         background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        zIndex: 10000,
+        zIndex: 1000,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -12256,46 +1370,45 @@ function InstantQuoterModal({ isOpen, onClose, currency = "INR", openCAD, openDF
         onClick={(e) => e.stopPropagation()}
         style={{
           width: "100%",
-          maxWidth: 960,
-          maxHeight: "92vh",
+          maxWidth: 920,
+          maxHeight: "90vh",
           overflowY: "auto",
           background: TOKENS.panel,
           border: `1px solid ${TOKENS.hair}`,
-          borderRadius: 12,
-          boxShadow: "0 24px 64px rgba(0,0,0,0.22), 0 0 0 1px rgba(217,119,6,0.2)",
+          borderRadius: 14,
+          boxShadow: "0 24px 60px rgba(0,0,0,0.2)",
           display: "flex",
           flexDirection: "column",
           color: TOKENS.paper,
-          fontFamily: "'Inter', sans-serif",
         }}
       >
         {/* Header */}
-        <div style={{ padding: "20px 24px", borderBottom: `1px solid ${TOKENS.hair}`, background: "linear-gradient(135deg, rgba(217,119,6,0.08) 0%, rgba(29,78,216,0.06) 100%)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
+        <div style={{ padding: "20px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 20 }}>⚡</span>
-              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 700, color: TOKENS.paper, letterSpacing: "-0.01em" }}>
-                Parametric Instant Sourcing & Manufacturing Quoter
+              <span style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
+                Interactive Project Scope & Cost Estimator
               </span>
-              <span style={{ background: "rgba(217,119,6,0.14)", border: "1px solid rgba(217,119,6,0.35)", color: TOKENS.brass, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                BENCHMARK ENGINE v4.2
+              <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, border: `1px solid ${TOKENS.blue}44`, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                INSTANT ALGORITHM
               </span>
             </div>
-            <div style={{ fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.4 }}>
-              Real-time algorithmic unit cost & batch amortization curve based on active machine shop telemetry in Chennai, Coimbatore, and Pune.
+            <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>
+              Configure your software specifications, tech modules, and team velocity to calculate estimated development budget and delivery timeline.
             </div>
           </div>
           <button
             onClick={onClose}
             style={{
-              background: "rgba(15,23,42,0.05)",
+              background: TOKENS.panelAlt,
               border: `1px solid ${TOKENS.hair}`,
               borderRadius: 6,
-              color: TOKENS.slate,
               width: 32,
               height: 32,
-              fontSize: 18,
               cursor: "pointer",
+              fontSize: 18,
+              color: TOKENS.slate,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -12305,27 +1418,496 @@ function InstantQuoterModal({ isOpen, onClose, currency = "INR", openCAD, openDF
           </button>
         </div>
 
-        {/* Tab Navigation */}
-        <div style={{ display: "flex", borderBottom: `1px solid ${TOKENS.hair}`, padding: "0 24px", background: "rgba(15,23,42,0.02)" }}>
+        {/* Modal Body */}
+        <div style={{ padding: 24, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 24 }}>
+          {/* Left Config Panel */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {/* 1. Platform Choice */}
+            <div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
+                1. TARGET PLATFORM & ARCHITECTURE
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {PLATFORM_OPTIONS.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setPlatform(p.id)}
+                    style={{
+                      background: platform === p.id ? TOKENS.badgeBg : TOKENS.panelAlt,
+                      border: `1px solid ${platform === p.id ? TOKENS.blue : TOKENS.hair}`,
+                      borderRadius: 8,
+                      padding: "10px 12px",
+                      textAlign: "left",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span>{p.icon}</span>
+                      <span style={{ fontSize: 12.5, fontWeight: 700, color: platform === p.id ? TOKENS.blue : TOKENS.paper }}>{p.name}</span>
+                    </div>
+                    <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 4 }}>{p.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 2. Feature Modules */}
+            <div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
+                2. REQUIRED TECHNICAL MODULES
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                {FEATURE_MODULES.map((f) => {
+                  const selected = selectedFeatures.includes(f.id);
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={() => toggleFeature(f.id)}
+                      style={{
+                        background: selected ? "rgba(13, 148, 136, 0.1)" : TOKENS.panelAlt,
+                        border: `1px solid ${selected ? TOKENS.teal : TOKENS.hair}`,
+                        borderRadius: 6,
+                        padding: "8px 10px",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span>{f.icon}</span>
+                        <span style={{ fontSize: 11.5, fontWeight: 600, color: selected ? TOKENS.teal : TOKENS.paper }}>{f.name}</span>
+                      </div>
+                      <span style={{ fontSize: 12 }}>{selected ? "✓" : "+"}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 3. Complexity & Timeline */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 6 }}>
+                  SCALE & COMPLEXITY
+                </div>
+                <select
+                  value={complexity}
+                  onChange={(e) => setComplexity(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px 10px",
+                    borderRadius: 6,
+                    border: `1px solid ${TOKENS.hair}`,
+                    background: TOKENS.panel,
+                    color: TOKENS.paper,
+                    fontSize: 12,
+                    cursor: "pointer",
+                  }}
+                >
+                  {Object.keys(COMPLEXITY_MULTIPLIERS).map((k) => (
+                    <option key={k} value={k}>
+                      {COMPLEXITY_MULTIPLIERS[k].label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 6 }}>
+                  DELIVERY SPEED
+                </div>
+                <select
+                  value={timeline}
+                  onChange={(e) => setTimeline(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px 10px",
+                    borderRadius: 6,
+                    border: `1px solid ${TOKENS.hair}`,
+                    background: TOKENS.panel,
+                    color: TOKENS.paper,
+                    fontSize: 12,
+                    cursor: "pointer",
+                  }}
+                >
+                  {Object.keys(TIMELINE_MULTIPLIERS).map((k) => (
+                    <option key={k} value={k}>
+                      {TIMELINE_MULTIPLIERS[k].label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Summary Panel */}
+          <div
+            style={{
+              background: TOKENS.panelAlt,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 12,
+              padding: 20,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 14, marginBottom: 16 }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
+                  ESTIMATED PROJECT BUDGET
+                </div>
+                <div style={{ fontSize: 32, fontWeight: 800, color: TOKENS.blue, marginTop: 4 }}>
+                  {formatPrice(totalCostInr, currency)}
+                </div>
+                <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 2 }}>
+                  Estimated Velocity: <strong>~{estimatedSprints} Weeks</strong> (Agile 2-week Sprints)
+                </div>
+              </div>
+
+              {/* Recommended Team Pod */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
+                  DEDICATED ENGINEERING POD ALLOCATION
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 11.5 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: TOKENS.slate }}>Lead Solutions Architect:</span>
+                    <strong style={{ color: TOKENS.paper }}>1 Engineer (Part-Time)</strong>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: TOKENS.slate }}>Senior Full-Stack / Mobile:</span>
+                    <strong style={{ color: TOKENS.paper }}>2 Engineers (Full-Time)</strong>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: TOKENS.slate }}>UI/UX Product Designer:</span>
+                    <strong style={{ color: TOKENS.paper }}>1 Designer (Sprint 1-3)</strong>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: TOKENS.slate }}>QA & DevOps Specialist:</span>
+                    <strong style={{ color: TOKENS.paper }}>1 Specialist (Continuous)</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Scope Inclusions */}
+              <div style={{ background: "rgba(13, 148, 136, 0.08)", border: `1px solid ${TOKENS.teal}44`, borderRadius: 8, padding: 12, fontSize: 11.5, lineHeight: 1.5, color: TOKENS.paper }}>
+                ✓ <strong>Guarantee:</strong> 100% Full IP & Source Code Ownership, Daily Standup Telemetry, 30-Day Post-Launch Warranty, and Strict Non-Disclosure Agreement (NDA).
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 18 }}>
+              <Button
+                onClick={() => {
+                  go("rfq-wizard");
+                  onClose();
+                }}
+                style={{ width: "100%", padding: "12px" }}
+              >
+                🚀 Request Formal Scope Proposal →
+              </Button>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  onClick={handleCopySpec}
+                  style={{
+                    flex: 1,
+                    background: TOKENS.panel,
+                    border: `1px solid ${TOKENS.hair}`,
+                    borderRadius: 6,
+                    padding: "8px",
+                    fontSize: 11.5,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    color: TOKENS.paper,
+                    cursor: "pointer",
+                  }}
+                >
+                  {copied ? "✓ Copied Spec" : "📋 Copy Estimate"}
+                </button>
+                <button
+                  onClick={() => {
+                    go("contact");
+                    onClose();
+                  }}
+                  style={{
+                    flex: 1,
+                    background: TOKENS.panel,
+                    border: `1px solid ${TOKENS.hair}`,
+                    borderRadius: 6,
+                    padding: "8px",
+                    fontSize: 11.5,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    color: TOKENS.blue,
+                    cursor: "pointer",
+                    fontWeight: 600,
+                  }}
+                >
+                  💬 Speak with Architect
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Client Project Tracker Modal ---------------------------- */
+
+function ClientProjectTrackerModal({ isOpen, onClose, go }) {
+  if (!isOpen) return null;
+
+  const project = {
+    id: "PRJ-2026-8841",
+    name: "Apex Neobank Mobile App & Microservices",
+    client: "Apex FinTech Solutions",
+    status: "In Active Development",
+    currentSprint: "Sprint 4 of 6",
+    progressPct: 68,
+    stagingUrl: "https://staging-apex.abhimanu-technologies.app",
+    leadArchitect: "Er. Vikramaditya Rao",
+    lastCommit: "feat(android): implement biometrics & UPI QR scan module",
+    commitHash: "git#a89f41b (14 mins ago)",
+  };
+
+  const sprints = [
+    { num: 1, title: "Figma UI/UX & Cloud DB Architecture", status: "COMPLETED", date: "Sep 01 - Sep 14" },
+    { num: 2, title: "Auth0 RBAC, Security & User Microservices", status: "COMPLETED", date: "Sep 15 - Sep 28" },
+    { num: 3, title: "Android Jetpack Compose Navigation & Core Screens", status: "COMPLETED", date: "Sep 29 - Oct 12" },
+    { num: 4, title: "Payment Gateway Integration & WebRTC Video KYC", status: "IN_PROGRESS", date: "Oct 13 - Oct 26" },
+    { num: 5, title: "End-to-End Automated Testing & Security Audit", status: "PENDING", date: "Oct 27 - Nov 09" },
+    { num: 6, title: "Google Play Store / App Store Production Release", status: "PENDING", date: "Nov 10 - Nov 20" },
+  ];
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15, 23, 42, 0.65)",
+        backdropFilter: "blur(16px)",
+        zIndex: 1000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px 16px",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: 880,
+          maxHeight: "90vh",
+          overflowY: "auto",
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          padding: 24,
+          color: TOKENS.paper,
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 20 }}>📊</span>
+              <span style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
+                Client Live Project Sprint Tracker
+              </span>
+              <span style={{ background: "rgba(13, 148, 136, 0.15)", color: TOKENS.teal, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                ● SPRINT 4 ACTIVE
+              </span>
+            </div>
+            <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 4 }}>
+              Project: <strong>{project.name}</strong> • Ticket: <span style={{ fontFamily: "'JetBrains Mono', monospace" }}>{project.id}</span>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: TOKENS.panelAlt,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              width: 32,
+              height: 32,
+              cursor: "pointer",
+              fontSize: 18,
+              color: TOKENS.slate,
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Progress Banner */}
+        <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 16, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, fontSize: 13 }}>
+            <span>Overall Roadmap Completion:</span>
+            <strong>{project.progressPct}%</strong>
+          </div>
+          <div style={{ height: 8, background: "#E2E8F0", borderRadius: 999, overflow: "hidden" }}>
+            <div style={{ width: `${project.progressPct}%`, height: "100%", background: `linear-gradient(90deg, ${TOKENS.blue}, ${TOKENS.teal})` }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: TOKENS.slate, marginTop: 10 }}>
+            <span>Lead Architect: <strong>{project.leadArchitect}</strong></span>
+            <span>Latest Commit: <code style={{ color: TOKENS.blue }}>{project.commitHash}</code></span>
+          </div>
+        </div>
+
+        {/* Sprints Timeline */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate }}>
+            AGILE SPRINTS TIMELINE
+          </div>
+          {sprints.map((sp) => (
+            <div
+              key={sp.num}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "10px 14px",
+                background: sp.status === "IN_PROGRESS" ? TOKENS.badgeBg : TOKENS.panelAlt,
+                border: `1px solid ${sp.status === "IN_PROGRESS" ? TOKENS.blue : TOKENS.hair}`,
+                borderRadius: 8,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.blue }}>
+                  #{sp.num}
+                </span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper }}>{sp.title}</div>
+                  <div style={{ fontSize: 11, color: TOKENS.slate }}>{sp.date}</div>
+                </div>
+              </div>
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: "3px 8px",
+                  borderRadius: 4,
+                  background:
+                    sp.status === "COMPLETED"
+                      ? "rgba(13, 148, 136, 0.15)"
+                      : sp.status === "IN_PROGRESS"
+                      ? "rgba(37, 99, 235, 0.15)"
+                      : "rgba(15, 23, 42, 0.06)",
+                  color:
+                    sp.status === "COMPLETED"
+                      ? TOKENS.teal
+                      : sp.status === "IN_PROGRESS"
+                      ? TOKENS.blue
+                      : TOKENS.slate,
+                }}
+              >
+                {sp.status}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 16 }}>
+          <div style={{ fontSize: 12, color: TOKENS.slate }}>
+            🔒 Authenticated client session for <strong>Apex FinTech Solutions</strong>.
+          </div>
+          <Button onClick={onClose}>Close Portal</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Product Demo Modal ---------------------------- */
+
+function ProductDemoModal({ product, isOpen, onClose }) {
+  const [activeTab, setActiveTab] = useState("features");
+
+  if (!isOpen || !product) return null;
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15, 23, 42, 0.65)",
+        backdropFilter: "blur(16px)",
+        zIndex: 1000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px 16px",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: 900,
+          maxHeight: "90vh",
+          overflowY: "auto",
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          padding: 24,
+          color: TOKENS.paper,
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 32 }}>{product.icon}</span>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 20, fontWeight: 800, color: TOKENS.paper }}>{product.name}</span>
+                <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                  {product.badge}
+                </span>
+              </div>
+              <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 2 }}>{product.tagline}</div>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: TOKENS.panelAlt,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              width: 32,
+              height: 32,
+              cursor: "pointer",
+              fontSize: 18,
+              color: TOKENS.slate,
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Tab Buttons */}
+        <div style={{ display: "flex", gap: 8, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 10, marginBottom: 16 }}>
           {[
-            { id: "calculator", label: "⚡ Parametric Calculator", icon: "⚙️" },
-            { id: "breakdown", label: "📊 Cost Distribution & Amortization", icon: "📈" },
-            { id: "hubs", label: "🏭 Matched Industrial Clusters", icon: "📍" },
+            { id: "features", label: "Module Features" },
+            { id: "architecture", label: "System Architecture" },
+            { id: "pricing", label: "SaaS Plans" },
           ].map((t) => (
             <button
               key={t.id}
               onClick={() => setActiveTab(t.id)}
               style={{
-                background: "transparent",
+                background: activeTab === t.id ? TOKENS.blue : "transparent",
+                color: activeTab === t.id ? "#FFFFFF" : TOKENS.slate,
                 border: "none",
-                borderBottom: activeTab === t.id ? `2px solid ${TOKENS.brass}` : "2px solid transparent",
-                padding: "12px 16px",
-                color: activeTab === t.id ? TOKENS.brass : TOKENS.slate,
-                fontSize: 13,
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: activeTab === t.id ? 700 : 500,
+                borderRadius: 6,
+                padding: "6px 14px",
+                fontSize: 12.5,
+                fontWeight: 600,
                 cursor: "pointer",
-                transition: "all 0.15s ease",
               }}
             >
               {t.label}
@@ -12333,919 +1915,63 @@ function InstantQuoterModal({ isOpen, onClose, currency = "INR", openCAD, openDF
           ))}
         </div>
 
-        {/* Modal Body */}
-        <div style={{ padding: 24, flex: 1 }}>
-          {activeTab === "calculator" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 24 }}>
-              {/* Left Controls */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-                {/* Process Selection */}
-                <div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 8, fontWeight: 700 }}>
-                    1. MANUFACTURING PROCESS
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                    {PROCESS_OPTIONS.map((p) => (
-                      <button
-                        key={p.id}
-                        onClick={() => setProcess(p.id)}
-                        style={{
-                          background: process === p.id ? "rgba(217,119,6,0.12)" : "rgba(15,23,42,0.03)",
-                          border: `1px solid ${process === p.id ? TOKENS.brass : TOKENS.hair}`,
-                          borderRadius: 8,
-                          padding: "10px 12px",
-                          textAlign: "left",
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
-                        }}
-                      >
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                          <span>{p.icon}</span>
-                          <span style={{ fontSize: 13, fontWeight: 700, color: process === p.id ? TOKENS.brass : TOKENS.paper }}>{p.label}</span>
-                        </div>
-                        <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 4 }}>{p.sub}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Material Selection */}
-                <div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 8, fontWeight: 700 }}>
-                    2. CERTIFIED RAW STOCK ALLOY
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
-                    {MATERIAL_OPTIONS.map((m) => (
-                      <button
-                        key={m.id}
-                        onClick={() => setMaterial(m.id)}
-                        style={{
-                          background: material === m.id ? "rgba(29,78,216,0.12)" : "rgba(15,23,42,0.03)",
-                          border: `1px solid ${material === m.id ? TOKENS.blue : TOKENS.hair}`,
-                          borderRadius: 6,
-                          padding: "8px 10px",
-                          textAlign: "left",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <div style={{ fontSize: 12, fontWeight: 600, color: material === m.id ? TOKENS.blue : TOKENS.paper }}>{m.label}</div>
-                        <div style={{ fontSize: 10, color: TOKENS.slate, marginTop: 2 }}>{m.desc}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Part Envelope Dimensions */}
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
-                      3. PART ENVELOPE (L × W × H in mm)
-                    </span>
-                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 600 }}>
-                      Vol: {volumeCm3.toFixed(1)} cm³ • Billet: {rawWeightKg.toFixed(2)} kg
-                    </span>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                    {[
-                      { label: "Length (L)", val: lengthMm, set: setLengthMm, min: 10, max: 800 },
-                      { label: "Width (W)", val: widthMm, set: setWidthMm, min: 10, max: 600 },
-                      { label: "Height (H)", val: heightMm, set: setHeightMm, min: 5, max: 300 },
-                    ].map((d, di) => (
-                      <div key={di} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "8px 10px" }}>
-                        <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{d.label}</div>
-                        <input
-                          type="number"
-                          value={d.val}
-                          onChange={(e) => d.set(Math.max(d.min, Math.min(d.max, Number(e.target.value) || d.min)))}
-                          style={{
-                            width: "100%",
-                            background: "transparent",
-                            border: "none",
-                            fontSize: 14,
-                            fontWeight: 700,
-                            color: TOKENS.paper,
-                            marginTop: 4,
-                            outline: "none",
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Quantity & Amortization Slider */}
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
-                      4. BATCH RUN QUANTITY
-                    </span>
-                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: TOKENS.brass, fontWeight: 700 }}>
-                      {quantity.toLocaleString()} units
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="1"
-                    max="2000"
-                    step="5"
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    style={{ width: "100%", accentColor: TOKENS.brass, cursor: "pointer" }}
-                  />
-                  <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
-                    {[10, 50, 100, 250, 500, 1000].map((q) => (
-                      <button
-                        key={q}
-                        onClick={() => setQuantity(q)}
-                        style={{
-                          flex: 1,
-                          background: quantity === q ? TOKENS.brass : "rgba(15,23,42,0.04)",
-                          color: quantity === q ? "#FFFFFF" : TOKENS.slate,
-                          border: `1px solid ${quantity === q ? TOKENS.brass : TOKENS.hair}`,
-                          borderRadius: 4,
-                          padding: "4px 0",
-                          fontSize: 11,
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontWeight: 600,
-                          cursor: "pointer",
-                        }}
-                      >
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tolerance & Surface Finish */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <div>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, fontWeight: 700 }}>
-                      TOLERANCE TIER
-                    </div>
-                    <select
-                      value={tolerance}
-                      onChange={(e) => setTolerance(e.target.value)}
-                      style={{
-                        width: "100%",
-                        padding: "8px 10px",
-                        borderRadius: 6,
-                        border: `1px solid ${TOKENS.hair}`,
-                        fontSize: 12,
-                        background: TOKENS.panel,
-                        color: TOKENS.paper,
-                        cursor: "pointer",
-                      }}
-                    >
-                      {TOLERANCE_OPTIONS.map((t) => (
-                        <option key={t.id} value={t.id}>{t.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginBottom: 6, fontWeight: 700 }}>
-                      SURFACE FINISH
-                    </div>
-                    <select
-                      value={finish}
-                      onChange={(e) => setFinish(e.target.value)}
-                      style={{
-                        width: "100%",
-                        padding: "8px 10px",
-                        borderRadius: 6,
-                        border: `1px solid ${TOKENS.hair}`,
-                        fontSize: 12,
-                        background: TOKENS.panel,
-                        color: TOKENS.paper,
-                        cursor: "pointer",
-                      }}
-                    >
-                      {FINISH_OPTIONS.map((f) => (
-                        <option key={f.id} value={f.id}>{f.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+        {activeTab === "features" && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            {product.modules.map((m, idx) => (
+              <div key={idx} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 14px", fontSize: 13 }}>
+                <span style={{ color: TOKENS.teal, fontWeight: 700, marginRight: 6 }}>✓</span>
+                {m}
               </div>
+            ))}
+          </div>
+        )}
 
-              {/* Right Output Panel */}
-              <div style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 20, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 12, marginBottom: 16 }}>
-                    <div>
-                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>ESTIMATED UNIT PRICE</div>
-                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, fontWeight: 800, color: TOKENS.paper, marginTop: 2 }}>
-                        {formatPrice(unitCostInr, currency)}
-                        <span style={{ fontSize: 13, fontWeight: 400, color: TOKENS.slate }}> / unit</span>
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>BATCH TOTAL ({quantity} PCS)</div>
-                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 700, color: TOKENS.brass, marginTop: 2 }}>
-                        {formatPrice(totalBatchInr, currency)}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Amortization Breakdown */}
-                  <div style={{ marginBottom: 16 }}>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate, marginBottom: 6 }}>
-                      COST PROPORTION BREAKDOWN
-                    </div>
-                    <div style={{ height: 10, borderRadius: 999, overflow: "hidden", display: "flex", width: "100%", background: "#E2E8F0" }}>
-                      <div style={{ width: `${matPct}%`, background: TOKENS.blue }} title={`Raw Material: ${matPct}%`} />
-                      <div style={{ width: `${machPct}%`, background: TOKENS.brass }} title={`Machine Time: ${machPct}%`} />
-                      <div style={{ width: `${setupPct}%`, background: TOKENS.teal }} title={`Setup Amortization: ${setupPct}%`} />
-                      <div style={{ width: `${finishQcPct}%`, background: "#9333EA" }} title={`Finish & Quality: ${finishQcPct}%`} />
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginTop: 10, fontSize: 11 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: TOKENS.blue }} />
-                        <span style={{ color: TOKENS.slate }}>Raw Stock:</span>
-                        <span style={{ fontWeight: 600, color: TOKENS.paper }}>{formatPrice(rawMaterialUnitInr, currency)}</span>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: TOKENS.brass }} />
-                        <span style={{ color: TOKENS.slate }}>Machine Runtime:</span>
-                        <span style={{ fontWeight: 600, color: TOKENS.paper }}>{formatPrice(machineUnitInr, currency)}</span>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: TOKENS.teal }} />
-                        <span style={{ color: TOKENS.slate }}>Tooling Amort.:</span>
-                        <span style={{ fontWeight: 600, color: TOKENS.paper }}>{formatPrice(setupUnitInr, currency)}</span>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#9333EA" }} />
-                        <span style={{ color: TOKENS.slate }}>Finishing & QC:</span>
-                        <span style={{ fontWeight: 600, color: TOKENS.paper }}>{formatPrice(finishUnitInr + qcUnitInr, currency)}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Production Lead Time */}
-                  <div style={{ background: "rgba(15,23,42,0.04)", borderRadius: 6, padding: "10px 12px", marginBottom: 16 }}>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>SELECT PRODUCTION SCHEDULE</div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 6 }}>
-                      {LEAD_OPTIONS.map((l) => (
-                        <label key={l.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", fontSize: 12 }}>
-                          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                            <input
-                              type="radio"
-                              name="leadTimeRadio"
-                              checked={leadTime === l.id}
-                              onChange={() => setLeadTime(l.id)}
-                              style={{ accentColor: TOKENS.brass }}
-                            />
-                            <span style={{ color: leadTime === l.id ? TOKENS.paper : TOKENS.slate, fontWeight: leadTime === l.id ? 600 : 400 }}>{l.label}</span>
-                          </span>
-                          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: leadTime === l.id ? TOKENS.brass : TOKENS.slate }}>{l.tag}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Hub Availability Tag */}
-                  <div style={{ borderLeft: `3px solid ${TOKENS.teal}`, paddingLeft: 10, fontSize: 11.5, color: TOKENS.slate, lineHeight: 1.4 }}>
-                    📍 <strong style={{ color: TOKENS.paper }}>Matched Capacity:</strong> 4 verified Tier-1 machine shops in <em>Chennai & Coimbatore</em> are currently equipped for this alloy and tolerance class.
-                  </div>
-                </div>
-
-                {/* Primary Actions */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 18 }}>
-                  <button
-                    onClick={() => { go?.("rfq-wizard"); onClose(); }}
-                    style={{
-                      width: "100%",
-                      background: TOKENS.brass,
-                      color: "#FFFFFF",
-                      border: "none",
-                      borderRadius: 6,
-                      padding: "11px 16px",
-                      fontSize: 13,
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 6,
-                    }}
-                  >
-                    <span>➕ Convert to Official RFQ Requirement →</span>
-                  </button>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button
-                      onClick={() => { openCAD?.(); onClose(); }}
-                      style={{
-                        flex: 1,
-                        background: "rgba(29,78,216,0.12)",
-                        border: `1px solid ${TOKENS.blue}`,
-                        color: TOKENS.blue,
-                        borderRadius: 6,
-                        padding: "8px 10px",
-                        fontSize: 11.5,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                      }}
-                    >
-                      📐 Open 3D CAD
-                    </button>
-                    <button
-                      onClick={() => { openDFM?.(); onClose(); }}
-                      style={{
-                        flex: 1,
-                        background: "rgba(0,168,150,0.12)",
-                        border: `1px solid ${TOKENS.teal}`,
-                        color: TOKENS.teal,
-                        borderRadius: 6,
-                        padding: "8px 10px",
-                        fontSize: 11.5,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                      }}
-                    >
-                      🛠 DFM Feasibility
-                    </button>
-                    <button
-                      onClick={handleCopySpec}
-                      style={{
-                        background: "rgba(15,23,42,0.05)",
-                        border: `1px solid ${TOKENS.hair}`,
-                        color: TOKENS.paper,
-                        borderRadius: 6,
-                        padding: "8px 12px",
-                        fontSize: 11.5,
-                        fontFamily: "'JetBrains Mono', monospace",
-                        cursor: "pointer",
-                      }}
-                      title="Copy Quote Spec to Clipboard"
-                    >
-                      {copied ? "✓ Copied" : "📋 Copy"}
-                    </button>
-                  </div>
-                </div>
-              </div>
+        {activeTab === "architecture" && (
+          <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
+              ENTERPRISE DEPLOYMENT TOPOLOGY
             </div>
-          )}
-
-          {activeTab === "breakdown" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.5 }}>
-                Industrial amortization curves illustrate why unit prices decrease substantially at scale. Setup costs (CAM programming, CNC fixture machining, tooling offsets) are fixed per batch and divide evenly across higher order volumes.
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12 }}>
-                {[10, 50, 100, 500, 1000].map((qtyTier) => {
-                  const sUnit = Math.round(curProc.setup / qtyTier);
-                  const uCost = Math.round((rawMaterialUnitInr + machineUnitInr + sUnit + finishUnitInr + qcUnitInr) * curLead.mult);
-                  const bTotal = uCost * qtyTier;
-                  return (
-                    <div
-                      key={qtyTier}
-                      style={{
-                        background: quantity === qtyTier ? "rgba(217,119,6,0.1)" : "rgba(15,23,42,0.03)",
-                        border: `1px solid ${quantity === qtyTier ? TOKENS.brass : TOKENS.hair}`,
-                        borderRadius: 8,
-                        padding: 14,
-                        textAlign: "center",
-                      }}
-                    >
-                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.paper }}>
-                        {qtyTier} Units
-                      </div>
-                      <div style={{ fontSize: 16, fontWeight: 800, color: TOKENS.brass, margin: "6px 0 2px" }}>
-                        {formatPrice(uCost, currency)}
-                      </div>
-                      <div style={{ fontSize: 10, color: TOKENS.slate }}>per part</div>
-                      <div style={{ fontSize: 11, fontWeight: 600, color: TOKENS.paper, marginTop: 8, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 6 }}>
-                        {formatPrice(bTotal, currency)} total
-                      </div>
-                      <button
-                        onClick={() => { setQuantity(qtyTier); setActiveTab("calculator"); }}
-                        style={{
-                          marginTop: 8,
-                          width: "100%",
-                          background: "transparent",
-                          border: `1px solid ${TOKENS.hair}`,
-                          borderRadius: 4,
-                          fontSize: 10.5,
-                          fontFamily: "'JetBrains Mono', monospace",
-                          color: TOKENS.paper,
-                          cursor: "pointer",
-                          padding: "3px 0",
-                        }}
-                      >
-                        Select Tier
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-              <div style={{ background: "rgba(15,23,42,0.02)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 16 }}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-                  PARAMETRIC COST FORMULA (INDIAN METROLOGY BENCHMARK)
-                </div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper, lineHeight: 1.6 }}>
-                  UnitCost = [ RawStockWeight × RatePerKg + CycleHours × Machinability × MachineHourRate + (ToolingSetup / Qty) + FinishingCost + QCCost ] × LeadTimeMultiplier
-                </div>
-              </div>
+            <div style={{ fontSize: 13, color: TOKENS.paper, lineHeight: 1.6, marginBottom: 14 }}>
+              Engineered using <strong>{product.techStack.join(" • ")}</strong> with automated multi-region database failover, Redis caching clusters, and zero-downtime rolling updates.
             </div>
-          )}
-
-          {activeTab === "hubs" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
-              {[
-                { name: "Chennai Guindy & Ambattur Industrial Cluster", plants: "14 Verified OEM Shops", certs: "AS9100D, ISO 9001:2015", special: "5-Axis DMG Mori Milling, Titanium Turning", lead: "3-5 days delivery in South Hub" },
-                { name: "Coimbatore Precision Engineering Belt", plants: "22 Verified CNC/VMC Shops", certs: "ISO 9001:2015, IATF 16949", special: "High-volume Aluminum & Steel Castings", lead: "4-6 days delivery pan-India" },
-                { name: "Pune Bhosari & Chakan Auto/Aero Corridor", plants: "18 Verified Fabricators", certs: "AS9100D, Nadcap Heat Treat", special: "Laser Sheet Metal & Aircraft Structural Bores", lead: "3-5 days delivery in West Hub" },
-              ].map((hub, hi) => (
-                <div key={hi} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 16 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
-                    <span>🏭</span>
-                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>{hub.name}</span>
-                  </div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 600 }}>{hub.plants}</div>
-                  <div style={{ fontSize: 11.5, color: TOKENS.slate, marginTop: 8 }}><strong>Certs:</strong> {hub.certs}</div>
-                  <div style={{ fontSize: 11.5, color: TOKENS.slate, marginTop: 4 }}><strong>Capabilities:</strong> {hub.special}</div>
-                  <div style={{ fontSize: 11, color: TOKENS.brass, marginTop: 8 }}>⚡ {hub.lead}</div>
-                  <button
-                    onClick={() => { go?.("manufacturers"); onClose(); }}
-                    style={{
-                      marginTop: 12,
-                      width: "100%",
-                      background: "transparent",
-                      border: `1px solid ${TOKENS.hair}`,
-                      borderRadius: 4,
-                      padding: "6px 0",
-                      fontSize: 11,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      cursor: "pointer",
-                      color: TOKENS.paper,
-                    }}
-                  >
-                    View Cluster Directory →
-                  </button>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              {product.metrics.map((met, i) => (
+                <div key={i} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "8px 14px", fontSize: 12, fontWeight: 700, color: TOKENS.blue }}>
+                  ⚡ {met}
                 </div>
               ))}
             </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div style={{ padding: "14px 24px", borderTop: `1px solid ${TOKENS.hair}`, background: "rgba(15,23,42,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
-            🔒 All pricing estimates conform to bilateral NDA privacy protocols.
           </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: "transparent",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              color: TOKENS.paper,
-              padding: "7px 16px",
-              fontSize: 12,
-              fontFamily: "'Inter', sans-serif",
-              cursor: "pointer",
-            }}
-          >
-            Close Calculator
-          </button>
+        )}
+
+        {activeTab === "pricing" && (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+            {Object.keys(product.pricing).map((k) => {
+              const p = product.pricing[k];
+              return (
+                <div key={k} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 16 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>{p.label}</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: TOKENS.blue, margin: "8px 0" }}>
+                    ₹{p.inr.toLocaleString("en-IN")}<span style={{ fontSize: 11, color: TOKENS.slate }}>{p.period}</span>
+                  </div>
+                  <div style={{ fontSize: 11.5, color: TOKENS.slate, lineHeight: 1.4 }}>{p.desc}</div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20, paddingTop: 16, borderTop: `1px solid ${TOKENS.hair}` }}>
+          <Button onClick={onClose}>Close Walkthrough</Button>
         </div>
       </div>
     </div>
   );
 }
 
-/* ---------------------------- AS9102 Quality Compliance & FAI Vault Modal ---------------------------- */
+/* ---------------------------- Universal Spotlight Search (Ctrl+K) ---------------------------- */
 
-function AuditComplianceModal({ isOpen, onClose, rfqId = "RFQ-2026-9041", partName = "SS316 Multi-Port Valve Manifold", material = "SS 316L Stainless Steel", openTraceability, openCAD }) {
-  const [activeForm, setActiveForm] = useState("form3");
-  const [downloadSuccess, setDownloadSuccess] = useState(false);
-
-  if (!isOpen) return null;
-
-  const FAI_CHARACTERISTICS = [
-    { charNo: "01", desc: "Overall Length (OAL)", nominal: "120.00 mm", tol: "±0.05", min: "119.95", max: "120.05", measured: "120.014 mm", dev: "+0.014", tool: "Zeiss Prismo CMM", status: "PASS" },
-    { charNo: "02", desc: "Main Bore Diameter", nominal: "Ø 25.000 mm", tol: "+0.020 / -0.000", min: "25.000", max: "25.020", measured: "25.008 mm", dev: "+0.008", tool: "Zeiss Air Gage Spindle", status: "PASS" },
-    { charNo: "03", desc: "Port Center Pitch", nominal: "45.00 mm", tol: "±0.02", min: "44.98", max: "45.02", measured: "44.996 mm", dev: "-0.004", tool: "Mitutoyo Linear Height", status: "PASS" },
-    { charNo: "04", desc: "Internal Thread M16x1.5-6H", nominal: "M16x1.5", tol: "6H Class", min: "Pitch 15.026", max: "15.216", measured: "Go Gauge Passes / No-Go Stops", dev: "0.000", tool: "NABL Plug Thread Gauge", status: "PASS" },
-    { charNo: "05", desc: "Flange Perpendicularity (⟂)", nominal: "0.020 mm", tol: "To Datum [A]", min: "0.000", max: "0.020", measured: "0.009 mm", dev: "-0.011", tool: "Zeiss VAST Gold Probe", status: "PASS" },
-    { charNo: "06", desc: "Cross-Port True Position (⌖)", nominal: "Ø 0.05 mm MMC", tol: "To Datums [A|B|C]", min: "0.00", max: "0.05", measured: "Ø 0.018 mm", dev: "-0.032", tool: "Zeiss 3D Spatial Algorithm", status: "PASS" },
-    { charNo: "07", desc: "Internal Bore Surface Finish Ra", nominal: "Ra 0.8 µm Max", tol: "DIN EN ISO 4287", min: "0.00", max: "0.80", measured: "Ra 0.58 µm", dev: "-0.22", tool: "Mitutoyo Surftest SJ-410", status: "PASS" },
-    { charNo: "08", desc: "Minimum Wall Thickness", nominal: "3.50 mm", tol: "±0.15", min: "3.35", max: "3.65", measured: "3.53 mm", dev: "+0.03", tool: "Olympus Ultrasonic Gauge", status: "PASS" },
-  ];
-
-  const CMM_MACHINES = [
-    { name: "Zeiss Prismo 7/10/5 VAST Gold", serial: "PR-89104", type: "Bridge CMM (0.9 + L/350 µm)", calDate: "2026-01-14", dueDate: "2027-01-14", lab: "Carl Zeiss India NABL CC-1102", certNo: "CZI-CAL-2026-0491", status: "ACTIVE / VERIFIED" },
-    { name: "Mitutoyo Crysta-Apex S9106 CNC", serial: "CA-44219", type: "CNC Coordinate Measuring Machine", calDate: "2025-11-20", dueDate: "2026-11-20", lab: "Mitutoyo Metrology Lab CC-2901", certNo: "MIT-2025-8821", status: "ACTIVE / VERIFIED" },
-    { name: "Mitutoyo Surftest SJ-410", serial: "SJ-10928", type: "Precision Stylus Surface Roughness Tester", calDate: "2026-02-05", dueDate: "2027-02-05", lab: "Apex Quality Metrology Hub", certNo: "AQM-2026-0112", status: "ACTIVE / VERIFIED" },
-    { name: "Olympus 38DL Plus", serial: "OLY-7721", type: "Ultrasonic Precision Thickness Gauge", calDate: "2025-12-10", dueDate: "2026-12-10", lab: "NDT Systems Bangalore", certNo: "NDT-2025-4491", status: "ACTIVE / VERIFIED" },
-  ];
-
-  const handleDownload = () => {
-    setDownloadSuccess(true);
-    setTimeout(() => setDownloadSuccess(false), 4000);
-  };
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px 16px",
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "100%",
-          maxWidth: 980,
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panel,
-          border: `1px solid ${TOKENS.hair}`,
-          borderRadius: 12,
-          boxShadow: "0 24px 64px rgba(0,0,0,0.22), 0 0 0 1px rgba(29,78,216,0.25)",
-          display: "flex",
-          flexDirection: "column",
-          color: TOKENS.paper,
-          fontFamily: "'Inter', sans-serif",
-        }}
-      >
-        {/* Header */}
-        <div style={{ padding: "20px 24px", borderBottom: `1px solid ${TOKENS.hair}`, background: "linear-gradient(135deg, rgba(29,78,216,0.08) 0%, rgba(0,168,150,0.06) 100%)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-              <span style={{ fontSize: 20 }}>🛡️</span>
-              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 700, color: TOKENS.paper, letterSpacing: "-0.01em" }}>
-                AS9102 Rev C Quality & FAI Compliance Dossier
-              </span>
-              <span style={{ background: "rgba(0,168,150,0.15)", border: `1px solid ${TOKENS.teal}`, color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                ● 100% CONFORMING (8/8 VERIFIED)
-              </span>
-            </div>
-            <div style={{ fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.4 }}>
-              Part: <strong>{partName}</strong> • RFQ: <span style={{ fontFamily: "'JetBrains Mono', monospace" }}>{rfqId}</span> • Certified Alloy: <strong>{material}</strong>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: "rgba(15,23,42,0.05)",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              color: TOKENS.slate,
-              width: 32,
-              height: 32,
-              fontSize: 18,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            ×
-          </button>
-        </div>
-
-        {/* Tab Navigation */}
-        <div style={{ display: "flex", borderBottom: `1px solid ${TOKENS.hair}`, padding: "0 24px", background: "rgba(15,23,42,0.02)", overflowX: "auto" }}>
-          {[
-            { id: "form3", label: "📐 Form 3: CMM Balloon Matrix", icon: "📐" },
-            { id: "form1", label: "📋 Form 1: Part Accountability", icon: "📋" },
-            { id: "form2", label: "🧪 Form 2: Materials & Processes", icon: "🧪" },
-            { id: "cmm", label: "🔬 Metrology Calibration Log", icon: "🔬" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setActiveForm(t.id)}
-              style={{
-                background: "transparent",
-                border: "none",
-                borderBottom: activeForm === t.id ? `2px solid ${TOKENS.blue}` : "2px solid transparent",
-                padding: "12px 16px",
-                color: activeForm === t.id ? TOKENS.blue : TOKENS.slate,
-                fontSize: 13,
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: activeForm === t.id ? 700 : 500,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                transition: "all 0.15s ease",
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab Content */}
-        <div style={{ padding: 24, flex: 1 }}>
-          {/* Form 3: CMM Characteristic Matrix */}
-          {activeForm === "form3" && (
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
-                    AS9102 REV C — FORM 3: CHARACTERISTIC ACCOUNTABILITY, VERIFICATION & COMPATIBILITY
-                  </div>
-                  <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 2 }}>
-                    CMM probe inspection calibrated against Datum Reference Frame [A|B|C] at 20.0°C ± 0.5°C ambient.
-                  </div>
-                </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button
-                    onClick={() => openCAD?.(rfqId, partName)}
-                    style={{
-                      background: "rgba(217,119,6,0.12)",
-                      border: `1px solid ${TOKENS.brass}`,
-                      color: TOKENS.brass,
-                      borderRadius: 6,
-                      padding: "6px 12px",
-                      fontSize: 11.5,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                    }}
-                  >
-                    📐 View Ballooned CAD
-                  </button>
-                </div>
-              </div>
-
-              {/* Table */}
-              <div style={{ overflowX: "auto", border: `1px solid ${TOKENS.hair}`, borderRadius: 8 }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, textAlign: "left" }}>
-                  <thead>
-                    <tr style={{ background: "rgba(15,23,42,0.04)", borderBottom: `1px solid ${TOKENS.hair}`, fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>
-                      <th style={{ padding: "10px 12px" }}>#</th>
-                      <th style={{ padding: "10px 12px" }}>Characteristic Description</th>
-                      <th style={{ padding: "10px 12px" }}>Nominal</th>
-                      <th style={{ padding: "10px 12px" }}>Tolerance</th>
-                      <th style={{ padding: "10px 12px" }}>Actual CMM Reading</th>
-                      <th style={{ padding: "10px 12px" }}>Deviation</th>
-                      <th style={{ padding: "10px 12px" }}>Inspection Tool</th>
-                      <th style={{ padding: "10px 12px" }}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {FAI_CHARACTERISTICS.map((c, ci) => (
-                      <tr key={ci} style={{ borderBottom: `1px solid ${TOKENS.hair}`, background: ci % 2 === 0 ? "transparent" : "rgba(15,23,42,0.015)" }}>
-                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.blue }}>{c.charNo}</td>
-                        <td style={{ padding: "10px 12px", fontWeight: 600, color: TOKENS.paper }}>{c.desc}</td>
-                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{c.nominal}</td>
-                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>{c.tol}</td>
-                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.paper }}>{c.measured}</td>
-                        <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", color: c.dev.startsWith("+") ? TOKENS.teal : TOKENS.blue }}>{c.dev}</td>
-                        <td style={{ padding: "10px 12px", fontSize: 11, color: TOKENS.slate }}>{c.tool}</td>
-                        <td style={{ padding: "10px 12px" }}>
-                          <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                            {c.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* Form 1: Part Number Accountability */}
-          {activeForm === "form1" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
-                AS9102 REV C — FORM 1: PART NUMBER ACCOUNTABILITY & ORGANIZATIONAL CLEARANCE
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                {[
-                  { label: "1. Part Number", val: "BAL-316L-V9041" },
-                  { label: "2. Part Name", val: partName },
-                  { label: "3. Serial Number / Lot", val: "SN-2026-0001 thru SN-2026-0010 (Batch 01)" },
-                  { label: "4. FAI Report Number", val: `FAIR-${rfqId}-REV-C` },
-                  { label: "5. Drawing Number & Revision", val: "DWG-BAL-9041-Aero, Rev D (ECO-4419)" },
-                  { label: "6. Organization Name & Location", val: "Apex Precision Engineering Ltd., Chennai Hub" },
-                  { label: "7. Supplier CAGE Code", val: "1A94F (Ministry of Defence Approved)" },
-                  { label: "8. Purchase Order Number", val: "PO-2026-9041-DEF" },
-                  { label: "9. Customer Clearance Lead", val: "Dr. K. S. Rao (Bharat Aerospace & Dynamics)" },
-                  { label: "10. Baseline Reason for FAI", val: "Initial Production Run (Clause 4.1.a)" },
-                ].map((item, idx) => (
-                  <div key={idx} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px" }}>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>{item.label}</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper, marginTop: 4 }}>{item.val}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Digital Signature Card */}
-              <div style={{ background: "rgba(0,168,150,0.06)", border: `1px solid ${TOKENS.teal}`, borderRadius: 8, padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 700 }}>
-                    CERTIFIED QUALITY INSPECTOR DIGITAL SIGNATURE
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>
-                    Er. R. Sundaram • ASQ-CQI Certified Metrologist (#88419)
-                  </div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: TOKENS.slate, marginTop: 2 }}>
-                    SHA-256 Stamp: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08
-                  </div>
-                </div>
-                <span style={{ fontSize: 32 }}>✍️</span>
-              </div>
-            </div>
-          )}
-
-          {/* Form 2: Product & Special Process Accountability */}
-          {activeForm === "form2" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
-                    AS9102 REV C — FORM 2: PRODUCT ACCOUNTABILITY (RAW MATERIALS & SPECIAL PROCESSES)
-                  </div>
-                  <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 2 }}>
-                    Full chemical spectroscopy, mechanical tension, and Nadcap-certified special surface treatments.
-                  </div>
-                </div>
-                <button
-                  onClick={() => openTraceability?.(rfqId, material)}
-                  style={{
-                    background: "rgba(0,168,150,0.12)",
-                    border: `1px solid ${TOKENS.teal}`,
-                    color: TOKENS.teal,
-                    borderRadius: 6,
-                    padding: "6px 12px",
-                    fontSize: 11.5,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                  }}
-                >
-                  🔬 View Mill Test Report (MTR) →
-                </button>
-              </div>
-
-              {/* Material Spec Table */}
-              <div style={{ border: `1px solid ${TOKENS.hair}`, borderRadius: 8, overflow: "hidden" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-                  <thead>
-                    <tr style={{ background: "rgba(15,23,42,0.04)", borderBottom: `1px solid ${TOKENS.hair}`, fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate, textAlign: "left" }}>
-                      <th style={{ padding: "10px 12px" }}>Material / Spec</th>
-                      <th style={{ padding: "10px 12px" }}>Supplier / Mill Source</th>
-                      <th style={{ padding: "10px 12px" }}>Heat / Melt #</th>
-                      <th style={{ padding: "10px 12px" }}>Cert Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
-                      <td style={{ padding: "10px 12px", fontWeight: 600, color: TOKENS.paper }}>AMS 5648 / ASTM A276 SS 316L</td>
-                      <td style={{ padding: "10px 12px", color: TOKENS.slate }}>Mishra Dhatu Nigam (MIDHANI) Hyderabad</td>
-                      <td style={{ padding: "10px 12px", fontFamily: "'JetBrains Mono', monospace", color: TOKENS.blue, fontWeight: 700 }}>HT-316L-98421</td>
-                      <td style={{ padding: "10px 12px" }}>
-                        <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                          CONFORMING
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Special Processes */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-                {[
-                  { name: "Solution Annealing", spec: "AMS 2759/4 (1065°C Rapid Water Quench)", lab: "Apex Thermal Facility (Nadcap #1902)", status: "COMPLIANT" },
-                  { name: "Citric Passivation", spec: "ASTM A967 Citric-4 (Zero Free Iron)", lab: "Midwest Chemical Finishing Lab", status: "COMPLIANT" },
-                  { name: "Fluorescent Penetrant NDT", spec: "ASTM E1417 Level 2 Sensitivity", lab: "NABL Certified NDT Lab #CC-2901", status: "ZERO DEFECTS" },
-                ].map((p, pi) => (
-                  <div key={pi} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14 }}>
-                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>{p.name}</div>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>{p.spec}</div>
-                    <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 4 }}>{p.lab}</div>
-                    <div style={{ marginTop: 8 }}>
-                      <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                        {p.status}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* CMM Metrology Calibration Log */}
-          {activeForm === "cmm" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate, fontWeight: 700 }}>
-                NABL & ISO/IEC 17025 ACCREDITED METROLOGY INSTRUMENT CALIBRATION LOG
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                {CMM_MACHINES.map((m, mi) => (
-                  <div key={mi} style={{ background: "rgba(15,23,42,0.03)", border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <div>
-                        <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>{m.name}</div>
-                        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.blue, marginTop: 2 }}>SN: {m.serial}</div>
-                      </div>
-                      <span style={{ background: "rgba(0,168,150,0.15)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-                        {m.status}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 11.5, color: TOKENS.slate, marginTop: 8 }}>
-                      <strong>Classification:</strong> {m.type}
-                    </div>
-                    <div style={{ fontSize: 11.5, color: TOKENS.slate, marginTop: 4 }}>
-                      <strong>Calibration Lab:</strong> {m.lab}
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, paddingTop: 8, borderTop: `1px solid ${TOKENS.hair}`, fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: TOKENS.slate }}>
-                      <span>Cal: {m.calDate}</span>
-                      <span style={{ color: TOKENS.teal }}>Valid Thru: {m.dueDate}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Footer Actions */}
-        <div style={{ padding: "14px 24px", borderTop: `1px solid ${TOKENS.hair}`, background: "rgba(15,23,42,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button
-              onClick={handleDownload}
-              style={{
-                background: TOKENS.blue,
-                color: "#FFFFFF",
-                border: "none",
-                borderRadius: 6,
-                padding: "8px 16px",
-                fontSize: 12.5,
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 600,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-              }}
-            >
-              <span>📥</span> Download AS9102 Digital Quality Pack (PDF)
-            </button>
-            {downloadSuccess && (
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal, fontWeight: 700 }}>
-                ✓ Generated AS9102-FAIR-{rfqId}.pdf successfully!
-              </span>
-            )}
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button
-              onClick={() => openTraceability?.(rfqId, material)}
-              style={{
-                background: "rgba(0,168,150,0.12)",
-                border: `1px solid ${TOKENS.teal}`,
-                color: TOKENS.teal,
-                borderRadius: 6,
-                padding: "8px 12px",
-                fontSize: 11.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              🔬 Material Traceability
-            </button>
-            <button
-              onClick={onClose}
-              style={{
-                background: "transparent",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 6,
-                color: TOKENS.paper,
-                padding: "8px 14px",
-                fontSize: 12,
-                fontFamily: "'Inter', sans-serif",
-                cursor: "pointer",
-              }}
-            >
-              Close Dossier
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Universal Command Palette (Ctrl+K) ---------------------------- */
-
-function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, openCAD, openEscrow, openTraceability, openSupplierOnboarding, openVendorCompare, openFreight, openDFM, openRiskHeatmap, openContractVault, openQuoter, openAudit }) {
+function SpotlightSearchModal({ isOpen, onClose, go, openEstimator, openTracker }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
 
@@ -13260,77 +1986,37 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
   if (!isOpen) return null;
 
   const catalog = [
-    { type: "Tool", title: "Parametric Instant Sourcing & Manufacturing Quoter", id: "quoter", action: "openQuoter", icon: "⚡", sub: "Parametric CNC, Sheet Metal, Injection Molding unit cost & batch amortization" },
-    { type: "Tool", title: "AS9102 Quality Compliance & FAI Vault", id: "audit", action: "openAudit", icon: "🛡️", sub: "AS9102 Forms 1/2/3, Zeiss Prismo CMM calibration records, FAI PDF pack" },
-    { type: "Tool", title: "Automated AI DFM Feasibility & CAD Rule Audit", id: "dfm", action: "openDFM", icon: "🛠️", sub: "Wall thickness, tool access radii, aspect ratio, GD&T multiplier" },
-    { type: "Tool", title: "Multi-Tier Supply Chain Digital Twin & Risk Heatmap", id: "risk", action: "openRiskHeatmap", icon: "🌐", sub: "Hub telemetry, commodity price ticker, failover reroute simulator" },
-    { type: "Tool", title: "Bilateral Enterprise NDA & Cryptographic IP Vault", id: "contract", action: "openContractVault", icon: "📜", sub: "Bilateral NDA generator, SHA-256 e-signature, ITAR/EAR compliance" },
-    { type: "Tool", title: "3D CAD & GD&T Mesh Viewer", id: "cad", action: "openCAD", icon: "📐", sub: "Inspect STEP file, CMM deviations, X-ray fluid bores" },
-    { type: "Tool", title: "Industrial Escrow & Milestone Vault", id: "escrow", action: "openEscrow", icon: "🔐", sub: "SBI/ICICI gateway, stage-gate 2FA releases" },
-    { type: "Tool", title: "Material Test Report (MTR) & Melt Traceability", id: "traceability", action: "openTraceability", icon: "🔬", sub: "AS9100D spectroscopy, tensile yield, NDT" },
-    { type: "Tool", title: "Supplier & Machine Shop Comparison Matrix", id: "compare", action: "openVendorCompare", icon: "⚖️", sub: "Side-by-side 5-axis CNC tolerance and OTIF audit" },
-    { type: "Tool", title: "Consignment GPS & Live Freight Telemetry", id: "freight", action: "openFreight", icon: "🚚", sub: "Live temperature, humidity, shock G-force, and E-Way bills" },
-    { type: "Tool", title: "OEM Supplier Plant Verification Wizard", id: "onboarding", action: "openSupplierOnboarding", icon: "🏭", sub: "Register machine shop & get verified" },
-    { type: "Page", title: "Products & Software Platforms", id: "products", icon: "🛒", sub: "ERP, CRM, HRMS, AI, IoT" },
-    { type: "Page", title: "Engineering Services & Pod Calculator", id: "services", icon: "🛠", sub: "Software, Cloud, AI, Security" },
-    { type: "Page", title: "Verified Manufacturers Directory", id: "manufacturers", icon: "🏭", sub: "CNC, Sheet Metal, SMT Assembly" },
-    { type: "Page", title: "Verified B2B Business Directory", id: "businesses", icon: "🏢", sub: "Suppliers, Logistics, Engineering" },
-    { type: "Page", title: "Live RFQs & Sourcing Requirements", id: "requirements", icon: "📋", sub: "Browse open buyer requirements" },
-    { type: "Page", title: "6-Step RFQ Post a Requirement Builder", id: "rfq-wizard", icon: "➕", sub: "Upload CAD & broadcast to plants" },
-    { type: "Page", title: "Seller & Business Owner Dashboard", id: "dashboard", icon: "📊", sub: "Telemetry, quotes, conversion funnel" },
-    { type: "Page", title: "Technical Knowledge Hub & Playbooks", id: "knowledge", icon: "📚", sub: "Engineering handbooks & standards" },
-    { type: "Page", title: "Architectural Blueprints by Industry", id: "industries", icon: "📐", sub: "Aerospace, FinTech, Healthcare, OEM" },
-    { type: "Page", title: "Enterprise Case Studies & ROI", id: "case-studies", icon: "📈", sub: "Production outcomes & telemetry" },
-    { type: "Page", title: "Engineering Insights & Whitepapers", id: "insights", icon: "🔬", sub: "Deep technical essays & code" },
-    { type: "Page", title: "Engineering Careers & Compensation", id: "careers", icon: "💼", sub: "Staff & Lead openings with bands" },
-    { type: "Page", title: "Engineering Manifesto & Edge Topology", id: "about", icon: "ℹ️", sub: "12 Anycast global edge PoPs" },
-    { type: "Page", title: "Enterprise Contact & Solutions Intake", id: "contact", icon: "📞", sub: "12-hour review guarantee" },
-    { type: "RFQ", title: "RFQ-2026-9041: 10,000 SS316 CNC Turned Valves", id: "requirements", rfqId: "RFQ-2026-9041", icon: "⚡", sub: "Custom CNC Machining · Chennai Hub" },
-    { type: "RFQ", title: "RFQ-2026-9082: SMT PCB Assembly for Medical IoT", id: "requirements", rfqId: "RFQ-2026-9082", icon: "⚡", sub: "Electronics Assembly · Hyderabad Hub" },
-    { type: "RFQ", title: "RFQ-2026-9114: Aerospace Aluminum 6061-T6 Brackets", id: "requirements", rfqId: "RFQ-2026-9114", icon: "⚡", sub: "CNC Machining · Pune Hub" },
-    { type: "RFQ", title: "RFQ-2026-9150: Automotive Sensor Injection Molding", id: "requirements", rfqId: "RFQ-2026-9150", icon: "⚡", sub: "Plastic Injection · Delhi Hub" },
-    { type: "Product", title: "Abhimanyu ERP Operations Platform", id: "products", icon: "📦", sub: "Inventory, Invoicing, Supply Chain" },
-    { type: "Product", title: "Abhimanyu CRM Lead Intelligence", id: "products", icon: "📦", sub: "AI Scoring, WhatsApp sequences" },
-    { type: "Product", title: "Abhimanyu AI Neural Defect Engine", id: "products", icon: "📦", sub: "Inline computer vision & telemetry" },
-    { type: "Product", title: "Abhimanyu IoT Fleet Telemetry Manager", id: "products", icon: "📦", sub: "10k+ connected sensors, MQTT" },
+    { type: "Service", title: "Web Application Development", id: "services", icon: "🌐", sub: "Next.js 14, React, responsive web portals, PWAs" },
+    { type: "Service", title: "Frontend & UI/UX Development", id: "services", icon: "🎨", sub: "Figma to pixel-perfect code, Tailwind, design systems" },
+    { type: "Service", title: "Backend & Distributed API Engineering", id: "services", icon: "⚙️", sub: "Node.js, Python FastAPI, Go, PostgreSQL, Kafka" },
+    { type: "Service", title: "Android & Mobile App Development", id: "services", icon: "📱", sub: "Native Kotlin, Jetpack Compose, Flutter, React Native" },
+    { type: "Service", title: "Full Stack Turnkey Development", id: "services", icon: "⚡", sub: "Complete web + mobile digital product engineering" },
+    { type: "Service", title: "Cloud, DevOps & SRE Engineering", id: "services", icon: "☁️", sub: "AWS, GCP, Docker, Kubernetes, CI/CD, Terraform" },
+    { type: "Service", title: "Enterprise AI & Custom Solutions", id: "services", icon: "🤖", sub: "Private RAG, custom LLMs, document intelligence" },
+    { type: "Product", title: "Abhimanyu Cloud ERP", id: "products", icon: "📦", sub: "Inventory, supply chain, automated GST invoicing" },
+    { type: "Product", title: "Abhimanyu CRM", id: "products", icon: "🎯", sub: "Omnichannel WhatsApp, sales pipeline & AI lead scoring" },
+    { type: "Product", title: "Abhimanyu HRMS", id: "products", icon: "👥", sub: "Payroll automation, biometric attendance, tax compliance" },
+    { type: "Product", title: "Abhimanyu AI Studio", id: "products", icon: "🧠", sub: "Private enterprise knowledge RAG & automation" },
+    { type: "Product", title: "Abhimanyu DevPulse", id: "products", icon: "📊", sub: "Real-time cloud observability & rollback monitor" },
+    { type: "Product", title: "Abhimanyu AppEngine", id: "products", icon: "⚡", sub: "Rapid backend-as-a-service & API generator" },
+    { type: "Tool", title: "Interactive Project Scope & Cost Estimator", id: "estimator", action: "openEstimator", icon: "⚡", sub: "Calculate tech stack budget, sprints & team pod" },
+    { type: "Tool", title: "Client Live Project Sprint Tracker", id: "tracker", action: "openTracker", icon: "📊", sub: "Live staging URL, sprint burndown & commit logs" },
+    { type: "Page", title: "Case Studies & Client Portfolio", id: "case-studies", icon: "📈", sub: "FinTech, Healthcare, Logistics & E-Commerce" },
+    { type: "Page", title: "Engineering Manifesto & Tech Hub", id: "knowledge", icon: "📚", sub: "Architecture playbooks and development guides" },
+    { type: "Page", title: "Careers & Open Positions", id: "careers", icon: "💼", sub: "Senior engineering roles with compensation bands" },
+    { type: "Page", title: "Contact & Technical Solutions Intake", id: "contact", icon: "📞", sub: "Direct consultation booking with 12hr review SLA" },
   ];
 
   const results = catalog.filter((item) => {
     const q = query.toLowerCase();
-    return item.title.toLowerCase().includes(q) ||
-           item.type.toLowerCase().includes(q) ||
-           item.sub.toLowerCase().includes(q);
+    return item.title.toLowerCase().includes(q) || item.sub.toLowerCase().includes(q) || item.type.toLowerCase().includes(q);
   });
 
   const handleSelect = (item) => {
     onClose();
-    if (item.action === "openQuoter") {
-      openQuoter?.();
-    } else if (item.action === "openAudit") {
-      openAudit?.();
-    } else if (item.action === "openCAD") {
-      openCAD?.();
-    } else if (item.action === "openDFM") {
-      openDFM?.();
-    } else if (item.action === "openRiskHeatmap") {
-      openRiskHeatmap?.();
-    } else if (item.action === "openContractVault") {
-      openContractVault?.();
-    } else if (item.action === "openEscrow") {
-      openEscrow?.();
-    } else if (item.action === "openTraceability") {
-      openTraceability?.();
-    } else if (item.action === "openSupplierOnboarding") {
-      openSupplierOnboarding?.();
-    } else if (item.action === "openVendorCompare") {
-      openVendorCompare?.();
-    } else if (item.action === "openFreight") {
-      openFreight?.();
-    } else if (item.rfqId) {
-      openTracker?.(item.rfqId);
-    } else {
-      go(item.id);
-    }
+    if (item.action === "openEstimator") openEstimator?.();
+    else if (item.action === "openTracker") openTracker?.();
+    else go(item.id);
   };
 
   return (
@@ -13341,7 +2027,6 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
         inset: 0,
         background: "rgba(15, 23, 42, 0.65)",
         backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
         zIndex: 10000,
         display: "flex",
         justifyContent: "center",
@@ -13352,221 +2037,1474 @@ function SpotlightSearchModal({ isOpen, onClose, go, openTracker, openAuth, open
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          maxWidth: 620,
           width: "100%",
-          background: TOKENS.panelAlt,
-          border: `1px solid rgba(21,101,192,0.45)`,
+          maxWidth: 620,
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
           borderRadius: 12,
+          boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
           overflow: "hidden",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.15)",
-          display: "flex",
-          flexDirection: "column",
-          maxHeight: "75vh",
         }}
       >
-        {/* Search Input Bar */}
-        <div style={{ display: "flex", alignItems: "center", padding: "16px 20px", borderBottom: `1px solid ${TOKENS.hair}`, gap: 12, background: "rgba(15, 23, 42, 0.03)" }}>
-          <span style={{ fontSize: 18, color: TOKENS.teal }}>🔍</span>
+        <div style={{ display: "flex", alignItems: "center", padding: "14px 18px", borderBottom: `1px solid ${TOKENS.hair}` }}>
+          <span style={{ fontSize: 18, marginRight: 10 }}>🔍</span>
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search products, services, RFQs, manufacturers, playbooks..."
+            placeholder="Search IT Services, Products, Tech Stacks, or Tools..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             style={{
-              flex: 1,
+              width: "100%",
               background: "transparent",
               border: "none",
-              color: TOKENS.paper,
-              fontSize: 15,
               outline: "none",
+              fontSize: 15,
               fontFamily: "'Inter', sans-serif",
+              color: TOKENS.paper,
             }}
           />
-          <kbd style={{ background: "rgba(15, 23, 42, 0.05)", border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+          <kbd style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "2px 6px", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
             ESC
           </kbd>
         </div>
 
-        {/* Results List */}
-        <div style={{ overflowY: "auto", padding: "8px" }}>
+        <div style={{ maxHeight: 380, overflowY: "auto", padding: 8 }}>
           {results.length === 0 ? (
-            <div style={{ padding: "32px 20px", textAlign: "center", color: TOKENS.slate, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
-              No matches found for "{query}". Try "CNC", "ERP", "RFQ", or "Anycast".
+            <div style={{ padding: "30px", textAlign: "center", color: TOKENS.slate, fontSize: 13 }}>
+              No matching services or products found for "{query}".
             </div>
           ) : (
-            results.slice(0, 10).map((r, idx) => (
-              <div
+            results.map((item, idx) => (
+              <button
                 key={idx}
-                onClick={() => handleSelect(r)}
+                onClick={() => handleSelect(item)}
                 style={{
+                  width: "100%",
+                  background: "transparent",
+                  border: "none",
+                  padding: "10px 14px",
+                  borderRadius: 8,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  padding: "10px 14px",
-                  borderRadius: 6,
                   cursor: "pointer",
-                  transition: "background 0.15s ease",
+                  textAlign: "left",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42, 0.045)")}
+                onMouseEnter={(e) => (e.currentTarget.style.background = TOKENS.panelAlt)}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <span style={{ fontSize: 18 }}>{r.icon}</span>
+                  <span style={{ fontSize: 20 }}>{item.icon}</span>
                   <div>
-                    <div style={{ color: TOKENS.paper, fontSize: 14, fontWeight: 500 }}>{r.title}</div>
-                    <div style={{ color: TOKENS.slate, fontSize: 12 }}>{r.sub}</div>
+                    <div style={{ fontSize: 13.5, fontWeight: 600, color: TOKENS.paper }}>{item.title}</div>
+                    <div style={{ fontSize: 11, color: TOKENS.slate }}>{item.sub}</div>
                   </div>
                 </div>
-                <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, background: "rgba(0,168,150,0.12)", padding: "2px 6px", borderRadius: 3 }}>
-                  {r.type.toUpperCase()}
+                <span style={{ background: TOKENS.panelAlt, color: TOKENS.slate, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", padding: "2px 8px", borderRadius: 4 }}>
+                  {item.type}
                 </span>
-              </div>
+              </button>
             ))
           )}
-        </div>
-
-        {/* Footer Shortcut Bar */}
-        <div style={{ padding: "10px 16px", borderTop: `1px solid ${TOKENS.hair}`, background: "rgba(255,255,255,0.015)", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
-          <span>Navigation: <kbd style={{ background: "rgba(15, 23, 42, 0.05)", padding: "1px 5px", borderRadius: 3 }}>↵ Enter</kbd> to open</span>
-          <span>Shortcut: <kbd style={{ background: "rgba(15, 23, 42, 0.05)", padding: "1px 5px", borderRadius: 3 }}>Ctrl+K</kbd> / <kbd style={{ background: "rgba(15, 23, 42, 0.05)", padding: "1px 5px", borderRadius: 3 }}>⌘K</kbd></span>
         </div>
       </div>
     </div>
   );
 }
 
-/* Dynamic Route SEO Manager */
-const PAGE_SEO = {
-  home: {
-    title: "Abhimanyu Technologies — Enterprise B2B Platform & Scale Your Business",
-    description: "Connect with verified manufacturers, enterprise products, AI services, custom CNC machining, and global suppliers."
-  },
-  products: {
-    title: "Enterprise B2B Product Marketplace | Abhimanyu Technologies",
-    description: "Explore enterprise software platforms, industrial machinery, electronics, and verified products."
-  },
-  services: {
-    title: "Services & Solutions Directory | Abhimanyu Technologies",
-    description: "Custom software engineering, AI/ML models, cloud Anycast load balancing, and cybersecurity services."
-  },
-  manufacturers: {
-    title: "Verified Industrial & OEM Manufacturers Directory | Abhimanyu",
-    description: "Find verified CNC machining, sheet metal fabrication, and electronics assembly manufacturers."
-  },
-  businesses: {
-    title: "Verified B2B Business Directory | Abhimanyu Technologies",
-    description: "Browse verified enterprise suppliers, service providers, and business profiles."
-  },
-  requirements: {
-    title: "Public RFQs & Buyer Requirements Hub | Abhimanyu Technologies",
-    description: "View active buyer requirements, post RFQs, and submit competitive supplier quotations."
-  },
-  "rfq-wizard": {
-    title: "5-Step RFQ Post a Requirement Wizard | Abhimanyu Technologies",
-    description: "Post your manufacturing or software requirement in 5 simple steps and receive instant verified quotes."
-  },
-  dashboard: {
-    title: "Seller & Business Owner Dashboard | Abhimanyu Technologies",
-    description: "Manage inbound leads, RFQs, submitted quotations, and account analytics."
-  },
-  knowledge: {
-    title: "Technical SEO & Manufacturing Knowledge Base | Abhimanyu",
-    description: "Industrial guides on CNC contract manufacturing, Anycast cloud architecture, and AI models."
-  },
-  about: {
-    title: "About Us | Abhimanyu Technologies Leadership & Vision",
-    description: "Learn about founder Shiva, CTO Abhimanyu, executive leadership, company history, and engineering values."
-  },
-  "case-studies": {
-    title: "Case Studies & Client ROI Outcomes | Abhimanyu Technologies",
-    description: "In-depth technical case studies on cloud load balancing, LMS analytics, and AI fraud scoring."
-  },
-  insights: {
-    title: "Technical Insights & Engineering Blog | Abhimanyu Technologies",
-    description: "Research whitepapers on Anycast load balancing, generative AI, and zero-trust security."
-  },
-  careers: {
-    title: "Careers & Open Engineering Roles | Abhimanyu Technologies",
-    description: "Join Abhimanyu Technologies in Telangana HQ or remote. Hiring Flutter, Node.js, AI/ML, and DevOps Engineers."
-  },
-  contact: {
-    title: "Contact Us & Project Inquiry | Scale Your Business",
-    description: "Get in touch with an Abhimanyu Technologies solution architect for scope quotes and consultations."
-  }
-};
+/* ---------------------------- Page 1: HomePage ---------------------------- */
 
-function useRouteSEO(page) {
-  useEffect(() => {
-    const seo = PAGE_SEO[page] || PAGE_SEO.home;
-    document.title = seo.title;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute("content", seo.description);
-    }
-  }, [page]);
+function HomePage({ go, currency, openEstimator, openTracker, setSelectedProduct, openProductDemo }) {
+  return (
+    <div>
+      {/* Hero Section */}
+      <section
+        style={{
+          position: "relative",
+          minHeight: "88vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "60px 20px 80px",
+          overflow: "hidden",
+          background: `radial-gradient(circle at 50% 15%, ${TOKENS.blue}0d 0%, transparent 60%)`,
+        }}
+      >
+        <HeroThreeCanvas />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 980, margin: "0 auto", textAlign: "center" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: TOKENS.badgeBg,
+              border: `1px solid ${TOKENS.blue}33`,
+              borderRadius: 999,
+              padding: "6px 16px",
+              marginBottom: 20,
+            }}
+          >
+            <span style={{ color: TOKENS.teal, fontSize: 11 }}>●</span>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.blue, letterSpacing: "0.04em" }}>
+              ENTERPRISE IT SERVICES & FULL-STACK DIGITAL PRODUCTS
+            </span>
+          </div>
+
+          <h1
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "clamp(34px, 5.5vw, 62px)",
+              fontWeight: 800,
+              color: TOKENS.paper,
+              letterSpacing: "-0.03em",
+              lineHeight: 1.12,
+              margin: "0 0 20px",
+            }}
+          >
+            Engineering World-Class <span style={{ color: TOKENS.blue }}>Web & Mobile Apps</span>, Cloud Backends and SaaS Products.
+          </h1>
+
+          <p
+            style={{
+              fontSize: "clamp(15px, 2vw, 19px)",
+              color: TOKENS.slate,
+              lineHeight: 1.6,
+              maxWidth: 760,
+              margin: "0 auto 36px",
+            }}
+          >
+            We partner with ambitious startups and enterprises to architect, design, and deliver high-performance Web Portals, Android & iOS Mobile Apps, Scalable Microservices, and Custom AI Systems.
+          </p>
+
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+            <Button onClick={() => go("services")} style={{ padding: "13px 26px", fontSize: 15 }}>
+              Explore IT Services →
+            </Button>
+            <Button onClick={openEstimator} variant="secondary" style={{ padding: "13px 24px", fontSize: 15 }}>
+              ⚡ Interactive Cost Estimator
+            </Button>
+            <Button onClick={() => go("products")} variant="outline" style={{ padding: "13px 24px", fontSize: 15 }}>
+              📦 View Software Products
+            </Button>
+          </div>
+
+          {/* Key Metric Badges */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+              gap: 16,
+              marginTop: 60,
+              background: TOKENS.panel,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 12,
+              padding: "20px 24px",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
+            }}
+          >
+            {[
+              { val: "120+", label: "Completed Digital Projects" },
+              { label: "On-Time Milestone Delivery", val: "99.8%" },
+              { label: "Web & Mobile App Engineers", val: "45+" },
+              { label: "Technical Solutions SLA", val: "< 2 Hours" },
+            ].map((st, i) => (
+              <div key={i} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 24, fontWeight: 800, color: TOKENS.blue }}>{st.val}</div>
+                <div style={{ fontSize: 11.5, color: TOKENS.slate, marginTop: 4 }}>{st.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Core IT Services Grid */}
+      <section style={{ padding: "80px 20px", maxWidth: 1280, margin: "0 auto" }}>
+        <SectionHeading
+          badge="Full-Stack Capabilities"
+          title="Comprehensive IT Engineering Services"
+          subtitle="From concept to deployment, our senior developers build robust, accessible, and scalable digital solutions tailored to your business goals."
+        />
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+          {IT_SERVICES.map((s) => (
+            <div
+              key={s.id}
+              style={{
+                background: TOKENS.panel,
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 12,
+                padding: 24,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+                  <span style={{ fontSize: 32 }}>{s.icon}</span>
+                  <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                    {s.tag}
+                  </span>
+                </div>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, margin: "0 0 8px" }}>{s.title}</h3>
+                <p style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.5, margin: "0 0 16px" }}>{s.shortDesc}</p>
+
+                {/* Tech Pills */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
+                  {s.techStack.map((tech, idx) => (
+                    <span
+                      key={idx}
+                      style={{
+                        background: TOKENS.panelAlt,
+                        border: `1px solid ${TOKENS.hair}`,
+                        borderRadius: 4,
+                        padding: "2px 7px",
+                        fontSize: 11,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        color: TOKENS.paper,
+                      }}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: 10, color: TOKENS.slate }}>ESTIMATED START</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>{formatPrice(s.estInr, currency)}</div>
+                </div>
+                <Button onClick={() => go("services")} style={{ padding: "6px 12px", fontSize: 12 }}>
+                  Details →
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Proprietary Software Products Showcase */}
+      <section style={{ padding: "80px 20px", background: TOKENS.panelAlt }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <SectionHeading
+            badge="Proprietary SaaS Suites"
+            title="Enterprise Software Products"
+            subtitle="Pre-built, modular, and customizable software platforms built by Abhimanyu Technologies for enterprise operations, CRM, HRMS, and AI."
+          />
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 24 }}>
+            {SOFTWARE_PRODUCTS.map((p) => (
+              <div
+                key={p.id}
+                style={{
+                  background: TOKENS.panel,
+                  border: `1px solid ${TOKENS.hair}`,
+                  borderRadius: 12,
+                  padding: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.04)",
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                    <span style={{ fontSize: 32 }}>{p.icon}</span>
+                    <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                      {p.badge}
+                    </span>
+                  </div>
+                  <h3 style={{ fontSize: 19, fontWeight: 700, color: TOKENS.paper, margin: "0 0 6px" }}>{p.name}</h3>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: TOKENS.teal, marginBottom: 10 }}>{p.tagline}</div>
+                  <p style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.5, margin: "0 0 16px" }}>{p.shortDesc}</p>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 18 }}>
+                    {p.metrics.map((met, mi) => (
+                      <div key={mi} style={{ fontSize: 11.5, color: TOKENS.paper, display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ color: TOKENS.teal }}>✓</span> {met}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontSize: 10, color: TOKENS.slate }}>STARTER TIER</div>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: TOKENS.blue }}>
+                      {formatPrice(p.pricing.starter.inr, currency)}<span style={{ fontSize: 11, fontWeight: 400, color: TOKENS.slate }}>/mo</span>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setSelectedProduct(p);
+                      openProductDemo();
+                    }}
+                    style={{ padding: "6px 12px", fontSize: 12 }}
+                  >
+                    View Modules →
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tech Stack Matrix */}
+      <section style={{ padding: "80px 20px", maxWidth: 1280, margin: "0 auto" }}>
+        <SectionHeading
+          badge="Modern Ecosystem"
+          title="Battle-Tested Technology Stack"
+          subtitle="We select the right tools for your specific business requirements, ensuring zero technical debt, security, and high maintainability."
+        />
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20 }}>
+          {TECH_CATEGORIES.map((cat, ci) => (
+            <div
+              key={ci}
+              style={{
+                background: TOKENS.panel,
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 10,
+                padding: 18,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 8, borderBottom: `1px solid ${TOKENS.hair}` }}>
+                <span>{cat.icon}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>{cat.category}</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {cat.items.map((item, ii) => (
+                  <div key={ii}>
+                    <div style={{ fontSize: 12.5, fontWeight: 600, color: TOKENS.paper }}>{item.name}</div>
+                    <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{item.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Client Testimonials */}
+      <section style={{ padding: "80px 20px", background: TOKENS.panelAlt }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <SectionHeading
+            badge="Client Success"
+            title="Trusted by Technology Leaders"
+            subtitle="See how our engineering teams have helped founders and CTOs ship world-class digital products."
+          />
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+            {TESTIMONIALS.map((t, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: TOKENS.panel,
+                  border: `1px solid ${TOKENS.hair}`,
+                  borderRadius: 12,
+                  padding: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <div style={{ color: TOKENS.brass, fontSize: 16, marginBottom: 12 }}>{"★".repeat(t.rating)}</div>
+                  <p style={{ fontSize: 13.5, color: TOKENS.paper, lineHeight: 1.6, margin: "0 0 20px", fontStyle: "italic" }}>
+                    "{t.quote}"
+                  </p>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14 }}>
+                  <span style={{ fontSize: 28 }}>{t.avatar}</span>
+                  <div>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: TOKENS.paper }}>{t.author}</div>
+                    <div style={{ fontSize: 11.5, color: TOKENS.slate }}>{t.role} • <strong>{t.company}</strong></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Project Intake CTA Banner */}
+      <section style={{ padding: "80px 20px", maxWidth: 1100, margin: "0 auto" }}>
+        <div
+          style={{
+            background: `linear-gradient(135deg, ${TOKENS.blueDark} 0%, #1E3A8A 100%)`,
+            color: "#FFFFFF",
+            borderRadius: 16,
+            padding: "50px 36px",
+            textAlign: "center",
+            boxShadow: "0 20px 50px rgba(37, 99, 235, 0.25)",
+          }}
+        >
+          <h2 style={{ fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 800, margin: "0 0 14px", letterSpacing: "-0.02em" }}>
+            Ready to Build Your Next Digital Product?
+          </h2>
+          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", maxWidth: 640, margin: "0 auto 30px", lineHeight: 1.6 }}>
+            Connect with our Senior Solutions Architects today. Receive a comprehensive technical scope proposal and estimated development sprints within 12 business hours.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              onClick={() => go("rfq-wizard")}
+              style={{
+                background: "#FFFFFF",
+                color: TOKENS.blueDark,
+                border: "none",
+                borderRadius: 8,
+                padding: "12px 24px",
+                fontSize: 14,
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              Start Project Planner →
+            </button>
+            <button
+              onClick={openEstimator}
+              style={{
+                background: "rgba(255,255,255,0.15)",
+                color: "#FFFFFF",
+                border: "1px solid rgba(255,255,255,0.3)",
+                borderRadius: 8,
+                padding: "12px 24px",
+                fontSize: 14,
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              ⚡ Instant Budget Estimator
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
+
+/* ---------------------------- Page 2: ServicesPage ---------------------------- */
+
+function ServicesPage({ go, currency, openEstimator }) {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const categories = ["All", "Web Engineering", "Frontend Engineering", "Backend & Systems", "Mobile Engineering", "Turnkey Engineering", "Cloud & Infrastructure", "Artificial Intelligence", "Quality & Security"];
+
+  const filtered = selectedCategory === "All"
+    ? IT_SERVICES
+    : IT_SERVICES.filter((s) => s.category === selectedCategory);
+
+  return (
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1280, margin: "0 auto" }}>
+      <SectionHeading
+        badge="Full-Stack Capabilities"
+        title="Enterprise IT Engineering Services"
+        subtitle="Specialized development teams delivering web portals, native Android apps, microservices, cloud DevOps, and AI systems."
+      />
+
+      {/* Filter Tabs */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 36 }}>
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            style={{
+              background: selectedCategory === cat ? TOKENS.blue : TOKENS.panel,
+              color: selectedCategory === cat ? "#FFFFFF" : TOKENS.slate,
+              border: `1px solid ${selectedCategory === cat ? TOKENS.blue : TOKENS.hair}`,
+              borderRadius: 6,
+              padding: "7px 14px",
+              fontSize: 12.5,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Detailed Services Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 24 }}>
+        {filtered.map((s) => (
+          <div
+            key={s.id}
+            style={{
+              background: TOKENS.panel,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 14,
+              padding: 28,
+              boxShadow: "0 2px 12px rgba(0,0,0,0.03)",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <span style={{ fontSize: 36 }}>{s.icon}</span>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <h3 style={{ fontSize: 21, fontWeight: 700, color: TOKENS.paper, margin: 0 }}>{s.title}</h3>
+                    <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                      {s.tag}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 4 }}>{s.category} • Timeline: <strong>{s.timeline}</strong></div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: 11, color: TOKENS.slate }}>ESTIMATED STARTING BUDGET</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: TOKENS.blue }}>{formatPrice(s.estInr, currency)}</div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: 14, color: TOKENS.slate, lineHeight: 1.6, marginBottom: 20 }}>
+              {s.shortDesc}
+            </p>
+
+            {/* Features & Deliverables Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20, marginBottom: 20 }}>
+              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 16 }}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
+                  WHAT WE DELIVER
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {s.features.map((feat, fi) => (
+                    <div key={fi} style={{ fontSize: 12.5, color: TOKENS.paper, display: "flex", alignItems: "flex-start", gap: 6 }}>
+                      <span style={{ color: TOKENS.teal, fontWeight: 700 }}>✓</span>
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 16, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
+                    TECHNOLOGY STACK
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+                    {s.techStack.map((tech, ti) => (
+                      <span key={ti} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "3px 8px", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper }}>
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 4 }}>
+                    CORE DELIVERABLES
+                  </div>
+                  <div style={{ fontSize: 12.5, color: TOKENS.paper }}>{s.deliverables}</div>
+                </div>
+
+                <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+                  <Button onClick={() => go("rfq-wizard")} style={{ flex: 1, padding: "9px" }}>
+                    Start Requirement →
+                  </Button>
+                  <Button onClick={openEstimator} variant="secondary" style={{ padding: "9px 14px" }}>
+                    ⚡ Estimate
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Page 3: ProductsPage ---------------------------- */
+
+function ProductsPage({ currency, setSelectedProduct, openProductDemo, go }) {
+  return (
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1280, margin: "0 auto" }}>
+      <SectionHeading
+        badge="Software Suite"
+        title="Enterprise Software Platforms"
+        subtitle="Proprietary software products built by Abhimanyu Technologies, available as cloud SaaS or private on-premise deployments."
+      />
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 32 }}>
+        {SOFTWARE_PRODUCTS.map((prod) => (
+          <div
+            key={prod.id}
+            style={{
+              background: TOKENS.panel,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 14,
+              padding: 28,
+              boxShadow: "0 4px 16px rgba(0,0,0,0.04)",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14, marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <span style={{ fontSize: 40 }}>{prod.icon}</span>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <h3 style={{ fontSize: 22, fontWeight: 800, color: TOKENS.paper, margin: 0 }}>{prod.name}</h3>
+                    <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                      {prod.badge}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: TOKENS.teal, marginTop: 4 }}>{prod.tagline}</div>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: 8 }}>
+                <Button
+                  onClick={() => {
+                    setSelectedProduct(prod);
+                    openProductDemo();
+                  }}
+                  variant="outline"
+                  style={{ padding: "8px 14px", fontSize: 12.5 }}
+                >
+                  Interactive Walkthrough
+                </Button>
+                <Button onClick={() => go("contact")} style={{ padding: "8px 16px", fontSize: 12.5 }}>
+                  Schedule Live Demo →
+                </Button>
+              </div>
+            </div>
+
+            <p style={{ fontSize: 14, color: TOKENS.slate, lineHeight: 1.6, marginBottom: 20 }}>
+              {prod.shortDesc}
+            </p>
+
+            {/* Modules Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 10, marginBottom: 24 }}>
+              {prod.modules.map((mod, mi) => (
+                <div key={mi} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", fontSize: 12.5, color: TOKENS.paper }}>
+                  <span style={{ color: TOKENS.teal, fontWeight: 700, marginRight: 6 }}>✓</span>
+                  {mod}
+                </div>
+              ))}
+            </div>
+
+            {/* Tiered Pricing Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
+              {Object.keys(prod.pricing).map((k) => {
+                const plan = prod.pricing[k];
+                return (
+                  <div key={k} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>{plan.label}</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: TOKENS.blue, margin: "6px 0" }}>
+                      {formatPrice(plan.inr, currency)}<span style={{ fontSize: 10.5, fontWeight: 400, color: TOKENS.slate }}>{plan.period}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: TOKENS.slate, lineHeight: 1.4 }}>{plan.desc}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Page 4: Project Intake Wizard (rfq-wizard) ---------------------------- */
+
+function ProjectWizardPage({ go }) {
+  const [step, setStep] = useState(1);
+  const [projectType, setProjectType] = useState("web");
+  const [techStack, setTechStack] = useState(["React/Next.js", "Node.js"]);
+  const [budget, setBudget] = useState("medium");
+  const [timeline, setTimeline] = useState("4-8 weeks");
+  const [formData, setFormData] = useState({ name: "", email: "", company: "", description: "" });
+  const [submittedId, setSubmittedId] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const ref = `PRJ-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    setSubmittedId(ref);
+  };
+
+  if (submittedId) {
+    return (
+      <div style={{ padding: "80px 20px", maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
+        <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 16, padding: "40px 30px", boxShadow: "0 10px 40px rgba(0,0,0,0.06)" }}>
+          <span style={{ fontSize: 48 }}>🎉</span>
+          <h2 style={{ fontSize: 26, fontWeight: 800, color: TOKENS.paper, margin: "14px 0 8px" }}>
+            Project Scope Ticket Created!
+          </h2>
+          <div style={{ fontSize: 14, color: TOKENS.slate, marginBottom: 20 }}>
+            Your requirement has been logged with reference ID:
+          </div>
+          <div style={{ background: TOKENS.badgeBg, border: `1px solid ${TOKENS.blue}`, borderRadius: 8, padding: "12px", fontFamily: "'JetBrains Mono', monospace", fontSize: 20, fontWeight: 700, color: TOKENS.blue, marginBottom: 20 }}>
+            {submittedId}
+          </div>
+          <p style={{ fontSize: 13.5, color: TOKENS.slate, lineHeight: 1.6, marginBottom: 28 }}>
+            Our Senior Solutions Architect will review your architecture specifications and send an initial scoping proposal and sprint plan within <strong>12 business hours</strong> to <strong>{formData.email || "your email"}</strong>.
+          </p>
+          <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+            <Button onClick={() => go("home")}>Return to Home</Button>
+            <Button onClick={() => setSubmittedId(null)} variant="secondary">Submit Another Ticket</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: "40px 20px 80px", maxWidth: 760, margin: "0 auto" }}>
+      <SectionHeading
+        badge="Project Planner"
+        title="Start Your Software Project"
+        subtitle="Complete this 5-step guided intake to outline your requirements, tech stack, and timeline."
+      />
+
+      <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 14, padding: "28px 32px", boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+        {/* Step Indicators */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 28, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 16 }}>
+          {["1. Platform", "2. Stack", "3. Budget", "4. Contact"].map((sLabel, idx) => (
+            <div
+              key={idx}
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 11.5,
+                fontWeight: step === idx + 1 ? 700 : 500,
+                color: step === idx + 1 ? TOKENS.blue : step > idx + 1 ? TOKENS.teal : TOKENS.slate,
+              }}
+            >
+              {step > idx + 1 ? "✓ " : ""}{sLabel}
+            </div>
+          ))}
+        </div>
+
+        {step === 1 && (
+          <div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, marginBottom: 14 }}>
+              Select your project category:
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 24 }}>
+              {[
+                { id: "web", label: "Web Application / Portal", icon: "🌐" },
+                { id: "android", label: "Native Android App", icon: "🤖" },
+                { id: "cross", label: "Flutter / Cross-Platform App", icon: "📱" },
+                { id: "fullstack", label: "Turnkey Full-Stack System", icon: "⚡" },
+                { id: "backend", label: "Backend Microservices / APIs", icon: "⚙️" },
+                { id: "ai", label: "Enterprise AI & Custom LLMs", icon: "🧠" },
+              ].map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => setProjectType(p.id)}
+                  style={{
+                    background: projectType === p.id ? TOKENS.badgeBg : TOKENS.panelAlt,
+                    border: `1px solid ${projectType === p.id ? TOKENS.blue : TOKENS.hair}`,
+                    borderRadius: 8,
+                    padding: "14px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    cursor: "pointer",
+                    textAlign: "left",
+                  }}
+                >
+                  <span style={{ fontSize: 24 }}>{p.icon}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: projectType === p.id ? TOKENS.blue : TOKENS.paper }}>{p.label}</span>
+                </button>
+              ))}
+            </div>
+            <Button onClick={() => setStep(2)}>Next: Tech Stack →</Button>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, marginBottom: 14 }}>
+              Select preferred technologies:
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 24 }}>
+              {["React/Next.js", "Kotlin (Android)", "Flutter", "Swift (iOS)", "Node.js", "Python FastAPI", "Go", "PostgreSQL", "AWS Cloud"].map((t) => {
+                const active = techStack.includes(t);
+                return (
+                  <button
+                    key={t}
+                    onClick={() => setTechStack(active ? techStack.filter((x) => x !== t) : [...techStack, t])}
+                    style={{
+                      background: active ? TOKENS.badgeBg : TOKENS.panelAlt,
+                      border: `1px solid ${active ? TOKENS.blue : TOKENS.hair}`,
+                      borderRadius: 6,
+                      padding: "10px",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: active ? TOKENS.blue : TOKENS.paper,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {active ? "✓ " : "+ "}{t}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <Button onClick={() => setStep(1)} variant="secondary">← Back</Button>
+              <Button onClick={() => setStep(3)}>Next: Budget & Scope →</Button>
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, marginBottom: 14 }}>
+              Estimated budget range & timeline:
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
+              {[
+                { id: "starter", label: "₹1.5L - ₹3L ($2k - $4k)", desc: "MVP or Module" },
+                { id: "medium", label: "₹3L - ₹7L ($4k - $9k)", desc: "Production App" },
+                { id: "enterprise", label: "₹7L+ ($9k+)", desc: "Enterprise Full Stack" },
+              ].map((b) => (
+                <button
+                  key={b.id}
+                  onClick={() => setBudget(b.id)}
+                  style={{
+                    background: budget === b.id ? TOKENS.badgeBg : TOKENS.panelAlt,
+                    border: `1px solid ${budget === b.id ? TOKENS.blue : TOKENS.hair}`,
+                    borderRadius: 8,
+                    padding: "12px",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: budget === b.id ? TOKENS.blue : TOKENS.paper }}>{b.label}</div>
+                  <div style={{ fontSize: 10, color: TOKENS.slate, marginTop: 4 }}>{b.desc}</div>
+                </button>
+              ))}
+            </div>
+
+            <div style={{ marginBottom: 24 }}>
+              <label style={{ fontSize: 12.5, fontWeight: 600, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+                Target Launch Timeline:
+              </label>
+              <select
+                value={timeline}
+                onChange={(e) => setTimeline(e.target.value)}
+                style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+              >
+                <option value="Under 4 weeks">Under 4 weeks (Rapid Sprint)</option>
+                <option value="4-8 weeks">4 to 8 weeks (Standard MVP)</option>
+                <option value="8-14 weeks">8 to 14 weeks (Full Scale Enterprise)</option>
+              </select>
+            </div>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <Button onClick={() => setStep(2)} variant="secondary">← Back</Button>
+              <Button onClick={() => setStep(4)}>Next: Contact Details →</Button>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <form onSubmit={handleSubmit}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, marginBottom: 14 }}>
+              Your contact details & project brief:
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+              <div>
+                <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Anand Sharma"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Work Email *</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="anand@company.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Company / Organization Name</label>
+              <input
+                type="text"
+                placeholder="e.g. Apex FinTech Solutions"
+                value={formData.company}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+              />
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Brief Project Description & Goals</label>
+              <textarea
+                rows={4}
+                placeholder="Describe key features, user flows, or existing codebase..."
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+              />
+            </div>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <Button onClick={() => setStep(3)} variant="secondary">← Back</Button>
+              <Button type="submit">Submit Requirement & Get Scoping Doc →</Button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Page 5: CaseStudiesPage ---------------------------- */
+
+function CaseStudiesPage({ go }) {
+  return (
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1280, margin: "0 auto" }}>
+      <SectionHeading
+        badge="Proven Outcomes"
+        title="Enterprise Engineering Case Studies"
+        subtitle="Explore real-world software platforms, Android apps, and high-concurrency cloud architectures delivered by our team."
+      />
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+        {CASE_STUDIES.map((cs) => (
+          <div
+            key={cs.id}
+            style={{
+              background: TOKENS.panel,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 14,
+              padding: 28,
+              boxShadow: "0 2px 14px rgba(0,0,0,0.03)",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, marginBottom: 14 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 36 }}>{cs.icon}</span>
+                <div>
+                  <h3 style={{ fontSize: 20, fontWeight: 700, color: TOKENS.paper, margin: "0 0 4px" }}>{cs.title}</h3>
+                  <div style={{ fontSize: 12.5, color: TOKENS.slate }}>Client: <strong>{cs.client}</strong> • Industry: <strong>{cs.industry}</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: 14, color: TOKENS.slate, lineHeight: 1.6, marginBottom: 16 }}>{cs.summary}</p>
+
+            {/* Results Counters */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 20 }}>
+              {cs.results.map((r, ri) => (
+                <div key={ri} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 14px", textAlign: "center" }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: TOKENS.blue }}>{r.value}</div>
+                  <div style={{ fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>{r.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Tech Stack Pills */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {cs.tech.map((t, ti) => (
+                <span key={ti} style={{ background: TOKENS.badgeBg, border: `1px solid ${TOKENS.blue}33`, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", padding: "3px 8px", borderRadius: 4 }}>
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Page 6: KnowledgePage (Tech Hub) ---------------------------- */
+
+function KnowledgePage() {
+  const articles = [
+    {
+      title: "Architecting Distributed Microservices in Go & Node.js",
+      category: "Backend Systems",
+      readTime: "8 min read",
+      summary: "How we design event-driven backends with Kafka, Redis, and PostgreSQL to handle 50k+ requests per second with deterministic latency.",
+      code: "func handleOrderStream(ctx context.Context, msg *kafka.Message) error {\n  // Atomic idempotent state transition\n  return db.Transaction(func(tx *sql.Tx) error {\n    return processPayment(tx, msg.Payload)\n  })\n}",
+    },
+    {
+      title: "Native Android UI Excellence with Jetpack Compose & M3",
+      category: "Mobile Architecture",
+      readTime: "6 min read",
+      summary: "Modern declarative Android development: State hoisting, Flow integration, Room database caching, and building fluid 60fps mobile interfaces.",
+      code: "@Composable\nfun OrderTelemetryCard(order: OrderState) {\n  Card(modifier = Modifier.fillMaxWidth().padding(12.dp)) {\n    Text(text = order.title, style = MaterialTheme.typography.titleMedium)\n  }\n}",
+    },
+    {
+      title: "Enterprise Next.js 14 App Router & Micro-Frontend Topologies",
+      category: "Web & Frontend",
+      readTime: "7 min read",
+      summary: "Optimizing server component boundaries, edge streaming, and multi-zone deployment for enterprise-grade SaaS platforms.",
+      code: "export async function generateMetadata({ params }): Promise<Metadata> {\n  const data = await fetchProjectTelemetry(params.id);\n  return { title: `${data.name} | Abhimanyu Tech` };\n}",
+    },
+  ];
+
+  return (
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1100, margin: "0 auto" }}>
+      <SectionHeading
+        badge="Engineering Knowledge"
+        title="Technical Playbooks & Architecture Guides"
+        subtitle="Insights, design patterns, and engineering standards developed across our production software deployments."
+      />
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        {articles.map((art, idx) => (
+          <div key={idx} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                {art.category}
+              </span>
+              <span style={{ fontSize: 11.5, color: TOKENS.slate }}>{art.readTime}</span>
+            </div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, margin: "0 0 8px" }}>{art.title}</h3>
+            <p style={{ fontSize: 13.5, color: TOKENS.slate, lineHeight: 1.6, marginBottom: 14 }}>{art.summary}</p>
+            <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "12px", fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.paper, overflowX: "auto" }}>
+              <pre style={{ margin: 0 }}>{art.code}</pre>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Page 7: DashboardPage ---------------------------- */
+
+function DashboardPage({ openTracker, openEstimator, go }) {
+  return (
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1200, margin: "0 auto" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30 }}>
+        <div>
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: TOKENS.paper, margin: "0 0 6px" }}>
+            Client Project & Development Workspace
+          </h2>
+          <div style={{ fontSize: 13, color: TOKENS.slate }}>
+            Logged in as <strong>Dr. K. S. Rao</strong> (Enterprise Client Lead)
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <Button onClick={openTracker} variant="secondary" style={{ padding: "8px 14px", fontSize: 12 }}>
+            📊 Open Live Sprint Tracker
+          </Button>
+          <Button onClick={() => go("rfq-wizard")} style={{ padding: "8px 14px", fontSize: 12 }}>
+            ➕ New Project Ticket
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginBottom: 28 }}>
+        {[
+          { label: "Active Software Sprints", val: "2 In Progress", color: TOKENS.blue },
+          { label: "Staging Health Status", val: "100% Operational", color: TOKENS.teal },
+          { label: "Completed Milestones", val: "14 Deliverables", color: TOKENS.paper },
+          { label: "Assigned Dev Pod Engineers", val: "4 Full-Time", color: TOKENS.brass },
+        ].map((c, i) => (
+          <div key={i} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
+            <div style={{ fontSize: 11.5, color: TOKENS.slate }}>{c.label}</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: c.color, marginTop: 4 }}>{c.val}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Active Projects Table */}
+      <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, overflow: "hidden", marginBottom: 28 }}>
+        <div style={{ padding: "16px 20px", borderBottom: `1px solid ${TOKENS.hair}`, fontWeight: 700, fontSize: 14 }}>
+          Active Client Deliverables
+        </div>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, textAlign: "left" }}>
+          <thead>
+            <tr style={{ background: TOKENS.panelAlt, borderBottom: `1px solid ${TOKENS.hair}`, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+              <th style={{ padding: "10px 16px" }}>Ticket ID</th>
+              <th style={{ padding: "10px 16px" }}>Project Scope</th>
+              <th style={{ padding: "10px 16px" }}>Tech Stack</th>
+              <th style={{ padding: "10px 16px" }}>Current Sprint</th>
+              <th style={{ padding: "10px 16px" }}>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
+              <td style={{ padding: "12px 16px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.blue }}>PRJ-2026-8841</td>
+              <td style={{ padding: "12px 16px", fontWeight: 600 }}>Apex Neobank Mobile App & Microservices</td>
+              <td style={{ padding: "12px 16px", fontSize: 12, color: TOKENS.slate }}>Flutter, Kotlin, Go, PostgreSQL</td>
+              <td style={{ padding: "12px 16px" }}><span style={{ background: "rgba(37,99,235,0.1)", color: TOKENS.blue, padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 700 }}>Sprint 4 (68%)</span></td>
+              <td style={{ padding: "12px 16px" }}><button onClick={openTracker} style={{ background: "none", border: "none", color: TOKENS.blue, fontWeight: 600, cursor: "pointer" }}>Inspect →</button></td>
+            </tr>
+            <tr>
+              <td style={{ padding: "12px 16px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.blue }}>PRJ-2026-9022</td>
+              <td style={{ padding: "12px 16px", fontWeight: 600 }}>Cloud ERP Multi-Warehouse Sync</td>
+              <td style={{ padding: "12px 16px", fontSize: 12, color: TOKENS.slate }}>Next.js 14, Node.js, Redis, Docker</td>
+              <td style={{ padding: "12px 16px" }}><span style={{ background: "rgba(13,148,136,0.1)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 700 }}>Sprint 2 (30%)</span></td>
+              <td style={{ padding: "12px 16px" }}><button onClick={openTracker} style={{ background: "none", border: "none", color: TOKENS.blue, fontWeight: 600, cursor: "pointer" }}>Inspect →</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Page 8: AboutPage ---------------------------- */
+
+function AboutPage({ go }) {
+  return (
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1100, margin: "0 auto" }}>
+      <SectionHeading
+        badge="Who We Are"
+        title="Engineering Excellence & Digital Craftsmanship"
+        subtitle="Abhimanyu Technologies is an enterprise software engineering company headquartered in Telangana, India, serving clients across the globe."
+      />
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 40 }}>
+        <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 24 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>🎯 Our Core Mission</h3>
+          <p style={{ fontSize: 13.5, color: TOKENS.slate, lineHeight: 1.6, margin: 0 }}>
+            To empower forward-thinking organizations with modern web applications, robust native Android mobile software, scalable cloud backends, and bespoke enterprise SaaS products built for long-term reliability.
+          </p>
+        </div>
+
+        <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 24 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>🛡️ Development Principles</h3>
+          <p style={{ fontSize: 13.5, color: TOKENS.slate, lineHeight: 1.6, margin: 0 }}>
+            We champion strict type safety, modular microservices, automated end-to-end testing, zero technical debt, and transparent daily communication with our clients.
+          </p>
+        </div>
+      </div>
+
+      {/* Leadership & Engineering Hubs */}
+      <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 14, padding: 28, textAlign: "center" }}>
+        <h3 style={{ fontSize: 20, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>Global Delivery & Engineering Hubs</h3>
+        <p style={{ fontSize: 14, color: TOKENS.slate, maxWidth: 640, margin: "0 auto 20px", lineHeight: 1.6 }}>
+          Headquartered in Telangana with distributed senior engineering teams across Hyderabad, Bengaluru, Chennai, and remote technology hubs.
+        </p>
+        <Button onClick={() => go("contact")}>Schedule a Technical Consultation →</Button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Page 9: CareersPage ---------------------------- */
+
+function CareersPage({ go }) {
+  const [appliedRole, setAppliedRole] = useState(null);
+
+  const roles = [
+    { title: "Senior Full Stack Engineer (React + Node/Go)", team: "Digital Platforms", loc: "Hyderabad / Remote", exp: "4-7 years", comp: "₹18L - ₹32L PA" },
+    { title: "Senior Android Engineer (Kotlin + Jetpack Compose)", team: "Mobile Engineering", loc: "Bengaluru / Remote", exp: "3-6 years", comp: "₹16L - ₹28L PA" },
+    { title: "Frontend Architecture Lead (Next.js + Design Systems)", team: "UI/UX Engineering", loc: "Telangana / Remote", exp: "5-9 years", comp: "₹22L - ₹38L PA" },
+    { title: "DevOps & Cloud SRE Architect (AWS + Kubernetes)", team: "Infrastructure", loc: "Chennai / Remote", exp: "4-8 years", comp: "₹20L - ₹35L PA" },
+  ];
+
+  return (
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1000, margin: "0 auto" }}>
+      <SectionHeading
+        badge="Join Our Team"
+        title="Build Future-Proof Software with Us"
+        subtitle="Work on high-throughput microservices, cutting-edge Android apps, and generative AI products with top-tier engineers."
+      />
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {roles.map((r, i) => (
+          <div
+            key={i}
+            style={{
+              background: TOKENS.panel,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 12,
+              padding: 20,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper }}>{r.title}</div>
+              <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>
+                {r.team} • {r.loc} • Exp: {r.exp}
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700, color: TOKENS.blue }}>
+                {r.comp}
+              </div>
+              <Button onClick={() => setAppliedRole(r.title)} style={{ padding: "8px 14px", fontSize: 12 }}>
+                Quick Apply →
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {appliedRole && (
+        <div style={{ marginTop: 24, padding: 18, background: "rgba(13, 148, 136, 0.1)", border: `1px solid ${TOKENS.teal}`, borderRadius: 8, textAlign: "center" }}>
+          <span style={{ fontWeight: 700, color: TOKENS.teal }}>✓ Application Started for {appliedRole}!</span>
+          <div style={{ fontSize: 13, color: TOKENS.paper, marginTop: 4 }}>
+            Please email your resume and GitHub profile to <code style={{ fontWeight: 700 }}>careers@abhimanu-technologies.app</code>.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------------------------- Page 10: ContactPage ---------------------------- */
+
+function ContactPage() {
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", phone: "", service: "Web Development", message: "" });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  return (
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1000, margin: "0 auto" }}>
+      <SectionHeading
+        badge="Get in Touch"
+        title="Start Your Technical Consultation"
+        subtitle="Speak directly with our senior software architects. Receive NDA-protected technical guidance and project estimates."
+      />
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 32 }}>
+        {/* Info Column */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 22 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>🏢 Engineering Headquarters</h3>
+            <div style={{ fontSize: 13.5, color: TOKENS.slate, lineHeight: 1.6 }}>
+              Abhimanyu Technologies Pvt. Ltd.<br />
+              Telangana Technology Corridor, India<br />
+              Email: <strong>contact@abhimanu-technologies.app</strong><br />
+              Direct: <strong>+91 (040) 8491-0022</strong>
+            </div>
+          </div>
+
+          <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 22 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>🛡️ Our Guarantee</h3>
+            <div style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.5 }}>
+              • 12-Hour Solutions Architect Review SLA<br />
+              • Bilateral NDA Protection Signed Automatically<br />
+              • Transparent Sprint-Based Milestone Pricing<br />
+              • 100% Client Code & IP Ownership
+            </div>
+          </div>
+        </div>
+
+        {/* Contact Form */}
+        <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 14, padding: 28, boxShadow: "0 2px 14px rgba(0,0,0,0.03)" }}>
+          {submitted ? (
+            <div style={{ textAlign: "center", padding: "40px 20px" }}>
+              <span style={{ fontSize: 40 }}>✅</span>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: TOKENS.paper, margin: "12px 0 6px" }}>Message Received!</h3>
+              <p style={{ fontSize: 13.5, color: TOKENS.slate }}>Thank you, {form.name}. Our Solutions Architect will reach out to {form.email} within 12 business hours.</p>
+              <Button onClick={() => setSubmitted(false)} variant="secondary" style={{ marginTop: 14 }}>Send Another Note</Button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div>
+                <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Ramesh Chandra"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Work Email *</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="ramesh@company.com"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Phone Number</label>
+                  <input
+                    type="tel"
+                    placeholder="+91 98765 43210"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Primary Service of Interest</label>
+                <select
+                  value={form.service}
+                  onChange={(e) => setForm({ ...form, service: e.target.value })}
+                  style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                >
+                  <option value="Web Development">Web Application Development (Next.js / React)</option>
+                  <option value="Android & Mobile">Android & Mobile App Development (Kotlin / Flutter)</option>
+                  <option value="Backend Microservices">Backend & API Engineering (Node / Python / Go)</option>
+                  <option value="Full Stack System">Turnkey Full-Stack Product</option>
+                  <option value="Cloud DevOps">Cloud, DevOps & Kubernetes (AWS / GCP)</option>
+                  <option value="Enterprise AI">Enterprise AI & Custom LLMs</option>
+                  <option value="Product SaaS Demo">Abhimanyu SaaS Product Demo</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Project Details / Architecture Scope</label>
+                <textarea
+                  rows={4}
+                  required
+                  placeholder="Outline your requirements, tech preferences, or project timeline..."
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                />
+              </div>
+
+              <Button type="submit" style={{ padding: "12px", width: "100%" }}>
+                Submit Consultation Request →
+              </Button>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Universal Footer ---------------------------- */
+
+function Footer({ go }) {
+  return (
+    <footer
+      style={{
+        background: TOKENS.panelAlt,
+        borderTop: `1px solid ${TOKENS.hair}`,
+        padding: "60px 20px 40px",
+        color: TOKENS.slate,
+        fontSize: 13,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: 36,
+          marginBottom: 40,
+        }}
+      >
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+            <TransparentLogo src="/logo.png" height={32} />
+            <span style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper }}>Abhimanyu</span>
+          </div>
+          <p style={{ lineHeight: 1.6, margin: "0 0 16px" }}>
+            Enterprise IT Services, Full-Stack Web Development, Native Android & Mobile App Engineering, and Software Products. Sloganed to Scale Your Business.
+          </p>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
+            📍 Telangana • Pan-India • Global Delivery
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.paper, marginBottom: 14 }}>
+            IT SERVICES
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <button onClick={() => go("services")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Web Application Development</button>
+            <button onClick={() => go("services")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Android & Mobile App Development</button>
+            <button onClick={() => go("services")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Backend Microservices & APIs</button>
+            <button onClick={() => go("services")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Frontend UI/UX Design Systems</button>
+            <button onClick={() => go("services")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Cloud, DevOps & SRE (AWS/GCP)</button>
+            <button onClick={() => go("services")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Enterprise AI & RAG Solutions</button>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.paper, marginBottom: 14 }}>
+            SOFTWARE PRODUCTS
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu Cloud ERP</button>
+            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu CRM</button>
+            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu HRMS</button>
+            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu AI Studio</button>
+            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu DevPulse</button>
+            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu AppEngine</button>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.paper, marginBottom: 14 }}>
+            COMPANY & LEGAL
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <button onClick={() => go("about")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>About Us</button>
+            <button onClick={() => go("case-studies")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Case Studies & Portfolio</button>
+            <button onClick={() => go("knowledge")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Engineering Playbooks</button>
+            <button onClick={() => go("careers")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Careers & Open Roles</button>
+            <button onClick={() => go("contact")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Contact & Consultation</button>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1280, margin: "0 auto", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10, fontSize: 11.5 }}>
+        <div>
+          © 2026 Abhimanyu Technologies Pvt. Ltd. All rights reserved. Sloganed to <strong>Scale Your Business</strong>.
+        </div>
+        <div style={{ display: "flex", gap: 16 }}>
+          <span>Privacy Policy</span>
+          <span>Terms of Service</span>
+          <span>Bilateral NDA Guarantee</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ---------------------------- Pages Registry ---------------------------- */
 
 const PAGES = {
   home: HomePage,
-  products: ProductsPage,
   services: ServicesPage,
-  manufacturers: ManufacturersPage,
-  businesses: BusinessesPage,
-  requirements: RequirementsPage,
-  "rfq-wizard": RFQWizardPage,
-  dashboard: BusinessDashboardPage,
-  knowledge: KnowledgePage,
-  about: AboutPage,
-  industries: IndustriesPage,
+  products: ProductsPage,
+  "rfq-wizard": ProjectWizardPage,
   "case-studies": CaseStudiesPage,
-  insights: InsightsPage,
+  knowledge: KnowledgePage,
+  dashboard: DashboardPage,
+  about: AboutPage,
   careers: CareersPage,
   contact: ContactPage,
 };
 
-export default function MyVaultSite() {
+/* ---------------------------- Root Application Component ---------------------------- */
+
+export default function App() {
   const [page, setPage] = useState("home");
   const [currency, setCurrency] = useState("INR");
-  const [currentUser, setCurrentUser] = useState({
-    name: "Dr. K. S. Rao",
-    company: "Bharat Aerospace & Dynamics",
-    role: "buyer",
-    location: "Telangana & Chennai Hub",
-    avatar: "🏢",
-    badge: "Enterprise Procurement Lead",
-    tier: "Tier-1 Defence & Space",
-    activeRFQs: 3,
-    email: "ksrao@bharataero.gov.in",
-  });
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [trackerRfqId, setTrackerRfqId] = useState(null);
-  const [trackerOpen, setTrackerOpen] = useState(false);
-  const [cadModalOpen, setCadModalOpen] = useState(false);
-  const [cadPart, setCadPart] = useState({ id: "RFQ-2026-9041", name: "SS316 Valve Manifold" });
-  const [supplierOnboardingOpen, setSupplierOnboardingOpen] = useState(false);
-  const [spotlightOpen, setSpotlightOpen] = useState(false);
-  const [escrowModalOpen, setEscrowModalOpen] = useState(false);
-  const [escrowOrder, setEscrowOrder] = useState({
-    poNumber: "PO-2026-9041",
-    supplier: "Apex Precision Engineering Ltd.",
-    inr: 485000,
-  });
-  const [traceModalOpen, setTraceModalOpen] = useState(false);
-  const [tracePart, setTracePart] = useState({
-    rfqId: "RFQ-2026-9041",
-    material: "SS 316L Stainless Steel",
-    heatNumber: "HT-316L-98421",
-  });
-  const [compareModalOpen, setCompareModalOpen] = useState(false);
-  const [compareSupplierIds, setCompareSupplierIds] = useState(["mfr-1", "mfr-2", "mfr-3"]);
-  const [freightModalOpen, setFreightModalOpen] = useState(false);
-  const [freightRfqId, setFreightRfqId] = useState("RFQ-2026-9041");
-  const [dfmModalOpen, setDfmModalOpen] = useState(false);
-  const [dfmPart, setDfmPart] = useState({ id: "RFQ-2026-9041", name: "SS316 Valve Manifold", material: "SS 316L Stainless Steel" });
-  const [riskModalOpen, setRiskModalOpen] = useState(false);
-  const [contractModalOpen, setContractModalOpen] = useState(false);
-  const [contractData, setContractData] = useState({ buyer: "Bharat Aerospace & Dynamics", supplier: "Apex Precision Engineering Ltd.", rfqId: "RFQ-2026-9041" });
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem("abhimanyu_theme") || "light";
@@ -13574,27 +3512,35 @@ export default function MyVaultSite() {
       return "light";
     }
   });
-  const [quoterOpen, setQuoterOpen] = useState(false);
-  const [auditOpen, setAuditOpen] = useState(false);
-  const [auditPart, setAuditPart] = useState({
-    rfqId: "RFQ-2026-9041",
-    partName: "SS316 Multi-Port Valve Manifold",
-    material: "SS 316L Stainless Steel",
+
+  const [currentUser, setCurrentUser] = useState({
+    name: "Dr. K. S. Rao",
+    company: "Apex FinTech Solutions",
+    role: "client",
   });
 
+  // Modal states
+  const [estimatorOpen, setEstimatorOpen] = useState(false);
+  const [trackerOpen, setTrackerOpen] = useState(false);
+  const [spotlightOpen, setSpotlightOpen] = useState(false);
+  const [productDemoOpen, setProductDemoOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(SOFTWARE_PRODUCTS[0]);
+
+  // Synchronize dynamic theme tokens
   useEffect(() => {
     const isDark = theme === "dark";
     Object.assign(TOKENS, isDark ? DARK_TOKENS : LIGHT_TOKENS);
     document.documentElement.setAttribute("data-theme", theme);
-    document.documentElement.style.setProperty("--bg", isDark ? "#0B1F3A" : "#F8FAFC");
+    document.documentElement.style.setProperty("--bg", isDark ? "#0B1727" : "#F8FAFC");
     document.documentElement.style.setProperty("--text", isDark ? "#F8FAFC" : "#0F172A");
-    document.body.style.background = isDark ? "#0B1F3A" : "#F8FAFC";
+    document.body.style.background = isDark ? "#0B1727" : "#F8FAFC";
     document.body.style.color = isDark ? "#F8FAFC" : "#0F172A";
     try {
       localStorage.setItem("abhimanyu_theme", theme);
     } catch (_) {}
   }, [theme]);
 
+  // Keyboard shortcut Ctrl+K / Cmd+K
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -13606,96 +3552,29 @@ export default function MyVaultSite() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  useRouteSEO(page);
-
-  const topRef = useRef(null);
   const go = (id) => {
     setPage(id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const openTracker = (id) => {
-    setTrackerRfqId(id || "RFQ-2026-9041");
-    setTrackerOpen(true);
-  };
-
-  const openCAD = (id, name) => {
-    setCadPart({ id: id || "RFQ-2026-9041", name: name || "SS316 Valve Manifold" });
-    setCadModalOpen(true);
-  };
-
-  const openSupplierOnboarding = () => setSupplierOnboardingOpen(true);
-  const openSpotlight = () => setSpotlightOpen(true);
-  const openQuoter = () => setQuoterOpen(true);
-
-  const openAudit = (rfqId, partName, material) => {
-    setAuditPart({
-      rfqId: rfqId || "RFQ-2026-9041",
-      partName: partName || "SS316 Multi-Port Valve Manifold",
-      material: material || "SS 316L Stainless Steel",
-    });
-    setAuditOpen(true);
-  };
-
-  const openEscrow = (poNumber, supplier, inr) => {
-    setEscrowOrder({
-      poNumber: poNumber || "PO-2026-9041",
-      supplier: supplier || "Apex Precision Engineering Ltd.",
-      inr: inr || 485000,
-    });
-    setEscrowModalOpen(true);
-  };
-
-  const openTraceability = (rfqId, material, heatNumber) => {
-    setTracePart({
-      rfqId: rfqId || "RFQ-2026-9041",
-      material: material || "SS 316L Stainless Steel",
-      heatNumber: heatNumber || "HT-316L-98421",
-    });
-    setTraceModalOpen(true);
-  };
-
-  const openVendorCompare = (ids) => {
-    if (ids && ids.length > 0) setCompareSupplierIds(ids);
-    setCompareModalOpen(true);
-  };
-
-  const openFreight = (id) => {
-    if (id) setFreightRfqId(id);
-    setFreightModalOpen(true);
-  };
-
-  const openDFM = (id, name, mat) => {
-    setDfmPart({
-      id: id || "RFQ-2026-9041",
-      name: name || "SS316 Multi-Port Valve Manifold",
-      material: mat || "SS 316L Stainless Steel",
-    });
-    setDfmModalOpen(true);
-  };
-
-  const openRiskHeatmap = () => setRiskModalOpen(true);
-
-  const openContractVault = (buyer, supplier, rfqId) => {
-    setContractData({
-      buyer: buyer || "Bharat Aerospace & Dynamics",
-      supplier: supplier || "Apex Precision Engineering Ltd.",
-      rfqId: rfqId || "RFQ-2026-9041",
-    });
-    setContractModalOpen(true);
-  };
-
-  const Page = PAGES[page] || HomePage;
+  const PageComponent = PAGES[page] || HomePage;
 
   return (
-    <div style={{ background: theme === "dark" ? DARK_TOKENS.ink : LIGHT_TOKENS.ink, color: theme === "dark" ? DARK_TOKENS.paper : LIGHT_TOKENS.paper, minHeight: "100vh", fontFamily: "'Inter', sans-serif" }} ref={topRef}>
+    <div
+      style={{
+        background: theme === "dark" ? DARK_TOKENS.ink : LIGHT_TOKENS.ink,
+        color: theme === "dark" ? DARK_TOKENS.paper : LIGHT_TOKENS.paper,
+        minHeight: "100vh",
+        fontFamily: "'Inter', sans-serif",
+      }}
+    >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
-        body { margin: 0; background: ${theme === "dark" ? "#0B1F3A" : "#F8FAFC"}; color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"}; }
+        body { margin: 0; background: ${theme === "dark" ? "#0B1727" : "#F8FAFC"}; color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"}; }
         input, select, textarea, option { color-scheme: ${theme === "dark" ? "dark" : "light"}; }
         input, select, textarea {
-          background: ${theme === "dark" ? "#102A4C" : "#FFFFFF"} !important;
+          background: ${theme === "dark" ? "#132238" : "#FFFFFF"} !important;
           color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"} !important;
           border-color: ${theme === "dark" ? "rgba(255,255,255,0.18)" : "#CBD5E1"} !important;
         }
@@ -13703,187 +3582,77 @@ export default function MyVaultSite() {
           color: ${theme === "dark" ? "#64748B" : "#94A3B8"} !important;
         }
         button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid ${TOKENS.blue}; outline-offset: 2px; }
-        select option { background: ${theme === "dark" ? "#102A4C" : "#FFFFFF"} !important; color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"} !important; }
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-33.33%); }
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.3; }
-        }
+        select option { background: ${theme === "dark" ? "#132238" : "#FFFFFF"} !important; color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"} !important; }
+
         @media (max-width: 860px) {
           .desktop-nav { display: none !important; }
           .mobile-toggle { display: block !important; }
-          .hero-grid { grid-template-columns: 1fr !important; }
-          .footer-grid { grid-template-columns: 1fr 1fr !important; }
           main { padding-bottom: 72px !important; }
         }
         @media (min-width: 861px) {
           .mobile-bottom-nav { display: none !important; }
         }
-        @media (prefers-reduced-motion: reduce) {
-          * { transition: none !important; animation: none !important; }
-        }
       `}</style>
+
+      {/* Header */}
       <SiteHeader
         page={page}
         go={go}
         currency={currency}
         setCurrency={setCurrency}
         currentUser={currentUser}
-        setCurrentUser={setCurrentUser}
-        openAuth={() => setAuthModalOpen(true)}
-        openTracker={openTracker}
-        openSpotlight={openSpotlight}
-        openQuoter={openQuoter}
+        openEstimator={() => setEstimatorOpen(true)}
+        openTracker={() => setTrackerOpen(true)}
+        openSpotlight={() => setSpotlightOpen(true)}
         theme={theme}
         setTheme={setTheme}
       />
+
+      {/* Main Page Content */}
       <main style={{ paddingTop: 64 }}>
-        <Page
+        <PageComponent
           go={go}
           currency={currency}
           currentUser={currentUser}
-          openTracker={openTracker}
-          openAuth={() => setAuthModalOpen(true)}
-          openCAD={openCAD}
-          openSupplierOnboarding={openSupplierOnboarding}
-          openSpotlight={openSpotlight}
-          openEscrow={openEscrow}
-          openTraceability={openTraceability}
-          openVendorCompare={openVendorCompare}
-          openFreight={openFreight}
-          openDFM={openDFM}
-          openRiskHeatmap={openRiskHeatmap}
-          openContractVault={openContractVault}
-          openQuoter={openQuoter}
-          openAudit={openAudit}
+          openEstimator={() => setEstimatorOpen(true)}
+          openTracker={() => setTrackerOpen(true)}
+          setSelectedProduct={setSelectedProduct}
+          openProductDemo={() => setProductDemoOpen(true)}
         />
       </main>
+
+      {/* Footer */}
       <Footer go={go} />
-      <LeadCaptureModal />
-      <RFQTrackerModal
-        rfqId={trackerRfqId}
-        isOpen={trackerOpen}
-        onClose={() => setTrackerOpen(false)}
+
+      {/* Global Modals */}
+      <ProjectEstimatorModal
+        isOpen={estimatorOpen}
+        onClose={() => setEstimatorOpen(false)}
         currency={currency}
         go={go}
-        openCAD={openCAD}
-        openEscrow={openEscrow}
-        openTraceability={openTraceability}
-        openFreight={openFreight}
-        openDFM={openDFM}
-        openContractVault={openContractVault}
-        openRiskHeatmap={openRiskHeatmap}
-        openAudit={openAudit}
       />
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        currentUser={currentUser}
-        onLogin={(profile) => setCurrentUser(profile)}
-        onLogout={() => setCurrentUser(null)}
+
+      <ClientProjectTrackerModal
+        isOpen={trackerOpen}
+        onClose={() => setTrackerOpen(false)}
+        go={go}
       />
-      <CADViewerModal
-        isOpen={cadModalOpen}
-        onClose={() => setCadModalOpen(false)}
-        rfqId={cadPart.id}
-        partName={cadPart.name}
-        openTraceability={openTraceability}
-        openDFM={openDFM}
+
+      <ProductDemoModal
+        product={selectedProduct}
+        isOpen={productDemoOpen}
+        onClose={() => setProductDemoOpen(false)}
       />
-      <SupplierOnboardingModal
-        isOpen={supplierOnboardingOpen}
-        onClose={() => setSupplierOnboardingOpen(false)}
-      />
+
       <SpotlightSearchModal
         isOpen={spotlightOpen}
         onClose={() => setSpotlightOpen(false)}
         go={go}
-        openTracker={openTracker}
-        openAuth={() => setAuthModalOpen(true)}
-        openCAD={openCAD}
-        openEscrow={openEscrow}
-        openTraceability={openTraceability}
-        openSupplierOnboarding={openSupplierOnboarding}
-        openVendorCompare={openVendorCompare}
-        openFreight={openFreight}
-        openDFM={openDFM}
-        openRiskHeatmap={openRiskHeatmap}
-        openContractVault={openContractVault}
-        openQuoter={openQuoter}
-        openAudit={openAudit}
+        openEstimator={() => setEstimatorOpen(true)}
+        openTracker={() => setTrackerOpen(true)}
       />
-      <EscrowSettlementModal
-        isOpen={escrowModalOpen}
-        onClose={() => setEscrowModalOpen(false)}
-        poNumber={escrowOrder.poNumber}
-        supplier={escrowOrder.supplier}
-        totalInr={escrowOrder.inr}
-        currency={currency}
-      />
-      <TraceabilityModal
-        isOpen={traceModalOpen}
-        onClose={() => setTraceModalOpen(false)}
-        rfqId={tracePart.rfqId}
-        material={tracePart.material}
-        heatNumber={tracePart.heatNumber}
-      />
-      <VendorComparisonModal
-        isOpen={compareModalOpen}
-        onClose={() => setCompareModalOpen(false)}
-        initialSupplierIds={compareSupplierIds}
-        go={go}
-      />
-      <FreightTrackerModal
-        isOpen={freightModalOpen}
-        onClose={() => setFreightModalOpen(false)}
-        rfqId={freightRfqId}
-        poNumber="PO-2026-9041"
-      />
-      <DFMAnalysisModal
-        isOpen={dfmModalOpen}
-        onClose={() => setDfmModalOpen(false)}
-        rfqId={dfmPart.id}
-        partName={dfmPart.name}
-        material={dfmPart.material}
-        openCAD={openCAD}
-        openTracker={openTracker}
-        openQuoter={openQuoter}
-      />
-      <SupplyChainRiskModal
-        isOpen={riskModalOpen}
-        onClose={() => setRiskModalOpen(false)}
-        go={go}
-        openTracker={openTracker}
-        openVendorCompare={openVendorCompare}
-      />
-      <ContractVaultModal
-        isOpen={contractModalOpen}
-        onClose={() => setContractModalOpen(false)}
-        buyerName={contractData.buyer}
-        supplierName={contractData.supplier}
-        rfqId={contractData.rfqId}
-      />
-      <InstantQuoterModal
-        isOpen={quoterOpen}
-        onClose={() => setQuoterOpen(false)}
-        currency={currency}
-        openCAD={openCAD}
-        openDFM={openDFM}
-        go={go}
-      />
-      <AuditComplianceModal
-        isOpen={auditOpen}
-        onClose={() => setAuditOpen(false)}
-        rfqId={auditPart.rfqId}
-        partName={auditPart.partName}
-        material={auditPart.material}
-        openTraceability={openTraceability}
-        openCAD={openCAD}
-      />
-      {/* Mobile Bottom Navigation Bar */}
+
+      {/* Fixed Mobile Bottom Navigation */}
       <nav
         className="mobile-bottom-nav"
         style={{
@@ -13892,7 +3661,7 @@ export default function MyVaultSite() {
           left: 0,
           right: 0,
           zIndex: 9000,
-          background: theme === "dark" ? "rgba(11, 31, 58, 0.96)" : "rgba(255, 255, 255, 0.96)",
+          background: theme === "dark" ? "rgba(19, 34, 56, 0.96)" : "rgba(255, 255, 255, 0.96)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           borderTop: `1px solid ${TOKENS.hair}`,
@@ -13906,47 +3675,37 @@ export default function MyVaultSite() {
       >
         {[
           { icon: "🏠", label: "Home", id: "home" },
-          { icon: "🧭", label: "Explore", id: "products" },
-          { icon: "➕", label: "Post RFQ", id: "rfq-wizard", highlight: true },
-          { icon: "💬", label: "Messages", id: "contact" },
-          { icon: "👤", label: "Account", id: "dashboard" },
+          { icon: "🛠", label: "Services", id: "services" },
+          { icon: "⚡", label: "Plan", id: "rfq-wizard", highlight: true },
+          { icon: "📦", label: "Products", id: "products" },
+          { icon: "📞", label: "Contact", id: "contact" },
         ].map((item) => (
           <button
             key={item.id}
-            onClick={() => {
-              if (item.id === "dashboard") {
-                if (!currentUser) setAuthModalOpen(true);
-                else go("dashboard");
-              } else {
-                go(item.id);
-              }
-            }}
+            onClick={() => go(item.id)}
             style={{
-              background: item.highlight
-                ? `linear-gradient(135deg, ${TOKENS.blue} 0%, #1976D2 100%)`
-                : "transparent",
+              background: item.highlight ? `linear-gradient(135deg, ${TOKENS.blue} 0%, #1D4ED8 100%)` : "transparent",
               border: "none",
-              borderRadius: item.highlight ? 14 : 8,
-              padding: item.highlight ? "10px 18px" : "8px 12px",
+              borderRadius: item.highlight ? 12 : 8,
+              padding: item.highlight ? "8px 16px" : "6px 10px",
               cursor: "pointer",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               gap: 3,
-              minWidth: item.highlight ? 70 : 52,
-              boxShadow: item.highlight ? "0 4px 14px rgba(21, 101, 192, 0.6)" : "none",
-              transition: "all 0.15s ease",
+              boxShadow: item.highlight ? "0 4px 14px rgba(37, 99, 235, 0.4)" : "none",
             }}
           >
-            <span style={{ fontSize: item.highlight ? 20 : 18, lineHeight: 1 }}>{item.icon}</span>
-            <span style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 9,
-              letterSpacing: "0.04em",
-              color: page === item.id ? TOKENS.brass : item.highlight ? "#fff" : TOKENS.slate,
-              fontWeight: page === item.id || item.highlight ? 700 : 400,
-            }}>
-              {item.label.toUpperCase()}
+            <span style={{ fontSize: item.highlight ? 18 : 16 }}>{item.icon}</span>
+            <span
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                fontWeight: page === item.id || item.highlight ? 700 : 500,
+                color: page === item.id ? TOKENS.blue : item.highlight ? "#FFFFFF" : TOKENS.slate,
+              }}
+            >
+              {item.label}
             </span>
           </button>
         ))}
@@ -13954,4 +3713,3 @@ export default function MyVaultSite() {
     </div>
   );
 }
-
