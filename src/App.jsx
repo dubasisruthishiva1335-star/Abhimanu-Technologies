@@ -4153,9 +4153,258 @@ function ProjectWizardPage({ go }) {
   );
 }
 
+/* ---------------------------- Interactive Case Study Deep-Dive Reader Modal ---------------------------- */
+
+function CaseStudyReaderModal({ caseStudy, isOpen, onClose, go }) {
+  const [activeTab, setActiveTab] = useState("overview");
+  const [copied, setCopied] = useState(false);
+
+  if (!isOpen || !caseStudy) return null;
+
+  const handleCopy = () => {
+    const text = `Case Study: ${caseStudy.title}\nClient: ${caseStudy.client} (${caseStudy.industry})\nChallenge: ${caseStudy.challenge}\nSolution: ${caseStudy.solution}\nTech: ${caseStudy.tech.join(", ")}`;
+    navigator.clipboard?.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15, 23, 42, 0.65)",
+        backdropFilter: "blur(16px)",
+        zIndex: 1000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px 16px",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: 920,
+          maxHeight: "92vh",
+          overflowY: "auto",
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          padding: 24,
+          color: TOKENS.paper,
+        }}
+      >
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 18 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 34 }}>{caseStudy.icon}</span>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 18, fontWeight: 800, color: TOKENS.paper }}>{caseStudy.title}</span>
+                <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                  {caseStudy.industry}
+                </span>
+              </div>
+              <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 2 }}>
+                Client: <strong>{caseStudy.client}</strong> • Production Case Study
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: TOKENS.panelAlt,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              width: 32,
+              height: 32,
+              cursor: "pointer",
+              fontSize: 18,
+              color: TOKENS.slate,
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Tab Controls */}
+        <div style={{ display: "flex", gap: 8, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 10, marginBottom: 18 }}>
+          {[
+            { id: "overview", label: "Overview & ROI Outcomes" },
+            { id: "architecture", label: "Architecture Topology" },
+            { id: "tech", label: "Engineering Stack & Security" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              style={{
+                background: activeTab === t.id ? TOKENS.blue : "transparent",
+                color: activeTab === t.id ? "#FFFFFF" : TOKENS.slate,
+                border: "none",
+                borderRadius: 6,
+                padding: "6px 14px",
+                fontSize: 12.5,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab 1: Overview */}
+        {activeTab === "overview" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 6 }}>
+                OPERATIONAL CHALLENGE
+              </div>
+              <div style={{ fontSize: 13.5, color: TOKENS.paper, lineHeight: 1.6 }}>
+                {caseStudy.challenge}
+              </div>
+            </div>
+
+            <div style={{ background: "rgba(37,99,235,0.06)", border: `1px solid ${TOKENS.blue}44`, borderRadius: 10, padding: 18 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.blue, marginBottom: 6 }}>
+                ENGINEERING ARCHITECTURE & SOLUTION
+              </div>
+              <div style={{ fontSize: 13.5, color: TOKENS.paper, lineHeight: 1.6 }}>
+                {caseStudy.solution}
+              </div>
+            </div>
+
+            {/* Results Grid */}
+            <div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 10 }}>
+                VERIFIED PRODUCTION METRICS
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
+                {caseStudy.results.map((r, i) => (
+                  <div key={i} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14, textAlign: "center" }}>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: TOKENS.blue }}>{r.value}</div>
+                    <div style={{ fontSize: 11, color: TOKENS.slate, marginTop: 4 }}>{r.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 2: Architecture Topology */}
+        {activeTab === "architecture" && (
+          <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 12 }}>
+              SYSTEM ARCHITECTURE TOPOLOGY & DATA FLOW
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, alignItems: "center", marginBottom: 20 }}>
+              <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
+                <div style={{ fontSize: 20 }}>📱</div>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>Client App</div>
+                <div style={{ fontSize: 10, color: TOKENS.blue }}>{caseStudy.tech[0]}</div>
+              </div>
+              <div style={{ textAlign: "center", color: TOKENS.blue }}>➔</div>
+              <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
+                <div style={{ fontSize: 20 }}>🛡️</div>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>Anycast WAF</div>
+                <div style={{ fontSize: 10, color: TOKENS.teal }}>TLS 1.3 / CDN</div>
+              </div>
+              <div style={{ textAlign: "center", color: TOKENS.blue }}>➔</div>
+              <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
+                <div style={{ fontSize: 20 }}>⚡</div>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>Backend API</div>
+                <div style={{ fontSize: 10, color: TOKENS.brass }}>{caseStudy.tech[2] || "Microservices"}</div>
+              </div>
+              <div style={{ textAlign: "center", color: TOKENS.blue }}>➔</div>
+              <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
+                <div style={{ fontSize: 20 }}>💾</div>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>Data Tier</div>
+                <div style={{ fontSize: 10, color: TOKENS.slate }}>{caseStudy.tech[3] || "PostgreSQL"}</div>
+              </div>
+            </div>
+            <div style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.6 }}>
+              Production cluster deployed across multi-AZ container pods with automated horizontal pod autoscaling (HPA), zero-downtime rolling updates, and sub-100ms P99 latency SLA.
+            </div>
+          </div>
+        )}
+
+        {/* Tab 3: Tech & Security */}
+        {activeTab === "tech" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
+                PRODUCTION TECH STACK COMPONENTS
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {caseStudy.tech.map((t, idx) => (
+                  <span key={idx} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.blue}44`, color: TOKENS.blue, fontSize: 12, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, padding: "5px 12px", borderRadius: 6 }}>
+                    ✓ {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ background: "rgba(13,148,136,0.08)", border: `1px solid ${TOKENS.teal}44`, borderRadius: 10, padding: 18 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.teal, marginBottom: 6 }}>
+                SECURITY & AUDIT COMPLIANCE
+              </div>
+              <div style={{ fontSize: 13, color: TOKENS.paper, lineHeight: 1.6 }}>
+                • OWASP Top 10 penetration testing passed with 0 critical or high vulnerabilities.<br />
+                • Strict AES-256 encryption at rest and TLS 1.3 in transit with automated KMS key rotation.<br />
+                • Role-Based Access Control (RBAC) with immutable audit logging and continuous observability.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Footer Actions */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 16, marginTop: 20 }}>
+          <button
+            onClick={handleCopy}
+            style={{
+              background: TOKENS.panelAlt,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 6,
+              padding: "8px 14px",
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              cursor: "pointer",
+              color: TOKENS.paper,
+            }}
+          >
+            {copied ? "✓ Copied Summary" : "📋 Copy Case Study Summary"}
+          </button>
+          <div style={{ display: "flex", gap: 10 }}>
+            <Button onClick={onClose} variant="secondary">Close Reader</Button>
+            <Button
+              onClick={() => {
+                go("rfq-wizard");
+                onClose();
+              }}
+            >
+              🚀 Request Similar Platform Proposal →
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------------------------- Page 5: CaseStudiesPage ---------------------------- */
 
 function CaseStudiesPage({ go }) {
+  const [selectedCaseStudy, setSelectedCaseStudy] = useState(CASE_STUDIES[0]);
+  const [readerOpen, setReaderOpen] = useState(false);
+
+  const handleOpenReader = (cs) => {
+    setSelectedCaseStudy(cs);
+    setReaderOpen(true);
+  };
+
   return (
     <div style={{ padding: "40px 20px 80px", maxWidth: 1280, margin: "0 auto" }}>
       <SectionHeading
@@ -4184,6 +4433,9 @@ function CaseStudiesPage({ go }) {
                   <div style={{ fontSize: 12.5, color: TOKENS.slate }}>Client: <strong>{cs.client}</strong> • Industry: <strong>{cs.industry}</strong></div>
                 </div>
               </div>
+              <Button onClick={() => handleOpenReader(cs)} style={{ padding: "8px 16px", fontSize: 12.5 }}>
+                🔬 View Full Blueprint →
+              </Button>
             </div>
 
             <p style={{ fontSize: 14, color: TOKENS.slate, lineHeight: 1.6, marginBottom: 16 }}>{cs.summary}</p>
@@ -4199,16 +4451,31 @@ function CaseStudiesPage({ go }) {
             </div>
 
             {/* Tech Stack Pills */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {cs.tech.map((t, ti) => (
-                <span key={ti} style={{ background: TOKENS.badgeBg, border: `1px solid ${TOKENS.blue}33`, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", padding: "3px 8px", borderRadius: 4 }}>
-                  {t}
-                </span>
-              ))}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {cs.tech.map((t, ti) => (
+                  <span key={ti} style={{ background: TOKENS.badgeBg, border: `1px solid ${TOKENS.blue}33`, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", padding: "3px 8px", borderRadius: 4 }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <button
+                onClick={() => handleOpenReader(cs)}
+                style={{ background: "none", border: "none", color: TOKENS.blue, fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}
+              >
+                Inspect Technical Challenge & Architecture ➔
+              </button>
             </div>
           </div>
         ))}
       </div>
+
+      <CaseStudyReaderModal
+        caseStudy={selectedCaseStudy}
+        isOpen={readerOpen}
+        onClose={() => setReaderOpen(false)}
+        go={go}
+      />
     </div>
   );
 }
@@ -4311,15 +4578,58 @@ function KnowledgePage({ openApiSandbox, openArchitecture }) {
 /* ---------------------------- Page 7: DashboardPage ---------------------------- */
 
 function DashboardPage({ openTracker, openEstimator, go }) {
+  const [downloadedInv, setDownloadedInv] = useState(null);
+
+  // Interactive Kanban state
+  const [tasks, setTasks] = useState([
+    { id: "TSK-101", title: "Android Biometric Keystore & Face Unlock", tag: "Kotlin / Compose", col: "In Dev" },
+    { id: "TSK-102", title: "WebRTC P2P Video Consultation Module", tag: "Go / STUN", col: "Code Review" },
+    { id: "TSK-103", title: "PostgreSQL Multi-Tenant Shard Migrations", tag: "SQL / PgBouncer", col: "Ready for Staging" },
+    { id: "TSK-104", title: "Automated GST E-Invoicing & E-Way Bills", tag: "Node.js / IRN", col: "Backlog" },
+    { id: "TSK-105", title: "Redis Cluster Distributed Lock Middleware", tag: "Redis / Go", col: "In Dev" },
+    { id: "TSK-106", title: "Cross-Platform Push Notifications Sync", tag: "Firebase FCM", col: "Code Review" },
+  ]);
+
+  const handleAdvanceTask = (id) => {
+    setTasks((prev) =>
+      prev.map((t) => {
+        if (t.id !== id) return t;
+        const nextCol =
+          t.col === "Backlog"
+            ? "In Dev"
+            : t.col === "In Dev"
+            ? "Code Review"
+            : t.col === "Code Review"
+            ? "Ready for Staging"
+            : "Backlog";
+        return { ...t, col: nextCol };
+      })
+    );
+  };
+
+  const commits = [
+    { sha: "git#a89f41b", msg: "feat(android): implement Jetpack Compose biometrics & hardware keystore", author: "Er. Vikramaditya", time: "14m ago", tests: "✓ 34 Passed" },
+    { sha: "git#c71b092", msg: "perf(postgres): add partition index on transaction_timestamp and client_id", author: "Er. Sundaram", time: "1h ago", tests: "✓ 48 Passed" },
+    { sha: "git#e54d318", msg: "sec(auth): enforce strict OAuth2 JWT token rotation and rate limiting", author: "Er. Ananya", time: "3h ago", tests: "✓ 29 Passed" },
+    { sha: "git#f9021da", msg: "infra(k8s): configure horizontal pod autoscaler (HPA) for 50k QPS peak", author: "Er. K. S. Rao", time: "5h ago", tests: "✓ All Green" },
+  ];
+
+  const milestones = [
+    { id: "M1", title: "UI/UX Architecture & Figma Token System", amount: "₹1,20,000", status: "PAID", inv: "INV-2026-081" },
+    { id: "M2", title: "Core Microservices & Auth0 RBAC Suite", amount: "₹1,50,000", status: "PAID", inv: "INV-2026-082" },
+    { id: "M3", title: "Native Android App (Jetpack Compose) MVP", amount: "₹1,80,000", status: "PAID", inv: "INV-2026-083" },
+    { id: "M4", title: "Payment Gateways & Staging Production Release", amount: "₹1,20,000", status: "DUE", inv: "INV-2026-084" },
+  ];
+
   return (
-    <div style={{ padding: "40px 20px 80px", maxWidth: 1200, margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30 }}>
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1280, margin: "0 auto" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30, flexWrap: "wrap", gap: 14 }}>
         <div>
           <h2 style={{ fontSize: 24, fontWeight: 800, color: TOKENS.paper, margin: "0 0 6px" }}>
             Client Project & Development Workspace
           </h2>
           <div style={{ fontSize: 13, color: TOKENS.slate }}>
-            Logged in as <strong>Dr. K. S. Rao</strong> (Enterprise Client Lead)
+            Logged in as <strong>Dr. K. S. Rao</strong> (Enterprise Client Lead • Apex FinTech Solutions)
           </div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
@@ -4379,6 +4689,134 @@ function DashboardPage({ openTracker, openEstimator, go }) {
             </tr>
           </tbody>
         </table>
+      </div>
+
+      {/* Interactive Sprint Kanban Board */}
+      <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 22, marginBottom: 28 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper }}>
+              ⚡ Interactive Sprint Kanban Board (Sprint 4)
+            </div>
+            <div style={{ fontSize: 12, color: TOKENS.slate }}>
+              Click any engineering ticket to advance its lifecycle state across the pod pipeline.
+            </div>
+          </div>
+          <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "3px 8px", borderRadius: 4 }}>
+            LIVE SYNC ACTIVE
+          </span>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
+          {["Backlog", "In Dev", "Code Review", "Ready for Staging"].map((col) => {
+            const colTasks = tasks.filter((t) => t.col === col);
+            return (
+              <div key={col} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.slate, marginBottom: 10, paddingBottom: 6, borderBottom: `1px solid ${TOKENS.hair}` }}>
+                  <span>{col.toUpperCase()}</span>
+                  <span>({colTasks.length})</span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {colTasks.map((task) => (
+                    <div
+                      key={task.id}
+                      onClick={() => handleAdvanceTask(task.id)}
+                      style={{
+                        background: TOKENS.panel,
+                        border: `1px solid ${TOKENS.hair}`,
+                        borderRadius: 8,
+                        padding: "10px 12px",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.borderColor = TOKENS.blue)}
+                      onMouseLeave={(e) => (e.currentTarget.style.borderColor = TOKENS.hair)}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <span style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.blue, fontWeight: 700 }}>{task.id}</span>
+                        <span style={{ fontSize: 9.5, color: TOKENS.teal, background: "rgba(13,148,136,0.1)", padding: "1px 5px", borderRadius: 3 }}>Advance ➔</span>
+                      </div>
+                      <div style={{ fontSize: 12.5, fontWeight: 600, color: TOKENS.paper, lineHeight: 1.4 }}>{task.title}</div>
+                      <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 6 }}>{task.tag}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Two Column Grid: Live Git Commits & Billing Ledger */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 24 }}>
+        {/* Live Git Commit Telemetry */}
+        <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 22 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: TOKENS.paper }}>
+              💻 Live Dev Pod Git Telemetry
+            </div>
+            <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal }}>● CI/CD GREEN</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {commits.map((c, idx) => (
+              <div key={idx} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "10px 12px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
+                  <code style={{ fontSize: 11, color: TOKENS.blue, fontWeight: 700 }}>{c.sha}</code>
+                  <span style={{ fontSize: 10.5, color: TOKENS.teal, fontWeight: 600 }}>{c.tests}</span>
+                </div>
+                <div style={{ fontSize: 12, color: TOKENS.paper, fontWeight: 500, lineHeight: 1.3 }}>{c.msg}</div>
+                <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 4 }}>
+                  {c.author} • {c.time}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Milestone Invoicing & Billing */}
+        <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 22 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: TOKENS.paper, marginBottom: 14 }}>
+            🧾 Milestone Invoices & Contract Ledger
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {milestones.map((m, idx) => (
+              <div key={idx} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "10px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper }}>{m.title}</div>
+                  <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 2 }}>
+                    Inv: <code style={{ color: TOKENS.blue }}>{m.inv}</code> • Amount: <strong>{m.amount}</strong>
+                  </div>
+                </div>
+                <div>
+                  {m.status === "PAID" ? (
+                    <button
+                      onClick={() => {
+                        setDownloadedInv(m.inv);
+                        setTimeout(() => setDownloadedInv(null), 2500);
+                      }}
+                      style={{
+                        background: downloadedInv === m.inv ? "rgba(13,148,136,0.2)" : "rgba(13,148,136,0.1)",
+                        border: `1px solid ${TOKENS.teal}66`,
+                        color: TOKENS.teal,
+                        borderRadius: 6,
+                        padding: "5px 10px",
+                        fontSize: 11,
+                        cursor: "pointer",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {downloadedInv === m.inv ? "✓ Downloaded" : "📥 Tax Inv"}
+                    </button>
+                  ) : (
+                    <span style={{ background: "rgba(217,119,6,0.1)", color: TOKENS.brass, padding: "4px 8px", borderRadius: 4, fontSize: 10.5, fontWeight: 700 }}>
+                      DUE UPON RELEASE
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
