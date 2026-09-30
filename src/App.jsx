@@ -71,21 +71,6 @@ const formatPrice = (inrAmount, curr = "INR") => {
   return `${c.symbol}${Math.round(converted).toLocaleString("en-US")}`;
 };
 
-/* ---------------------------- Navigation Structure ---------------------------- */
-
-const NAV = [
-  { id: "home", label: "Home" },
-  { id: "services", label: "IT Services" },
-  { id: "products", label: "Products" },
-  { id: "rfq-wizard", label: "Project Planner" },
-  { id: "case-studies", label: "Case Studies" },
-  { id: "dashboard", label: "Client Portal" },
-  { id: "knowledge", label: "Tech Hub" },
-  { id: "about", label: "About Us" },
-  { id: "careers", label: "Careers" },
-  { id: "contact", label: "Contact" },
-];
-
 /* ---------------------------- IT Services Dataset ---------------------------- */
 
 const IT_SERVICES = [
@@ -814,7 +799,6 @@ function SiteHeader({
   currency = "INR",
   setCurrency,
   currentUser,
-  openAuth,
   openEstimator,
   openTracker,
   openSpotlight,
