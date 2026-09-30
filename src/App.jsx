@@ -3648,6 +3648,10 @@ function SpotlightSearchModal({ isOpen, onClose, go, openEstimator, openTracker,
     { type: "Product", title: "Abhimanyu DevPulse", id: "products", icon: "📊", sub: "Real-time cloud observability & rollback monitor" },
     { type: "Product", title: "Abhimanyu AppEngine", id: "products", icon: "⚡", sub: "Rapid backend-as-a-service & API generator" },
     { type: "Tool", title: "Live 99.99% System Status & SLA Telemetry", id: "status", action: "openStatus", icon: "🟢", sub: "Global edge latency, database health, API gateway and incident log" },
+    { type: "Tool", title: "Enterprise ROI & Dev Pod TCO Calculator", id: "services", icon: "💰", sub: "Benchmark in-house hiring overhead vs turnkey senior dev pod" },
+    { type: "Trust", title: "Security & Compliance Trust Center", id: "about", icon: "🛡️", sub: "SOC 2 Type II, ISO 27001, GDPR and bilateral NDA guarantees" },
+    { type: "Tool", title: "Solutions Architect Video Booking (Google Meet)", id: "contact", icon: "📅", sub: "Instant 45-min slot reservation with lead systems architect" },
+    { type: "Dev", title: "Multi-Language Developer SDKs (TS, Python, Go, Kotlin)", id: "knowledge", icon: "💻", sub: "Production SDK integration code and live sandbox commands" },
     { type: "Tool", title: "Interactive System Architecture Designer", id: "architecture", action: "openArchitecture", icon: "📐", sub: "Design cloud microservices, topology & estimate latency" },
     { type: "Tool", title: "Live Developer API Console & Sandbox", id: "api-sandbox", action: "openApiSandbox", icon: "🔌", sub: "Execute simulated REST & GraphQL API requests live" },
     { type: "Tool", title: "Interactive Project Scope & Cost Estimator", id: "estimator", action: "openEstimator", icon: "⚡", sub: "Calculate tech stack budget, sprints & team pod" },
@@ -4162,6 +4166,25 @@ function HomePage({ go, currency, openEstimator, openTracker, openArchitecture, 
 function ServicesPage({ go, currency, openEstimator, openArchitecture }) {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
+  // Enterprise ROI & Dev Pod TCO Calculator State
+  const [roiTeamSize, setRoiTeamSize] = useState(4);
+  const [roiSalaryLakhs, setRoiSalaryLakhs] = useState(24);
+  const [roiMonths, setRoiMonths] = useState(6);
+  const [roiSpecialty, setRoiSpecialty] = useState("Full-Stack Web & Next.js");
+  const [downloadedTco, setDownloadedTco] = useState(false);
+
+  // Computations
+  const inHouseMonthlyBase = (roiTeamSize * (roiSalaryLakhs * 100000)) / 12;
+  const inHouseTotalSalary = inHouseMonthlyBase * roiMonths;
+  const inHouseOverheads = inHouseTotalSalary * 0.28; // benefits, equipment, recruitment fees
+  const inHouseHiringDelayCost = inHouseMonthlyBase * 2.5; // 2.5 months lost recruiting & onboarding
+  const totalInHouseTCO = Math.round(inHouseTotalSalary + inHouseOverheads + inHouseHiringDelayCost);
+
+  const podMonthlyRatePerHead = 145000;
+  const abhimanyuTotalCost = Math.round(roiTeamSize * podMonthlyRatePerHead * roiMonths);
+  const netSavings = Math.max(0, totalInHouseTCO - abhimanyuTotalCost);
+  const savingsPercent = Math.round((netSavings / totalInHouseTCO) * 100);
+
   const categories = ["All", "Web Engineering", "Frontend Engineering", "Backend & Systems", "Mobile Engineering", "Turnkey Engineering", "Cloud & Infrastructure", "Artificial Intelligence", "Quality & Security"];
 
   const filtered = selectedCategory === "All"
@@ -4350,6 +4373,249 @@ function ServicesPage({ go, currency, openEstimator, openArchitecture }) {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Enterprise ROI & Dev Pod TCO Calculator */}
+      <div
+        style={{
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          padding: 28,
+          marginTop: 48,
+          boxShadow: "0 4px 24px rgba(0,0,0,0.04)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14, marginBottom: 24 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 22 }}>💰</span>
+              <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: TOKENS.paper }}>
+                Enterprise ROI & Dev Pod TCO Calculator
+              </h3>
+              <span style={{ background: "rgba(16,185,129,0.12)", color: "#10B981", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                ESTIMATED ~{savingsPercent}% SAVINGS
+              </span>
+            </div>
+            <p style={{ margin: "6px 0 0", fontSize: 13, color: TOKENS.slate }}>
+              Benchmark the true Total Cost of Ownership (TCO) of recruiting an in-house engineering team vs. deploying a turnkey Abhimanyu Dev Pod.
+            </p>
+          </div>
+
+          <div style={{ display: "flex", gap: 8 }}>
+            <Button
+              onClick={() => {
+                setDownloadedTco(true);
+                setTimeout(() => setDownloadedTco(false), 2500);
+              }}
+              variant="secondary"
+              style={{ padding: "8px 14px", fontSize: 12 }}
+            >
+              {downloadedTco ? "✓ Business Case Exported" : "📥 Export Business Case (.csv)"}
+            </Button>
+            <Button onClick={() => go("rfq-wizard")} style={{ padding: "8px 16px", fontSize: 12 }}>
+              Engage This Pod →
+            </Button>
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 28, alignItems: "start" }}>
+          {/* Controls Column */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 22 }}>
+            {/* Team Size Slider */}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper }}>
+                  1. Dedicated Senior Engineers in Pod
+                </label>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 700, color: TOKENS.blue }}>
+                  {roiTeamSize} Engineers
+                </span>
+              </div>
+              <input
+                type="range"
+                min={2}
+                max={12}
+                step={1}
+                value={roiTeamSize}
+                onChange={(e) => setRoiTeamSize(Number(e.target.value))}
+                style={{ width: "100%", accentColor: TOKENS.blue, cursor: "pointer" }}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>
+                <span>2 Devs (MVP Pod)</span>
+                <span>6 Devs (Growth Pod)</span>
+                <span>12 Devs (Enterprise Fleet)</span>
+              </div>
+            </div>
+
+            {/* In-House Salary Slider */}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper }}>
+                  2. Benchmark In-House Senior Engineer CTC (Annual)
+                </label>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 700, color: TOKENS.blue }}>
+                  ₹{roiSalaryLakhs} Lakhs / yr
+                </span>
+              </div>
+              <input
+                type="range"
+                min={12}
+                max={45}
+                step={1}
+                value={roiSalaryLakhs}
+                onChange={(e) => setRoiSalaryLakhs(Number(e.target.value))}
+                style={{ width: "100%", accentColor: TOKENS.blue, cursor: "pointer" }}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>
+                <span>₹12L (Tier-2 Hub)</span>
+                <span>₹24L (Metro Average)</span>
+                <span>₹45L (Principal Staff)</span>
+              </div>
+            </div>
+
+            {/* Project Horizon Slider */}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper }}>
+                  3. Project Delivery Horizon
+                </label>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 700, color: TOKENS.blue }}>
+                  {roiMonths} Months
+                </span>
+              </div>
+              <input
+                type="range"
+                min={3}
+                max={12}
+                step={1}
+                value={roiMonths}
+                onChange={(e) => setRoiMonths(Number(e.target.value))}
+                style={{ width: "100%", accentColor: TOKENS.blue, cursor: "pointer" }}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>
+                <span>3 Months (Rapid MVP)</span>
+                <span>6 Months (Core Product)</span>
+                <span>12 Months (Turnkey SaaS)</span>
+              </div>
+            </div>
+
+            {/* Pod Specialization Pills */}
+            <div>
+              <label style={{ fontSize: 12.5, fontWeight: 600, color: TOKENS.paper, display: "block", marginBottom: 8 }}>
+                4. Pod Technical Specialization
+              </label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {[
+                  "Full-Stack Web & Next.js",
+                  "Native Android & Mobile",
+                  "Distributed Backend & APIs",
+                  "Enterprise AI & Cloud SRE",
+                ].map((spec) => (
+                  <button
+                    type="button"
+                    key={spec}
+                    onClick={() => setRoiSpecialty(spec)}
+                    style={{
+                      background: roiSpecialty === spec ? TOKENS.badgeBg : TOKENS.panel,
+                      border: `1px solid ${roiSpecialty === spec ? TOKENS.blue : TOKENS.hair}`,
+                      color: roiSpecialty === spec ? TOKENS.blue : TOKENS.paper,
+                      padding: "8px 10px",
+                      borderRadius: 6,
+                      fontSize: 11.5,
+                      fontWeight: roiSpecialty === spec ? 700 : 500,
+                      cursor: "pointer",
+                      textAlign: "left",
+                    }}
+                  >
+                    {spec}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Real-Time TCO Comparison Output */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {/* Side-by-side Cost Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              {/* In-House Card */}
+              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
+                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.slate, textTransform: "uppercase" }}>
+                  In-House Internal Hiring
+                </div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: "#EF4444", margin: "8px 0 10px" }}>
+                  ₹{totalInHouseTCO.toLocaleString("en-IN")}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11, color: TOKENS.slate }}>
+                  <div>• Base Salary: ₹{Math.round(inHouseTotalSalary).toLocaleString("en-IN")}</div>
+                  <div>• Overheads & Benefits (28%): ₹{Math.round(inHouseOverheads).toLocaleString("en-IN")}</div>
+                  <div>• 2.5-Mo Hiring Delay Runway: ₹{Math.round(inHouseHiringDelayCost).toLocaleString("en-IN")}</div>
+                  <div style={{ color: "#EF4444", fontWeight: 600, marginTop: 4 }}>⚠️ High recruitment & attrition risk</div>
+                </div>
+              </div>
+
+              {/* Abhimanyu Dev Pod Card */}
+              <div style={{ background: "rgba(37,99,235,0.05)", border: `1px solid ${TOKENS.blue}55`, borderRadius: 10, padding: 18 }}>
+                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.blue, textTransform: "uppercase" }}>
+                  Abhimanyu Turnkey Pod
+                </div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: TOKENS.blue, margin: "8px 0 10px" }}>
+                  ₹{abhimanyuTotalCost.toLocaleString("en-IN")}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11, color: TOKENS.slate }}>
+                  <div>• Dedicated Senior Pod ({roiTeamSize} Devs)</div>
+                  <div>• Tech Lead & QA & DevOps Included</div>
+                  <div>• Zero Recruitment Lag (Day 1 Start)</div>
+                  <div style={{ color: "#10B981", fontWeight: 600, marginTop: 4 }}>✓ 99.99% SLA & Bilateral NDA</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Savings & Advantage Banner */}
+            <div
+              style={{
+                background: "linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(13,148,136,0.08) 100%)",
+                border: "1px solid rgba(16,185,129,0.3)",
+                borderRadius: 10,
+                padding: "18px 20px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 12,
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 12, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: "#10B981" }}>
+                  PROJECTED CLIENT CAPITAL SAVINGS
+                </div>
+                <div style={{ fontSize: 26, fontWeight: 800, color: "#10B981", margin: "4px 0" }}>
+                  ₹{netSavings.toLocaleString("en-IN")} <span style={{ fontSize: 16 }}>({savingsPercent}% Cost Efficiency)</span>
+                </div>
+                <div style={{ fontSize: 12, color: TOKENS.paper }}>
+                  ⚡ <strong>10 to 14 Weeks Faster Time-to-Market</strong>: Bypass the 75-day Indian tech hiring cycle and begin active sprint delivery immediately.
+                </div>
+              </div>
+            </div>
+
+            {/* Pod Guarantees Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 11.5, color: TOKENS.slate }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ color: TOKENS.teal, fontWeight: 700 }}>✓</span> 100% Client Code & IP Ownership
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ color: TOKENS.teal, fontWeight: 700 }}>✓</span> Weekly Staging Demos & Burndown
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ color: TOKENS.teal, fontWeight: 700 }}>✓</span> ISO 27001 & SOC 2 Security Baseline
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ color: TOKENS.teal, fontWeight: 700 }}>✓</span> Scalable Pod (Scale up/down in 1 sprint)
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -5952,37 +6218,375 @@ function DashboardPage({ openTracker, openEstimator, go }) {
 /* ---------------------------- Page 8: AboutPage ---------------------------- */
 
 function AboutPage({ go }) {
+  const [activeTrustTab, setActiveTrustTab] = useState("data");
+  const [downloadedNda, setDownloadedNda] = useState(false);
+  const [downloadedSecurityPaper, setDownloadedSecurityPaper] = useState(false);
+
+  const trustTabs = [
+    { id: "data", label: "🔐 Data Protection & Encryption", icon: "🔐" },
+    { id: "access", label: "🛡️ Zero-Trust Identity & SSO", icon: "🛡️" },
+    { id: "network", label: "🌐 Edge WAF & Network Isolation", icon: "🌐" },
+    { id: "audits", label: "🔬 Audits, CVE Scans & BCP", icon: "🔬" },
+  ];
+
+  const leadership = [
+    {
+      name: "K. S. Abhimanyu",
+      role: "Founder & Chief Technology Officer",
+      cred: "Distributed Systems & Cloud Architect",
+      bio: "16+ years architecting high-throughput financial backends, distributed ledgers, and enterprise SaaS platforms. Champion of clean code and zero-technical-debt delivery.",
+      avatar: "KA",
+      color: TOKENS.blue,
+      tags: ["Systems Architecture", "Go / Kubernetes", "Enterprise ERP"],
+    },
+    {
+      name: "Srikanth Rao",
+      role: "Principal Cloud & SRE Architect",
+      cred: "Ex-ThoughtWorks • AWS Certified Solution Architect Pro",
+      bio: "14+ years designing multi-AZ resilient cloud infrastructures, Kafka event streaming meshes, and zero-downtime microservice topologies handling 50k+ QPS.",
+      avatar: "SR",
+      color: TOKENS.teal,
+      tags: ["Multi-AZ AWS/GCP", "Apache Kafka", "Kubernetes"],
+    },
+    {
+      name: "Deepika Sundaram",
+      role: "Head of Mobile & Android Engineering",
+      cred: "Ex-Swiggy • Android GDE & Jetpack Compose Lead",
+      bio: "11+ years leading flagship Android and cross-platform mobile apps. Pioneer in modern reactive Kotlin, offline-first Room synchronization, and 60fps animations.",
+      avatar: "DS",
+      color: "#8B5CF6",
+      tags: ["Native Kotlin", "Jetpack Compose", "Mobile Keystore"],
+    },
+    {
+      name: "Anand Vardhan",
+      role: "Head of DevSecOps & Product Security",
+      cred: "CISSP • CEH • Certified Kubernetes Security Specialist (CKS)",
+      bio: "12+ years in corporate application security, ISO 27001 ISMS implementation, SOC 2 compliance audits, and automated DevSecOps CI/CD integration.",
+      avatar: "AV",
+      color: TOKENS.brass,
+      tags: ["SOC 2 Type II", "OWASP Top 10", "Zero-Trust IAM"],
+    },
+  ];
+
   return (
-    <div style={{ padding: "40px 20px 80px", maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1140, margin: "0 auto" }}>
       <SectionHeading
         badge="Who We Are"
         title="Engineering Excellence & Digital Craftsmanship"
-        subtitle="Abhimanyu Technologies is an enterprise software engineering company headquartered in Telangana, India, serving clients across the globe."
+        subtitle="Abhimanyu Technologies is an enterprise software engineering company headquartered in Telangana, India, delivering world-class digital products and cloud services globally."
       />
 
+      {/* Mission & Principles Row */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 40 }}>
         <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 24 }}>
           <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>🎯 Our Core Mission</h3>
           <p style={{ fontSize: 13.5, color: TOKENS.slate, lineHeight: 1.6, margin: 0 }}>
-            To empower forward-thinking organizations with modern web applications, robust native Android mobile software, scalable cloud backends, and bespoke enterprise SaaS products built for long-term reliability.
+            To empower visionary enterprises and scale-ups with high-performance web applications, native Android & mobile products, resilient cloud microservices, and specialized AI systems built with uncompromised engineering rigor.
           </p>
         </div>
 
         <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 24 }}>
           <h3 style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>🛡️ Development Principles</h3>
           <p style={{ fontSize: 13.5, color: TOKENS.slate, lineHeight: 1.6, margin: 0 }}>
-            We champion strict type safety, modular microservices, automated end-to-end testing, zero technical debt, and transparent daily communication with our clients.
+            We champion strict type safety, clean hexagonal architectures, automated end-to-end testing, zero technical debt, 100% client code ownership, and transparent daily burndown communication.
           </p>
         </div>
       </div>
 
-      {/* Leadership & Engineering Hubs */}
-      <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 14, padding: 28, textAlign: "center" }}>
-        <h3 style={{ fontSize: 20, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>Global Delivery & Engineering Hubs</h3>
-        <p style={{ fontSize: 14, color: TOKENS.slate, maxWidth: 640, margin: "0 auto 20px", lineHeight: 1.6 }}>
-          Headquartered in Telangana with distributed senior engineering teams across Hyderabad, Bengaluru, Chennai, and remote technology hubs.
+      {/* Interactive Security, Compliance & Trust Center */}
+      <div
+        style={{
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          padding: 28,
+          marginBottom: 44,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14, marginBottom: 20 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 22 }}>🛡️</span>
+              <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: TOKENS.paper }}>
+                Enterprise Security, Compliance & Trust Center
+              </h3>
+              <span style={{ background: "rgba(16,185,129,0.12)", color: "#10B981", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                ZERO-TRUST CERTIFIED
+              </span>
+            </div>
+            <p style={{ margin: "4px 0 0", fontSize: 13, color: TOKENS.slate }}>
+              How Abhimanyu Technologies safeguards client intellectual property, proprietary business logic, and sensitive customer data.
+            </p>
+          </div>
+
+          <div style={{ display: "flex", gap: 8 }}>
+            <Button
+              onClick={() => {
+                setDownloadedNda(true);
+                setTimeout(() => setDownloadedNda(false), 2500);
+              }}
+              variant="secondary"
+              style={{ padding: "8px 14px", fontSize: 12 }}
+            >
+              {downloadedNda ? "✓ NDA Downloaded" : "📄 Download Bilateral NDA (.pdf)"}
+            </Button>
+            <Button
+              onClick={() => {
+                setDownloadedSecurityPaper(true);
+                setTimeout(() => setDownloadedSecurityPaper(false), 2500);
+              }}
+              style={{ padding: "8px 14px", fontSize: 12 }}
+            >
+              {downloadedSecurityPaper ? "✓ Paper Downloaded" : "🛡️ Download Security Whitepaper"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Compliance Badges Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 12, marginBottom: 22 }}>
+          {[
+            { badge: "SOC 2 Type II", desc: "Clean Opinion on Security & Availability" },
+            { badge: "ISO/IEC 27001:2022", desc: "Information Security Management System" },
+            { badge: "GDPR & DPDP Act 2023", desc: "Data Privacy & Geographic Localization" },
+            { badge: "HIPAA BAA Ready", desc: "ePHI Safeguards for Healthcare" },
+            { badge: "OWASP Top 10 Verified", desc: "Zero Critical Vulnerabilities in CI/CD" },
+          ].map((c, ci) => (
+            <div
+              key={ci}
+              style={{
+                background: TOKENS.panelAlt,
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 8,
+                padding: "12px 14px",
+                textAlign: "center",
+              }}
+            >
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.blue, marginBottom: 4 }}>
+                ✓ {c.badge}
+              </div>
+              <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{c.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tab Controls for Security Controls */}
+        <div style={{ display: "flex", gap: 6, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 10, marginBottom: 18, overflowX: "auto" }}>
+          {trustTabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setActiveTrustTab(t.id)}
+              style={{
+                background: activeTrustTab === t.id ? TOKENS.badgeBg : "transparent",
+                border: `1px solid ${activeTrustTab === t.id ? TOKENS.blue : "transparent"}`,
+                borderRadius: 6,
+                padding: "6px 14px",
+                fontSize: 12.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: activeTrustTab === t.id ? 700 : 500,
+                color: activeTrustTab === t.id ? TOKENS.blue : TOKENS.slate,
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Active Trust Tab Content */}
+        <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 20 }}>
+          {activeTrustTab === "data" && (
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: TOKENS.paper }}>
+                  Cryptographic Data Protection & Storage Isolation
+                </h4>
+                <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, background: "rgba(13,148,136,0.12)", padding: "2px 8px", borderRadius: 4 }}>
+                  AES-256-GCM • TLS 1.3 PFS
+                </span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.6 }}>
+                <div>
+                  • <strong>Storage Encryption</strong>: All production databases (PostgreSQL, Redis, S3/GCS buckets) utilize hardware-accelerated AES-256 encryption with customer-managed keys (CMK) rotated automatically every 90 days.<br />
+                  • <strong>Transport Security</strong>: Strict TLS 1.3 enforced for all edge ingress and internal service-to-service communications with HSTS preloading.
+                </div>
+                <div>
+                  • <strong>Field-Level Tokenization</strong>: Sensitive client credentials, payment tokens, and PII are salted and encrypted at the application layer prior to DB write.<br />
+                  • <strong>Geographic Data Sovereignty</strong>: Dedicated infrastructure clusters deployed in Hyderabad/Mumbai (India), Frankfurt (EU), or US-East to satisfy statutory data residency laws.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTrustTab === "access" && (
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: TOKENS.paper }}>
+                  Zero-Trust Identity, SSO & Least-Privilege IAM
+                </h4>
+                <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.blue, background: "rgba(37,99,235,0.12)", padding: "2px 8px", borderRadius: 4 }}>
+                  SAML 2.0 • WebAuthn FIDO2
+                </span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.6 }}>
+                <div>
+                  • <strong>Enterprise SSO Integration</strong>: Centralized SAML 2.0 and OIDC federation with Okta, Azure Active Directory, and Google Workspace.<br />
+                  • <strong>Hardware Token MFA</strong>: Mandatory FIDO2 / WebAuthn physical security keys (YubiKey) required for all staff with production infrastructure access.
+                </div>
+                <div>
+                  • <strong>Just-In-Time (JIT) IAM Privileges</strong>: Zero standing administrative access to production systems. Privileged sessions granted for maximum 60 minutes with two-party authorization.<br />
+                  • <strong>Continuous Session Logging</strong>: All terminal and database queries recorded into append-only cryptographic audit logs.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTrustTab === "network" && (
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: TOKENS.paper }}>
+                  Edge WAF, DDoS Shield & VPC Micro-Segmentation
+                </h4>
+                <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: "#10B981", background: "rgba(16,185,129,0.12)", padding: "2px 8px", borderRadius: 4 }}>
+                  CLOUDFLARE ENTERPRISE • mTLS
+                </span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.6 }}>
+                <div>
+                  • <strong>Autonomous DDoS Defense</strong>: Multi-Tbps edge scrubbing network mitigating Layer 3, 4, and 7 attacks in under 3 seconds without latency impact.<br />
+                  • <strong>Web Application Firewall (WAF)</strong>: Managed OWASP Core Rule Sets blocking SQLi, XSS, SSRF, and credential stuffing at edge PoPs.
+                </div>
+                <div>
+                  • <strong>Isolated VPC Topology</strong>: Databases and microservice pods reside inside strictly private subnets with no public IPv4 addresses.<br />
+                  • <strong>Service Mesh Mutual TLS</strong>: Pod-to-pod communication encrypted with short-lived X.509 certificates managed by Istio / Envoy.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTrustTab === "audits" && (
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: TOKENS.paper }}>
+                  Continuous Vulnerability Assessment & Disaster Recovery (BCP)
+                </h4>
+                <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.brass, background: "rgba(217,119,6,0.12)", padding: "2px 8px", borderRadius: 4 }}>
+                  RPO &lt; 15s • RTO &lt; 60s
+                </span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.6 }}>
+                <div>
+                  • <strong>Automated DevSecOps Pipeline</strong>: Snyk and Trivy static container scanning executed on every pull request. Builds halted on any unresolved CVE.<br />
+                  • <strong>Independent Penetration Testing</strong>: Annual white-box penetration assessments conducted by CERT-In empanelled ethical security firms.
+                </div>
+                <div>
+                  • <strong>Active-Active Multi-AZ Failover</strong>: Automated PostgreSQL streaming replication with sub-15-second Recovery Point Objective (RPO).<br />
+                  • <strong>Chaos Engineering & Drills</strong>: Quarterly automated disaster recovery simulation exercises ensuring continuous business continuity.
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Senior Technical Leadership & Principal Architects */}
+      <div style={{ marginBottom: 44 }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <h3 style={{ fontSize: 22, fontWeight: 700, color: TOKENS.paper, margin: "0 0 8px" }}>
+            Senior Engineering Leadership & Principal Architects
+          </h3>
+          <p style={{ fontSize: 13.5, color: TOKENS.slate, maxWidth: 640, margin: "0 auto" }}>
+            Our development pods are directed by seasoned technology leaders with deep battle-tested experience across global technology organizations.
+          </p>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: 20 }}>
+          {leadership.map((l, i) => (
+            <div
+              key={i}
+              style={{
+                background: TOKENS.panel,
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 12,
+                padding: 22,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+              }}
+            >
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <div
+                    style={{
+                      width: 46,
+                      height: 46,
+                      borderRadius: "50%",
+                      background: l.color,
+                      color: "#FFFFFF",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 18,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {l.avatar}
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: TOKENS.paper }}>{l.name}</h4>
+                    <div style={{ fontSize: 11.5, fontWeight: 600, color: l.color }}>{l.role}</div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, marginBottom: 10 }}>
+                  {l.cred}
+                </div>
+
+                <p style={{ margin: "0 0 16px", fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.55 }}>
+                  {l.bio}
+                </p>
+              </div>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 12 }}>
+                {l.tags.map((t, ti) => (
+                  <span
+                    key={ti}
+                    style={{
+                      background: TOKENS.panelAlt,
+                      borderRadius: 4,
+                      padding: "2px 6px",
+                      fontSize: 10.5,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      color: TOKENS.paper,
+                    }}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Global Delivery Hubs CTA Card */}
+      <div style={{ background: `linear-gradient(135deg, ${TOKENS.panelAlt} 0%, ${TOKENS.panel} 100%)`, border: `1px solid ${TOKENS.hair}`, borderRadius: 14, padding: 32, textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
+        <h3 style={{ fontSize: 21, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>
+          Ready to Accelerate Your Engineering Roadmap?
+        </h3>
+        <p style={{ fontSize: 14, color: TOKENS.slate, maxWidth: 640, margin: "0 auto 24px", lineHeight: 1.6 }}>
+          Headquartered in the Telangana Technology Corridor with distributed engineering teams across Hyderabad, Bengaluru, Chennai, and global delivery nodes.
         </p>
-        <Button onClick={() => go("contact")}>Schedule a Technical Consultation →</Button>
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <Button onClick={() => go("contact")} style={{ padding: "11px 22px", fontSize: 14 }}>
+            Schedule an Architecture Consultation →
+          </Button>
+          <Button onClick={() => go("rfq-wizard")} variant="secondary" style={{ padding: "11px 20px", fontSize: 14 }}>
+            ⚡ Plan Project Scope
+          </Button>
+        </div>
       </div>
     </div>
   );
