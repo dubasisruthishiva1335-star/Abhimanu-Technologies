@@ -12,7 +12,6 @@ import * as THREE from "three";
    - Cloud, DevOps & Infrastructure (AWS/GCP/Azure/K8s)
    - Enterprise AI & Custom Automation
    - Proprietary Software Products (ERP, CRM, HRMS, AI Studio)
-   - Interactive Client Project Scope & Cost Estimator
    ============================================================ */
 
 const LIGHT_TOKENS = {
@@ -34,24 +33,12 @@ const LIGHT_TOKENS = {
 
 const TOKENS = { ...LIGHT_TOKENS };
 
-/* ---------------------------- Multi-Currency Engine ---------------------------- */
+/* ---------------------------- Currency Formatter ---------------------------- */
 
-const CURRENCIES = {
-  INR: { code: "INR", symbol: "₹", label: "🇮🇳 INR (₹)", rate: 1 },
-  USD: { code: "USD", symbol: "$", label: "🇺🇸 USD ($)", rate: 0.012 },
-  EUR: { code: "EUR", symbol: "€", label: "🇪🇺 EUR (€)", rate: 0.011 },
-  AED: { code: "AED", symbol: "AED ", label: "🇦🇪 AED (د.إ)", rate: 0.044 },
-};
-
-const formatPrice = (inrAmount, curr = "INR") => {
-  const c = CURRENCIES[curr] || CURRENCIES.INR;
-  const converted = inrAmount * c.rate;
-  if (curr === "INR") {
-    if (inrAmount >= 10000000) return `₹${(inrAmount / 10000000).toFixed(1)} Cr`;
-    if (inrAmount >= 100000) return `₹${(inrAmount / 100000).toFixed(1)} L`;
-    return `₹${inrAmount.toLocaleString("en-IN")}`;
-  }
-  return `${c.symbol}${Math.round(converted).toLocaleString("en-US")}`;
+const formatPrice = (inrAmount) => {
+  if (inrAmount >= 10000000) return `₹${(inrAmount / 10000000).toFixed(1)} Cr`;
+  if (inrAmount >= 100000) return `₹${(inrAmount / 100000).toFixed(1)} L`;
+  return `₹${Math.round(inrAmount).toLocaleString("en-IN")}`;
 };
 
 /* ---------------------------- IT Services Dataset ---------------------------- */
@@ -1976,7 +1963,7 @@ function ProductDemoModal({ product, isOpen, onClose }) {
           {[
             { id: "sandbox", label: "⚡ Live Interactive Sandbox" },
             { id: "features", label: "Module Features" },
-            { id: "architecture", label: "System Architecture" },
+            { id: "architecture", label: "Cloud Architecture" },
             { id: "pricing", label: "SaaS Plans" },
           ].map((t) => (
             <button
@@ -3640,7 +3627,7 @@ function CaseStudyReaderModal({ caseStudy, isOpen, onClose, go }) {
         {activeTab === "architecture" && (
           <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 20 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 12 }}>
-              SYSTEM ARCHITECTURE TOPOLOGY & DATA FLOW
+              DISTRIBUTED CLOUD TOPOLOGY & DATA FLOW
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, alignItems: "center", marginBottom: 20 }}>
               <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
@@ -4326,7 +4313,7 @@ fun main() = runBlocking {
         {/* Topic / Endpoint Switcher */}
         <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
           {[
-            { id: "quote", label: "1. Scope & Cost Estimator API" },
+            { id: "quote", label: "1. Project Scope & Architecture API" },
             { id: "rag", label: "2. Enterprise AI Studio Vector RAG" },
             { id: "invoice", label: "3. Cloud ERP Automated GST Invoice" },
             { id: "sprint", label: "4. Live Sprint Velocity & Telemetry" },
