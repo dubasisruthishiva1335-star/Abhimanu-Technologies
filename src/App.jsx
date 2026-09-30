@@ -5062,6 +5062,7 @@ function CareersPage({ go }) {
     { title: "Senior Full Stack Engineer (React + Node/Go)", team: "Digital Platforms", loc: "Hyderabad / Remote", exp: "4-7 years", comp: "₹18L - ₹32L PA" },
     { title: "Senior Android Engineer (Kotlin + Jetpack Compose)", team: "Mobile Engineering", loc: "Bengaluru / Remote", exp: "3-6 years", comp: "₹16L - ₹28L PA" },
     { title: "Frontend Architecture Lead (Next.js + Design Systems)", team: "UI/UX Engineering", loc: "Telangana / Remote", exp: "5-9 years", comp: "₹22L - ₹38L PA" },
+    { title: "Staff AI/ML Systems Engineer (Python + Vector DBs)", team: "AI & Data Engineering", loc: "Hyderabad / Remote", exp: "5-8 years", comp: "₹24L - ₹42L PA" },
     { title: "DevOps & Cloud SRE Architect (AWS + Kubernetes)", team: "Infrastructure", loc: "Chennai / Remote", exp: "4-8 years", comp: "₹20L - ₹35L PA" },
   ];
 
