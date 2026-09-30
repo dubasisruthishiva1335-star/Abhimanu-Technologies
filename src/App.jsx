@@ -820,6 +820,7 @@ function SiteHeader({
   openSpotlight,
   openArchitecture,
   openApiSandbox,
+  openStatusModal,
   theme = "light",
   setTheme,
 }) {
@@ -1078,6 +1079,29 @@ function SiteHeader({
             <kbd style={{ background: "rgba(15,23,42,0.06)", border: `1px solid ${TOKENS.hair}`, borderRadius: 3, padding: "1px 4px", fontSize: 10, fontFamily: "'JetBrains Mono', monospace" }}>Ctrl+K</kbd>
           </button>
 
+          {/* System SLA Status Telemetry Pill */}
+          <button
+            onClick={openStatusModal}
+            style={{
+              background: "rgba(16, 185, 129, 0.08)",
+              border: "1px solid rgba(16, 185, 129, 0.28)",
+              borderRadius: 6,
+              padding: "6px 10px",
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: 600,
+              color: "#10B981",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+            title="Click to view Live 99.99% Infrastructure SLA & Edge Telemetry"
+          >
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#10B981", boxShadow: "0 0 6px #10B981" }} />
+            <span>99.99% SLA</span>
+          </button>
+
           {/* Theme Toggle Pill */}
           <button
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
@@ -1259,6 +1283,34 @@ function SiteHeader({
             gap: 10,
           }}
         >
+          {/* Mobile Status Telemetry Banner */}
+          <button
+            onClick={() => { openStatusModal(); setMobileMenuOpen(false); }}
+            style={{
+              background: "rgba(16, 185, 129, 0.08)",
+              border: "1px solid rgba(16, 185, 129, 0.28)",
+              color: "#10B981",
+              borderRadius: 6,
+              padding: "9px 12px",
+              fontSize: 12,
+              fontWeight: 700,
+              fontFamily: "'JetBrains Mono', monospace",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 4,
+            }}
+          >
+            <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981" }} />
+              <span>System Telemetry & Health</span>
+            </span>
+            <span style={{ fontSize: 11, background: "rgba(16, 185, 129, 0.15)", padding: "2px 6px", borderRadius: 4 }}>
+              99.99% SLA ⚡
+            </span>
+          </button>
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
             <button
               onClick={() => { openArchitecture(); setMobileMenuOpen(false); }}
@@ -2567,6 +2619,501 @@ function ApiSandboxModal({ isOpen, onClose }) {
   );
 }
 
+/* ---------------------------- System Status & SLA Telemetry Modal ---------------------------- */
+
+function SystemStatusModal({ isOpen, onClose }) {
+  const [selectedRegion, setSelectedRegion] = useState("all");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState("Just now (Live edge streaming)");
+  const [alertEmail, setAlertEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+  const [hoveredDay, setHoveredDay] = useState(null);
+
+  if (!isOpen) return null;
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+      const d = new Date();
+      setLastUpdated(`Refreshed at ${d.toLocaleTimeString()}`);
+    }, 500);
+  };
+
+  const edgeNodes = [
+    { id: "HYD-1", city: "Hyderabad, India", role: "Primary Cloud Datacenter", ping: isRefreshing ? "..." : "12ms", p99: "22ms", uptime: "99.998%", ssl: "TLS 1.3 / Grade A+", status: "Healthy" },
+    { id: "SIN-1", city: "Singapore, APAC", role: "Asia-Pacific Edge PoP", ping: isRefreshing ? "..." : "38ms", p99: "49ms", uptime: "99.995%", ssl: "TLS 1.3 / Grade A+", status: "Healthy" },
+    { id: "FRA-1", city: "Frankfurt, Germany", role: "Europe Central Edge", ping: isRefreshing ? "..." : "114ms", p99: "132ms", uptime: "99.992%", ssl: "TLS 1.3 / Grade A+", status: "Healthy" },
+    { id: "IAD-1", city: "US-East (Virginia)", role: "Americas Edge Gateway", ping: isRefreshing ? "..." : "158ms", p99: "174ms", uptime: "99.991%", ssl: "TLS 1.3 / Grade A+", status: "Healthy" },
+  ];
+
+  const subsystems = [
+    { name: "Global Ingress API Gateway", stack: "Kong & Envoy L7 Proxy", uptime: "100.00%", latency: "8.4ms", status: "Operational", desc: "Edge routing, rate token buckets & mTLS termination" },
+    { name: "Microservices Core Fleet", stack: "Go 1.22 & Node.js on Kubernetes", uptime: "99.99%", latency: "16.1ms", status: "Operational", desc: "Stateless container pods auto-scaled across multi-AZ nodes" },
+    { name: "Distributed Transaction Database", stack: "PostgreSQL Multi-AZ + PgBouncer", uptime: "99.99%", latency: "2.8ms write", status: "Operational", desc: "Write-ahead streaming replication & sub-millisecond connection pooling" },
+    { name: "In-Memory Cache Cluster", stack: "Redis 7.2 Multi-Node Cluster", uptime: "100.00%", latency: "0.38ms", status: "Operational", desc: "Distributed session caching and instant KV retrieval" },
+    { name: "Event Streaming Mesh", stack: "Apache Kafka 3.6 Event Mesh", uptime: "99.99%", latency: "0 consumer lag", status: "Operational", desc: "Zero data-loss financial & telemetry log bus" },
+    { name: "Vector AI Inference Fleet", stack: "Qdrant Vector DB + Dedicated GPUs", uptime: "99.98%", latency: "134ms p95", status: "Operational", desc: "Private enterprise embeddings & semantic RAG retrieval" },
+    { name: "Edge CDN & Enterprise WAF", stack: "Cloudflare Enterprise + DDoS Shield", uptime: "100.00%", latency: "Instant", status: "Operational", desc: "L3/L4/L7 threat mitigation and global static asset edge cache" },
+    { name: "GitOps CI/CD Delivery Fleet", stack: "ArgoCD & GitHub Enterprise Runners", uptime: "99.96%", latency: "3m 10s build", status: "Operational", desc: "Continuous delivery with automated canary verification" },
+  ];
+
+  const filteredNodes = selectedRegion === "all" ? edgeNodes : edgeNodes.filter((n) => n.id === selectedRegion);
+
+  const incidents = [
+    {
+      id: "INC-2026-0929",
+      title: "Automated Kafka Consumer Partition Rebalance",
+      status: "Resolved",
+      time: "Yesterday, 14:22 UTC",
+      duration: "42 seconds",
+      impact: "Zero customer impact. Autonomous pod self-healing initiated rebalance without message loss.",
+    },
+    {
+      id: "MNT-2026-1004",
+      title: "Rolling Worker Node OS Kernel & Security Patching",
+      status: "Scheduled",
+      time: "Upcoming Sunday, 02:00 - 02:15 UTC",
+      duration: "15 minutes",
+      impact: "Zero downtime. Pods automatically cordoned and drained across secondary AZ nodes.",
+    },
+  ];
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15, 23, 42, 0.72)",
+        backdropFilter: "blur(14px)",
+        zIndex: 10000,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: 960,
+          maxHeight: "90vh",
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          boxShadow: "0 24px 60px rgba(0,0,0,0.3)",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        {/* Modal Header */}
+        <div
+          style={{
+            padding: "20px 24px",
+            borderBottom: `1px solid ${TOKENS.hair}`,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            background: TOKENS.panelAlt,
+          }}
+        >
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 20 }}>🟢</span>
+              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
+                System Telemetry & Operational Health
+              </h2>
+              <span
+                style={{
+                  background: "rgba(16, 185, 129, 0.15)",
+                  color: "#10B981",
+                  fontSize: 10.5,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: 700,
+                  padding: "2px 8px",
+                  borderRadius: 4,
+                  border: "1px solid rgba(16, 185, 129, 0.3)",
+                }}
+              >
+                99.994% SLA ROLLING
+              </span>
+            </div>
+            <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 4 }}>
+              Real-time infrastructure heartbeat across global multi-region edge gateways and distributed data layers.
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <button
+              onClick={handleRefresh}
+              style={{
+                background: TOKENS.panel,
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 6,
+                padding: "6px 12px",
+                fontSize: 11.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                color: TOKENS.paper,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <span>{isRefreshing ? "⏳" : "🔄"}</span>
+              <span>{isRefreshing ? "Pinging Nodes..." : "Refresh Telemetry"}</span>
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                background: "transparent",
+                border: "none",
+                fontSize: 22,
+                cursor: "pointer",
+                color: TOKENS.slate,
+                padding: "0 6px",
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        {/* Modal Scrollable Body */}
+        <div style={{ overflowY: "auto", padding: "20px 24px", display: "flex", flexDirection: "column", gap: 24 }}>
+          {/* Main Status Hero */}
+          <div
+            style={{
+              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(13, 148, 136, 0.06) 100%)",
+              border: "1px solid rgba(16, 185, 129, 0.25)",
+              borderRadius: 10,
+              padding: "16px 20px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 16,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: "50%",
+                  background: "rgba(16, 185, 129, 0.18)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 22,
+                  boxShadow: "0 0 16px rgba(16, 185, 129, 0.35)",
+                }}
+              >
+                ✓
+              </div>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#10B981" }}>
+                  All Production Systems Fully Operational
+                </div>
+                <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 2 }}>
+                  All 4 global edge nodes, database clusters, and inference pipelines are reporting normal operating parameters.
+                </div>
+              </div>
+            </div>
+            <div style={{ textAlign: "right", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
+              <div>STATUS: <strong style={{ color: "#10B981" }}>HEALTHY</strong></div>
+              <div style={{ marginTop: 2 }}>{lastUpdated}</div>
+            </div>
+          </div>
+
+          {/* 90-Day Rolling Uptime Bar */}
+          <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: "16px 18px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>
+                90-Day Rolling Uptime History
+              </div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#10B981", fontWeight: 700 }}>
+                99.994% Availability
+              </div>
+            </div>
+
+            {/* 90 Bars */}
+            <div style={{ display: "flex", gap: 3, alignItems: "center", height: 32, marginBottom: 8 }}>
+              {Array.from({ length: 90 }).map((_, i) => {
+                const isMaintenanceDay = i === 62;
+                return (
+                  <div
+                    key={i}
+                    onMouseEnter={() => setHoveredDay(90 - i)}
+                    onMouseLeave={() => setHoveredDay(null)}
+                    style={{
+                      flex: 1,
+                      height: "100%",
+                      borderRadius: 2,
+                      background: isMaintenanceDay ? "#F59E0B" : "#10B981",
+                      cursor: "pointer",
+                      opacity: hoveredDay === 90 - i ? 1 : 0.85,
+                      transition: "opacity 0.15s ease",
+                    }}
+                    title={isMaintenanceDay ? `Day ${90 - i}: 99.98% (Scheduled Zero-Downtime Migration)` : `Day ${90 - i}: 100.0% Uptime`}
+                  />
+                );
+              })}
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
+              <span>90 Days Ago</span>
+              <span>{hoveredDay ? `Viewing Day -${hoveredDay}: ${hoveredDay === 28 ? "99.98% (Maintenance)" : "100.0% Operational"}` : "Hover a bar for telemetry"}</span>
+              <span>Today (100.0%)</span>
+            </div>
+          </div>
+
+          {/* Global Edge Node Health & Latency */}
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>
+                Global Edge Gateways & Latency
+              </div>
+              {/* Region filter */}
+              <div style={{ display: "flex", gap: 4 }}>
+                {["all", "HYD-1", "SIN-1", "FRA-1", "IAD-1"].map((reg) => (
+                  <button
+                    key={reg}
+                    onClick={() => setSelectedRegion(reg)}
+                    style={{
+                      background: selectedRegion === reg ? TOKENS.blue : "transparent",
+                      color: selectedRegion === reg ? "#FFFFFF" : TOKENS.slate,
+                      border: `1px solid ${selectedRegion === reg ? TOKENS.blue : TOKENS.hair}`,
+                      borderRadius: 4,
+                      padding: "3px 8px",
+                      fontSize: 10.5,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      cursor: "pointer",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {reg.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+              {filteredNodes.map((node) => (
+                <div
+                  key={node.id}
+                  style={{
+                    background: TOKENS.panelAlt,
+                    border: `1px solid ${TOKENS.hair}`,
+                    borderRadius: 8,
+                    padding: "14px 16px",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.paper }}>
+                      {node.id}
+                    </span>
+                    <span style={{ fontSize: 10, color: "#10B981", fontWeight: 700, background: "rgba(16, 185, 129, 0.15)", padding: "2px 6px", borderRadius: 4 }}>
+                      ● {node.status}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper, marginBottom: 2 }}>{node.city}</div>
+                  <div style={{ fontSize: 11, color: TOKENS.slate, marginBottom: 10 }}>{node.role}</div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
+                    <div>
+                      <span style={{ color: TOKENS.slate }}>Ping: </span>
+                      <strong style={{ color: TOKENS.paper }}>{node.ping}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: TOKENS.slate }}>p99: </span>
+                      <strong style={{ color: TOKENS.paper }}>{node.p99}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: TOKENS.slate }}>SLA: </span>
+                      <strong style={{ color: "#10B981" }}>{node.uptime}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: TOKENS.slate }}>Security: </span>
+                      <strong style={{ color: TOKENS.paper }}>TLS 1.3</strong>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Core Infrastructure Subsystems */}
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper, marginBottom: 12 }}>
+              Core Infrastructure Subsystems
+            </div>
+            <div style={{ border: `1px solid ${TOKENS.hair}`, borderRadius: 8, overflow: "hidden" }}>
+              {subsystems.map((sub, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "2fr 1.5fr 1fr 1fr 1fr",
+                    padding: "12px 16px",
+                    background: idx % 2 === 0 ? TOKENS.panel : TOKENS.panelAlt,
+                    borderBottom: idx === subsystems.length - 1 ? "none" : `1px solid ${TOKENS.hair}`,
+                    alignItems: "center",
+                    gap: 12,
+                    fontSize: 12,
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 600, color: TOKENS.paper }}>{sub.name}</div>
+                    <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 2 }}>{sub.desc}</div>
+                  </div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate, fontSize: 11 }}>
+                    {sub.stack}
+                  </div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper, fontSize: 11 }}>
+                    ⚡ {sub.latency}
+                  </div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", color: "#10B981", fontWeight: 700, fontSize: 11 }}>
+                    {sub.uptime}
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <span style={{ fontSize: 10.5, color: "#10B981", background: "rgba(16, 185, 129, 0.12)", padding: "2px 8px", borderRadius: 4, fontWeight: 600 }}>
+                      ● {sub.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Incident & Maintenance Feed */}
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper, marginBottom: 12 }}>
+              Incident & Maintenance Log
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {incidents.map((inc) => (
+                <div
+                  key={inc.id}
+                  style={{
+                    background: TOKENS.panelAlt,
+                    border: `1px solid ${TOKENS.hair}`,
+                    borderRadius: 8,
+                    padding: "14px 16px",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span
+                        style={{
+                          fontSize: 10,
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontWeight: 700,
+                          padding: "2px 6px",
+                          borderRadius: 4,
+                          background: inc.status === "Resolved" ? "rgba(16, 185, 129, 0.15)" : "rgba(37, 99, 235, 0.15)",
+                          color: inc.status === "Resolved" ? "#10B981" : TOKENS.blue,
+                        }}
+                      >
+                        {inc.status.toUpperCase()}
+                      </span>
+                      <strong style={{ fontSize: 13, color: TOKENS.paper }}>{inc.title}</strong>
+                    </div>
+                    <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+                      {inc.time}
+                    </span>
+                  </div>
+                  <p style={{ margin: "0 0 6px", fontSize: 12, color: TOKENS.slate, lineHeight: 1.5 }}>
+                    {inc.impact}
+                  </p>
+                  <div style={{ fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+                    Reference ID: {inc.id} • Duration: {inc.duration}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* SLA Commitment Banner & Alert Subscription */}
+          <div
+            style={{
+              background: `linear-gradient(135deg, ${TOKENS.panelAlt} 0%, ${TOKENS.panel} 100%)`,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 10,
+              padding: "18px 20px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 16,
+            }}
+          >
+            <div style={{ maxWidth: 460 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: TOKENS.paper, marginBottom: 4 }}>
+                🛡️ 99.99% Financial SLA Backing
+              </div>
+              <div style={{ fontSize: 11.5, color: TOKENS.slate, lineHeight: 1.5 }}>
+                Our client contracts incorporate automated 25% sprint credits if monthly multi-AZ availability dips below 99.9%. Monitored continuously via third-party synthetic probes.
+              </div>
+            </div>
+
+            <div style={{ minWidth: 280 }}>
+              {subscribed ? (
+                <div style={{ color: "#10B981", fontSize: 12, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>
+                  ✓ Subscribed to real-time status alerts!
+                </div>
+              ) : (
+                <form onSubmit={handleSubscribe} style={{ display: "flex", gap: 6 }}>
+                  <input
+                    type="email"
+                    required
+                    placeholder="Enter email for SLA alerts..."
+                    value={alertEmail}
+                    onChange={(e) => setAlertEmail(e.target.value)}
+                    style={{
+                      background: TOKENS.panel,
+                      border: `1px solid ${TOKENS.hair}`,
+                      borderRadius: 6,
+                      padding: "8px 10px",
+                      fontSize: 11.5,
+                      color: TOKENS.paper,
+                      width: 190,
+                    }}
+                  />
+                  <Button type="submit" style={{ padding: "8px 12px", fontSize: 11.5 }}>
+                    Subscribe
+                  </Button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div
+          style={{
+            padding: "14px 24px",
+            borderTop: `1px solid ${TOKENS.hair}`,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            background: TOKENS.panelAlt,
+          }}
+        >
+          <div style={{ fontSize: 11, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>
+            Autonomous Incident Monitoring by Prometheus & OpenTelemetry
+          </div>
+          <Button onClick={onClose} variant="secondary" style={{ padding: "7px 16px", fontSize: 12 }}>
+            Close Telemetry View
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------------------------- Enhanced Product Demo Modal with Live Interactive Sandbox ---------------------------- */
 
 function ProductDemoModal({ product, isOpen, onClose }) {
@@ -3072,7 +3619,7 @@ function ProductDemoModal({ product, isOpen, onClose }) {
 
 /* ---------------------------- Universal Spotlight Search (Ctrl+K) ---------------------------- */
 
-function SpotlightSearchModal({ isOpen, onClose, go, openEstimator, openTracker, openArchitecture, openApiSandbox }) {
+function SpotlightSearchModal({ isOpen, onClose, go, openEstimator, openTracker, openArchitecture, openApiSandbox, openStatus }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
 
@@ -3100,6 +3647,7 @@ function SpotlightSearchModal({ isOpen, onClose, go, openEstimator, openTracker,
     { type: "Product", title: "Abhimanyu AI Studio", id: "products", icon: "🧠", sub: "Private enterprise knowledge RAG & automation" },
     { type: "Product", title: "Abhimanyu DevPulse", id: "products", icon: "📊", sub: "Real-time cloud observability & rollback monitor" },
     { type: "Product", title: "Abhimanyu AppEngine", id: "products", icon: "⚡", sub: "Rapid backend-as-a-service & API generator" },
+    { type: "Tool", title: "Live 99.99% System Status & SLA Telemetry", id: "status", action: "openStatus", icon: "🟢", sub: "Global edge latency, database health, API gateway and incident log" },
     { type: "Tool", title: "Interactive System Architecture Designer", id: "architecture", action: "openArchitecture", icon: "📐", sub: "Design cloud microservices, topology & estimate latency" },
     { type: "Tool", title: "Live Developer API Console & Sandbox", id: "api-sandbox", action: "openApiSandbox", icon: "🔌", sub: "Execute simulated REST & GraphQL API requests live" },
     { type: "Tool", title: "Interactive Project Scope & Cost Estimator", id: "estimator", action: "openEstimator", icon: "⚡", sub: "Calculate tech stack budget, sprints & team pod" },
@@ -3121,6 +3669,7 @@ function SpotlightSearchModal({ isOpen, onClose, go, openEstimator, openTracker,
     else if (item.action === "openTracker") openTracker?.();
     else if (item.action === "openArchitecture") openArchitecture?.();
     else if (item.action === "openApiSandbox") openApiSandbox?.();
+    else if (item.action === "openStatus") openStatus?.();
     else go(item.id);
   };
 
@@ -4483,6 +5032,357 @@ function CaseStudiesPage({ go }) {
 /* ---------------------------- Page 6: KnowledgePage (Tech Hub) ---------------------------- */
 
 function KnowledgePage({ openApiSandbox, openArchitecture }) {
+  const [activeLang, setActiveLang] = useState("ts");
+  const [activeTopic, setActiveTopic] = useState("quote");
+  const [copiedInstall, setCopiedInstall] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
+
+  const sdkSnippets = {
+    ts: {
+      quote: `import { AbhimanyuClient } from '@abhimanyu/sdk';
+
+const abhimanyu = new AbhimanyuClient({
+  apiKey: process.env.ABHIMANYU_API_KEY,
+  environment: 'production'
+});
+
+// Calculate quote for a high-concurrency enterprise project
+const quote = await abhimanyu.estimator.calculateQuote({
+  serviceCategory: 'web-application-development',
+  tier: 'enterprise',
+  frontend: 'nextjs-14',
+  backend: 'go-distributed',
+  cloud: 'aws-multi-az',
+  sprintsCount: 6,
+  currency: 'INR'
+});
+
+console.log(\`Estimated Cost: ₹\${quote.totalEstimatedInr.toLocaleString('en-IN')}\`);
+console.log(\`Assigned Pod: \${quote.suggestedPod.join(', ')}\`);`,
+
+      rag: `import { AbhimanyuClient } from '@abhimanyu/sdk';
+
+const abhimanyu = new AbhimanyuClient({ apiKey: process.env.ABHIMANYU_API_KEY });
+
+// Query Private Enterprise Vector Knowledge Base
+const response = await abhimanyu.aiStudio.ragQuery({
+  knowledgeBaseId: 'kb_fintech_compliance_2026',
+  prompt: 'What are the PCI-DSS tokenization requirements for cardholder storage?',
+  topK: 4,
+  temperature: 0.1
+});
+
+console.log(\`Verified Answer: \${response.answer}\`);
+console.log('Source Documents:', response.citations.map(c => c.documentTitle));`,
+
+      invoice: `import { AbhimanyuClient } from '@abhimanyu/sdk';
+
+const abhimanyu = new AbhimanyuClient({ apiKey: process.env.ABHIMANYU_API_KEY });
+
+// Automated GST E-Invoicing & IRN Generation
+const invoice = await abhimanyu.erp.invoices.create({
+  customerGstin: '36AAAAA0000A1Z5',
+  clientCompanyName: 'Apex FinTech Solutions Pvt Ltd',
+  items: [
+    { sku: 'SKU-8841', description: 'High-Precision Micro-Controllers', qty: 25, unitPrice: 850 }
+  ],
+  applyGST: true,
+  irnAutoSign: true
+});
+
+console.log(\`Invoice: \${invoice.invoiceNumber} | Government IRN: \${invoice.irn}\`);`,
+
+      sprint: `import { AbhimanyuClient } from '@abhimanyu/sdk';
+
+const abhimanyu = new AbhimanyuClient({ apiKey: process.env.ABHIMANYU_API_KEY });
+
+// Real-time WebSocket sprint burndown stream
+const stream = abhimanyu.tracker.streamSprintProgress('PRJ-2026-APEX');
+stream.on('data', (sprint) => {
+  console.log(\`Sprint: \${sprint.name} | Burndown: \${sprint.completedPoints}/\${sprint.totalPoints} pts\`);
+  console.log(\`Staging Cluster: \${sprint.stagingUrl}\`);
+});`,
+    },
+
+    py: {
+      quote: `from abhimanyu import AbhimanyuClient
+import os
+
+client = AbhimanyuClient(
+    api_key=os.environ.get("ABHIMANYU_API_KEY"),
+    timeout_seconds=30
+)
+
+# Calculate dynamic enterprise quote
+quote = client.estimator.calculate_quote(
+    service_category="web-application-development",
+    tier="enterprise",
+    frontend="nextjs-14",
+    backend="go-distributed",
+    cloud="aws-multi-az",
+    sprints_count=6,
+    currency="INR"
+)
+
+print(f"Estimated Investment: ₹{quote.total_estimated_inr:,.2f}")
+print(f"Delivery Timeline: {quote.timeline_weeks} Weeks across {quote.sprints_count} Sprints")`,
+
+      rag: `from abhimanyu import AbhimanyuClient
+import os
+
+client = AbhimanyuClient(api_key=os.environ.get("ABHIMANYU_API_KEY"))
+
+# Query Private Enterprise Vector Knowledge Base
+response = client.ai_studio.rag_query(
+    knowledge_base_id="kb_fintech_compliance_2026",
+    prompt="Explain our disaster recovery RTO and automated database failover SLAs.",
+    top_k=4,
+    temperature=0.1
+)
+
+print(f"Inference Latency: {response.latency_ms}ms (p95)")
+print(f"Answer: {response.answer}")
+for cite in response.citations:
+    print(f" - [{cite.score:.2f}] {cite.title} (Page {cite.page})")`,
+
+      invoice: `from abhimanyu import AbhimanyuClient
+import os
+
+client = AbhimanyuClient(api_key=os.environ.get("ABHIMANYU_API_KEY"))
+
+# Generate GST E-Invoice with Automated IRN Digitization
+invoice = client.erp.invoices.create(
+    customer_gstin="36AAAAA0000A1Z5",
+    client_name="Apex FinTech Solutions Pvt Ltd",
+    items=[
+        {"sku": "SKU-8841", "description": "High-Precision Micro-Controllers", "qty": 25, "unit_price": 850}
+    ],
+    irn_auto_sign=True
+)
+
+print(f"Tax Invoice: {invoice.invoice_number} | IRN: {invoice.irn}")
+print(f"Grand Total: ₹{invoice.grand_total:,.2f} (Includes 18% CGST/SGST)")`,
+
+      sprint: `from abhimanyu import AbhimanyuClient
+import os
+
+client = AbhimanyuClient(api_key=os.environ.get("ABHIMANYU_API_KEY"))
+
+# Query live sprint burndown & DORA metrics
+status = client.tracker.get_sprint_status("PRJ-2026-APEX")
+print(f"Active Sprint: {status.name} (Milestone {status.milestone_index})")
+print(f"Staging Deployment: {status.staging_url}")
+print(f"DORA Lead Time: {status.lead_time_days} days | Change Failure Rate: {status.change_failure_rate}%")`,
+    },
+
+    go: {
+      quote: `package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"github.com/abhimanyu/client-go"
+)
+
+func main() {
+	client := abhimanyu.NewClient(abhimanyu.Config{
+		APIKey:  "abh_live_94819488a0b94c3d",
+		BaseURL: "https://api.abhimanu-technologies.app/v1",
+	})
+
+	quote, err := client.Estimator.CalculateQuote(context.Background(), &abhimanyu.QuoteParams{
+		ServiceCategory: "web-application-development",
+		Tier:            "enterprise",
+		Frontend:        "nextjs-14",
+		Backend:         "go-distributed",
+		Cloud:           "aws-multi-az",
+		SprintsCount:    6,
+	})
+	if err != nil {
+		log.Fatalf("Calculation error: %v", err)
+	}
+
+	fmt.Printf("Estimated Cost: ₹%d | Timeline: %d weeks\\n", quote.TotalINR, quote.Weeks)
+}`,
+
+      rag: `package main
+
+import (
+	"context"
+	"fmt"
+	"github.com/abhimanyu/client-go"
+)
+
+func main() {
+	client := abhimanyu.NewClient(abhimanyu.Config{APIKey: "abh_live_94819488a0b94c3d"})
+
+	rag, _ := client.AIStudio.QueryRAG(context.Background(), &abhimanyu.RAGRequest{
+		KnowledgeBaseID: "kb_fintech_compliance_2026",
+		Prompt:          "Explain our disaster recovery RTO and automated database failover SLAs.",
+		TopK:            3,
+	})
+
+	fmt.Printf("Model: %s | Latency: %dms\\n", rag.ModelVersion, rag.LatencyMs)
+	fmt.Printf("Synthesis: %s\\n", rag.Answer)
+}`,
+
+      invoice: `package main
+
+import (
+	"context"
+	"fmt"
+	"github.com/abhimanyu/client-go"
+)
+
+func main() {
+	client := abhimanyu.NewClient(abhimanyu.Config{APIKey: "abh_live_94819488a0b94c3d"})
+
+	inv, _ := client.ERP.CreateInvoice(context.Background(), &abhimanyu.InvoicePayload{
+		GSTIN:       "36AAAAA0000A1Z5",
+		ClientName:  "Apex FinTech Solutions Pvt Ltd",
+		Items: []abhimanyu.Item{
+			{SKU: "SKU-8841", Qty: 25, Price: 850.0},
+		},
+		AutoSignIRN: true,
+	})
+
+	fmt.Printf("GST E-Invoice Created: %s | IRN: %s\\n", inv.InvoiceNumber, inv.IRN)
+}`,
+
+      sprint: `package main
+
+import (
+	"context"
+	"fmt"
+	"github.com/abhimanyu/client-go"
+)
+
+func main() {
+	client := abhimanyu.NewClient(abhimanyu.Config{APIKey: "abh_live_94819488a0b94c3d"})
+
+	status, _ := client.Tracker.GetSprintTelemetry(context.Background(), "PRJ-2026-APEX")
+	fmt.Printf("Project: %s | Status: %s\\n", status.ProjectID, status.State)
+	fmt.Printf("Staging URL: %s\\n", status.StagingURL)
+}`,
+    },
+
+    kt: {
+      quote: `package com.abhimanyu.android.demo
+
+import com.abhimanyu.android.sdk.AbhimanyuClient
+import com.abhimanyu.android.sdk.models.QuoteRequest
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    val client = AbhimanyuClient.Builder()
+        .apiKey("abh_live_94819488a0b94c3d")
+        .build()
+
+    val quote = client.estimator.calculateQuote(
+        QuoteRequest(
+            serviceCategory = "web-application-development",
+            tier = "enterprise",
+            frontend = "nextjs-14",
+            backend = "go-distributed",
+            cloud = "aws-multi-az",
+            sprintsCount = 6
+        )
+    )
+
+    println("Total Investment: ₹\${quote.totalEstimatedInr}")
+    println("Pod Assigned: \${quote.suggestedPod.joinToString()}")
+}`,
+
+      rag: `package com.abhimanyu.android.demo
+
+import com.abhimanyu.android.sdk.AbhimanyuClient
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    val client = AbhimanyuClient.Builder().apiKey("abh_live_94819488a0b94c3d").build()
+
+    val rag = client.aiStudio.ragQuery(
+        knowledgeBaseId = "kb_fintech_compliance_2026",
+        prompt = "Explain our disaster recovery RTO and database failover SLAs."
+    )
+
+    println("RAG Result: \${rag.answer}")
+    println("Citations Count: \${rag.citations.size}")
+}`,
+
+      invoice: `package com.abhimanyu.android.demo
+
+import com.abhimanyu.android.sdk.AbhimanyuClient
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    val client = AbhimanyuClient.Builder().apiKey("abh_live_94819488a0b94c3d").build()
+
+    val invoice = client.erp.createInvoice(
+        gstin = "36AAAAA0000A1Z5",
+        clientName = "Apex FinTech Solutions Pvt Ltd",
+        sku = "SKU-8841",
+        qty = 25,
+        unitPrice = 850.0
+    )
+
+    println("Invoice: \${invoice.invoiceNumber} | Total: ₹\${invoice.grandTotal}")
+}`,
+
+      sprint: `package com.abhimanyu.android.demo
+
+import com.abhimanyu.android.sdk.AbhimanyuClient
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    val client = AbhimanyuClient.Builder().apiKey("abh_live_94819488a0b94c3d").build()
+
+    client.tracker.observeSprintVelocity("PRJ-2026-APEX").collectLatest { status ->
+        println("Sprint: \${status.name} | Velocity: \${status.velocityPoints} pts/week")
+    }
+}`,
+    },
+
+    curl: {
+      quote: `curl -X POST https://api.abhimanu-technologies.app/v1/projects/quote/calculate \\
+  -H "Authorization: Bearer abh_live_94819488a0b94c3d" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "service_category": "web-application-development",
+    "tier": "enterprise",
+    "frontend": "nextjs-14",
+    "backend": "go-distributed",
+    "cloud": "aws-multi-az",
+    "sprints_count": 6,
+    "currency": "INR"
+  }'`,
+
+      rag: `curl -X POST https://api.abhimanu-technologies.app/v1/ai/rag/query \\
+  -H "Authorization: Bearer abh_live_94819488a0b94c3d" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "knowledge_base_id": "kb_fintech_compliance_2026",
+    "prompt": "What are the PCI-DSS tokenization requirements for cardholder storage?",
+    "top_k": 4
+  }'`,
+
+      invoice: `curl -X POST https://api.abhimanu-technologies.app/v1/products/erp/invoices \\
+  -H "Authorization: Bearer abh_live_94819488a0b94c3d" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "customer_gstin": "36AAAAA0000A1Z5",
+    "client_name": "Apex FinTech Solutions Pvt Ltd",
+    "items": [{"sku": "SKU-8841", "qty": 25, "unit_price": 850}],
+    "irn_auto_sign": true
+  }'`,
+
+      sprint: `curl -X GET https://api.abhimanu-technologies.app/v1/projects/PRJ-2026-APEX/telemetry \\
+  -H "Authorization: Bearer abh_live_94819488a0b94c3d"`,
+    },
+  };
+
   const articles = [
     {
       title: "Architecting Distributed Microservices in Go & Node.js",
@@ -4551,6 +5451,233 @@ function KnowledgePage({ openApiSandbox, openArchitecture }) {
           <Button onClick={openArchitecture} variant="secondary" style={{ padding: "9px 16px", fontSize: 13 }}>
             📐 Architecture Map
           </Button>
+        </div>
+      </div>
+
+      {/* Multi-Language Developer SDK & Integration Generator */}
+      <div
+        style={{
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          padding: 24,
+          marginBottom: 36,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14, marginBottom: 18 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 20 }}>💻</span>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
+                Official Developer SDKs & Integration Suite
+              </h3>
+              <span style={{ background: "rgba(37,99,235,0.12)", color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                v2.4 PRODUCTION
+              </span>
+            </div>
+            <p style={{ margin: "4px 0 0", fontSize: 13, color: TOKENS.slate }}>
+              Connect your distributed systems, mobile clients, and enterprise workflows using strongly-typed official SDKs.
+            </p>
+          </div>
+
+          {/* Quick Install Pill */}
+          <div
+            style={{
+              background: TOKENS.panelAlt,
+              border: `1px solid ${TOKENS.hair}`,
+              borderRadius: 8,
+              padding: "6px 12px",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 12,
+            }}
+          >
+            <span style={{ color: TOKENS.teal }}>$</span>
+            <span style={{ color: TOKENS.paper }}>
+              {activeLang === "ts" && "npm install @abhimanyu/sdk"}
+              {activeLang === "py" && "pip install abhimanyu-client"}
+              {activeLang === "go" && "go get github.com/abhimanyu/client-go"}
+              {activeLang === "kt" && 'implementation("com.abhimanyu.android:core:2.4.0")'}
+              {activeLang === "curl" && "curl -sS https://api.abhimanu-technologies.app/v1/health"}
+            </span>
+            <button
+              onClick={() => {
+                const cmd =
+                  activeLang === "ts"
+                    ? "npm install @abhimanyu/sdk"
+                    : activeLang === "py"
+                    ? "pip install abhimanyu-client"
+                    : activeLang === "go"
+                    ? "go get github.com/abhimanyu/client-go"
+                    : activeLang === "kt"
+                    ? 'implementation("com.abhimanyu.android:core:2.4.0")'
+                    : "curl -sS https://api.abhimanu-technologies.app/v1/health";
+                navigator.clipboard?.writeText(cmd);
+                setCopiedInstall(true);
+                setTimeout(() => setCopiedInstall(false), 2000);
+              }}
+              style={{
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                fontSize: 11,
+                color: copiedInstall ? "#10B981" : TOKENS.slate,
+                padding: "2px 4px",
+              }}
+              title="Copy install command"
+            >
+              {copiedInstall ? "✓ Copied" : "📋"}
+            </button>
+          </div>
+        </div>
+
+        {/* Language Tabs */}
+        <div style={{ display: "flex", gap: 6, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 10, marginBottom: 16, overflowX: "auto" }}>
+          {[
+            { id: "ts", label: "TypeScript / Node.js", icon: "📘" },
+            { id: "py", label: "Python 3.11+", icon: "🐍" },
+            { id: "go", label: "Go (Golang)", icon: "🐹" },
+            { id: "kt", label: "Kotlin / Android", icon: "📱" },
+            { id: "curl", label: "cURL / Terminal", icon: "⚡" },
+          ].map((lang) => (
+            <button
+              key={lang.id}
+              onClick={() => setActiveLang(lang.id)}
+              style={{
+                background: activeLang === lang.id ? TOKENS.badgeBg : "transparent",
+                border: `1px solid ${activeLang === lang.id ? TOKENS.blue : "transparent"}`,
+                borderRadius: 6,
+                padding: "6px 14px",
+                fontSize: 12.5,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: activeLang === lang.id ? 700 : 500,
+                color: activeLang === lang.id ? TOKENS.blue : TOKENS.slate,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                whiteSpace: "nowrap",
+              }}
+            >
+              <span>{lang.icon}</span>
+              <span>{lang.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Topic / Endpoint Switcher */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
+          {[
+            { id: "quote", label: "1. Scope & Cost Estimator API" },
+            { id: "rag", label: "2. Enterprise AI Studio Vector RAG" },
+            { id: "invoice", label: "3. Cloud ERP Automated GST Invoice" },
+            { id: "sprint", label: "4. Live Sprint Velocity & Telemetry" },
+          ].map((topic) => (
+            <button
+              key={topic.id}
+              onClick={() => setActiveTopic(topic.id)}
+              style={{
+                background: activeTopic === topic.id ? TOKENS.panelAlt : "transparent",
+                border: `1px solid ${activeTopic === topic.id ? TOKENS.teal : TOKENS.hair}`,
+                borderRadius: 6,
+                padding: "5px 12px",
+                fontSize: 12,
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: activeTopic === topic.id ? 600 : 400,
+                color: activeTopic === topic.id ? TOKENS.paper : TOKENS.slate,
+                cursor: "pointer",
+              }}
+            >
+              {topic.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Code Snippet Box */}
+        <div
+          style={{
+            background: "#0B1727",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 8,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              padding: "8px 16px",
+              background: "#132238",
+              borderBottom: "1px solid rgba(255,255,255,0.08)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#EF4444", display: "inline-block" }} />
+              <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#F59E0B", display: "inline-block" }} />
+              <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#10B981", display: "inline-block" }} />
+              <span style={{ marginLeft: 8, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: "#94A3B8" }}>
+                {activeLang === "ts" && "integration.ts"}
+                {activeLang === "py" && "client_service.py"}
+                {activeLang === "go" && "main.go"}
+                {activeLang === "kt" && "TelemetryRepository.kt"}
+                {activeLang === "curl" && "terminal_request.sh"}
+              </span>
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={() => {
+                  navigator.clipboard?.writeText(sdkSnippets[activeLang][activeTopic]);
+                  setCopiedCode(true);
+                  setTimeout(() => setCopiedCode(false), 2000);
+                }}
+                style={{
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  color: copiedCode ? "#10B981" : "#F8FAFC",
+                  padding: "4px 10px",
+                  fontSize: 11,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  borderRadius: 4,
+                  cursor: "pointer",
+                }}
+              >
+                {copiedCode ? "✓ Copied Snippet" : "📋 Copy Code"}
+              </button>
+              <button
+                onClick={openApiSandbox}
+                style={{
+                  background: "rgba(13,148,136,0.2)",
+                  border: "1px solid rgba(13,148,136,0.4)",
+                  color: "#2DD4BF",
+                  padding: "4px 10px",
+                  fontSize: 11,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  borderRadius: 4,
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
+              >
+                ⚡ Run in Sandbox
+              </button>
+            </div>
+          </div>
+          <pre
+            style={{
+              margin: 0,
+              padding: "16px 20px",
+              color: "#E2E8F0",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 12,
+              lineHeight: 1.6,
+              overflowX: "auto",
+            }}
+          >
+            <code>{sdkSnippets[activeLang][activeTopic]}</code>
+          </pre>
         </div>
       </div>
 
@@ -4930,23 +6057,104 @@ function CareersPage({ go }) {
 /* ---------------------------- Page 10: ContactPage ---------------------------- */
 
 function ContactPage() {
-  const [submitted, setSubmitted] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", phone: "", service: "Web Development", message: "" });
+  const [activeTab, setActiveTab] = useState("calendar"); // "calendar" | "rfp"
 
-  const handleSubmit = (e) => {
+  // Calendar State
+  const [selectedPractice, setSelectedPractice] = useState("Web & Next.js 14");
+  const [selectedDate, setSelectedDate] = useState("Tomorrow (Recommended)");
+  const [selectedTimezone, setSelectedTimezone] = useState("IST (UTC+5:30) - Asia/Kolkata");
+  const [selectedSlot, setSelectedSlot] = useState("02:00 PM - 02:45 PM");
+  const [calForm, setCalForm] = useState({ name: "", email: "", company: "", topic: "" });
+  const [calBooked, setCalBooked] = useState(false);
+  const [copiedMeet, setCopiedMeet] = useState(false);
+  const [downloadedIcs, setDownloadedIcs] = useState(false);
+
+  // RFP Form State
+  const [rfpSubmitted, setRfpSubmitted] = useState(false);
+  const [rfpForm, setRfpForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    service: "Web Application Development",
+    budget: "₹15,00,000 - ₹30,00,000",
+    message: "",
+    ndaRequired: true,
+  });
+
+  const handleBookCalendar = (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setCalBooked(true);
+  };
+
+  const handleRfpSubmit = (e) => {
+    e.preventDefault();
+    setRfpSubmitted(true);
   };
 
   return (
-    <div style={{ padding: "40px 20px 80px", maxWidth: 1000, margin: "0 auto" }}>
+    <div style={{ padding: "40px 20px 80px", maxWidth: 1040, margin: "0 auto" }}>
       <SectionHeading
         badge="Get in Touch"
-        title="Start Your Technical Consultation"
-        subtitle="Speak directly with our senior software architects. Receive NDA-protected technical guidance and project estimates."
+        title="Technical Consultation & Architectural Advisory"
+        subtitle="Speak directly with senior enterprise architects. Receive NDA-protected system designs, cost models, and feasibility reviews."
       />
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 32 }}>
+      {/* Mode Switcher Tabs */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 12,
+          marginBottom: 32,
+        }}
+      >
+        <button
+          onClick={() => setActiveTab("calendar")}
+          style={{
+            background: activeTab === "calendar" ? TOKENS.blue : TOKENS.panel,
+            color: activeTab === "calendar" ? "#FFFFFF" : TOKENS.paper,
+            border: `1px solid ${activeTab === "calendar" ? TOKENS.blue : TOKENS.hair}`,
+            borderRadius: 8,
+            padding: "10px 22px",
+            fontSize: 13.5,
+            fontWeight: 700,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            boxShadow: activeTab === "calendar" ? "0 4px 14px rgba(37,99,235,0.3)" : "none",
+            transition: "all 0.15s ease",
+          }}
+        >
+          <span>⚡</span>
+          <span>Book Direct Architect Video Session (Google Meet)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("rfp")}
+          style={{
+            background: activeTab === "rfp" ? TOKENS.blue : TOKENS.panel,
+            color: activeTab === "rfp" ? "#FFFFFF" : TOKENS.paper,
+            border: `1px solid ${activeTab === "rfp" ? TOKENS.blue : TOKENS.hair}`,
+            borderRadius: 8,
+            padding: "10px 22px",
+            fontSize: 13.5,
+            fontWeight: 700,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            boxShadow: activeTab === "rfp" ? "0 4px 14px rgba(37,99,235,0.3)" : "none",
+            transition: "all 0.15s ease",
+          }}
+        >
+          <span>📝</span>
+          <span>Submit Written RFP & Request Bilateral NDA</span>
+        </button>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.35fr", gap: 32, alignItems: "start" }}>
         {/* Info Column */}
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 22 }}>
@@ -4960,96 +6168,408 @@ function ContactPage() {
           </div>
 
           <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 22 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>🛡️ Our Guarantee</h3>
-            <div style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.5 }}>
-              • 12-Hour Solutions Architect Review SLA<br />
-              • Bilateral NDA Protection Signed Automatically<br />
-              • Transparent Sprint-Based Milestone Pricing<br />
-              • 100% Client Code & IP Ownership
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper, margin: "0 0 10px" }}>🛡️ Consultation Guarantees</h3>
+            <div style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.6 }}>
+              • <strong>Bilateral NDA Signed Upfront</strong>: Your proprietary logic and code remain 100% confidential.<br />
+              • <strong>Senior Staff Only</strong>: You converse directly with Principal Architects, never non-technical sales reps.<br />
+              • <strong>Free Architecture Whitepaper</strong>: Following the 45-min call, receive a tailored system topology map and milestone breakdown.<br />
+              • <strong>Sprint-Based Fixed Pricing</strong>: Predictable milestones with zero hidden lock-in fees.
             </div>
+          </div>
+
+          {/* Assigned Lead Architect Card */}
+          <div
+            style={{
+              background: `linear-gradient(135deg, ${TOKENS.panelAlt} 0%, ${TOKENS.panel} 100%)`,
+              border: `1px solid ${TOKENS.teal}55`,
+              borderRadius: 12,
+              padding: 20,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: "50%",
+                  background: TOKENS.teal,
+                  color: "#FFFFFF",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 18,
+                  fontWeight: 700,
+                }}
+              >
+                SR
+              </div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>Srikanth Rao</div>
+                <div style={{ fontSize: 11, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>
+                  Principal Cloud & Distributed Systems Architect
+                </div>
+              </div>
+            </div>
+            <p style={{ margin: 0, fontSize: 12, color: TOKENS.slate, lineHeight: 1.5 }}>
+              14+ years designing high-throughput backends and native mobile applications. Ex-ThoughtWorks, AWS Certified Solutions Architect Professional.
+            </p>
           </div>
         </div>
 
-        {/* Contact Form */}
+        {/* Right Interaction Card */}
         <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 14, padding: 28, boxShadow: "0 2px 14px rgba(0,0,0,0.03)" }}>
-          {submitted ? (
-            <div style={{ textAlign: "center", padding: "40px 20px" }}>
-              <span style={{ fontSize: 40 }}>✅</span>
-              <h3 style={{ fontSize: 20, fontWeight: 700, color: TOKENS.paper, margin: "12px 0 6px" }}>Message Received!</h3>
-              <p style={{ fontSize: 13.5, color: TOKENS.slate }}>Thank you, {form.name}. Our Solutions Architect will reach out to {form.email} within 12 business hours.</p>
-              <Button onClick={() => setSubmitted(false)} variant="secondary" style={{ marginTop: 14 }}>Send Another Note</Button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              <div>
-                <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Ramesh Chandra"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
-                />
-              </div>
+          {activeTab === "calendar" ? (
+            /* Tab A: Calendar Scheduler */
+            calBooked ? (
+              <div style={{ textAlign: "center", padding: "20px 10px" }}>
+                <span style={{ fontSize: 44 }}>🎉</span>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: TOKENS.paper, margin: "14px 0 6px" }}>
+                  Consultation Confirmed!
+                </h3>
+                <p style={{ fontSize: 13, color: TOKENS.slate, margin: "0 0 20px" }}>
+                  A calendar invite and bilateral NDA packet have been dispatched to <strong>{calForm.email}</strong>.
+                </p>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <div>
-                  <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Work Email *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="ramesh@company.com"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Phone Number</label>
-                  <input
-                    type="tel"
-                    placeholder="+91 98765 43210"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Primary Service of Interest</label>
-                <select
-                  value={form.service}
-                  onChange={(e) => setForm({ ...form, service: e.target.value })}
-                  style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                {/* Video Pass Card */}
+                <div
+                  style={{
+                    background: TOKENS.panelAlt,
+                    border: `1px solid ${TOKENS.teal}66`,
+                    borderRadius: 10,
+                    padding: "18px 20px",
+                    textAlign: "left",
+                    marginBottom: 20,
+                  }}
                 >
-                  <option value="Web Development">Web Application Development (Next.js / React)</option>
-                  <option value="Android & Mobile">Android & Mobile App Development (Kotlin / Flutter)</option>
-                  <option value="Backend Microservices">Backend & API Engineering (Node / Python / Go)</option>
-                  <option value="Full Stack System">Turnkey Full-Stack Product</option>
-                  <option value="Cloud DevOps">Cloud, DevOps & Kubernetes (AWS / GCP)</option>
-                  <option value="Enterprise AI">Enterprise AI & Custom LLMs</option>
-                  <option value="Product SaaS Demo">Abhimanyu SaaS Product Demo</option>
-                </select>
-              </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 10 }}>
+                    <span style={{ fontSize: 12, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.teal }}>
+                      ● SECURE ARCHITECTURE VIDEO SESSION
+                    </span>
+                    <span style={{ fontSize: 11, color: TOKENS.slate }}>45 Minutes</span>
+                  </div>
 
-              <div>
-                <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Project Details / Architecture Scope</label>
-                <textarea
-                  rows={4}
-                  required
-                  placeholder="Outline your requirements, tech preferences, or project timeline..."
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
-                />
-              </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, fontSize: 12.5, marginBottom: 14 }}>
+                    <div>
+                      <span style={{ color: TOKENS.slate }}>Domain: </span>
+                      <strong style={{ color: TOKENS.paper }}>{selectedPractice}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: TOKENS.slate }}>Lead Architect: </span>
+                      <strong style={{ color: TOKENS.paper }}>Srikanth Rao</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: TOKENS.slate }}>Date: </span>
+                      <strong style={{ color: TOKENS.paper }}>{selectedDate}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: TOKENS.slate }}>Time Slot: </span>
+                      <strong style={{ color: TOKENS.paper }}>{selectedSlot}</strong>
+                    </div>
+                  </div>
 
-              <Button type="submit" style={{ padding: "12px", width: "100%" }}>
-                Submit Consultation Request →
-              </Button>
-            </form>
+                  <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: TOKENS.blue, fontWeight: 600 }}>
+                      https://meet.google.com/abh-8841-sre
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard?.writeText("https://meet.google.com/abh-8841-sre");
+                        setCopiedMeet(true);
+                        setTimeout(() => setCopiedMeet(false), 2000);
+                      }}
+                      style={{
+                        background: TOKENS.panelAlt,
+                        border: `1px solid ${TOKENS.hair}`,
+                        borderRadius: 4,
+                        padding: "4px 8px",
+                        fontSize: 11,
+                        cursor: "pointer",
+                        color: copiedMeet ? "#10B981" : TOKENS.paper,
+                        fontFamily: "'JetBrains Mono', monospace",
+                      }}
+                    >
+                      {copiedMeet ? "✓ Copied" : "📋 Copy"}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+                  <Button
+                    onClick={() => {
+                      setDownloadedIcs(true);
+                      setTimeout(() => setDownloadedIcs(false), 2500);
+                    }}
+                    style={{ padding: "8px 16px", fontSize: 12 }}
+                  >
+                    {downloadedIcs ? "✓ Calendar (.ics) Downloaded" : "📥 Add to Google / Outlook Calendar"}
+                  </Button>
+                  <Button onClick={() => setCalBooked(false)} variant="secondary" style={{ padding: "8px 14px", fontSize: 12 }}>
+                    Book Another Slot
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleBookCalendar} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 600, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+                    1. Select Technical Practice / Domain
+                  </label>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    {[
+                      "Web & Next.js 14",
+                      "Mobile & Kotlin / Flutter",
+                      "Backend & Microservices",
+                      "Cloud & Kubernetes DevOps",
+                      "Enterprise AI & Custom LLMs",
+                      "ERP / CRM SaaS Products",
+                    ].map((p) => (
+                      <button
+                        type="button"
+                        key={p}
+                        onClick={() => setSelectedPractice(p)}
+                        style={{
+                          background: selectedPractice === p ? TOKENS.badgeBg : TOKENS.panelAlt,
+                          border: `1px solid ${selectedPractice === p ? TOKENS.blue : TOKENS.hair}`,
+                          color: selectedPractice === p ? TOKENS.blue : TOKENS.paper,
+                          padding: "8px 10px",
+                          borderRadius: 6,
+                          fontSize: 11.5,
+                          textAlign: "left",
+                          cursor: "pointer",
+                          fontWeight: selectedPractice === p ? 700 : 500,
+                        }}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 600, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+                    2. Select Consultation Date
+                  </label>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
+                    {[
+                      "Today (Urgent Intake)",
+                      "Tomorrow (Recommended)",
+                      "In 2 Days",
+                      "In 3 Days",
+                    ].map((d) => (
+                      <button
+                        type="button"
+                        key={d}
+                        onClick={() => setSelectedDate(d)}
+                        style={{
+                          background: selectedDate === d ? TOKENS.badgeBg : TOKENS.panelAlt,
+                          border: `1px solid ${selectedDate === d ? TOKENS.blue : TOKENS.hair}`,
+                          color: selectedDate === d ? TOKENS.blue : TOKENS.paper,
+                          padding: "7px 6px",
+                          borderRadius: 6,
+                          fontSize: 10.5,
+                          cursor: "pointer",
+                          textAlign: "center",
+                          fontWeight: selectedDate === d ? 700 : 500,
+                        }}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1.8fr", gap: 10 }}>
+                  <div>
+                    <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Timezone</label>
+                    <select
+                      value={selectedTimezone}
+                      onChange={(e) => setSelectedTimezone(e.target.value)}
+                      style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 11.5 }}
+                    >
+                      <option value="IST (UTC+5:30) - Asia/Kolkata">IST (UTC+5:30) - India</option>
+                      <option value="UTC - Universal Time">UTC - London / Universal</option>
+                      <option value="EST (UTC-5) - New York">EST (UTC-5) - Americas</option>
+                      <option value="SGT (UTC+8) - Singapore">SGT (UTC+8) - Singapore</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Available 45-Min Slots</label>
+                    <select
+                      value={selectedSlot}
+                      onChange={(e) => setSelectedSlot(e.target.value)}
+                      style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 11.5 }}
+                    >
+                      <option value="10:00 AM - 10:45 AM">10:00 AM - 10:45 AM</option>
+                      <option value="11:30 AM - 12:15 PM">11:30 AM - 12:15 PM</option>
+                      <option value="02:00 PM - 02:45 PM">02:00 PM - 02:45 PM (Recommended)</option>
+                      <option value="04:30 PM - 05:15 PM">04:30 PM - 05:15 PM</option>
+                      <option value="07:00 PM - 07:45 PM">07:00 PM - 07:45 PM</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <div>
+                    <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Your Name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Ramesh Chandra"
+                      value={calForm.name}
+                      onChange={(e) => setCalForm({ ...calForm, name: e.target.value })}
+                      style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 12.5 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Work Email *</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="ramesh@company.com"
+                      value={calForm.email}
+                      onChange={(e) => setCalForm({ ...calForm, email: e.target.value })}
+                      style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 12.5 }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Company / Startup Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Apex FinTech Solutions"
+                    value={calForm.company}
+                    onChange={(e) => setCalForm({ ...calForm, company: e.target.value })}
+                    style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 12.5 }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>What would you like to solve on this call?</label>
+                  <textarea
+                    rows={2}
+                    placeholder="e.g. Scaling Next.js server components, database sharding, or native Kotlin app migration..."
+                    value={calForm.topic}
+                    onChange={(e) => setCalForm({ ...calForm, topic: e.target.value })}
+                    style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 12.5 }}
+                  />
+                </div>
+
+                <Button type="submit" style={{ padding: "12px", width: "100%", fontSize: 13 }}>
+                  Confirm 45-Min Architect Session (Free & NDA-Protected) →
+                </Button>
+              </form>
+            )
+          ) : (
+            /* Tab B: RFP & Written Inquiry */
+            rfpSubmitted ? (
+              <div style={{ textAlign: "center", padding: "40px 20px" }}>
+                <span style={{ fontSize: 40 }}>✅</span>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: TOKENS.paper, margin: "12px 0 6px" }}>RFP Received!</h3>
+                <p style={{ fontSize: 13.5, color: TOKENS.slate }}>Thank you, {rfpForm.name}. Our Solutions Architect will review your scope and respond to {rfpForm.email} within 12 business hours.</p>
+                <Button onClick={() => setRfpSubmitted(false)} variant="secondary" style={{ marginTop: 14 }}>Submit Another RFP</Button>
+              </div>
+            ) : (
+              <form onSubmit={handleRfpSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <div>
+                  <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Ramesh Chandra"
+                    value={rfpForm.name}
+                    onChange={(e) => setRfpForm({ ...rfpForm, name: e.target.value })}
+                    style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                  />
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div>
+                    <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Work Email *</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="ramesh@company.com"
+                      value={rfpForm.email}
+                      onChange={(e) => setRfpForm({ ...rfpForm, email: e.target.value })}
+                      style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Phone Number</label>
+                    <input
+                      type="tel"
+                      placeholder="+91 98765 43210"
+                      value={rfpForm.phone}
+                      onChange={(e) => setRfpForm({ ...rfpForm, phone: e.target.value })}
+                      style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div>
+                    <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Primary Service of Interest</label>
+                    <select
+                      value={rfpForm.service}
+                      onChange={(e) => setRfpForm({ ...rfpForm, service: e.target.value })}
+                      style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                    >
+                      <option value="Web Development">Web Application Development (Next.js / React)</option>
+                      <option value="Android & Mobile">Android & Mobile App Development (Kotlin / Flutter)</option>
+                      <option value="Backend Microservices">Backend & API Engineering (Node / Python / Go)</option>
+                      <option value="Full Stack System">Turnkey Full-Stack Product</option>
+                      <option value="Cloud DevOps">Cloud, DevOps & Kubernetes (AWS / GCP)</option>
+                      <option value="Enterprise AI">Enterprise AI & Custom LLMs</option>
+                      <option value="Product SaaS Demo">Abhimanyu SaaS Product Demo</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Estimated Budget Range</label>
+                    <select
+                      value={rfpForm.budget}
+                      onChange={(e) => setRfpForm({ ...rfpForm, budget: e.target.value })}
+                      style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                    >
+                      <option value="₹5,00,000 - ₹15,00,000">₹5,00,000 - ₹15,00,000 ($6k - $18k)</option>
+                      <option value="₹15,00,000 - ₹30,00,000">₹15,00,000 - ₹30,00,000 ($18k - $36k)</option>
+                      <option value="₹30,00,000 - ₹75,00,000">₹30,00,000 - ₹75,00,000 ($36k - $90k)</option>
+                      <option value="₹75,00,000+">₹75,00,000+ ($90k+ Enterprise Pod)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: 12, color: TOKENS.slate, display: "block", marginBottom: 4 }}>Project Details / Architecture Scope *</label>
+                  <textarea
+                    rows={4}
+                    required
+                    placeholder="Outline your requirements, tech preferences, or project timeline..."
+                    value={rfpForm.message}
+                    onChange={(e) => setRfpForm({ ...rfpForm, message: e.target.value })}
+                    style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, background: TOKENS.panel, color: TOKENS.paper, fontSize: 13 }}
+                  />
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: TOKENS.slate }}>
+                  <input
+                    type="checkbox"
+                    id="ndaCheck"
+                    checked={rfpForm.ndaRequired}
+                    onChange={(e) => setRfpForm({ ...rfpForm, ndaRequired: e.target.checked })}
+                  />
+                  <label htmlFor="ndaCheck">
+                    Require automated Bilateral Non-Disclosure Agreement (NDA) countersigned before technical disclosure.
+                  </label>
+                </div>
+
+                <Button type="submit" style={{ padding: "12px", width: "100%" }}>
+                  Submit RFP Consultation Request →
+                </Button>
+              </form>
+            )
           )}
         </div>
       </div>
@@ -5059,7 +6579,7 @@ function ContactPage() {
 
 /* ---------------------------- Universal Footer ---------------------------- */
 
-function Footer({ go }) {
+function Footer({ go, openStatusModal }) {
   return (
     <footer
       style={{
@@ -5131,6 +6651,10 @@ function Footer({ go }) {
             <button onClick={() => go("knowledge")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Engineering Playbooks</button>
             <button onClick={() => go("careers")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Careers & Open Roles</button>
             <button onClick={() => go("contact")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Contact & Consultation</button>
+            <button onClick={openStatusModal} style={{ background: "none", border: "none", color: "#10B981", textAlign: "left", cursor: "pointer", padding: 0, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981" }} />
+              Live System Status & SLA (99.99%)
+            </button>
           </div>
         </div>
       </div>
@@ -5139,10 +6663,13 @@ function Footer({ go }) {
         <div>
           © 2026 Abhimanyu Technologies Pvt. Ltd. All rights reserved. Sloganed to <strong>Scale Your Business</strong>.
         </div>
-        <div style={{ display: "flex", gap: 16 }}>
+        <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
           <span>Privacy Policy</span>
           <span>Terms of Service</span>
           <span>Bilateral NDA Guarantee</span>
+          <button onClick={openStatusModal} style={{ background: "none", border: "none", color: "#10B981", cursor: "pointer", padding: 0, fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace" }}>
+            ● 99.99% Status
+          </button>
         </div>
       </div>
     </footer>
@@ -5189,6 +6716,7 @@ export default function App() {
   const [spotlightOpen, setSpotlightOpen] = useState(false);
   const [architectureOpen, setArchitectureOpen] = useState(false);
   const [apiSandboxOpen, setApiSandboxOpen] = useState(false);
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [productDemoOpen, setProductDemoOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(SOFTWARE_PRODUCTS[0]);
 
@@ -5272,6 +6800,7 @@ export default function App() {
         openSpotlight={() => setSpotlightOpen(true)}
         openArchitecture={() => setArchitectureOpen(true)}
         openApiSandbox={() => setApiSandboxOpen(true)}
+        openStatusModal={() => setStatusModalOpen(true)}
         theme={theme}
         setTheme={setTheme}
       />
@@ -5286,13 +6815,14 @@ export default function App() {
           openTracker={() => setTrackerOpen(true)}
           openArchitecture={() => setArchitectureOpen(true)}
           openApiSandbox={() => setApiSandboxOpen(true)}
+          openStatusModal={() => setStatusModalOpen(true)}
           setSelectedProduct={setSelectedProduct}
           openProductDemo={() => setProductDemoOpen(true)}
         />
       </main>
 
       {/* Footer */}
-      <Footer go={go} />
+      <Footer go={go} openStatusModal={() => setStatusModalOpen(true)} />
 
       {/* Global Modals */}
       <ProjectEstimatorModal
@@ -5320,6 +6850,11 @@ export default function App() {
         onClose={() => setApiSandboxOpen(false)}
       />
 
+      <SystemStatusModal
+        isOpen={statusModalOpen}
+        onClose={() => setStatusModalOpen(false)}
+      />
+
       <ProductDemoModal
         product={selectedProduct}
         isOpen={productDemoOpen}
@@ -5334,6 +6869,7 @@ export default function App() {
         openTracker={() => setTrackerOpen(true)}
         openArchitecture={() => setArchitectureOpen(true)}
         openApiSandbox={() => setApiSandboxOpen(true)}
+        openStatus={() => setStatusModalOpen(true)}
       />
 
       {/* Fixed Mobile Bottom Navigation */}
