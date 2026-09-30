@@ -3274,7 +3274,7 @@ function ProjectWizardPage({ go }) {
       <SectionHeading
         badge="Project Planner"
         title="Start Your Software Project"
-        subtitle="Complete this 5-step guided intake to outline your requirements, tech stack, and timeline."
+        subtitle="Complete this 4-step guided intake to outline your requirements, tech stack, and timeline."
       />
 
       <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 14, padding: "28px 32px", boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
