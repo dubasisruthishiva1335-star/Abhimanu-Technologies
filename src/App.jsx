@@ -32,23 +32,6 @@ const LIGHT_TOKENS = {
   cardHover: "rgba(37, 99, 235, 0.04)",
 };
 
-const DARK_TOKENS = {
-  ink: "#0B1727",
-  panel: "#132238",
-  panelAlt: "#1B2F4A",
-  brass: "#F59E0B",
-  brassBright: "#FBBF24",
-  paper: "#F8FAFC",
-  slate: "#94A3B8",
-  teal: "#14B8A6",
-  blue: "#38BDF8",
-  blueDark: "#0284C7",
-  hair: "rgba(255, 255, 255, 0.12)",
-  white: "#FFFFFF",
-  badgeBg: "rgba(56, 189, 248, 0.14)",
-  cardHover: "rgba(56, 189, 248, 0.06)",
-};
-
 const TOKENS = { ...LIGHT_TOKENS };
 
 /* ---------------------------- Multi-Currency Engine ---------------------------- */
@@ -796,21 +779,10 @@ function HeroThreeCanvas() {
 function SiteHeader({
   page,
   go,
-  currency = "INR",
-  setCurrency,
-  currentUser,
-  openEstimator,
-  openTracker,
-  openSpotlight,
-  openArchitecture,
-  openApiSandbox,
   openStatusModal,
-  theme = "light",
-  setTheme,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdown, setServicesDropdown] = useState(false);
-  const [currencyDropdown, setCurrencyDropdown] = useState(false);
 
   return (
     <header
@@ -820,7 +792,7 @@ function SiteHeader({
         left: 0,
         right: 0,
         zIndex: 100,
-        background: theme === "dark" ? "rgba(19, 34, 56, 0.94)" : "rgba(255, 255, 255, 0.94)",
+        background: "rgba(255, 255, 255, 0.94)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
         borderBottom: `1px solid ${TOKENS.hair}`,
@@ -1037,32 +1009,27 @@ function SiteHeader({
           >
             Careers
           </button>
+
+          <button
+            onClick={() => go("contact")}
+            style={{
+              background: page === "contact" ? TOKENS.badgeBg : "transparent",
+              border: "none",
+              borderRadius: 6,
+              color: page === "contact" ? TOKENS.blue : TOKENS.paper,
+              fontSize: 13,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+          >
+            Contact
+          </button>
         </nav>
 
         {/* Desktop Actions */}
         <div className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {/* Spotlight Search Pill */}
-          <button
-            onClick={openSpotlight}
-            style={{
-              background: "rgba(15,23,42,0.04)",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              padding: "6px 10px",
-              fontSize: 12,
-              fontFamily: "'Inter', sans-serif",
-              color: TOKENS.slate,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-            }}
-            title="Press Ctrl+K to Search Services, Products & Tech"
-          >
-            <span>🔍 Search</span>
-            <kbd style={{ background: "rgba(15,23,42,0.06)", border: `1px solid ${TOKENS.hair}`, borderRadius: 3, padding: "1px 4px", fontSize: 10, fontFamily: "'JetBrains Mono', monospace" }}>Ctrl+K</kbd>
-          </button>
-
           {/* System SLA Status Telemetry Pill */}
           <button
             onClick={openStatusModal}
@@ -1070,7 +1037,7 @@ function SiteHeader({
               background: "rgba(16, 185, 129, 0.08)",
               border: "1px solid rgba(16, 185, 129, 0.28)",
               borderRadius: 6,
-              padding: "6px 10px",
+              padding: "6px 12px",
               fontSize: 12,
               fontFamily: "'JetBrains Mono', monospace",
               fontWeight: 600,
@@ -1085,157 +1052,6 @@ function SiteHeader({
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#10B981", boxShadow: "0 0 6px #10B981" }} />
             <span>99.99% SLA</span>
           </button>
-
-          {/* Theme Toggle Pill */}
-          <button
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            style={{
-              background: "rgba(15,23,42,0.04)",
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              padding: "6px 10px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              color: TOKENS.paper,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-            }}
-            title={`Switch to ${theme === "light" ? "Dark Mode" : "Light Mode"}`}
-          >
-            {theme === "light" ? "🌙 Dark" : "☀️ Light"}
-          </button>
-
-          {/* Currency Switcher */}
-          <div style={{ position: "relative" }}>
-            <button
-              onClick={() => setCurrencyDropdown(!currencyDropdown)}
-              style={{
-                background: "rgba(15,23,42,0.04)",
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 6,
-                padding: "6px 10px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                color: TOKENS.paper,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 4,
-              }}
-            >
-              <span>{CURRENCIES[currency]?.label.split(" ")[0]}</span>
-              <span style={{ fontSize: 8 }}>▼</span>
-            </button>
-            {currencyDropdown && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "100%",
-                  right: 0,
-                  background: TOKENS.panel,
-                  border: `1px solid ${TOKENS.hair}`,
-                  borderRadius: 6,
-                  padding: 4,
-                  boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
-                  zIndex: 200,
-                  minWidth: 130,
-                }}
-              >
-                {Object.keys(CURRENCIES).map((cKey) => (
-                  <button
-                    key={cKey}
-                    onClick={() => { setCurrency(cKey); setCurrencyDropdown(false); }}
-                    style={{
-                      width: "100%",
-                      background: currency === cKey ? TOKENS.badgeBg : "transparent",
-                      border: "none",
-                      color: currency === cKey ? TOKENS.blue : TOKENS.paper,
-                      padding: "6px 10px",
-                      fontSize: 11.5,
-                      fontFamily: "'JetBrains Mono', monospace",
-                      textAlign: "left",
-                      cursor: "pointer",
-                      borderRadius: 4,
-                    }}
-                  >
-                    {CURRENCIES[cKey].label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* System Architecture Designer */}
-          <button
-            onClick={openArchitecture}
-            style={{
-              background: "rgba(37,99,235,0.08)",
-              border: `1px solid ${TOKENS.blue}44`,
-              borderRadius: 6,
-              color: TOKENS.blue,
-              padding: "6px 12px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 700,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-            }}
-            title="Design Custom Microservices & Cloud Architecture"
-          >
-            <span>📐 System Architect</span>
-          </button>
-
-          {/* Developer API Console */}
-          <button
-            onClick={openApiSandbox}
-            style={{
-              background: "rgba(13,148,136,0.08)",
-              border: `1px solid ${TOKENS.teal}44`,
-              borderRadius: 6,
-              color: TOKENS.teal,
-              padding: "6px 12px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 700,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-            }}
-            title="Test Live Simulated REST & GraphQL API Endpoints"
-          >
-            <span>🔌 API Console</span>
-          </button>
-
-          {/* Interactive Project Cost Estimator */}
-          <button
-            onClick={openEstimator}
-            style={{
-              background: "rgba(217,119,6,0.12)",
-              border: `1px solid ${TOKENS.brass}`,
-              borderRadius: 6,
-              color: TOKENS.brass,
-              padding: "6px 12px",
-              fontSize: 12,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 700,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-            }}
-          >
-            <span>⚡ Cost Estimator</span>
-          </button>
-
-          {/* Primary CTA */}
-          <Button onClick={() => go("rfq-wizard")} style={{ padding: "7px 14px", fontSize: 12 }}>
-            Start a Project →
-          </Button>
         </div>
 
         {/* Mobile Hamburger Toggle */}
@@ -1295,69 +1111,6 @@ function SiteHeader({
             </span>
           </button>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
-            <button
-              onClick={() => { openArchitecture(); setMobileMenuOpen(false); }}
-              style={{
-                background: "rgba(37,99,235,0.08)",
-                border: `1px solid ${TOKENS.blue}44`,
-                color: TOKENS.blue,
-                borderRadius: 6,
-                padding: "8px",
-                fontSize: 11,
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              📐 Architecture
-            </button>
-            <button
-              onClick={() => { openApiSandbox(); setMobileMenuOpen(false); }}
-              style={{
-                background: "rgba(13,148,136,0.08)",
-                border: `1px solid ${TOKENS.teal}44`,
-                color: TOKENS.teal,
-                borderRadius: 6,
-                padding: "8px",
-                fontSize: 11,
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              🔌 API Console
-            </button>
-            <button
-              onClick={() => { openEstimator(); setMobileMenuOpen(false); }}
-              style={{
-                background: "rgba(217,119,6,0.12)",
-                border: `1px solid ${TOKENS.brass}`,
-                color: TOKENS.brass,
-                borderRadius: 6,
-                padding: "8px",
-                fontSize: 11,
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              ⚡ Cost Estimator
-            </button>
-            <button
-              onClick={() => { setTheme(theme === "light" ? "dark" : "light"); setMobileMenuOpen(false); }}
-              style={{
-                background: TOKENS.panelAlt,
-                border: `1px solid ${TOKENS.hair}`,
-                color: TOKENS.paper,
-                borderRadius: 6,
-                padding: "8px",
-                fontSize: 11.5,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
-            </button>
-          </div>
-
           {[
             { id: "home", label: "🏠 Home" },
             { id: "services", label: "🛠 IT Services" },
@@ -1392,378 +1145,6 @@ function SiteHeader({
         </div>
       )}
     </header>
-  );
-}
-
-/* ---------------------------- Interactive Project Scope & Cost Estimator Modal ---------------------------- */
-
-function ProjectEstimatorModal({ isOpen, onClose, currency = "INR", go }) {
-  const [platform, setPlatform] = useState("web");
-  const [complexity, setComplexity] = useState("medium");
-  const [timeline, setTimeline] = useState("standard");
-  const [selectedFeatures, setSelectedFeatures] = useState(["auth", "db", "api"]);
-  const [copied, setCopied] = useState(false);
-
-  if (!isOpen) return null;
-
-  const PLATFORM_OPTIONS = [
-    { id: "web", name: "Web Application", icon: "🌐", baseCost: 150000, weeks: 4, desc: "Responsive portal, Next.js / React SPA, PWA" },
-    { id: "android", name: "Native Android App", icon: "🤖", baseCost: 180000, weeks: 5, desc: "Native Kotlin, Jetpack Compose, Material 3" },
-    { id: "cross", name: "Cross-Platform Mobile", icon: "📱", baseCost: 220000, weeks: 6, desc: "Flutter or React Native for Android & iOS" },
-    { id: "fullstack", name: "Full Stack Web + Mobile", icon: "⚡", baseCost: 350000, weeks: 8, desc: "Next.js Web + Android/iOS App + Backend" },
-    { id: "backend", name: "Backend Microservices", icon: "⚙️", baseCost: 160000, weeks: 4, desc: "High-throughput APIs in Node.js, Python or Go" },
-  ];
-
-  const FEATURE_MODULES = [
-    { id: "auth", name: "User Authentication & RBAC", cost: 25000, icon: "🔐" },
-    { id: "db", name: "Database Modeling & Cloud Sync", cost: 35000, icon: "💾" },
-    { id: "api", name: "RESTful & GraphQL API Suite", cost: 40000, icon: "🔌" },
-    { id: "payments", name: "Payment Gateway (Stripe/Razorpay)", cost: 30000, icon: "💳" },
-    { id: "chat", name: "Real-Time Chat & Push Alerts", cost: 45000, icon: "💬" },
-    { id: "admin", name: "Custom Admin CMS & Analytics", cost: 50000, icon: "📊" },
-    { id: "ai", name: "AI Assistant & RAG Integration", cost: 65000, icon: "🤖" },
-    { id: "devops", name: "Docker & CI/CD Cloud Pipeline", cost: 35000, icon: "☁️" },
-  ];
-
-  const COMPLEXITY_MULTIPLIERS = {
-    mvp: { label: "MVP Prototype", mult: 0.85, tag: "Rapid Launch" },
-    medium: { label: "Production Grade", mult: 1.0, tag: "Standard Scale" },
-    enterprise: { label: "Enterprise Distributed", mult: 1.45, tag: "High Security & Scale" },
-  };
-
-  const TIMELINE_MULTIPLIERS = {
-    standard: { label: "Standard Delivery", mult: 1.0, tag: "Normal Cadence" },
-    accelerated: { label: "Accelerated Sprint", mult: 1.25, tag: "+25% Priority Pod" },
-    rush: { label: "Rapid 3-Week Blitz", mult: 1.5, tag: "+50% Dedicated Sprint" },
-  };
-
-  const toggleFeature = (fId) => {
-    setSelectedFeatures((prev) =>
-      prev.includes(fId) ? prev.filter((x) => x !== fId) : [...prev, fId]
-    );
-  };
-
-  const currentPlatform = PLATFORM_OPTIONS.find((p) => p.id === platform) || PLATFORM_OPTIONS[0];
-  const comp = COMPLEXITY_MULTIPLIERS[complexity] || COMPLEXITY_MULTIPLIERS.medium;
-  const time = TIMELINE_MULTIPLIERS[timeline] || TIMELINE_MULTIPLIERS.standard;
-
-  const featuresTotal = selectedFeatures.reduce((acc, fId) => {
-    const f = FEATURE_MODULES.find((m) => m.id === fId);
-    return acc + (f ? f.cost : 0);
-  }, 0);
-
-  const baseCalculated = (currentPlatform.baseCost + featuresTotal) * comp.mult * time.mult;
-  const totalCostInr = Math.round(baseCalculated);
-  const estimatedSprints = Math.max(2, Math.round(currentPlatform.weeks * comp.mult));
-
-  const handleCopySpec = () => {
-    const spec = `Abhimanyu Technologies - Project Estimate\nPlatform: ${currentPlatform.name}\nComplexity: ${comp.label}\nFeatures: ${selectedFeatures.join(", ")}\nTimeline: ${time.label} (~${estimatedSprints} weeks)\nEstimated Budget: ${formatPrice(totalCostInr, currency)}`;
-    navigator.clipboard?.writeText(spec);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(16px)",
-        zIndex: 1000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px 16px",
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "100%",
-          maxWidth: 920,
-          maxHeight: "90vh",
-          overflowY: "auto",
-          background: TOKENS.panel,
-          border: `1px solid ${TOKENS.hair}`,
-          borderRadius: 14,
-          boxShadow: "0 24px 60px rgba(0,0,0,0.2)",
-          display: "flex",
-          flexDirection: "column",
-          color: TOKENS.paper,
-        }}
-      >
-        {/* Header */}
-        <div style={{ padding: "20px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 20 }}>⚡</span>
-              <span style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
-                Interactive Project Scope & Cost Estimator
-              </span>
-              <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, border: `1px solid ${TOKENS.blue}44`, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
-                INSTANT ALGORITHM
-              </span>
-            </div>
-            <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>
-              Configure your software specifications, tech modules, and team velocity to calculate estimated development budget and delivery timeline.
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: TOKENS.panelAlt,
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              width: 32,
-              height: 32,
-              cursor: "pointer",
-              fontSize: 18,
-              color: TOKENS.slate,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            ×
-          </button>
-        </div>
-
-        {/* Modal Body */}
-        <div style={{ padding: 24, display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 24 }}>
-          {/* Left Config Panel */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            {/* 1. Platform Choice */}
-            <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-                1. TARGET PLATFORM & ARCHITECTURE
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                {PLATFORM_OPTIONS.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => setPlatform(p.id)}
-                    style={{
-                      background: platform === p.id ? TOKENS.badgeBg : TOKENS.panelAlt,
-                      border: `1px solid ${platform === p.id ? TOKENS.blue : TOKENS.hair}`,
-                      borderRadius: 8,
-                      padding: "10px 12px",
-                      textAlign: "left",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <span>{p.icon}</span>
-                      <span style={{ fontSize: 12.5, fontWeight: 700, color: platform === p.id ? TOKENS.blue : TOKENS.paper }}>{p.name}</span>
-                    </div>
-                    <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 4 }}>{p.desc}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 2. Feature Modules */}
-            <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-                2. REQUIRED TECHNICAL MODULES
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-                {FEATURE_MODULES.map((f) => {
-                  const selected = selectedFeatures.includes(f.id);
-                  return (
-                    <button
-                      key={f.id}
-                      onClick={() => toggleFeature(f.id)}
-                      style={{
-                        background: selected ? "rgba(13, 148, 136, 0.1)" : TOKENS.panelAlt,
-                        border: `1px solid ${selected ? TOKENS.teal : TOKENS.hair}`,
-                        borderRadius: 6,
-                        padding: "8px 10px",
-                        textAlign: "left",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <span>{f.icon}</span>
-                        <span style={{ fontSize: 11.5, fontWeight: 600, color: selected ? TOKENS.teal : TOKENS.paper }}>{f.name}</span>
-                      </div>
-                      <span style={{ fontSize: 12 }}>{selected ? "✓" : "+"}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* 3. Complexity & Timeline */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 6 }}>
-                  SCALE & COMPLEXITY
-                </div>
-                <select
-                  value={complexity}
-                  onChange={(e) => setComplexity(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px 10px",
-                    borderRadius: 6,
-                    border: `1px solid ${TOKENS.hair}`,
-                    background: TOKENS.panel,
-                    color: TOKENS.paper,
-                    fontSize: 12,
-                    cursor: "pointer",
-                  }}
-                >
-                  {Object.keys(COMPLEXITY_MULTIPLIERS).map((k) => (
-                    <option key={k} value={k}>
-                      {COMPLEXITY_MULTIPLIERS[k].label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 6 }}>
-                  DELIVERY SPEED
-                </div>
-                <select
-                  value={timeline}
-                  onChange={(e) => setTimeline(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px 10px",
-                    borderRadius: 6,
-                    border: `1px solid ${TOKENS.hair}`,
-                    background: TOKENS.panel,
-                    color: TOKENS.paper,
-                    fontSize: 12,
-                    cursor: "pointer",
-                  }}
-                >
-                  {Object.keys(TIMELINE_MULTIPLIERS).map((k) => (
-                    <option key={k} value={k}>
-                      {TIMELINE_MULTIPLIERS[k].label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Summary Panel */}
-          <div
-            style={{
-              background: TOKENS.panelAlt,
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 12,
-              padding: 20,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <div style={{ borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 14, marginBottom: 16 }}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.slate }}>
-                  ESTIMATED PROJECT BUDGET
-                </div>
-                <div style={{ fontSize: 32, fontWeight: 800, color: TOKENS.blue, marginTop: 4 }}>
-                  {formatPrice(totalCostInr, currency)}
-                </div>
-                <div style={{ fontSize: 12, color: TOKENS.slate, marginTop: 2 }}>
-                  Estimated Velocity: <strong>~{estimatedSprints} Weeks</strong> (Agile 2-week Sprints)
-                </div>
-              </div>
-
-              {/* Recommended Team Pod */}
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-                  DEDICATED ENGINEERING POD ALLOCATION
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 11.5 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ color: TOKENS.slate }}>Lead Solutions Architect:</span>
-                    <strong style={{ color: TOKENS.paper }}>1 Engineer (Part-Time)</strong>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ color: TOKENS.slate }}>Senior Full-Stack / Mobile:</span>
-                    <strong style={{ color: TOKENS.paper }}>2 Engineers (Full-Time)</strong>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ color: TOKENS.slate }}>UI/UX Product Designer:</span>
-                    <strong style={{ color: TOKENS.paper }}>1 Designer (Sprint 1-3)</strong>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ color: TOKENS.slate }}>QA & DevOps Specialist:</span>
-                    <strong style={{ color: TOKENS.paper }}>1 Specialist (Continuous)</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Scope Inclusions */}
-              <div style={{ background: "rgba(13, 148, 136, 0.08)", border: `1px solid ${TOKENS.teal}44`, borderRadius: 8, padding: 12, fontSize: 11.5, lineHeight: 1.5, color: TOKENS.paper }}>
-                ✓ <strong>Guarantee:</strong> 100% Full IP & Source Code Ownership, Daily Standup Telemetry, 30-Day Post-Launch Warranty, and Strict Non-Disclosure Agreement (NDA).
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 18 }}>
-              <Button
-                onClick={() => {
-                  go("rfq-wizard");
-                  onClose();
-                }}
-                style={{ width: "100%", padding: "12px" }}
-              >
-                🚀 Request Formal Scope Proposal →
-              </Button>
-              <div style={{ display: "flex", gap: 8 }}>
-                <button
-                  onClick={handleCopySpec}
-                  style={{
-                    flex: 1,
-                    background: TOKENS.panel,
-                    border: `1px solid ${TOKENS.hair}`,
-                    borderRadius: 6,
-                    padding: "8px",
-                    fontSize: 11.5,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    color: TOKENS.paper,
-                    cursor: "pointer",
-                  }}
-                >
-                  {copied ? "✓ Copied Spec" : "📋 Copy Estimate"}
-                </button>
-                <button
-                  onClick={() => {
-                    go("contact");
-                    onClose();
-                  }}
-                  style={{
-                    flex: 1,
-                    background: TOKENS.panel,
-                    border: `1px solid ${TOKENS.hair}`,
-                    borderRadius: 6,
-                    padding: "8px",
-                    fontSize: 11.5,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    color: TOKENS.blue,
-                    cursor: "pointer",
-                    fontWeight: 600,
-                  }}
-                >
-                  💬 Speak with Architect
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -1929,674 +1310,6 @@ function ClientProjectTrackerModal({ isOpen, onClose, go }) {
             🔒 Authenticated client session for <strong>Apex FinTech Solutions</strong>.
           </div>
           <Button onClick={onClose}>Close Portal</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Product Demo Modal ---------------------------- */
-
-/* ---------------------------- Interactive Architecture Visualizer Modal ---------------------------- */
-
-function ArchitectureVisualizerModal({ isOpen, onClose, go, currency = "INR" }) {
-  const [clientTier, setClientTier] = useState("nextjs");
-  const [gatewayTier, setGatewayTier] = useState("go");
-  const [dataTier, setDataTier] = useState("postgres_redis");
-  const [cloudTier, setCloudTier] = useState("aws");
-  const [brokerTier, setBrokerTier] = useState("kafka");
-  const [copied, setCopied] = useState(false);
-
-  if (!isOpen) return null;
-
-  const CLIENT_OPTIONS = {
-    nextjs: { name: "Next.js 15 Web & Edge SSR", icon: "🌐", qps: "100k+ QPS", desc: "Sub-second edge rendering, React 19, TypeScript, PWA" },
-    android_native: { name: "Native Android (Kotlin + Compose)", icon: "🤖", qps: "60 FPS Native", desc: "Coroutines, Flow, Room SQLite offline-first sync" },
-    flutter_cross: { name: "Cross-Platform Flutter & iOS", icon: "📱", qps: "Unified Delivery", desc: "Single codebase for Android & iOS with native plugins" },
-    micro_frontends: { name: "Enterprise Micro-Frontends", icon: "🎨", qps: "Team Isolation", desc: "Module federation, independent release cycles" },
-  };
-
-  const GATEWAY_OPTIONS = {
-    go: { name: "Go (Golang) Microservices", icon: "⚡", baseLatency: 16, maxQps: 85000, desc: "High-concurrency goroutines, minimal 14MB RAM per pod" },
-    fastify: { name: "Node.js (Fastify) Event Services", icon: "⚙️", baseLatency: 28, maxQps: 45000, desc: "Asynchronous non-blocking I/O, rapid developer velocity" },
-    fastapi: { name: "Python FastAPI + PyTorch AI", icon: "🐍", baseLatency: 35, maxQps: 32000, desc: "Async ASGI, native machine learning inference pipelines" },
-    spring: { name: "Java Spring Boot Core", icon: "☕", baseLatency: 30, maxQps: 55000, desc: "Enterprise banking-grade transactions, robust ACID safety" },
-  };
-
-  const DATA_OPTIONS = {
-    postgres_redis: { name: "PostgreSQL Shards + Redis Cache", icon: "💾", bonusQps: 25000, latencyMult: 0.85, desc: "ACID compliance with sub-millisecond Redis caching" },
-    timescale: { name: "TimescaleDB + PostgreSQL", icon: "📈", bonusQps: 35000, latencyMult: 0.9, desc: "High-frequency IoT sensor telemetry & GPS packet streams" },
-    milvus_rag: { name: "Milvus Vector DB + PostgreSQL", icon: "🧠", bonusQps: 15000, latencyMult: 1.1, desc: "Hybrid semantic search & enterprise RAG document embeddings" },
-  };
-
-  const CLOUD_OPTIONS = {
-    aws: { name: "AWS Multi-AZ (EKS, RDS, S3, CloudFront)", icon: "☁️", sla: "99.99%", estMonthlyInr: 38000 },
-    gcp: { name: "Google Cloud (GKE, Cloud Spanner, BigQuery)", icon: "🌐", sla: "99.99%", estMonthlyInr: 42000 },
-    hybrid_k8s: { name: "Hybrid Kubernetes + ArgoCD GitOps", icon: "⚓", sla: "99.95%", estMonthlyInr: 32000 },
-  };
-
-  const BROKER_OPTIONS = {
-    kafka: { name: "Apache Kafka Event Bus", icon: "📬", desc: "High-throughput partitioned log streaming for decoupled services" },
-    redis_pubsub: { name: "Redis Streams & Pub/Sub", icon: "⚡", desc: "Ultra-low latency real-time messaging and WebSocket notifications" },
-    rabbitmq: { name: "RabbitMQ Message Broker", icon: "🐇", desc: "Flexible AMQP routing, dead-letter queues, reliable delivery" },
-  };
-
-  const gw = GATEWAY_OPTIONS[gatewayTier];
-  const dt = DATA_OPTIONS[dataTier];
-  const cld = CLOUD_OPTIONS[cloudTier];
-  const clt = CLIENT_OPTIONS[clientTier];
-  const brk = BROKER_OPTIONS[brokerTier];
-
-  const calculatedQps = Math.round(gw.maxQps + dt.bonusQps);
-  const calculatedLatency = Math.round(gw.baseLatency * dt.latencyMult);
-
-  const handleCopySpec = () => {
-    const spec = `Abhimanyu Technologies - Architecture Specification\nClient Tier: ${clt.name}\nAPI Gateway: ${gw.name}\nData Layer: ${dt.name}\nBroker: ${brk.name}\nCloud SRE: ${cld.name}\nThroughput Capacity: ~${calculatedQps.toLocaleString()} QPS\nEst. P99 Latency: ~${calculatedLatency} ms\nHigh-Availability SLA: ${cld.sla}`;
-    navigator.clipboard?.writeText(spec);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(16px)",
-        zIndex: 1000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px 16px",
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "100%",
-          maxWidth: 960,
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panel,
-          border: `1px solid ${TOKENS.hair}`,
-          borderRadius: 14,
-          boxShadow: "0 24px 60px rgba(0,0,0,0.25)",
-          color: TOKENS.paper,
-        }}
-      >
-        {/* Header */}
-        <div style={{ padding: "20px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 20 }}>📐</span>
-              <span style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
-                Interactive System Architecture & Tech Stack Designer
-              </span>
-              <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, border: `1px solid ${TOKENS.blue}44`, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
-                ENTERPRISE TOPOLOGY
-              </span>
-            </div>
-            <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>
-              Compose your client applications, microservices runtime, event streams, and cloud infrastructure to calculate real-time performance benchmarks.
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: TOKENS.panelAlt,
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              width: 32,
-              height: 32,
-              cursor: "pointer",
-              fontSize: 18,
-              color: TOKENS.slate,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            ×
-          </button>
-        </div>
-
-        {/* Live Visual Topology Blueprint */}
-        <div style={{ padding: "18px 24px", background: TOKENS.panelAlt, borderBottom: `1px solid ${TOKENS.hair}` }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 12, display: "flex", justifyContent: "space-between" }}>
-            <span>LIVE SYSTEM TOPOLOGY MAP</span>
-            <span style={{ color: TOKENS.teal }}>● 99.99% HIGH-AVAILABILITY CLUSTER</span>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10, alignItems: "center" }}>
-            <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.blue}66`, borderRadius: 8, padding: 12, textAlign: "center" }}>
-              <div style={{ fontSize: 20 }}>{clt.icon}</div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>Client Layer</div>
-              <div style={{ fontSize: 9.5, color: TOKENS.blue, fontFamily: "'JetBrains Mono', monospace" }}>{clt.name.split(" ")[0]}</div>
-            </div>
-
-            <div style={{ textAlign: "center", color: TOKENS.blue, fontSize: 14 }}>➔</div>
-
-            <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.teal}66`, borderRadius: 8, padding: 12, textAlign: "center" }}>
-              <div style={{ fontSize: 20 }}>🛡️</div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>Edge WAF & CDN</div>
-              <div style={{ fontSize: 9.5, color: TOKENS.teal, fontFamily: "'JetBrains Mono', monospace" }}>Cloudflare / SSL</div>
-            </div>
-
-            <div style={{ textAlign: "center", color: TOKENS.blue, fontSize: 14 }}>➔</div>
-
-            <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.brass}66`, borderRadius: 8, padding: 12, textAlign: "center" }}>
-              <div style={{ fontSize: 20 }}>{gw.icon}</div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>API Gateway</div>
-              <div style={{ fontSize: 9.5, color: TOKENS.brass, fontFamily: "'JetBrains Mono', monospace" }}>{gw.name.split(" ")[0]}</div>
-            </div>
-
-            <div style={{ textAlign: "center", color: TOKENS.blue, fontSize: 14 }}>➔</div>
-
-            <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
-              <div style={{ fontSize: 20 }}>{brk.icon}</div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>Event Broker</div>
-              <div style={{ fontSize: 9.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>{brk.name.split(" ")[0]}</div>
-            </div>
-
-            <div style={{ textAlign: "center", color: TOKENS.blue, fontSize: 14 }}>➔</div>
-
-            <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
-              <div style={{ fontSize: 20 }}>{dt.icon}</div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: TOKENS.paper, marginTop: 4 }}>Storage & Cache</div>
-              <div style={{ fontSize: 9.5, color: TOKENS.slate, fontFamily: "'JetBrains Mono', monospace" }}>{dt.name.split(" ")[0]}</div>
-            </div>
-          </div>
-
-          {/* Telemetry Metrics */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginTop: 16 }}>
-            <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "10px 14px" }}>
-              <div style={{ fontSize: 10.5, color: TOKENS.slate }}>Projected Peak Throughput</div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: TOKENS.blue, marginTop: 2 }}>~{calculatedQps.toLocaleString()} QPS</div>
-            </div>
-            <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "10px 14px" }}>
-              <div style={{ fontSize: 10.5, color: TOKENS.slate }}>P99 Network Response Latency</div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: TOKENS.teal, marginTop: 2 }}>~{calculatedLatency} ms</div>
-            </div>
-            <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "10px 14px" }}>
-              <div style={{ fontSize: 10.5, color: TOKENS.slate }}>High-Availability SLA</div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: TOKENS.brass, marginTop: 2 }}>{cld.sla} Uptime</div>
-            </div>
-            <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "10px 14px" }}>
-              <div style={{ fontSize: 10.5, color: TOKENS.slate }}>Est. Monthly Cloud Hosting</div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: TOKENS.paper, marginTop: 2 }}>{formatPrice(cld.estMonthlyInr, currency)}/mo</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Configuration Tiers */}
-        <div style={{ padding: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-          {/* 1. Client Tier */}
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-              1. CLIENT & PRESENTATION TIER
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {Object.keys(CLIENT_OPTIONS).map((k) => {
-                const opt = CLIENT_OPTIONS[k];
-                const active = clientTier === k;
-                return (
-                  <button
-                    key={k}
-                    onClick={() => setClientTier(k)}
-                    style={{
-                      background: active ? TOKENS.badgeBg : TOKENS.panelAlt,
-                      border: `1px solid ${active ? TOKENS.blue : TOKENS.hair}`,
-                      borderRadius: 8,
-                      padding: "8px 12px",
-                      textAlign: "left",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: active ? TOKENS.blue : TOKENS.paper }}>{opt.icon} {opt.name}</div>
-                      <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{opt.desc}</div>
-                    </div>
-                    <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.teal, fontWeight: 700 }}>{opt.qps}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 2. Microservices Gateway Tier */}
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-              2. MICROSERVICES & API ENGINE
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {Object.keys(GATEWAY_OPTIONS).map((k) => {
-                const opt = GATEWAY_OPTIONS[k];
-                const active = gatewayTier === k;
-                return (
-                  <button
-                    key={k}
-                    onClick={() => setGatewayTier(k)}
-                    style={{
-                      background: active ? TOKENS.badgeBg : TOKENS.panelAlt,
-                      border: `1px solid ${active ? TOKENS.blue : TOKENS.hair}`,
-                      borderRadius: 8,
-                      padding: "8px 12px",
-                      textAlign: "left",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: active ? TOKENS.blue : TOKENS.paper }}>{opt.icon} {opt.name}</div>
-                      <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{opt.desc}</div>
-                    </div>
-                    <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.blue, fontWeight: 700 }}>~{opt.maxQps.toLocaleString()} QPS</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 3. Data & Storage Tier */}
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-              3. DATABASE, CACHING & VECTOR STORE
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {Object.keys(DATA_OPTIONS).map((k) => {
-                const opt = DATA_OPTIONS[k];
-                const active = dataTier === k;
-                return (
-                  <button
-                    key={k}
-                    onClick={() => setDataTier(k)}
-                    style={{
-                      background: active ? TOKENS.badgeBg : TOKENS.panelAlt,
-                      border: `1px solid ${active ? TOKENS.blue : TOKENS.hair}`,
-                      borderRadius: 8,
-                      padding: "8px 12px",
-                      textAlign: "left",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <div style={{ fontSize: 12, fontWeight: 700, color: active ? TOKENS.blue : TOKENS.paper }}>{opt.icon} {opt.name}</div>
-                    <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{opt.desc}</div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 4. Cloud Infrastructure */}
-          <div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-              4. CLOUD SRE & ORCHESTRATION
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {Object.keys(CLOUD_OPTIONS).map((k) => {
-                const opt = CLOUD_OPTIONS[k];
-                const active = cloudTier === k;
-                return (
-                  <button
-                    key={k}
-                    onClick={() => setCloudTier(k)}
-                    style={{
-                      background: active ? TOKENS.badgeBg : TOKENS.panelAlt,
-                      border: `1px solid ${active ? TOKENS.blue : TOKENS.hair}`,
-                      borderRadius: 8,
-                      padding: "8px 12px",
-                      textAlign: "left",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: active ? TOKENS.blue : TOKENS.paper }}>{opt.icon} {opt.name}</div>
-                      <div style={{ fontSize: 10.5, color: TOKENS.slate }}>High-Availability SLA: <strong>{opt.sla}</strong></div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Modal Actions */}
-        <div style={{ padding: "16px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
-          <div style={{ fontSize: 12, color: TOKENS.slate }}>
-            Estimated Dev Sprints: <strong>5 to 8 Sprints</strong> (Dedicated pod with Lead Architect, Full-Stack Engineers & SRE).
-          </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <button
-              onClick={handleCopySpec}
-              style={{
-                background: TOKENS.panelAlt,
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 6,
-                padding: "10px 14px",
-                fontSize: 12,
-                fontFamily: "'JetBrains Mono', monospace",
-                cursor: "pointer",
-                color: TOKENS.paper,
-              }}
-            >
-              {copied ? "✓ Copied Spec" : "📋 Copy Blueprint"}
-            </button>
-            <Button
-              onClick={() => {
-                go("rfq-wizard");
-                onClose();
-              }}
-            >
-              🚀 Request Engineering Pod for This Architecture →
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------- Live Developer API Console & Sandbox Modal ---------------------------- */
-
-function ApiSandboxModal({ isOpen, onClose }) {
-  const [selectedEndpoint, setSelectedEndpoint] = useState("catalog");
-  const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState(null);
-  const [copiedCurl, setCopiedCurl] = useState(false);
-
-  const ENDPOINTS = {
-    catalog: {
-      method: "GET",
-      path: "/v1/services/catalog",
-      desc: "Fetches complete IT engineering services directory with tech stack metadata and deliverables.",
-      body: null,
-      sampleResponse: {
-        status: 200,
-        provider: "Abhimanyu Technologies Pvt Ltd",
-        total_services: 8,
-        services: [
-          { id: "web-dev", title: "Web Application Development", stack: ["Next.js 14", "React 18", "Node.js"] },
-          { id: "android-dev", title: "Android & Mobile App Development", stack: ["Kotlin", "Compose", "Flutter"] },
-          { id: "backend-dev", title: "Backend & Distributed APIs", stack: ["Go", "Node.js", "PostgreSQL", "Kafka"] },
-          { id: "ai-solutions", title: "Enterprise AI & RAG", stack: ["Python", "FastAPI", "Milvus", "LangChain"] },
-        ],
-        infrastructure: "AWS Multi-AZ EKS Cluster (Hyderabad & Singapore)",
-        timestamp: "2026-09-30T11:30:00Z",
-      },
-    },
-    quote: {
-      method: "POST",
-      path: "/v1/projects/quote/calculate",
-      desc: "Parametrically calculates sprint timeline, engineering pod allocation, and budget.",
-      body: JSON.stringify({
-        platform: "android_web_turnkey",
-        modules: ["auth_rbac", "payment_gateway", "ai_rag_assistant", "realtime_telemetry"],
-        scale_tier: "enterprise_high_concurrency",
-      }, null, 2),
-      sampleResponse: {
-        status: 200,
-        quote_id: "QTE-2026-9921",
-        estimated_budget_inr: 450000,
-        estimated_budget_usd: 5400,
-        estimated_duration_weeks: 8,
-        allocated_pod: {
-          solutions_architect: 1,
-          senior_fullstack_engineers: 2,
-          mobile_specialist: 1,
-          devops_sre: 1,
-        },
-        sla_guarantee: "100% IP Ownership & 30-Day Post-Launch Warranty",
-      },
-    },
-    inventory: {
-      method: "GET",
-      path: "/v1/products/erp/inventory/status",
-      desc: "Queries real-time warehouse inventory telemetry from Abhimanyu Cloud ERP.",
-      body: null,
-      sampleResponse: {
-        status: 200,
-        product: "Abhimanyu Cloud ERP",
-        warehouse_id: "WH-TELANGANA-01",
-        total_skus: 1420,
-        active_sync_latency_ms: 14,
-        recent_stock: [
-          { sku: "SKU-8841", item: "Microcontroller STM32", qty: 2450, status: "IN_STOCK" },
-          { sku: "SKU-4420", item: "Fiber Laser Scanner Head", qty: 38, status: "LOW_STOCK" },
-          { sku: "SKU-1192", item: "Titanium Fastener M8", qty: 890, status: "IN_STOCK" },
-        ],
-      },
-    },
-    rag: {
-      method: "POST",
-      path: "/v1/ai/rag/query",
-      desc: "Simulates an enterprise semantic query against proprietary vector documents.",
-      body: JSON.stringify({
-        query: "What is our disaster recovery RTO and RPO for AWS microservices?",
-        role_access: "engineering_lead",
-      }, null, 2),
-      sampleResponse: {
-        status: 200,
-        query: "What is our disaster recovery RTO and RPO for AWS microservices?",
-        confidence: 0.994,
-        latency_ms: 320,
-        answer: "Under our multi-region AWS topology with cross-region RDS read-replicas and Aurora Global Database, Recovery Time Objective (RTO) is < 15 minutes, and Recovery Point Objective (RPO) is < 1 second.",
-        citations: ["SecOps-DR-Runbook-v3.pdf #Section 4.2", "AWS-MultiAZ-Spec.md"],
-      },
-    },
-  };
-
-  const ep = ENDPOINTS[selectedEndpoint] || ENDPOINTS.catalog;
-
-  const handleSend = () => {
-    setLoading(true);
-    setResponse(null);
-    setTimeout(() => {
-      setResponse(ep.sampleResponse);
-      setLoading(false);
-    }, 280);
-  };
-
-  const handleCopyCurl = () => {
-    const curl = `curl -X ${ep.method} "https://api.abhimanu-technologies.app${ep.path}" \\
-  -H "Authorization: Bearer abk_live_demo_9841" \\
-  -H "Content-Type: application/json"${ep.body ? ` \\\n  -d '${ep.body.replace(/\n/g, "")}'` : ""}`;
-    navigator.clipboard?.writeText(curl);
-    setCopiedCurl(true);
-    setTimeout(() => setCopiedCurl(false), 2000);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(16px)",
-        zIndex: 1000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px 16px",
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "100%",
-          maxWidth: 900,
-          maxHeight: "90vh",
-          overflowY: "auto",
-          background: TOKENS.panel,
-          border: `1px solid ${TOKENS.hair}`,
-          borderRadius: 14,
-          boxShadow: "0 24px 60px rgba(0,0,0,0.25)",
-          color: TOKENS.paper,
-        }}
-      >
-        {/* Header */}
-        <div style={{ padding: "20px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 20 }}>🔌</span>
-              <span style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
-                Live Developer API Console & Sandbox
-              </span>
-              <span style={{ background: "rgba(13,148,136,0.15)", color: TOKENS.teal, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
-                REST & GRAPHQL
-              </span>
-            </div>
-            <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>
-              Execute live simulated API requests against Abhimanyu platform microservices, query service catalogs, and inspect JSON payloads.
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: TOKENS.panelAlt,
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              width: 32,
-              height: 32,
-              cursor: "pointer",
-              fontSize: 18,
-              color: TOKENS.slate,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            ×
-          </button>
-        </div>
-
-        {/* Endpoint Selector Tabs */}
-        <div style={{ display: "flex", gap: 8, padding: "14px 24px", borderBottom: `1px solid ${TOKENS.hair}`, background: TOKENS.panelAlt, flexWrap: "wrap" }}>
-          {Object.keys(ENDPOINTS).map((k) => {
-            const item = ENDPOINTS[k];
-            const active = selectedEndpoint === k;
-            return (
-              <button
-                key={k}
-                onClick={() => { setSelectedEndpoint(k); setResponse(null); }}
-                style={{
-                  background: active ? TOKENS.panel : "transparent",
-                  border: `1px solid ${active ? TOKENS.blue : "transparent"}`,
-                  borderRadius: 6,
-                  padding: "6px 12px",
-                  fontSize: 12,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  color: active ? TOKENS.blue : TOKENS.slate,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
-              >
-                <span style={{ color: item.method === "GET" ? TOKENS.teal : TOKENS.blue, fontWeight: 700 }}>{item.method}</span>
-                <span>{item.path.split("/").pop()}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* URL Bar & Send Button */}
-        <div style={{ padding: "16px 24px", borderBottom: `1px solid ${TOKENS.hair}`, display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ background: ep.method === "GET" ? "rgba(13,148,136,0.15)" : TOKENS.badgeBg, color: ep.method === "GET" ? TOKENS.teal : TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "6px 12px", borderRadius: 6 }}>
-            {ep.method}
-          </span>
-          <div style={{ flex: 1, background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "8px 12px", fontSize: 13, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.paper }}>
-            https://api.abhimanu-technologies.app{ep.path}
-          </div>
-          <Button onClick={handleSend} disabled={loading} style={{ padding: "8px 18px", fontSize: 13 }}>
-            {loading ? "Sending..." : "Send Request ⚡"}
-          </Button>
-        </div>
-
-        {/* Request Details & Response Output */}
-        <div style={{ padding: 24, display: "grid", gridTemplateColumns: ep.body ? "1fr 1fr" : "1fr", gap: 20 }}>
-          {ep.body && (
-            <div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-                REQUEST BODY (JSON)
-              </div>
-              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14, fontFamily: "'JetBrains Mono', monospace", fontSize: 11.5, color: TOKENS.paper, overflowX: "auto" }}>
-                <pre style={{ margin: 0 }}>{ep.body}</pre>
-              </div>
-            </div>
-          )}
-
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate }}>
-                RESPONSE PAYLOAD
-              </span>
-              {response && (
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <span style={{ background: "rgba(13,148,136,0.15)", color: TOKENS.teal, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 6px", borderRadius: 4 }}>
-                    ● 200 OK (24ms)
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14, minHeight: 220, maxHeight: 320, overflowY: "auto", fontFamily: "'JetBrains Mono', monospace", fontSize: 11.5, color: TOKENS.paper }}>
-              {loading ? (
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 200, color: TOKENS.slate }}>
-                  Processing request...
-                </div>
-              ) : response ? (
-                <pre style={{ margin: 0, color: TOKENS.paper }}>
-                  {JSON.stringify(response, null, 2)}
-                </pre>
-              ) : (
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: 200, color: TOKENS.slate, textAlign: "center" }}>
-                  <span style={{ fontSize: 24, marginBottom: 8 }}>⚡</span>
-                  Click "Send Request ⚡" to execute simulated live call.
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Actions */}
-        <div style={{ padding: "14px 24px", borderTop: `1px solid ${TOKENS.hair}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ fontSize: 12, color: TOKENS.slate }}>
-            {ep.desc}
-          </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <button
-              onClick={handleCopyCurl}
-              style={{
-                background: TOKENS.panelAlt,
-                border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 6,
-                padding: "8px 12px",
-                fontSize: 11.5,
-                fontFamily: "'JetBrains Mono', monospace",
-                cursor: "pointer",
-                color: TOKENS.paper,
-              }}
-            >
-              {copiedCurl ? "✓ Copied cURL" : "📋 Copy cURL"}
-            </button>
-            <Button onClick={onClose} variant="secondary" style={{ padding: "8px 14px", fontSize: 12 }}>
-              Close Console
-            </Button>
-          </div>
         </div>
       </div>
     </div>
@@ -3601,163 +2314,9 @@ function ProductDemoModal({ product, isOpen, onClose }) {
   );
 }
 
-/* ---------------------------- Universal Spotlight Search (Ctrl+K) ---------------------------- */
-
-function SpotlightSearchModal({ isOpen, onClose, go, openEstimator, openTracker, openArchitecture, openApiSandbox, openStatus }) {
-  const [query, setQuery] = useState("");
-  const inputRef = useRef(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
-      setQuery("");
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  const catalog = [
-    { type: "Service", title: "Web Application Development", id: "services", icon: "🌐", sub: "Next.js 14, React, responsive web portals, PWAs" },
-    { type: "Service", title: "Frontend & UI/UX Development", id: "services", icon: "🎨", sub: "Figma to pixel-perfect code, Tailwind, design systems" },
-    { type: "Service", title: "Backend & Distributed API Engineering", id: "services", icon: "⚙️", sub: "Node.js, Python FastAPI, Go, PostgreSQL, Kafka" },
-    { type: "Service", title: "Android & Mobile App Development", id: "services", icon: "📱", sub: "Native Kotlin, Jetpack Compose, Flutter, React Native" },
-    { type: "Service", title: "Full Stack Turnkey Development", id: "services", icon: "⚡", sub: "Complete web + mobile digital product engineering" },
-    { type: "Service", title: "Cloud, DevOps & SRE Engineering", id: "services", icon: "☁️", sub: "AWS, GCP, Docker, Kubernetes, CI/CD, Terraform" },
-    { type: "Service", title: "Enterprise AI & Custom Solutions", id: "services", icon: "🤖", sub: "Private RAG, custom LLMs, document intelligence" },
-    { type: "Product", title: "Abhimanyu Cloud ERP", id: "products", icon: "📦", sub: "Inventory, supply chain, automated GST invoicing" },
-    { type: "Product", title: "Abhimanyu CRM", id: "products", icon: "🎯", sub: "Omnichannel WhatsApp, sales pipeline & AI lead scoring" },
-    { type: "Product", title: "Abhimanyu HRMS", id: "products", icon: "👥", sub: "Payroll automation, biometric attendance, tax compliance" },
-    { type: "Product", title: "Abhimanyu AI Studio", id: "products", icon: "🧠", sub: "Private enterprise knowledge RAG & automation" },
-    { type: "Product", title: "Abhimanyu DevPulse", id: "products", icon: "📊", sub: "Real-time cloud observability & rollback monitor" },
-    { type: "Product", title: "Abhimanyu AppEngine", id: "products", icon: "⚡", sub: "Rapid backend-as-a-service & API generator" },
-    { type: "Tool", title: "Live 99.99% System Status & SLA Telemetry", id: "status", action: "openStatus", icon: "🟢", sub: "Global edge latency, database health, API gateway and incident log" },
-    { type: "Tool", title: "Enterprise ROI & Dev Pod TCO Calculator", id: "services", icon: "💰", sub: "Benchmark in-house hiring overhead vs turnkey senior dev pod" },
-    { type: "Trust", title: "Security & Compliance Trust Center", id: "about", icon: "🛡️", sub: "SOC 2 Type II, ISO 27001, GDPR and bilateral NDA guarantees" },
-    { type: "Tool", title: "Solutions Architect Video Booking (Google Meet)", id: "contact", icon: "📅", sub: "Instant 45-min slot reservation with lead systems architect" },
-    { type: "Dev", title: "Multi-Language Developer SDKs (TS, Python, Go, Kotlin)", id: "knowledge", icon: "💻", sub: "Production SDK integration code and live sandbox commands" },
-    { type: "Tool", title: "Interactive System Architecture Designer", id: "architecture", action: "openArchitecture", icon: "📐", sub: "Design cloud microservices, topology & estimate latency" },
-    { type: "Tool", title: "Live Developer API Console & Sandbox", id: "api-sandbox", action: "openApiSandbox", icon: "🔌", sub: "Execute simulated REST & GraphQL API requests live" },
-    { type: "Tool", title: "Interactive Project Scope & Cost Estimator", id: "estimator", action: "openEstimator", icon: "⚡", sub: "Calculate tech stack budget, sprints & team pod" },
-    { type: "Tool", title: "Client Live Project Sprint Tracker", id: "tracker", action: "openTracker", icon: "📊", sub: "Live staging URL, sprint burndown & commit logs" },
-    { type: "Page", title: "Case Studies & Client Portfolio", id: "case-studies", icon: "📈", sub: "FinTech, Healthcare, Logistics & E-Commerce" },
-    { type: "Page", title: "Engineering Manifesto & Tech Hub", id: "knowledge", icon: "📚", sub: "Architecture playbooks and development guides" },
-    { type: "Page", title: "Careers & Open Positions", id: "careers", icon: "💼", sub: "Senior engineering roles with compensation bands" },
-    { type: "Page", title: "Contact & Technical Solutions Intake", id: "contact", icon: "📞", sub: "Direct consultation booking with 12hr review SLA" },
-  ];
-
-  const results = catalog.filter((item) => {
-    const q = query.toLowerCase();
-    return item.title.toLowerCase().includes(q) || item.sub.toLowerCase().includes(q) || item.type.toLowerCase().includes(q);
-  });
-
-  const handleSelect = (item) => {
-    onClose();
-    if (item.action === "openEstimator") openEstimator?.();
-    else if (item.action === "openTracker") openTracker?.();
-    else if (item.action === "openArchitecture") openArchitecture?.();
-    else if (item.action === "openApiSandbox") openApiSandbox?.();
-    else if (item.action === "openStatus") openStatus?.();
-    else go(item.id);
-  };
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(16px)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        padding: "80px 16px 20px",
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "100%",
-          maxWidth: 620,
-          background: TOKENS.panel,
-          border: `1px solid ${TOKENS.hair}`,
-          borderRadius: 12,
-          boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
-          overflow: "hidden",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", padding: "14px 18px", borderBottom: `1px solid ${TOKENS.hair}` }}>
-          <span style={{ fontSize: 18, marginRight: 10 }}>🔍</span>
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Search IT Services, Products, Tech Stacks, or Tools..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            style={{
-              width: "100%",
-              background: "transparent",
-              border: "none",
-              outline: "none",
-              fontSize: 15,
-              fontFamily: "'Inter', sans-serif",
-              color: TOKENS.paper,
-            }}
-          />
-          <kbd style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 4, padding: "2px 6px", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-            ESC
-          </kbd>
-        </div>
-
-        <div style={{ maxHeight: 380, overflowY: "auto", padding: 8 }}>
-          {results.length === 0 ? (
-            <div style={{ padding: "30px", textAlign: "center", color: TOKENS.slate, fontSize: 13 }}>
-              No matching services or products found for "{query}".
-            </div>
-          ) : (
-            results.map((item, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSelect(item)}
-                style={{
-                  width: "100%",
-                  background: "transparent",
-                  border: "none",
-                  padding: "10px 14px",
-                  borderRadius: 8,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  cursor: "pointer",
-                  textAlign: "left",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = TOKENS.panelAlt)}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <span style={{ fontSize: 20 }}>{item.icon}</span>
-                  <div>
-                    <div style={{ fontSize: 13.5, fontWeight: 600, color: TOKENS.paper }}>{item.title}</div>
-                    <div style={{ fontSize: 11, color: TOKENS.slate }}>{item.sub}</div>
-                  </div>
-                </div>
-                <span style={{ background: TOKENS.panelAlt, color: TOKENS.slate, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", padding: "2px 8px", borderRadius: 4 }}>
-                  {item.type}
-                </span>
-              </button>
-            ))
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ---------------------------- Page 1: HomePage ---------------------------- */
 
-function HomePage({ go, currency, openEstimator, openTracker, openArchitecture, openApiSandbox, setSelectedProduct, openProductDemo }) {
+function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDemo }) {
   return (
     <div>
       {/* Hero Section */}
@@ -3823,24 +2382,11 @@ function HomePage({ go, currency, openEstimator, openTracker, openArchitecture, 
             <Button onClick={() => go("services")} style={{ padding: "13px 26px", fontSize: 15 }}>
               Explore IT Services →
             </Button>
-            <Button
-              onClick={openArchitecture}
-              style={{
-                background: "rgba(37,99,235,0.08)",
-                border: `1px solid ${TOKENS.blue}55`,
-                color: TOKENS.blue,
-                padding: "13px 24px",
-                fontSize: 15,
-                fontWeight: 700,
-              }}
-            >
-              📐 System Architect
-            </Button>
-            <Button onClick={openEstimator} variant="secondary" style={{ padding: "13px 24px", fontSize: 15 }}>
-              ⚡ Cost Estimator
-            </Button>
             <Button onClick={() => go("products")} variant="outline" style={{ padding: "13px 24px", fontSize: 15 }}>
               📦 View Software Products
+            </Button>
+            <Button onClick={() => go("contact")} variant="secondary" style={{ padding: "13px 24px", fontSize: 15 }}>
+              Schedule Consultation
             </Button>
           </div>
 
@@ -4123,7 +2669,7 @@ function HomePage({ go, currency, openEstimator, openTracker, openArchitecture, 
               Start Project Planner →
             </button>
             <button
-              onClick={openEstimator}
+              onClick={() => go("contact")}
               style={{
                 background: "rgba(255,255,255,0.15)",
                 color: "#FFFFFF",
@@ -4136,7 +2682,7 @@ function HomePage({ go, currency, openEstimator, openTracker, openArchitecture, 
                 cursor: "pointer",
               }}
             >
-              ⚡ Instant Budget Estimator
+              Consult an Architect →
             </button>
           </div>
         </div>
@@ -4147,7 +2693,7 @@ function HomePage({ go, currency, openEstimator, openTracker, openArchitecture, 
 
 /* ---------------------------- Page 2: ServicesPage ---------------------------- */
 
-function ServicesPage({ go, currency, openEstimator, openArchitecture }) {
+function ServicesPage({ go, currency }) {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Enterprise ROI & Dev Pod TCO Calculator State
@@ -4277,12 +2823,9 @@ function ServicesPage({ go, currency, openEstimator, openArchitecture }) {
                   <div style={{ fontSize: 12.5, color: TOKENS.paper }}>{s.deliverables}</div>
                 </div>
 
-                <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-                  <Button onClick={() => go("rfq-wizard")} style={{ flex: 1, padding: "9px" }}>
+                <div style={{ marginTop: 16 }}>
+                  <Button onClick={() => go("rfq-wizard")} style={{ width: "100%", padding: "9px" }}>
                     Start Requirement →
-                  </Button>
-                  <Button onClick={openEstimator} variant="secondary" style={{ padding: "9px 14px" }}>
-                    ⚡ Estimate
                   </Button>
                 </div>
               </div>
@@ -4308,8 +2851,8 @@ function ServicesPage({ go, currency, openEstimator, openArchitecture }) {
               How our Senior Solutions Architects evaluate and choose the optimal architectural stack for client software products.
             </div>
           </div>
-          <Button onClick={openArchitecture} style={{ padding: "8px 16px", fontSize: 12.5 }}>
-            📐 Open System Architect
+          <Button onClick={() => go("contact")} style={{ padding: "8px 16px", fontSize: 12.5 }}>
+            Book Architecture Review →
           </Button>
         </div>
 
@@ -5281,7 +3824,7 @@ function CaseStudiesPage({ go }) {
 
 /* ---------------------------- Page 6: KnowledgePage (Tech Hub) ---------------------------- */
 
-function KnowledgePage({ openApiSandbox, openArchitecture }) {
+function KnowledgePage({ go }) {
   const [activeLang, setActiveLang] = useState("ts");
   const [activeTopic, setActiveTopic] = useState("quote");
   const [copiedInstall, setCopiedInstall] = useState(false);
@@ -5665,44 +4208,6 @@ fun main() = runBlocking {
         subtitle="Insights, design patterns, and engineering standards developed across our production software deployments."
       />
 
-      {/* Live Developer API Sandbox Callout */}
-      <div
-        style={{
-          background: `linear-gradient(135deg, ${TOKENS.panelAlt} 0%, ${TOKENS.panel} 100%)`,
-          border: `1px solid ${TOKENS.teal}66`,
-          borderRadius: 12,
-          padding: 22,
-          marginBottom: 32,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 14,
-        }}
-      >
-        <div style={{ maxWidth: 660 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-            <span style={{ fontSize: 20 }}>🔌</span>
-            <span style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper }}>
-              Live Interactive Developer API Console & Sandbox
-            </span>
-            <span style={{ background: "rgba(13,148,136,0.15)", color: TOKENS.teal, fontSize: 10, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 6px", borderRadius: 4 }}>
-              DEVELOPER TESTBED
-            </span>
-          </div>
-          <p style={{ fontSize: 12.5, color: TOKENS.slate, margin: 0, lineHeight: 1.5 }}>
-            Execute simulated REST & GraphQL endpoints, inspect request headers, and view live JSON payloads returned by Abhimanyu microservice APIs.
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <Button onClick={openApiSandbox} style={{ padding: "9px 18px", fontSize: 13 }}>
-            Launch API Console ⚡
-          </Button>
-          <Button onClick={openArchitecture} variant="secondary" style={{ padding: "9px 16px", fontSize: 13 }}>
-            📐 Architecture Map
-          </Button>
-        </div>
-      </div>
 
       {/* Multi-Language Developer SDK & Integration Generator */}
       <div
@@ -5897,22 +4402,7 @@ fun main() = runBlocking {
               >
                 {copiedCode ? "✓ Copied Snippet" : "📋 Copy Code"}
               </button>
-              <button
-                onClick={openApiSandbox}
-                style={{
-                  background: "rgba(13,148,136,0.2)",
-                  border: "1px solid rgba(13,148,136,0.4)",
-                  color: "#2DD4BF",
-                  padding: "4px 10px",
-                  fontSize: 11,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  borderRadius: 4,
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-              >
-                ⚡ Run in Sandbox
-              </button>
+
             </div>
           </div>
           <pre
@@ -5954,7 +4444,7 @@ fun main() = runBlocking {
 
 /* ---------------------------- Page 7: DashboardPage ---------------------------- */
 
-function DashboardPage({ openTracker, openEstimator, go }) {
+function DashboardPage({ openTracker, go }) {
   const [downloadedInv, setDownloadedInv] = useState(null);
 
   // Interactive Kanban state
@@ -7283,14 +5773,7 @@ const PAGES = {
 
 export default function App() {
   const [page, setPage] = useState("home");
-  const [currency, setCurrency] = useState("INR");
-  const [theme, setTheme] = useState(() => {
-    try {
-      return localStorage.getItem("abhimanyu_theme") || "light";
-    } catch {
-      return "light";
-    }
-  });
+  const [currency] = useState("INR");
 
   const [currentUser, setCurrentUser] = useState({
     name: "Dr. K. S. Rao",
@@ -7299,40 +5782,10 @@ export default function App() {
   });
 
   // Modal states
-  const [estimatorOpen, setEstimatorOpen] = useState(false);
   const [trackerOpen, setTrackerOpen] = useState(false);
-  const [spotlightOpen, setSpotlightOpen] = useState(false);
-  const [architectureOpen, setArchitectureOpen] = useState(false);
-  const [apiSandboxOpen, setApiSandboxOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [productDemoOpen, setProductDemoOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(SOFTWARE_PRODUCTS[0]);
-
-  // Synchronize dynamic theme tokens
-  useEffect(() => {
-    const isDark = theme === "dark";
-    Object.assign(TOKENS, isDark ? DARK_TOKENS : LIGHT_TOKENS);
-    document.documentElement.setAttribute("data-theme", theme);
-    document.documentElement.style.setProperty("--bg", isDark ? "#0B1727" : "#F8FAFC");
-    document.documentElement.style.setProperty("--text", isDark ? "#F8FAFC" : "#0F172A");
-    document.body.style.background = isDark ? "#0B1727" : "#F8FAFC";
-    document.body.style.color = isDark ? "#F8FAFC" : "#0F172A";
-    try {
-      localStorage.setItem("abhimanyu_theme", theme);
-    } catch (_) {}
-  }, [theme]);
-
-  // Keyboard shortcut Ctrl+K / Cmd+K
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setSpotlightOpen((prev) => !prev);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
   const go = (id) => {
     setPage(id);
@@ -7344,8 +5797,8 @@ export default function App() {
   return (
     <div
       style={{
-        background: theme === "dark" ? DARK_TOKENS.ink : LIGHT_TOKENS.ink,
-        color: theme === "dark" ? DARK_TOKENS.paper : LIGHT_TOKENS.paper,
+        background: LIGHT_TOKENS.ink,
+        color: LIGHT_TOKENS.paper,
         minHeight: "100vh",
         fontFamily: "'Inter', sans-serif",
       }}
@@ -7353,18 +5806,18 @@ export default function App() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
-        body { margin: 0; background: ${theme === "dark" ? "#0B1727" : "#F8FAFC"}; color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"}; }
-        input, select, textarea, option { color-scheme: ${theme === "dark" ? "dark" : "light"}; }
+        body { margin: 0; background: #F8FAFC; color: #0F172A; }
+        input, select, textarea, option { color-scheme: light; }
         input, select, textarea {
-          background: ${theme === "dark" ? "#132238" : "#FFFFFF"} !important;
-          color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"} !important;
-          border-color: ${theme === "dark" ? "rgba(255,255,255,0.18)" : "#CBD5E1"} !important;
+          background: #FFFFFF !important;
+          color: #0F172A !important;
+          border-color: #CBD5E1 !important;
         }
         input::placeholder, textarea::placeholder {
-          color: ${theme === "dark" ? "#64748B" : "#94A3B8"} !important;
+          color: #94A3B8 !important;
         }
         button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid ${TOKENS.blue}; outline-offset: 2px; }
-        select option { background: ${theme === "dark" ? "#132238" : "#FFFFFF"} !important; color: ${theme === "dark" ? "#F8FAFC" : "#0F172A"} !important; }
+        select option { background: #FFFFFF !important; color: #0F172A !important; }
 
         @media (max-width: 860px) {
           .desktop-nav { display: none !important; }
@@ -7380,17 +5833,7 @@ export default function App() {
       <SiteHeader
         page={page}
         go={go}
-        currency={currency}
-        setCurrency={setCurrency}
-        currentUser={currentUser}
-        openEstimator={() => setEstimatorOpen(true)}
-        openTracker={() => setTrackerOpen(true)}
-        openSpotlight={() => setSpotlightOpen(true)}
-        openArchitecture={() => setArchitectureOpen(true)}
-        openApiSandbox={() => setApiSandboxOpen(true)}
         openStatusModal={() => setStatusModalOpen(true)}
-        theme={theme}
-        setTheme={setTheme}
       />
 
       {/* Main Page Content */}
@@ -7399,10 +5842,7 @@ export default function App() {
           go={go}
           currency={currency}
           currentUser={currentUser}
-          openEstimator={() => setEstimatorOpen(true)}
           openTracker={() => setTrackerOpen(true)}
-          openArchitecture={() => setArchitectureOpen(true)}
-          openApiSandbox={() => setApiSandboxOpen(true)}
           openStatusModal={() => setStatusModalOpen(true)}
           setSelectedProduct={setSelectedProduct}
           openProductDemo={() => setProductDemoOpen(true)}
@@ -7413,29 +5853,10 @@ export default function App() {
       <Footer go={go} openStatusModal={() => setStatusModalOpen(true)} />
 
       {/* Global Modals */}
-      <ProjectEstimatorModal
-        isOpen={estimatorOpen}
-        onClose={() => setEstimatorOpen(false)}
-        currency={currency}
-        go={go}
-      />
-
       <ClientProjectTrackerModal
         isOpen={trackerOpen}
         onClose={() => setTrackerOpen(false)}
         go={go}
-      />
-
-      <ArchitectureVisualizerModal
-        isOpen={architectureOpen}
-        onClose={() => setArchitectureOpen(false)}
-        go={go}
-        currency={currency}
-      />
-
-      <ApiSandboxModal
-        isOpen={apiSandboxOpen}
-        onClose={() => setApiSandboxOpen(false)}
       />
 
       <SystemStatusModal
@@ -7449,17 +5870,6 @@ export default function App() {
         onClose={() => setProductDemoOpen(false)}
       />
 
-      <SpotlightSearchModal
-        isOpen={spotlightOpen}
-        onClose={() => setSpotlightOpen(false)}
-        go={go}
-        openEstimator={() => setEstimatorOpen(true)}
-        openTracker={() => setTrackerOpen(true)}
-        openArchitecture={() => setArchitectureOpen(true)}
-        openApiSandbox={() => setApiSandboxOpen(true)}
-        openStatus={() => setStatusModalOpen(true)}
-      />
-
       {/* Fixed Mobile Bottom Navigation */}
       <nav
         className="mobile-bottom-nav"
@@ -7469,7 +5879,7 @@ export default function App() {
           left: 0,
           right: 0,
           zIndex: 9000,
-          background: theme === "dark" ? "rgba(19, 34, 56, 0.96)" : "rgba(255, 255, 255, 0.96)",
+          background: "rgba(255, 255, 255, 0.96)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           borderTop: `1px solid ${TOKENS.hair}`,
