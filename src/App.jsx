@@ -1911,6 +1911,33 @@ function HomePage({ go, currency, openTracker }) {
               </div>
             ))}
           </div>
+
+          {/* Quick Architect Configurator Trigger Banner */}
+          <div
+            onClick={() => go("services")}
+            style={{
+              marginTop: 24,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              background: "rgba(37,99,235,0.06)",
+              border: `1px solid ${TOKENS.blue}33`,
+              borderRadius: 999,
+              padding: "8px 20px",
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(37,99,235,0.12)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(37,99,235,0.06)")}
+          >
+            <span style={{ fontSize: 16 }}>📐</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: TOKENS.paper }}>
+              Want to benchmark your custom microservices & cloud stack?
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: TOKENS.blue, display: "flex", alignItems: "center", gap: 4 }}>
+              Launch Solution Architect Studio ➔
+            </span>
+          </div>
         </div>
       </section>
 
@@ -2332,6 +2359,343 @@ function HomePage({ go, currency, openTracker }) {
   );
 }
 
+
+/* ---------------------------- Advanced Enterprise Solution Architect Studio ---------------------------- */
+
+function SolutionArchitectStudio({ go }) {
+  const [frontend, setFrontend] = useState("nextjs");
+  const [backend, setBackend] = useState("go");
+  const [database, setDatabase] = useState("postgres");
+  const [messaging, setMessaging] = useState("kafka");
+  const [cloud, setCloud] = useState("aws");
+  const [compliance, setCompliance] = useState(["soc2", "iso27001"]);
+  const [downloadedSpec, setDownloadedSpec] = useState(false);
+
+  // Computations based on stack
+  const computedThroughput = backend === "go" ? "85,000 req/sec" : backend === "node" ? "35,000 req/sec" : backend === "java" ? "60,000 req/sec" : "28,000 req/sec";
+  const computedLatency = backend === "go" ? "< 28ms P99" : backend === "node" ? "< 48ms P99" : backend === "java" ? "< 42ms P99" : "< 65ms P99";
+  const podSize = (compliance.length > 2 ? 6 : 5);
+  const sprintEstimate = (frontend === "all" || compliance.includes("pci")) ? "8 to 12 Sprints" : "6 to 9 Sprints";
+
+  const toggleCompliance = (cId) => {
+    setCompliance((prev) =>
+      prev.includes(cId) ? prev.filter((x) => x !== cId) : [...prev, cId]
+    );
+  };
+
+  const handleExportSpec = () => {
+    const spec = {
+      architecture_id: "ARCH-SPEC-" + Math.floor(1000 + Math.random() * 9000),
+      timestamp: new Date().toISOString(),
+      client_frontend: frontend,
+      backend_microservices: backend,
+      database_layer: database,
+      event_streaming: messaging,
+      cloud_infrastructure: cloud,
+      compliance_standards: compliance,
+      benchmarks: {
+        estimated_throughput: computedThroughput,
+        p99_latency: computedLatency,
+        recommended_pod_headcount: podSize,
+        delivery_estimate: sprintEstimate
+      },
+      audit_sla: "99.99% Availability • Zero Technical Debt",
+      lead_architect: "Er. K. S. Abhimanyu (CTO)"
+    };
+
+    const blob = new Blob([JSON.stringify(spec, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "abhimanyu_architecture_spec.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    setDownloadedSpec(true);
+    setTimeout(() => setDownloadedSpec(false), 2500);
+  };
+
+  return (
+    <div
+      style={{
+        background: TOKENS.panel,
+        border: `1px solid ${TOKENS.hair}`,
+        borderRadius: 16,
+        padding: "32px 28px",
+        boxShadow: "0 8px 30px rgba(0,0,0,0.04)",
+        marginTop: 48,
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14, marginBottom: 24 }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 24 }}>📐</span>
+            <h3 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: TOKENS.paper }}>
+              Interactive Enterprise Solution Architect Studio
+            </h3>
+            <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+              LIVE CONFIGURATOR
+            </span>
+          </div>
+          <p style={{ margin: "6px 0 0", fontSize: 13.5, color: TOKENS.slate }}>
+            Configure your enterprise system parameters below to benchmark architectural throughput, P99 latency, and recommended engineering pod composition.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: 8 }}>
+          <Button onClick={handleExportSpec} variant="secondary" style={{ padding: "8px 14px", fontSize: 12 }}>
+            {downloadedSpec ? "✓ Spec (.json) Exported" : "📥 Export Architecture Blueprint (.json)"}
+          </Button>
+          <Button onClick={() => go("contact")} style={{ padding: "8px 16px", fontSize: 12 }}>
+            Submit to Lead Architect →
+          </Button>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 28, alignItems: "start" }}>
+        {/* Left Column: Stack Selectors */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {/* Frontend Tier */}
+          <div>
+            <label style={{ fontSize: 12.5, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 8 }}>
+              1. Client Application Tier
+            </label>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {[
+                { id: "nextjs", label: "Next.js 14 SSR Web Portal", icon: "🌐" },
+                { id: "kotlin", label: "Native Android (Kotlin & Compose)", icon: "🤖" },
+                { id: "flutter", label: "Cross-Platform Flutter (iOS + Android)", icon: "📱" },
+                { id: "microfrontend", label: "Module Federation Micro-Frontends", icon: "🧩" },
+              ].map((f) => (
+                <button
+                  type="button"
+                  key={f.id}
+                  onClick={() => setFrontend(f.id)}
+                  style={{
+                    background: frontend === f.id ? TOKENS.badgeBg : TOKENS.panelAlt,
+                    border: `1px solid ${frontend === f.id ? TOKENS.blue : TOKENS.hair}`,
+                    borderRadius: 8,
+                    padding: "10px 12px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    cursor: "pointer",
+                    textAlign: "left",
+                    color: frontend === f.id ? TOKENS.blue : TOKENS.paper,
+                    fontWeight: frontend === f.id ? 700 : 500,
+                    fontSize: 12,
+                  }}
+                >
+                  <span>{f.icon}</span>
+                  <span>{f.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Backend Microservices Tier */}
+          <div>
+            <label style={{ fontSize: 12.5, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 8 }}>
+              2. Distributed Microservices & APIs Tier
+            </label>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
+              {[
+                { id: "go", label: "Go (Golang)", desc: "Low latency • 85k QPS" },
+                { id: "node", label: "Node.js Fastify", desc: "Fast JS ecosystem" },
+                { id: "python", label: "Python FastAPI", desc: "AI / LLM Pipelines" },
+                { id: "java", label: "Spring Boot", desc: "Enterprise banking" },
+              ].map((b) => (
+                <button
+                  type="button"
+                  key={b.id}
+                  onClick={() => setBackend(b.id)}
+                  style={{
+                    background: backend === b.id ? TOKENS.badgeBg : TOKENS.panelAlt,
+                    border: `1px solid ${backend === b.id ? TOKENS.blue : TOKENS.hair}`,
+                    borderRadius: 6,
+                    padding: "8px 6px",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: backend === b.id ? TOKENS.blue : TOKENS.paper }}>{b.label}</div>
+                  <div style={{ fontSize: 9.5, color: TOKENS.slate, marginTop: 2 }}>{b.desc}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Data & Messaging Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+                3. Primary Data Tier
+              </label>
+              <select
+                value={database}
+                onChange={(e) => setDatabase(e.target.value)}
+                style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, fontSize: 12.5, background: TOKENS.panelAlt }}
+              >
+                <option value="postgres">PostgreSQL 16 (Multi-Tenant RLS)</option>
+                <option value="redis">Redis Cluster (In-Memory + Pub/Sub)</option>
+                <option value="mongo">MongoDB Atlas (Polymorphic JSON)</option>
+                <option value="vector">Milvus / Pinecone (Vector Embeddings)</option>
+              </select>
+            </div>
+
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+                4. Event Streaming Mesh
+              </label>
+              <select
+                value={messaging}
+                onChange={(e) => setMessaging(e.target.value)}
+                style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, fontSize: 12.5, background: TOKENS.panelAlt }}
+              >
+                <option value="kafka">Apache Kafka (High-Throughput Partitioning)</option>
+                <option value="rabbitmq">RabbitMQ (AMQP Priority Queues)</option>
+                <option value="sqs">AWS SQS / SNS (Serverless Queues)</option>
+                <option value="redis-stream">Redis Streams (Microsecond Queues)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Cloud Provider */}
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+              5. Cloud Orchestration Platform
+            </label>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+              {[
+                { id: "aws", label: "AWS EKS Multi-AZ", desc: "Elastic Kubernetes" },
+                { id: "gcp", label: "Google Cloud GKE", desc: "Anthos / Cloud Run" },
+                { id: "azure", label: "Microsoft Azure AKS", desc: "Enterprise Active Directory" },
+              ].map((c) => (
+                <button
+                  type="button"
+                  key={c.id}
+                  onClick={() => setCloud(c.id)}
+                  style={{
+                    background: cloud === c.id ? TOKENS.badgeBg : TOKENS.panelAlt,
+                    border: `1px solid ${cloud === c.id ? TOKENS.blue : TOKENS.hair}`,
+                    borderRadius: 6,
+                    padding: "8px 10px",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
+                >
+                  <div style={{ fontSize: 11.5, fontWeight: 700, color: cloud === c.id ? TOKENS.blue : TOKENS.paper }}>{c.label}</div>
+                  <div style={{ fontSize: 9.5, color: TOKENS.slate }}>{c.desc}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Compliance & Security Guardrails */}
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+              6. Enterprise Security & Compliance Guardrails
+            </label>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {[
+                { id: "soc2", label: "SOC 2 Type II" },
+                { id: "iso27001", label: "ISO/IEC 27001" },
+                { id: "pci", label: "PCI-DSS Level 1" },
+                { id: "hipaa", label: "HIPAA BAA Ready" },
+                { id: "gdpr", label: "GDPR / DPDP Act" },
+              ].map((comp) => {
+                const active = compliance.includes(comp.id);
+                return (
+                  <button
+                    type="button"
+                    key={comp.id}
+                    onClick={() => toggleCompliance(comp.id)}
+                    style={{
+                      background: active ? "rgba(16,185,129,0.12)" : TOKENS.panelAlt,
+                      border: `1px solid ${active ? "#10B981" : TOKENS.hair}`,
+                      color: active ? "#10B981" : TOKENS.slate,
+                      padding: "5px 10px",
+                      borderRadius: 6,
+                      fontSize: 11.5,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontWeight: active ? 700 : 500,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {active ? "✓ " : "+ "}{comp.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Live Computed Telemetry & Visual Architecture Blueprint */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {/* Key Architectural Benchmarks */}
+          <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 20 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 12, textTransform: "uppercase" }}>
+              Dynamic Architecture Benchmarks
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+              <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
+                <div style={{ fontSize: 11, color: TOKENS.slate }}>Peak Throughput</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: TOKENS.blue, marginTop: 4 }}>{computedThroughput}</div>
+              </div>
+              <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
+                <div style={{ fontSize: 11, color: TOKENS.slate }}>P99 Network Latency</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: TOKENS.teal, marginTop: 4 }}>{computedLatency}</div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 10, marginBottom: 6 }}>
+              <span style={{ color: TOKENS.slate }}>Recommended Dev Pod:</span>
+              <strong style={{ color: TOKENS.paper }}>{podSize} Dedicated Senior Engineers</strong>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 10 }}>
+              <span style={{ color: TOKENS.slate }}>Estimated Sprint Velocity:</span>
+              <strong style={{ color: TOKENS.blue }}>{sprintEstimate}</strong>
+            </div>
+          </div>
+
+          {/* Visual Architecture Flow Diagram */}
+          <div style={{ background: "#0F172A", color: "#F8FAFC", borderRadius: 12, padding: 20, fontFamily: "'JetBrains Mono', monospace" }}>
+            <div style={{ fontSize: 11, color: "#38BDF8", fontWeight: 700, marginBottom: 14 }}>
+              ● LIVE ARCHITECTURAL TOPOLOGY MAP
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.06)", padding: "8px 12px", borderRadius: 6 }}>
+                <span style={{ color: "#38BDF8" }}>[CLIENT]</span>
+                <span style={{ color: "#F8FAFC" }}>{frontend.toUpperCase()} App</span>
+                <span style={{ marginLeft: "auto", fontSize: 10, color: "#94A3B8" }}>TLS 1.3</span>
+              </div>
+              <div style={{ textAlign: "center", color: "#38BDF8", fontSize: 12 }}>↓ Envoy Anycast Gateway</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(37,99,235,0.2)", border: "1px solid #2563EB", padding: "8px 12px", borderRadius: 6 }}>
+                <span style={{ color: "#60A5FA" }}>[MICROSERVICES]</span>
+                <span style={{ color: "#FFFFFF", fontWeight: 700 }}>{backend.toUpperCase()} Pods on {cloud.toUpperCase()} EKS</span>
+              </div>
+              <div style={{ textAlign: "center", color: "#10B981", fontSize: 12 }}>↓ Event Bus & Async Pipes</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(16,185,129,0.15)", border: "1px solid #10B981", padding: "8px 12px", borderRadius: 6 }}>
+                <span style={{ color: "#34D399" }}>[DATA & MESH]</span>
+                <span style={{ color: "#FFFFFF" }}>{database.toUpperCase()} + {messaging.toUpperCase()}</span>
+                <span style={{ marginLeft: "auto", fontSize: 10, color: "#34D399" }}>ACID + HA</span>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 14, paddingTop: 10, borderTop: "1px solid rgba(255,255,255,0.12)", fontSize: 10.5, color: "#94A3B8", display: "flex", justifyContent: "space-between" }}>
+              <span>Security: {compliance.map(c => c.toUpperCase()).join(", ")}</span>
+              <span style={{ color: "#10B981" }}>✓ Validated Architecture</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------------------------- Page 2: ServicesPage ---------------------------- */
 
 function ServicesPage({ go, currency }) {
@@ -2391,6 +2755,9 @@ function ServicesPage({ go, currency }) {
           </button>
         ))}
       </div>
+
+      {/* Solution Architect Studio */}
+      <SolutionArchitectStudio go={go} />
 
       {/* Detailed Services Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 24 }}>
@@ -2927,6 +3294,71 @@ function IndustriesPage({ go }) {
             </div>
           </div>
         ))}
+      </div>
+
+            {/* Interactive Regulatory & Architectural Benchmark Matrix */}
+      <div
+        style={{
+          marginTop: 48,
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          padding: 28,
+          boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
+        }}
+      >
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 20 }}>📊</span>
+            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
+              Cross-Industry Architectural & Regulatory Benchmark Matrix
+            </h3>
+            <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+              ENTERPRISE STANDARDS
+            </span>
+          </div>
+          <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>
+            How our engineering pods tailor distributed topologies and compliance controls across critical sectors.
+          </div>
+        </div>
+
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5, textAlign: "left" }}>
+            <thead>
+              <tr style={{ background: TOKENS.panelAlt, borderBottom: `1px solid ${TOKENS.hair}`, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+                <th style={{ padding: "10px 14px" }}>Industry Vertical</th>
+                <th style={{ padding: "10px 14px" }}>Peak Concurrency</th>
+                <th style={{ padding: "10px 14px" }}>P99 Latency SLA</th>
+                <th style={{ padding: "10px 14px" }}>Primary Compliance</th>
+                <th style={{ padding: "10px 14px" }}>Data Isolation Pattern</th>
+                <th style={{ padding: "10px 14px" }}>Primary Cloud Topology</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { name: "Banking & FinTech", tps: "10,000+ TPS", latency: "< 85ms", comp: "PCI-DSS Level 1 / RBI", iso: "Hardware Token HSM Vault", cloud: "Multi-AZ AWS EKS + Kafka" },
+                { name: "Healthcare & Life Sciences", tps: "5,000+ Streams", latency: "< 180ms", comp: "HIPAA / HL7 FHIR", iso: "ePHI Encrypted Field Storage", cloud: "HIPAA VPC + WebRTC Edge" },
+                { name: "Retail & E-Commerce", tps: "250K Users", latency: "< 1.2s", comp: "SOC 2 Type II / OWASP", iso: "Multi-Tenant Redis Cache", cloud: "Next.js Edge + CloudFront" },
+                { name: "Logistics & Supply Chain", tps: "50K pings/sec", latency: "< 50ms", comp: "ISO 27001 ISMS", iso: "TimescaleDB Time-Series", cloud: "MQTT IoT Gateway + Go" },
+                { name: "Enterprise Cloud SaaS", tps: "100K+ QPS", latency: "< 45ms", comp: "SAML 2.0 / SOC 2", iso: "Database-Per-Tenant RLS", cloud: "Kubernetes Cluster + Terraform" },
+                { name: "Smart Manufacturing", tps: "50K msg/sec", latency: "< 20ms", comp: "Industry 4.0 / OPC-UA", iso: "Edge Industrial Gateways", cloud: "Docker On-Premise + AWS" },
+              ].map((row, ri) => (
+                <tr key={ri} style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
+                  <td style={{ padding: "12px 14px", fontWeight: 700, color: TOKENS.paper }}>{row.name}</td>
+                  <td style={{ padding: "12px 14px", color: TOKENS.blue, fontWeight: 700 }}>{row.tps}</td>
+                  <td style={{ padding: "12px 14px", color: TOKENS.teal, fontWeight: 600 }}>{row.latency}</td>
+                  <td style={{ padding: "12px 14px" }}>
+                    <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, padding: "2px 6px", borderRadius: 4, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>
+                      {row.comp}
+                    </span>
+                  </td>
+                  <td style={{ padding: "12px 14px", color: TOKENS.slate }}>{row.iso}</td>
+                  <td style={{ padding: "12px 14px", fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.paper }}>{row.cloud}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Enterprise Trust & Governance Box */}
@@ -3594,18 +4026,19 @@ console.log('Source Documents:', response.citations.map(c => c.documentTitle));`
 
 const abhimanyu = new AbhimanyuClient({ apiKey: process.env.ABHIMANYU_API_KEY });
 
-// Automated GST E-Invoicing & IRN Generation
-const invoice = await abhimanyu.erp.invoices.create({
-  customerGstin: '36AAAAA0000A1Z5',
-  clientCompanyName: 'Apex FinTech Solutions Pvt Ltd',
-  items: [
-    { sku: 'SKU-8841', description: 'High-Precision Micro-Controllers', qty: 25, unitPrice: 850 }
-  ],
-  applyGST: true,
-  irnAutoSign: true
+// High-Throughput Event Ingestion into Distributed Kafka Cluster
+await abhimanyu.events.publish({
+  topic: 'telemetry.payments.settled',
+  clientId: 'apex_fintech_solutions',
+  payload: {
+    txId: 'TXN-884192',
+    amountInr: 2500000,
+    settlementType: 'IMPS_INSTANT'
+  },
+  idempotencyKey: 'idemp_94819488a0b94c3d'
 });
 
-console.log(\`Invoice: \${invoice.invoiceNumber} | Government IRN: \${invoice.irn}\`);`,
+console.log('Event acknowledged across 3 Kafka broker replicas with zero packet loss');`,
 
       sprint: `import { AbhimanyuClient } from '@abhimanyu/sdk';
 
@@ -3665,18 +4098,15 @@ import os
 
 client = AbhimanyuClient(api_key=os.environ.get("ABHIMANYU_API_KEY"))
 
-# Generate GST E-Invoice with Automated IRN Digitization
-invoice = client.erp.invoices.create(
-    customer_gstin="36AAAAA0000A1Z5",
-    client_name="Apex FinTech Solutions Pvt Ltd",
-    items=[
-        {"sku": "SKU-8841", "description": "High-Precision Micro-Controllers", "qty": 25, "unit_price": 850}
-    ],
-    irn_auto_sign=True
+# Publish High-Throughput Event to Distributed Kafka Cluster
+result = client.events.publish(
+    topic="telemetry.payments.settled",
+    client_id="apex_fintech_solutions",
+    payload={"tx_id": "TXN-884192", "amount_inr": 2500000},
+    idempotency_key="idemp_94819488a0b94c3d"
 )
 
-print(f"Tax Invoice: {invoice.invoice_number} | IRN: {invoice.irn}")
-print(f"Grand Total: ₹{invoice.grand_total:,.2f} (Includes 18% CGST/SGST)")`,
+print(f"Event Partition Offset: {result.offset} | Cluster Latency: {result.ack_latency_ms}ms")`,
 
       sprint: `from abhimanyu import AbhimanyuClient
 import os
@@ -4271,13 +4701,116 @@ function DashboardPage({ openTracker, go }) {
             </tr>
             <tr>
               <td style={{ padding: "12px 16px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.blue }}>PRJ-2026-9022</td>
-              <td style={{ padding: "12px 16px", fontWeight: 600 }}>Cloud ERP Multi-Warehouse Sync</td>
+              <td style={{ padding: "12px 16px", fontWeight: 600 }}>Omnichannel Logistics & Warehouse Dispatch Platform</td>
               <td style={{ padding: "12px 16px", fontSize: 12, color: TOKENS.slate }}>Next.js 14, Node.js, Redis, Docker</td>
               <td style={{ padding: "12px 16px" }}><span style={{ background: "rgba(13,148,136,0.1)", color: TOKENS.teal, padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 700 }}>Sprint 2 (30%)</span></td>
               <td style={{ padding: "12px 16px" }}><button onClick={openTracker} style={{ background: "none", border: "none", color: TOKENS.blue, fontWeight: 600, cursor: "pointer" }}>Inspect →</button></td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+            {/* Interactive Agile Burndown & Automated CI/CD Runner */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 24, marginBottom: 28 }}>
+        {/* Interactive Burndown Chart */}
+        <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 12, padding: 22 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: TOKENS.paper }}>
+                📈 Sprint Burndown Velocity (Sprint 4)
+              </div>
+              <div style={{ fontSize: 11.5, color: TOKENS.slate }}>
+                Committed Story Points: 48 pts • Remaining: 6 pts
+              </div>
+            </div>
+            <span style={{ background: "rgba(16,185,129,0.12)", color: "#10B981", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+              87.5% BURNED
+            </span>
+          </div>
+
+          {/* SVG Burndown Curve */}
+          <div style={{ background: TOKENS.panelAlt, borderRadius: 8, padding: "16px 12px", border: `1px solid ${TOKENS.hair}` }}>
+            <svg viewBox="0 0 400 160" style={{ width: "100%", height: "auto" }}>
+              {/* Grid Lines */}
+              <line x1="40" y1="20" x2="380" y2="20" stroke={TOKENS.hair} strokeDasharray="3 3" />
+              <line x1="40" y1="60" x2="380" y2="60" stroke={TOKENS.hair} strokeDasharray="3 3" />
+              <line x1="40" y1="100" x2="380" y2="100" stroke={TOKENS.hair} strokeDasharray="3 3" />
+              <line x1="40" y1="140" x2="380" y2="140" stroke={TOKENS.hair} />
+
+              {/* Ideal Guide Line */}
+              <line x1="40" y1="20" x2="380" y2="140" stroke="#94A3B8" strokeWidth="2" strokeDasharray="4 4" />
+
+              {/* Actual Velocity Path */}
+              <polyline
+                fill="none"
+                stroke={TOKENS.blue}
+                strokeWidth="3"
+                points="40,20 80,32 120,48 160,65 200,82 240,105 280,118 320,132 360,136"
+              />
+
+              {/* Data points */}
+              {[[40,20], [80,32], [120,48], [160,65], [200,82], [240,105], [280,118], [320,132], [360,136]].map(([x,y], i) => (
+                <circle key={i} cx={x} cy={y} r="4" fill={TOKENS.blue} />
+              ))}
+
+              {/* Labels */}
+              <text x="10" y="25" fontSize="9" fill={TOKENS.slate} fontFamily="monospace">48p</text>
+              <text x="10" y="85" fontSize="9" fill={TOKENS.slate} fontFamily="monospace">24p</text>
+              <text x="10" y="145" fontSize="9" fill={TOKENS.slate} fontFamily="monospace">0p</text>
+              <text x="40" y="155" fontSize="9" fill={TOKENS.slate} fontFamily="monospace">D1</text>
+              <text x="200" y="155" fontSize="9" fill={TOKENS.slate} fontFamily="monospace">D5</text>
+              <text x="360" y="155" fontSize="9" fill={TOKENS.slate} fontFamily="monospace">D10</text>
+            </svg>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 10.5, color: TOKENS.slate }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <span style={{ width: 12, height: 2, background: "#94A3B8", display: "inline-block" }} /> Ideal Velocity
+              </span>
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <span style={{ width: 12, height: 3, background: TOKENS.blue, display: "inline-block" }} /> Actual Pod Burn
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Live CI/CD Pipeline Simulator */}
+        <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 12, padding: 22, color: "#F8FAFC", fontFamily: "'JetBrains Mono', monospace" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#38BDF8" }}>
+              ⚡ Staging CI/CD Pipeline Telemetry
+            </div>
+            <span style={{ fontSize: 10, background: "rgba(16,185,129,0.2)", color: "#10B981", padding: "2px 6px", borderRadius: 4 }}>
+              AUTO-DEPLOY OK
+            </span>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: "#94A3B8", marginBottom: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>✓ [LINT] ESLint & Prettier Rules</span>
+              <span style={{ color: "#10B981" }}>PASS (0.4s)</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>✓ [TEST] Jest / Vitest (148 suites)</span>
+              <span style={{ color: "#10B981" }}>100% GREEN (1.2s)</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>✓ [SECURITY] SonarQube & SAST CVE Scan</span>
+              <span style={{ color: "#10B981" }}>0 VULNS (0.8s)</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>✓ [DOCKER] Multi-stage build image</span>
+              <span style={{ color: "#38BDF8" }}>sha256:8841a0b</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>✓ [K8S] Canary rollout to Staging Pods</span>
+              <span style={{ color: "#10B981" }}>HEALTHY (18ms)</span>
+            </div>
+          </div>
+
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 10.5, color: "#64748B" }}>Target: staging.apex-fintech.internal</span>
+            <span style={{ fontSize: 11, color: "#38BDF8", fontWeight: 700 }}>v2.4.18-prod</span>
+          </div>
+        </div>
       </div>
 
       {/* Interactive Sprint Kanban Board */}
