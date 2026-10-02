@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import * as THREE from "three";
 
 /* ============================================================
-   ABHIMANYU TECHNOLOGIES — Enterprise IT Services & Products
+   ABHIMANYU TECHNOLOGIES — Global Software Engineering & Digital Solutions
    
-   Platform Architecture:
-   - Full-Stack Digital Engineering & Custom IT Services
-   - Web Development (Frontend & Full-Stack)
-   - Android & iOS Mobile App Development
-   - Backend & Distributed API Microservices
-   - Cloud, DevOps & Infrastructure (AWS/GCP/Azure/K8s)
-   - Enterprise AI & Custom Automation
-   - Proprietary Software Products (ERP, CRM, HRMS, AI Studio)
+   Enterprise Architecture:
+   - Full-Stack Digital Engineering & Custom Software Services
+   - Modern Web Engineering (Next.js, React, Micro-Frontends)
+   - Mobile Engineering (Native Android Kotlin, iOS Swift, Flutter)
+   - Distributed Microservices & APIs (Go, Node.js, Python FastAPI)
+   - Cloud, DevOps & SRE (AWS, GCP, Kubernetes, Terraform)
+   - Enterprise AI & Data Intelligence
+   - Industry Verticals (FinTech, Healthcare, Retail, Supply Chain)
    ============================================================ */
 
 const LIGHT_TOKENS = {
@@ -206,160 +206,165 @@ const IT_SERVICES = [
   },
 ];
 
-/* ---------------------------- Software Products Dataset ---------------------------- */
+/* ---------------------------- Industries We Transform Dataset ---------------------------- */
 
-const SOFTWARE_PRODUCTS = [
+const INDUSTRY_VERTICALS = [
   {
-    id: "erp",
-    name: "Abhimanyu Cloud ERP",
-    badge: "Enterprise Flagship",
-    tagline: "All-in-One Cloud Operations, Supply Chain & Financial Management",
-    shortDesc: "A modular, lightning-fast cloud ERP engineered for high-growth businesses. Unify inventory, multi-warehouse logistics, purchase orders, automated GST billing, and real-time P&L reporting.",
-    icon: "📦",
-    category: "Operations & Finance",
-    metrics: ["4.2x Faster Month-End Close", "99.98% Inventory Accuracy", "12,000+ Daily Transactions"],
-    modules: [
-      "Smart Multi-Warehouse Inventory with Batch & Barcode Tracking",
-      "Automated Purchase Orders & Supplier Portal with Vendor Scorecards",
-      "GST-Compliant E-Invoicing, E-Way Bill Generation & Tax Audits",
-      "Double-Entry General Ledger, Accounts Receivable/Payable & P&L",
-      "Production Planning (BOM, Work Orders & Machine Downtime Tracking)",
-      "Role-Based Access Control (RBAC) with Bank-Grade Audit Logs",
+    id: "fintech",
+    name: "Banking, FinTech & Digital Payments",
+    icon: "💳",
+    badge: "PCI-DSS Level 1 Ready",
+    tagline: "High-Throughput Core Banking, Payment Switches & Real-Time Settlement",
+    shortDesc: "Architecting resilient distributed ledgers, sub-100ms payment switches, biometric fraud detection, and automated regulatory reporting for banks, NBFCs, and global FinTech scale-ups.",
+    metrics: [
+      { label: "Peak Throughput", val: "10,000+ TPS" },
+      { label: "P99 Processing Latency", val: "< 85ms" },
+      { label: "Statutory Compliance", val: "RBI / PCI-DSS" },
     ],
-    pricing: {
-      starter: { label: "Starter", inr: 24999, period: "/mo", desc: "Up to 15 users, 1 warehouse, core inventory & accounting" },
-      pro: { label: "Growth Pro", inr: 59999, period: "/mo", desc: "Up to 50 users, 5 warehouses, automated GST & supplier portal" },
-      enterprise: { label: "Enterprise", inr: 129999, period: "/mo", desc: "Unlimited users, dedicated cloud instance, custom API integrations" },
-    },
-    techStack: ["Next.js", "Node.js", "PostgreSQL", "Redis", "Docker", "AWS"],
-    demoId: "erp",
+    capabilities: [
+      "Real-time UPI, IMPS, ACH, and ISO 20022 message payment switches",
+      "Core banking modernization & legacy mainframe migration to Go microservices",
+      "AI-driven biometric authentication, risk scoring, and anti-money laundering (AML)",
+      "Zero-trust card tokenization vaults and hardware security module (HSM) integrations",
+    ],
+    techStack: ["Go", "Kafka", "PostgreSQL", "Redis", "Docker", "AWS EKS"],
   },
   {
-    id: "crm",
-    name: "Abhimanyu CRM",
-    badge: "AI-Powered",
-    tagline: "Intelligent Lead Acceleration, Omnichannel WhatsApp & Revenue Pipeline",
-    shortDesc: "Close deals faster with automated AI lead scoring, visual drag-and-drop sales pipelines, two-way WhatsApp & Email sequences, and predictive revenue forecasting.",
-    icon: "🎯",
-    category: "Sales & Marketing",
-    metrics: ["+46% Lead-to-Deal Conversion", "<15 Min Response SLA", "Omnichannel WhatsApp Sync"],
-    modules: [
-      "Visual Drag-and-Drop Sales Pipeline with Custom Deal Stages",
-      "Official Meta WhatsApp Cloud API Integration with Automated Drip Sequences",
-      "AI Lead Scoring based on engagement telemetry and budget fit",
-      "Unified Customer Inbox: Email, WhatsApp, Phone, and Web Chat",
-      "Automated Quotation Generator with E-Signature and PDF Export",
-      "Sales Representative Activity Telemetry, Leaderboards & Commissions",
+    id: "healthcare",
+    name: "Healthcare & Life Sciences",
+    icon: "🏥",
+    badge: "HIPAA & HL7/FHIR Compliant",
+    tagline: "Telehealth Platforms, EHR Modernization & Clinical Workflow Automation",
+    shortDesc: "End-to-end digital health engineering delivering secure electronic health records (EHR), remote patient monitoring, and AI-assisted clinical decision support with strict HIPAA isolation.",
+    metrics: [
+      { label: "Data Security SLA", val: "100% HIPAA" },
+      { label: "Consultation Latency", val: "< 180ms" },
+      { label: "Active Patient Records", val: "2.4M+" },
     ],
-    pricing: {
-      starter: { label: "Starter", inr: 14999, period: "/mo", desc: "Up to 5 sales reps, 5,000 active leads, WhatsApp automation" },
-      pro: { label: "Growth Pro", inr: 34999, period: "/mo", desc: "Up to 20 reps, 25,000 leads, AI scoring & custom reports" },
-      enterprise: { label: "Enterprise", inr: 79999, period: "/mo", desc: "Unlimited seats, dedicated WhatsApp number pools, custom webhooks" },
-    },
-    techStack: ["React", "FastAPI (Python)", "PostgreSQL", "Redis", "WebSockets"],
-    demoId: "crm",
+    capabilities: [
+      "FHIR & HL7 interoperability middleware connecting hospital information systems (HIS)",
+      "WebRTC encrypted low-latency video consultations with automated clinical transcription",
+      "Medical imaging (DICOM) cloud viewers with AI diagnostic assistance overlays",
+      "e-Prescription (eRx) routing with pharmacy POS integrations and drug interaction checks",
+    ],
+    techStack: ["React", "Python FastAPI", "WebRTC", "PostgreSQL", "HIPAA Cloud"],
   },
   {
-    id: "hrms",
-    name: "Abhimanyu HRMS",
-    badge: "People Operations",
-    tagline: "Modern Payroll, Biometric Attendance & Employee Lifecycle Platform",
-    shortDesc: "Automate workforce management from hiring to retirement. Features 1-click compliant payroll, geo-fenced mobile attendance, leave approvals, and employee self-service.",
-    icon: "👥",
-    category: "Human Capital",
-    metrics: ["1-Click Monthly Payroll", "100% Statutory Compliance", "Zero Paperwork HR"],
-    modules: [
-      "Automated Payroll Processing with PF, ESI, TDS & Professional Tax",
-      "Mobile Geo-Fenced & Facial Biometric Attendance Integration",
-      "Flexible Leave Policies, Holiday Calendars & Shift Rostering",
-      "Employee Self-Service Mobile App (Payslip Downloads, Reimbursements)",
-      "Performance Appraisal Cycles, OKR Tracking & 360 Feedback",
-      "Digital Onboarding, Offer Letter Generator & Document Vault",
+    id: "retail",
+    name: "Retail, E-Commerce & Omnichannel",
+    icon: "🛍️",
+    badge: "High Concurrency",
+    tagline: "Headless Commerce, Dynamic Pricing Engines & Omnichannel POS",
+    shortDesc: "Powering global retail brands with headless e-commerce architectures, sub-second product search, dynamic AI pricing engines, and real-time unified inventory across physical and digital stores.",
+    metrics: [
+      { label: "Black Friday Concurrency", val: "250K Users" },
+      { label: "Cart Checkout Speed", val: "< 1.2s" },
+      { label: "Conversion Lift", val: "+34%" },
     ],
-    pricing: {
-      starter: { label: "Starter", inr: 9999, period: "/mo", desc: "Up to 25 employees, automated payroll & attendance" },
-      pro: { label: "Growth Pro", inr: 24999, period: "/mo", desc: "Up to 100 employees, biometric sync & appraisal cycles" },
-      enterprise: { label: "Enterprise", inr: 54999, period: "/mo", desc: "Unlimited workforce, custom ERP payroll sync, dedicated HR SLA" },
-    },
-    techStack: ["Next.js", "Go", "PostgreSQL", "Flutter (Mobile App)", "Docker"],
-    demoId: "hrms",
+    capabilities: [
+      "Headless storefronts built with Next.js 14 and distributed edge caching",
+      "Unified multi-store inventory synchronization with ERP & warehouse dispatch",
+      "Personalized recommendation engines utilizing vector search and customer purchase history",
+      "Omnichannel Point of Sale (POS) native tablet apps with offline receipt printing",
+    ],
+    techStack: ["Next.js 14", "Node.js", "Redis", "Elasticsearch", "Stripe / Razorpay"],
   },
   {
-    id: "ai-studio",
-    name: "Abhimanyu AI Studio",
-    badge: "Generative AI",
-    tagline: "Private Enterprise Knowledge Brain & Custom AI Workflow Orchestrator",
-    shortDesc: "Deploy secure, enterprise-grade AI assistants trained on your private internal documents, wikis, and databases with zero data leakage.",
-    icon: "🧠",
-    category: "Enterprise Intelligence",
-    metrics: ["<350ms Query Latency", "100% Private Data Isolation", "Multi-Model Fallback"],
-    modules: [
-      "Private Document Ingestion: PDF, Word, Excel, Notion, Confluence, SQL",
-      "Hybrid Semantic & Keyword Search using Vector Embeddings",
-      "Custom Prompt Engineering Studio with Guardrails & Hallucination Filters",
-      "Multi-LLM Routing (OpenAI GPT-4o, Anthropic Claude 3.5, Local Llama 3)",
-      "Automated Workflow Triggers: Ticket Resolution, Summarization, Email Drafting",
-      "Full Audit Trail of AI Responses with Ground-Truth Source Citations",
+    id: "logistics",
+    name: "Logistics & Intelligent Supply Chain",
+    icon: "🚚",
+    badge: "Real-Time Telemetry",
+    tagline: "Fleet Telematics, Dynamic Route Optimization & Warehouse Automation",
+    shortDesc: "Streamlining end-to-end freight mobility with IoT fleet tracking, automated geofenced dispatching, dynamic multi-stop routing algorithms, and cold-chain temperature monitoring.",
+    metrics: [
+      { label: "Fleet Mileage Saved", val: "18.4%" },
+      { label: "Real-Time Geolocation", val: "5-Sec Ping" },
+      { label: "On-Time Dispatch", val: "99.4%" },
     ],
-    pricing: {
-      starter: { label: "Starter", inr: 29999, period: "/mo", desc: "Up to 50,000 queries/mo, 10GB documents, 3 custom agents" },
-      pro: { label: "Growth Pro", inr: 69999, period: "/mo", desc: "Up to 250,000 queries/mo, 100GB documents, unlimited agents" },
-      enterprise: { label: "Enterprise", inr: 149999, period: "/mo", desc: "On-premise / private VPC deployment, fine-tuned custom models" },
-    },
-    techStack: ["Python", "FastAPI", "Milvus / Qdrant", "LangChain", "Next.js"],
-    demoId: "ai-studio",
+    capabilities: [
+      "Real-time GPS vehicle tracking with live CAN-bus engine diagnostics and geofencing",
+      "Genetic algorithmic multi-drop route optimization reducing fuel expenditure",
+      "Automated electronic Proof of Delivery (e-PoD) with digital signature capture",
+      "Warehouse management system (WMS) integrating automated conveyor barcode scanners",
+    ],
+    techStack: ["Kotlin / Android", "Go", "TimescaleDB", "MQTT / IoT", "Google Maps API"],
   },
   {
-    id: "devpulse",
-    name: "Abhimanyu DevPulse",
-    badge: "DevOps & SRE",
-    tagline: "Real-Time Cloud Telemetry, Container Health & Automated Rollback Monitor",
-    shortDesc: "Gain full observability into your distributed services. Detect latency spikes, memory leaks, and failing API routes before your customers notice.",
-    icon: "📊",
-    category: "Cloud Observability",
-    metrics: ["Real-time APM Telemetry", "<2s Incident Alerts", "Automated Rollback Engine"],
-    modules: [
-      "Distributed Tracing across microservices with latency bottleneck alerts",
-      "Docker & Kubernetes Pod Health, CPU/Memory telemetry, and auto-scaling rules",
-      "API Endpoint Uptime & HTTP status code distribution dashboards",
-      "Automated Canary Rollback triggers when error rate exceeds threshold",
-      "Slack, PagerDuty, WhatsApp & Email incident routing with runbooks",
-      "Log Aggregation & Search with instant root-cause analysis",
+    id: "saas",
+    name: "Enterprise High-Tech & Cloud SaaS",
+    icon: "☁️",
+    badge: "Multi-Tenant Scale",
+    tagline: "Multi-Tenant Architectures, Micro-Frontends & DevSecOps Automation",
+    shortDesc: "Co-engineering next-generation enterprise software platforms with independent multi-tenant database isolations, usage-based billing, enterprise SSO (SAML/Okta), and automated CI/CD canary rollouts.",
+    metrics: [
+      { label: "Platform Availability", val: "99.99%" },
+      { label: "Tenant Provisioning", val: "< 15s" },
+      { label: "Global Edge Latency", val: "< 45ms" },
     ],
-    pricing: {
-      starter: { label: "Starter", inr: 11999, period: "/mo", desc: "Up to 10 servers/nodes, 100GB logs, 1-minute metric intervals" },
-      pro: { label: "Growth Pro", inr: 28999, period: "/mo", desc: "Up to 50 servers, 500GB logs, real-time APM & Slack alerts" },
-      enterprise: { label: "Enterprise", inr: 64999, period: "/mo", desc: "Unlimited infrastructure, automated rollback webhooks, SLA 99.99%" },
-    },
-    techStack: ["Go", "Prometheus", "Grafana", "TimescaleDB", "React"],
-    demoId: "devpulse",
+    capabilities: [
+      "Dynamic tenant isolation: database-per-tenant and row-level security (RLS)",
+      "Enterprise single sign-on (SSO) with Okta, Azure AD, Ping, and SAML 2.0",
+      "Automated metering and usage-based billing infrastructure via Stripe / Chargebee",
+      "Micro-frontend module federation allowing multiple independent agile squads to ship in parallel",
+    ],
+    techStack: ["React 18", "Go / Python", "PostgreSQL", "Kubernetes", "Terraform"],
   },
   {
-    id: "appengine",
-    name: "Abhimanyu AppEngine",
-    badge: "Developer Tool",
-    tagline: "Rapid Backend-as-a-Service & Secure API Generator for Web & Mobile",
-    shortDesc: "Accelerate your development cycle by 10x. Model your database schemas visually and auto-generate production-ready REST & GraphQL APIs with built-in auth.",
-    icon: "⚡",
-    category: "Developer Platform",
-    metrics: ["10x Faster Backend Setup", "Instant REST & GraphQL", "Auto-Generated TypeScript SDKs"],
-    modules: [
-      "Visual Database Schema Designer with automatic foreign key relations",
-      "Auto-generated CRUD REST endpoints and GraphQL queries with pagination",
-      "Pre-built Authentication (JWT, Email Magic Link, Google/Apple OAuth)",
-      "Role-Based Field-Level Permissions and Row-Level Security (RLS)",
-      "Auto-generated typed TypeScript and Kotlin client SDKs",
-      "1-Click Deploy to isolated cloud environments with automatic backups",
+    id: "manufacturing",
+    name: "Smart Manufacturing & Industrial IoT",
+    icon: "🏭",
+    badge: "Industry 4.0",
+    tagline: "Predictive Maintenance, SCADA Telemetry & Factory Floor Analytics",
+    shortDesc: "Bridging Operational Technology (OT) and Information Technology (IT) with edge IoT gateways, real-time machine telemetry dashboards, and predictive maintenance ML models.",
+    metrics: [
+      { label: "Machine Downtime Cut", val: "-42%" },
+      { label: "Edge Sensor Ingestion", val: "50K msg/s" },
+      { label: "OEE Tracking Accuracy", val: "99.8%" },
     ],
-    pricing: {
-      starter: { label: "Developer", inr: 7999, period: "/mo", desc: "Up to 3 active projects, 50,000 API requests/day, community support" },
-      pro: { label: "Team Pro", inr: 19999, period: "/mo", desc: "Up to 15 projects, 1M requests/day, team collaboration & custom domains" },
-      enterprise: { label: "Enterprise", inr: 49999, period: "/mo", desc: "Self-hosted license, unlimited APIs, custom database connectors" },
-    },
-    techStack: ["Node.js", "TypeScript", "PostgreSQL", "Prisma", "Docker"],
-    demoId: "appengine",
+    capabilities: [
+      "OPC-UA and MQTT edge industrial protocol gateways connecting PLC controllers",
+      "Real-time Overall Equipment Effectiveness (OEE) digital twin visualizers",
+      "Vibration and thermal sensor telemetry pipelines for predictive anomaly alerting",
+      "Paperless production work orders synced directly with plant ERP and inventory",
+    ],
+    techStack: ["Python", "Rust", "MQTT", "Grafana", "TimescaleDB", "Docker"],
   },
 ];
+
+/* ---------------------------- Engagement & Delivery Models Dataset ---------------------------- */
+
+const ENGAGEMENT_MODELS = [
+  {
+    id: "dedicated-pod",
+    name: "Dedicated Engineering Pods",
+    badge: "Agile Extension",
+    icon: "👥",
+    desc: "Autonomous, senior cross-functional teams (Lead Architect, Senior Full-Stack Engineers, Mobile Engineers, QA, and DevOps) integrated directly into your sprint cycles.",
+    bestFor: "Scale-ups and enterprise tech teams needing velocity, domain expertise, and zero hiring overhead.",
+    highlights: ["Senior talent with 5+ years experience", "Timezone-aligned daily standups", "Flexible team scaling with 2-week notice", "Full IP and repository ownership"],
+  },
+  {
+    id: "turnkey-delivery",
+    name: "End-to-End Turnkey Delivery",
+    badge: "Fixed / Milestones",
+    icon: "🎯",
+    desc: "We take full accountability for architecting, designing, engineering, testing, and deploying your digital platform from discovery to production launch.",
+    bestFor: "Enterprises launching new digital ventures, modernization programs, or time-critical greenfield platforms.",
+    highlights: ["Fixed scope, milestones & transparent pricing", "Comprehensive UI/UX design & system architecture", "Strict SLA commitments and zero-defect warranties", "Full knowledge transfer and developer runbooks"],
+  },
+  {
+    id: "architecture-advisory",
+    name: "Strategic Technology & Architecture Advisory",
+    badge: "CTO / Architect Level",
+    icon: "🏛️",
+    desc: "High-impact architectural audits, cloud migration roadmaps, security compliance reviews (SOC2/ISO27001), and legacy system refactoring strategies.",
+    bestFor: "Founders and CTOs needing architectural validation before massive scale or migration.",
+    highlights: ["In-depth code and architecture debt audit", "Cloud cost optimization (FinOps)", "Microservices migration roadmaps", "Disaster recovery & high-availability blueprints"],
+  },
+];
+
+// Backwards compatibility alias
+const SOFTWARE_PRODUCTS = INDUSTRY_VERTICALS;
 
 /* ---------------------------- Tech Stacks ---------------------------- */
 
@@ -834,7 +839,7 @@ function SiteHeader({
                 fontWeight: 600,
               }}
             >
-              IT SERVICES & PRODUCTS
+              GLOBAL SOFTWARE ENGINEERING
             </div>
           </div>
         </button>
@@ -862,7 +867,7 @@ function SiteHeader({
                 gap: 4,
               }}
             >
-              IT Services <span style={{ fontSize: 9 }}>▼</span>
+              Services <span style={{ fontSize: 9 }}>▼</span>
             </button>
             {servicesDropdown && (
               <div
@@ -913,12 +918,12 @@ function SiteHeader({
           </div>
 
           <button
-            onClick={() => go("products")}
+            onClick={() => go("industries")}
             style={{
-              background: page === "products" ? TOKENS.badgeBg : "transparent",
+              background: page === "industries" || page === "products" ? TOKENS.badgeBg : "transparent",
               border: "none",
               borderRadius: 6,
-              color: page === "products" ? TOKENS.blue : TOKENS.paper,
+              color: page === "industries" || page === "products" ? TOKENS.blue : TOKENS.paper,
               fontSize: 13,
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
@@ -926,7 +931,7 @@ function SiteHeader({
               cursor: "pointer",
             }}
           >
-            Products
+            Industries
           </button>
 
           <button
@@ -1100,8 +1105,8 @@ function SiteHeader({
 
           {[
             { id: "home", label: "🏠 Home" },
-            { id: "services", label: "🛠 IT Services" },
-            { id: "products", label: "📦 Products" },
+            { id: "services", label: "🛠 Engineering Capabilities" },
+            { id: "industries", label: "🏢 Industries We Transform" },
             { id: "rfq-wizard", label: "➕ Project Scope Planner" },
             { id: "case-studies", label: "📈 Case Studies" },
             { id: "dashboard", label: "📊 Client Portal" },
@@ -1800,510 +1805,13 @@ function SystemStatusModal({ isOpen, onClose }) {
 
 /* ---------------------------- Enhanced Product Demo Modal with Live Interactive Sandbox ---------------------------- */
 
-function ProductDemoModal({ product, isOpen, onClose }) {
-  const [activeTab, setActiveTab] = useState("sandbox");
-  
-  // Interactive ERP state
-  const [erpStock, setErpStock] = useState([
-    { id: 1, sku: "SKU-8841", name: "High-Precision Micro-Controllers", qty: 1420, price: 850 },
-    { id: 2, sku: "SKU-4420", name: "Industrial Fiber Laser Scanner Heads", qty: 38, price: 42000 },
-    { id: 3, sku: "SKU-1192", name: "Aerospace Titanium Fastener Kits", qty: 890, price: 1600 },
-  ]);
-  const [erpInvoice, setErpInvoice] = useState(null);
-
-  // Interactive CRM state
-  const [crmDeals, setCrmDeals] = useState([
-    { id: 1, client: "Apex FinTech Solutions", val: "₹18,00,000", stage: "Lead In" },
-    { id: 2, client: "TransContinental Logistics", val: "₹34,00,000", stage: "Demo" },
-    { id: 3, client: "Vanguard Health Technologies", val: "₹24,50,000", stage: "Won" },
-  ]);
-  const [crmMsgSent, setCrmMsgSent] = useState(false);
-
-  // Interactive HRMS state
-  const [hrmsCtc, setHrmsCtc] = useState(85000);
-  const [hrmsDays, setHrmsDays] = useState(26);
-
-  // Interactive AI state
-  const [aiPrompt, setAiPrompt] = useState("What is our disaster recovery RTO for cloud microservices?");
-  const [aiGenerating, setAiGenerating] = useState(false);
-  const [aiResult, setAiResult] = useState(null);
-
-  // Interactive DevPulse state
-  const [deploySimulating, setDeploySimulating] = useState(false);
-  const [deploySuccess, setDeploySuccess] = useState(false);
-
-  // Interactive AppEngine state
-  const [appEntity, setAppEntity] = useState("CustomerOrder");
-
-  if (!isOpen || !product) return null;
-
-  // Handlers for Sandbox
-  const handleAddStock = (id) => {
-    setErpStock((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, qty: item.qty + 50 } : item))
-    );
-  };
-
-  const handleGenerateInvoice = () => {
-    const item = erpStock[0];
-    const subtotal = item.price * 10;
-    const gst = subtotal * 0.18;
-    setErpInvoice({
-      number: `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      item: item.name,
-      qty: 10,
-      subtotal,
-      gst,
-      total: subtotal + gst,
-    });
-  };
-
-  const handleAdvanceDeal = (id) => {
-    setCrmDeals((prev) =>
-      prev.map((d) => {
-        if (d.id !== id) return d;
-        const nextStage = d.stage === "Lead In" ? "Demo" : d.stage === "Demo" ? "Won" : "Lead In";
-        return { ...d, stage: nextStage };
-      })
-    );
-  };
-
-  const handleRunAi = () => {
-    setAiGenerating(true);
-    setAiResult(null);
-    setTimeout(() => {
-      setAiResult({
-        answer: "Under Abhimanyu Multi-Region Cloud Topology, our automated cross-region Aurora Postgres failover guarantees an RTO of under 15 minutes and an RPO of under 1 second.",
-        confidence: "99.4%",
-        latency: "310ms",
-        sources: ["Cloud-DR-Runbook.pdf (Sec 4.2)", "Kubernetes-EKS-Manifest.yaml"],
-      });
-      setAiGenerating(false);
-    }, 400);
-  };
-
-  const handleSimulateDeploy = () => {
-    setDeploySimulating(true);
-    setDeploySuccess(false);
-    setTimeout(() => {
-      setDeploySimulating(false);
-      setDeploySuccess(true);
-    }, 600);
-  };
-
-  // HRMS Calculations
-  const basic = Math.round(hrmsCtc * 0.5);
-  const hra = Math.round(hrmsCtc * 0.2);
-  const pf = Math.round(basic * 0.12);
-  const pt = 200;
-  const tds = Math.round(hrmsCtc * 0.08);
-  const netTakeHome = hrmsCtc - (pf + pt + tds);
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.65)",
-        backdropFilter: "blur(16px)",
-        zIndex: 1000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px 16px",
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "100%",
-          maxWidth: 920,
-          maxHeight: "92vh",
-          overflowY: "auto",
-          background: TOKENS.panel,
-          border: `1px solid ${TOKENS.hair}`,
-          borderRadius: 14,
-          padding: 24,
-          color: TOKENS.paper,
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 32 }}>{product.icon}</span>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 20, fontWeight: 800, color: TOKENS.paper }}>{product.name}</span>
-                <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
-                  {product.badge}
-                </span>
-              </div>
-              <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 2 }}>{product.tagline}</div>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: TOKENS.panelAlt,
-              border: `1px solid ${TOKENS.hair}`,
-              borderRadius: 6,
-              width: 32,
-              height: 32,
-              cursor: "pointer",
-              fontSize: 18,
-              color: TOKENS.slate,
-            }}
-          >
-            ×
-          </button>
-        </div>
-
-        {/* Tab Buttons */}
-        <div style={{ display: "flex", gap: 8, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 10, marginBottom: 16 }}>
-          {[
-            { id: "sandbox", label: "⚡ Live Interactive Sandbox" },
-            { id: "features", label: "Module Features" },
-            { id: "architecture", label: "Cloud Architecture" },
-            { id: "pricing", label: "SaaS Plans" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              style={{
-                background: activeTab === t.id ? TOKENS.blue : "transparent",
-                color: activeTab === t.id ? "#FFFFFF" : TOKENS.slate,
-                border: "none",
-                borderRadius: 6,
-                padding: "6px 14px",
-                fontSize: 12.5,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Sandbox Tab Content */}
-        {activeTab === "sandbox" && (
-          <div>
-            {/* 1. ERP Sandbox */}
-            {product.id === "erp" && (
-              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>📦 Live Inventory & Automated Invoicing Sandbox</div>
-                    <div style={{ fontSize: 11.5, color: TOKENS.slate }}>Click to simulate real-time stock replenishment or generate a GST e-invoice.</div>
-                  </div>
-                  <Button onClick={handleGenerateInvoice} style={{ padding: "6px 12px", fontSize: 11.5 }}>
-                    🧾 Generate GST E-Invoice
-                  </Button>
-                </div>
-
-                <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, overflow: "hidden", marginBottom: 16 }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, textAlign: "left" }}>
-                    <thead>
-                      <tr style={{ background: TOKENS.panelAlt, borderBottom: `1px solid ${TOKENS.hair}`, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
-                        <th style={{ padding: "8px 12px" }}>SKU</th>
-                        <th style={{ padding: "8px 12px" }}>Item Name</th>
-                        <th style={{ padding: "8px 12px" }}>Stock Balance</th>
-                        <th style={{ padding: "8px 12px" }}>Unit Price</th>
-                        <th style={{ padding: "8px 12px" }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {erpStock.map((item) => (
-                        <tr key={item.id} style={{ borderBottom: `1px solid ${TOKENS.hair}` }}>
-                          <td style={{ padding: "8px 12px", fontFamily: "'JetBrains Mono', monospace", color: TOKENS.blue, fontWeight: 600 }}>{item.sku}</td>
-                          <td style={{ padding: "8px 12px", color: TOKENS.paper }}>{item.name}</td>
-                          <td style={{ padding: "8px 12px", fontWeight: 700, color: item.qty < 50 ? TOKENS.brass : TOKENS.teal }}>{item.qty} Units</td>
-                          <td style={{ padding: "8px 12px", color: TOKENS.slate }}>₹{item.price.toLocaleString("en-IN")}</td>
-                          <td style={{ padding: "8px 12px" }}>
-                            <button
-                              onClick={() => handleAddStock(item.id)}
-                              style={{ background: TOKENS.badgeBg, border: `1px solid ${TOKENS.blue}44`, borderRadius: 4, padding: "3px 8px", fontSize: 10.5, color: TOKENS.blue, cursor: "pointer", fontWeight: 600 }}
-                            >
-                              + Ingest 50
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {erpInvoice && (
-                  <div style={{ background: "rgba(13,148,136,0.08)", border: `1px solid ${TOKENS.teal}66`, borderRadius: 8, padding: 14, fontSize: 12 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, color: TOKENS.teal, marginBottom: 6 }}>
-                      <span>✓ Official GST E-Invoice Generated ({erpInvoice.number})</span>
-                      <span>HSN: 8471 | IRN Validated</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", color: TOKENS.paper }}>
-                      <span>Item: {erpInvoice.item} × {erpInvoice.qty} units</span>
-                      <strong>Total with 18% GST: ₹{erpInvoice.total.toLocaleString("en-IN")}</strong>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 2. CRM Sandbox */}
-            {product.id === "crm" && (
-              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>🎯 Interactive Sales Pipeline & WhatsApp Drip Simulator</div>
-                    <div style={{ fontSize: 11.5, color: TOKENS.slate }}>Click any deal card to advance it through the revenue pipeline.</div>
-                  </div>
-                  <button
-                    onClick={() => setCrmMsgSent(true)}
-                    style={{ background: "#25D366", color: "#FFFFFF", border: "none", borderRadius: 6, padding: "6px 12px", fontSize: 11.5, fontWeight: 700, cursor: "pointer" }}
-                  >
-                    💬 Test WhatsApp Drip
-                  </button>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 16 }}>
-                  {["Lead In", "Demo", "Won"].map((stg) => {
-                    const stgDeals = crmDeals.filter((d) => d.stage === stg);
-                    return (
-                      <div key={stg} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12 }}>
-                        <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.slate, marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
-                          <span>{stg.toUpperCase()}</span>
-                          <span>({stgDeals.length})</span>
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                          {stgDeals.map((d) => (
-                            <div
-                              key={d.id}
-                              onClick={() => handleAdvanceDeal(d.id)}
-                              style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: 10, cursor: "pointer", transition: "all 0.15s ease" }}
-                            >
-                              <div style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper }}>{d.client}</div>
-                              <div style={{ fontSize: 11, color: TOKENS.blue, fontWeight: 600, marginTop: 4 }}>{d.val}</div>
-                              <div style={{ fontSize: 9.5, color: TOKENS.teal, marginTop: 4 }}>Click to Advance ➔</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {crmMsgSent && (
-                  <div style={{ background: "rgba(37, 211, 102, 0.1)", border: "1px solid #25D366", borderRadius: 8, padding: 12, fontSize: 12 }}>
-                    <div style={{ fontWeight: 700, color: "#128C7E", marginBottom: 4 }}>✓ WhatsApp Cloud API Drip Dispatched to +91 98401 XXXXX</div>
-                    <div style={{ color: TOKENS.paper, fontStyle: "italic" }}>
-                      "Hi Rajesh, your custom architecture demo for Apex FinTech is ready. View live sandbox: https://abhimanu.app/demo/8841"
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 3. HRMS Sandbox */}
-            {product.id === "hrms" && (
-              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper, marginBottom: 4 }}>👥 Real-Time Indian & Global Payroll Calculator</div>
-                <div style={{ fontSize: 11.5, color: TOKENS.slate, marginBottom: 14 }}>Adjust monthly CTC to compute automatic PF, TDS, and net take-home salary.</div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                  <div>
-                    <label style={{ fontSize: 11.5, color: TOKENS.slate, display: "block", marginBottom: 6 }}>
-                      Monthly Base CTC: <strong>₹{hrmsCtc.toLocaleString("en-IN")}</strong>
-                    </label>
-                    <input
-                      type="range"
-                      min={30000}
-                      max={300000}
-                      step={5000}
-                      value={hrmsCtc}
-                      onChange={(e) => setHrmsCtc(Number(e.target.value))}
-                      style={{ width: "100%" }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: 11.5, color: TOKENS.slate, display: "block", marginBottom: 6 }}>
-                      Working Days Attended: <strong>{hrmsDays} / 26 Days</strong>
-                    </label>
-                    <input
-                      type="range"
-                      min={10}
-                      max={26}
-                      value={hrmsDays}
-                      onChange={(e) => setHrmsDays(Number(e.target.value))}
-                      style={{ width: "100%" }}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14 }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10, fontSize: 11.5 }}>
-                    <div><span style={{ color: TOKENS.slate }}>Basic (50%):</span> <strong style={{ color: TOKENS.paper }}>₹{basic.toLocaleString("en-IN")}</strong></div>
-                    <div><span style={{ color: TOKENS.slate }}>HRA (20%):</span> <strong style={{ color: TOKENS.paper }}>₹{hra.toLocaleString("en-IN")}</strong></div>
-                    <div><span style={{ color: TOKENS.slate }}>Provident Fund (12%):</span> <strong style={{ color: TOKENS.brass }}>-₹{pf.toLocaleString("en-IN")}</strong></div>
-                    <div><span style={{ color: TOKENS.slate }}>TDS (Est. Tax):</span> <strong style={{ color: TOKENS.brass }}>-₹{tds.toLocaleString("en-IN")}</strong></div>
-                    <div><span style={{ color: TOKENS.slate }}>Net Take-Home:</span> <strong style={{ color: TOKENS.teal, fontSize: 14 }}>₹{netTakeHome.toLocaleString("en-IN")}</strong></div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 4. AI Studio Sandbox */}
-            {product.id === "ai" && (
-              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper, marginBottom: 4 }}>🧠 Enterprise RAG Vector Knowledge Assistant</div>
-                <div style={{ fontSize: 11.5, color: TOKENS.slate, marginBottom: 14 }}>Simulate querying confidential enterprise documents with semantic citations.</div>
-
-                <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-                  <input
-                    type="text"
-                    value={aiPrompt}
-                    onChange={(e) => setAiPrompt(e.target.value)}
-                    style={{ flex: 1, padding: "8px 12px", borderRadius: 6, fontSize: 12.5 }}
-                  />
-                  <Button onClick={handleRunAi} disabled={aiGenerating} style={{ padding: "8px 16px", fontSize: 12 }}>
-                    {aiGenerating ? "Generating..." : "Query Vault ⚡"}
-                  </Button>
-                </div>
-
-                {aiResult && (
-                  <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14, fontSize: 12 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", color: TOKENS.teal, fontWeight: 700, marginBottom: 6 }}>
-                      <span>Confidence Score: {aiResult.confidence}</span>
-                      <span>Latency: {aiResult.latency}</span>
-                    </div>
-                    <div style={{ color: TOKENS.paper, lineHeight: 1.6, marginBottom: 10 }}>{aiResult.answer}</div>
-                    <div style={{ fontSize: 10.5, color: TOKENS.slate }}>
-                      Citations: {aiResult.sources.map((s, i) => <code key={i} style={{ background: TOKENS.panelAlt, padding: "2px 6px", borderRadius: 3, marginRight: 6 }}>{s}</code>)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 5. DevPulse Sandbox */}
-            {product.id === "devpulse" && (
-              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>📊 DORA Metrics Observability & Canary Deployments</div>
-                    <div style={{ fontSize: 11.5, color: TOKENS.slate }}>Live telemetry benchmarks across your production GitOps repositories.</div>
-                  </div>
-                  <Button onClick={handleSimulateDeploy} disabled={deploySimulating} style={{ padding: "6px 14px", fontSize: 11.5 }}>
-                    {deploySimulating ? "Deploying..." : "🚀 Simulate Canary Deploy"}
-                  </Button>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10, marginBottom: 14 }}>
-                  {[
-                    { label: "Deploy Frequency", val: "18.4 / day", tier: "Elite" },
-                    { label: "Lead Time", val: "24 mins", tier: "Elite" },
-                    { label: "MTTR Recovery", val: "12 mins", tier: "Elite" },
-                    { label: "Failure Rate", val: "0.7%", tier: "Elite" },
-                  ].map((m, i) => (
-                    <div key={i} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 12 }}>
-                      <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{m.label}</div>
-                      <div style={{ fontSize: 16, fontWeight: 800, color: TOKENS.teal, marginTop: 2 }}>{m.val}</div>
-                      <span style={{ fontSize: 9.5, background: "rgba(13,148,136,0.15)", color: TOKENS.teal, padding: "1px 6px", borderRadius: 4, fontWeight: 700 }}>{m.tier}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {deploySuccess && (
-                  <div style={{ background: "rgba(13,148,136,0.1)", border: `1px solid ${TOKENS.teal}`, borderRadius: 8, padding: 12, fontSize: 12, color: TOKENS.teal, fontWeight: 700 }}>
-                    ✓ Canary deployment hash #git-d71a89 promoted to 100% traffic with zero error anomalies.
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 6. AppEngine Sandbox */}
-            {product.id === "appengine" && (
-              <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper, marginBottom: 4 }}>⚡ Instant Low-Code Microservice & API Generator</div>
-                <div style={{ fontSize: 11.5, color: TOKENS.slate, marginBottom: 14 }}>Type an entity name to auto-generate RESTful OpenAPI & GraphQL specifications.</div>
-
-                <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 14 }}>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper }}>Entity Model:</label>
-                  <input
-                    type="text"
-                    value={appEntity}
-                    onChange={(e) => setAppEntity(e.target.value)}
-                    style={{ padding: "6px 12px", borderRadius: 6, fontSize: 12, width: 220 }}
-                  />
-                </div>
-
-                <div style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14, fontFamily: "'JetBrains Mono', monospace", fontSize: 11.5, color: TOKENS.paper }}>
-                  <div style={{ color: TOKENS.blue, fontWeight: 700, marginBottom: 6 }}>// Auto-Generated REST Endpoints</div>
-                  <div>POST   /api/v1/{appEntity.toLowerCase()}s        ➔ Create {appEntity}</div>
-                  <div>GET    /api/v1/{appEntity.toLowerCase()}s        ➔ Paginated List (Cursor / Limit)</div>
-                  <div>GET    /api/v1/{appEntity.toLowerCase()}s/:id    ➔ Query by UUID</div>
-                  <div>DELETE /api/v1/{appEntity.toLowerCase()}s/:id    ➔ Soft Delete & Audit Log</div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === "features" && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            {product.modules.map((m, idx) => (
-              <div key={idx} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 14px", fontSize: 13 }}>
-                <span style={{ color: TOKENS.teal, fontWeight: 700, marginRight: 6 }}>✓</span>
-                {m}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {activeTab === "architecture" && (
-          <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 20 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 8 }}>
-              ENTERPRISE DEPLOYMENT TOPOLOGY
-            </div>
-            <div style={{ fontSize: 13, color: TOKENS.paper, lineHeight: 1.6, marginBottom: 14 }}>
-              Engineered using <strong>{product.techStack.join(" • ")}</strong> with automated multi-region database failover, Redis caching clusters, and zero-downtime rolling updates.
-            </div>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              {product.metrics.map((met, i) => (
-                <div key={i} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "8px 14px", fontSize: 12, fontWeight: 700, color: TOKENS.blue }}>
-                  ⚡ {met}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === "pricing" && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-            {Object.keys(product.pricing).map((k) => {
-              const p = product.pricing[k];
-              return (
-                <div key={k} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 16 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>{p.label}</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: TOKENS.blue, margin: "8px 0" }}>
-                    ₹{p.inr.toLocaleString("en-IN")}<span style={{ fontSize: 11, color: TOKENS.slate }}>{p.period}</span>
-                  </div>
-                  <div style={{ fontSize: 11.5, color: TOKENS.slate, lineHeight: 1.4 }}>{p.desc}</div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20, paddingTop: 16, borderTop: `1px solid ${TOKENS.hair}` }}>
-          <Button onClick={onClose}>Close Walkthrough</Button>
-        </div>
-      </div>
-    </div>
-  );
+function ProductDemoModal() {
+  return null;
 }
 
 /* ---------------------------- Page 1: HomePage ---------------------------- */
 
-function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDemo }) {
+function HomePage({ go, currency, openTracker }) {
   return (
     <div>
       {/* Hero Section */}
@@ -2335,7 +1843,7 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
           >
             <span style={{ color: TOKENS.teal, fontSize: 11 }}>●</span>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.blue, letterSpacing: "0.04em" }}>
-              ENTERPRISE IT SERVICES & FULL-STACK DIGITAL PRODUCTS
+              GLOBAL SOFTWARE ENGINEERING & ENTERPRISE DIGITAL SOLUTIONS
             </span>
           </div>
 
@@ -2350,7 +1858,7 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
               margin: "0 0 20px",
             }}
           >
-            Engineering World-Class <span style={{ color: TOKENS.blue }}>Web & Mobile Apps</span>, Cloud Backends and SaaS Products.
+            Engineering World-Class <span style={{ color: TOKENS.blue }}>Web & Mobile Platforms</span>, Scalable Cloud Backends & AI Systems.
           </h1>
 
           <p
@@ -2362,15 +1870,15 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
               margin: "0 auto 36px",
             }}
           >
-            We partner with ambitious startups and enterprises to architect, design, and deliver high-performance Web Portals, Android & iOS Mobile Apps, Scalable Microservices, and Custom AI Systems.
+            We partner with global enterprises and high-growth scale-ups to architect, build, and deploy mission-critical software solutions with uncompromised engineering rigor and zero technical debt.
           </p>
 
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
             <Button onClick={() => go("services")} style={{ padding: "13px 26px", fontSize: 15 }}>
-              Explore IT Services →
+              Explore Capabilities →
             </Button>
-            <Button onClick={() => go("products")} variant="outline" style={{ padding: "13px 24px", fontSize: 15 }}>
-              📦 View Software Products
+            <Button onClick={() => go("industries")} variant="outline" style={{ padding: "13px 24px", fontSize: 15 }}>
+              🏢 Industries We Transform
             </Button>
             <Button onClick={() => go("contact")} variant="secondary" style={{ padding: "13px 24px", fontSize: 15 }}>
               Schedule Consultation
@@ -2392,10 +1900,10 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
             }}
           >
             {[
-              { val: "120+", label: "Completed Digital Projects" },
-              { label: "On-Time Milestone Delivery", val: "99.8%" },
-              { label: "Web & Mobile App Engineers", val: "45+" },
-              { label: "Technical Solutions SLA", val: "< 2 Hours" },
+              { val: "120+", label: "Completed Enterprise Systems" },
+              { label: "Production SLA Reliability", val: "99.99%" },
+              { label: "Senior Solutions Engineers", val: "50+" },
+              { label: "Incident & Architecture SLA", val: "< 2 Hours" },
             ].map((st, i) => (
               <div key={i} style={{ textAlign: "center" }}>
                 <div style={{ fontSize: 24, fontWeight: 800, color: TOKENS.blue }}>{st.val}</div>
@@ -2406,12 +1914,12 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
         </div>
       </section>
 
-      {/* Core IT Services Grid */}
+      {/* Core IT Engineering Services Grid */}
       <section style={{ padding: "80px 20px", maxWidth: 1280, margin: "0 auto" }}>
         <SectionHeading
           badge="Full-Stack Capabilities"
-          title="Comprehensive IT Engineering Services"
-          subtitle="From concept to deployment, our senior developers build robust, accessible, and scalable digital solutions tailored to your business goals."
+          title="Enterprise Software Engineering Capabilities"
+          subtitle="From cloud-native architecture to continuous delivery, our senior developers engineer resilient, high-concurrency systems tailored to your business roadmap."
         />
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
@@ -2463,11 +1971,11 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
 
               <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                  <div style={{ fontSize: 10, color: TOKENS.slate }}>ESTIMATED START</div>
+                  <div style={{ fontSize: 10, color: TOKENS.slate }}>ESTIMATED STARTING BUDGET</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>{formatPrice(s.estInr, currency)}</div>
                 </div>
                 <Button onClick={() => go("services")} style={{ padding: "6px 12px", fontSize: 12 }}>
-                  Details →
+                  Practice Details →
                 </Button>
               </div>
             </div>
@@ -2475,24 +1983,24 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
         </div>
       </section>
 
-      {/* Proprietary Software Products Showcase */}
+      {/* Strategic Industry Verticals Showcase */}
       <section style={{ padding: "80px 20px", background: TOKENS.panelAlt }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <SectionHeading
-            badge="Proprietary SaaS Suites"
-            title="Enterprise Software Products"
-            subtitle="Pre-built, modular, and customizable software platforms built by Abhimanyu Technologies for enterprise operations, CRM, HRMS, and AI."
+            badge="Strategic Verticals"
+            title="Industries We Transform Through Software"
+            subtitle="Domain-specific architectures engineered for the strict regulatory compliance, high concurrency, and data security demanded by global enterprises."
           />
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 24 }}>
-            {SOFTWARE_PRODUCTS.map((p) => (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: 24 }}>
+            {INDUSTRY_VERTICALS.map((ind) => (
               <div
-                key={p.id}
+                key={ind.id}
                 style={{
                   background: TOKENS.panel,
                   border: `1px solid ${TOKENS.hair}`,
-                  borderRadius: 12,
-                  padding: 24,
+                  borderRadius: 14,
+                  padding: 26,
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
@@ -2501,39 +2009,46 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
               >
                 <div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-                    <span style={{ fontSize: 32 }}>{p.icon}</span>
-                    <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
-                      {p.badge}
+                    <span style={{ fontSize: 34 }}>{ind.icon}</span>
+                    <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "3px 8px", borderRadius: 4 }}>
+                      {ind.badge}
                     </span>
                   </div>
-                  <h3 style={{ fontSize: 19, fontWeight: 700, color: TOKENS.paper, margin: "0 0 6px" }}>{p.name}</h3>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: TOKENS.teal, marginBottom: 10 }}>{p.tagline}</div>
-                  <p style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.5, margin: "0 0 16px" }}>{p.shortDesc}</p>
+                  <h3 style={{ fontSize: 19, fontWeight: 700, color: TOKENS.paper, margin: "0 0 6px" }}>{ind.name}</h3>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: TOKENS.teal, marginBottom: 10 }}>{ind.tagline}</div>
+                  <p style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.5, margin: "0 0 16px" }}>{ind.shortDesc}</p>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 18 }}>
-                    {p.metrics.map((met, mi) => (
-                      <div key={mi} style={{ fontSize: 11.5, color: TOKENS.paper, display: "flex", alignItems: "center", gap: 6 }}>
-                        <span style={{ color: TOKENS.teal }}>✓</span> {met}
+                  {/* Metrics */}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, background: TOKENS.panelAlt, borderRadius: 8, padding: 12, marginBottom: 16 }}>
+                    {ind.metrics.map((m, mi) => (
+                      <div key={mi} style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: TOKENS.blue }}>{m.val}</div>
+                        <div style={{ fontSize: 9.5, color: TOKENS.slate, marginTop: 2 }}>{m.label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Capabilities checklist */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 16 }}>
+                    {ind.capabilities.slice(0, 2).map((cap, ci) => (
+                      <div key={ci} style={{ fontSize: 11.5, color: TOKENS.paper, display: "flex", alignItems: "flex-start", gap: 6 }}>
+                        <span style={{ color: TOKENS.teal, fontWeight: 700 }}>✓</span>
+                        <span>{cap}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div style={{ fontSize: 10, color: TOKENS.slate }}>STARTER TIER</div>
-                    <div style={{ fontSize: 15, fontWeight: 800, color: TOKENS.blue }}>
-                      {formatPrice(p.pricing.starter.inr, currency)}<span style={{ fontSize: 11, fontWeight: 400, color: TOKENS.slate }}>/mo</span>
-                    </div>
+                  <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+                    {ind.techStack.slice(0, 3).map((t, ti) => (
+                      <span key={ti} style={{ fontSize: 10, background: TOKENS.panelAlt, padding: "2px 6px", borderRadius: 4, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+                        {t}
+                      </span>
+                    ))}
                   </div>
-                  <Button
-                    onClick={() => {
-                      setSelectedProduct(p);
-                      openProductDemo();
-                    }}
-                    style={{ padding: "6px 12px", fontSize: 12 }}
-                  >
-                    View Modules →
+                  <Button onClick={() => go("industries")} style={{ padding: "6px 12px", fontSize: 12 }}>
+                    Explore Vertical →
                   </Button>
                 </div>
               </div>
@@ -2542,81 +2057,137 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
         </div>
       </section>
 
-      {/* Tech Stack Matrix */}
+      {/* Enterprise Engagement & Delivery Models */}
       <section style={{ padding: "80px 20px", maxWidth: 1280, margin: "0 auto" }}>
         <SectionHeading
-          badge="Modern Ecosystem"
-          title="Battle-Tested Technology Stack"
-          subtitle="We select the right tools for your specific business requirements, ensuring zero technical debt, security, and high maintainability."
+          badge="How We Deliver"
+          title="Enterprise Engagement & Delivery Models"
+          subtitle="Flexible collaboration structures designed to seamlessly align with your enterprise roadmap, sprint velocity, and governance standards."
         />
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20 }}>
-          {TECH_CATEGORIES.map((cat, ci) => (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 24 }}>
+          {ENGAGEMENT_MODELS.map((model) => (
             <div
-              key={ci}
+              key={model.id}
               style={{
                 background: TOKENS.panel,
                 border: `1px solid ${TOKENS.hair}`,
-                borderRadius: 10,
-                padding: 18,
+                borderRadius: 14,
+                padding: 26,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 8, borderBottom: `1px solid ${TOKENS.hair}` }}>
-                <span>{cat.icon}</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>{cat.category}</span>
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+                  <span style={{ fontSize: 32 }}>{model.icon}</span>
+                  <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "3px 8px", borderRadius: 4 }}>
+                    {model.badge}
+                  </span>
+                </div>
+                <h3 style={{ fontSize: 19, fontWeight: 700, color: TOKENS.paper, margin: "0 0 8px" }}>{model.name}</h3>
+                <p style={{ fontSize: 13, color: TOKENS.slate, lineHeight: 1.5, margin: "0 0 14px" }}>{model.desc}</p>
+                <div style={{ background: TOKENS.panelAlt, borderRadius: 6, padding: "8px 10px", fontSize: 11.5, color: TOKENS.paper, marginBottom: 16 }}>
+                  <strong>Best For:</strong> {model.bestFor}
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 18 }}>
+                  {model.highlights.map((h, hi) => (
+                    <div key={hi} style={{ fontSize: 11.5, color: TOKENS.paper, display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ color: TOKENS.teal }}>✓</span> {h}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {cat.items.map((item, ii) => (
-                  <div key={ii}>
-                    <div style={{ fontSize: 12.5, fontWeight: 600, color: TOKENS.paper }}>{item.name}</div>
-                    <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{item.desc}</div>
-                  </div>
-                ))}
+
+              <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14 }}>
+                <Button onClick={() => go("contact")} style={{ width: "100%", padding: "10px", fontSize: 13 }}>
+                  Consult on {model.name} →
+                </Button>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Client Testimonials */}
+      {/* Tech Stack Matrix */}
       <section style={{ padding: "80px 20px", background: TOKENS.panelAlt }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <SectionHeading
-            badge="Client Success"
-            title="Trusted by Technology Leaders"
-            subtitle="See how our engineering teams have helped founders and CTOs ship world-class digital products."
+            badge="Modern Ecosystem"
+            title="Battle-Tested Enterprise Technology Stack"
+            subtitle="We select the right tools for your specific business requirements, ensuring zero technical debt, security, and high maintainability."
           />
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
-            {TESTIMONIALS.map((t, idx) => (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20 }}>
+            {TECH_CATEGORIES.map((cat, ci) => (
               <div
-                key={idx}
+                key={ci}
                 style={{
                   background: TOKENS.panel,
                   border: `1px solid ${TOKENS.hair}`,
-                  borderRadius: 12,
-                  padding: 24,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
+                  borderRadius: 10,
+                  padding: 18,
                 }}
               >
-                <div>
-                  <div style={{ color: TOKENS.brass, fontSize: 16, marginBottom: 12 }}>{"★".repeat(t.rating)}</div>
-                  <p style={{ fontSize: 13.5, color: TOKENS.paper, lineHeight: 1.6, margin: "0 0 20px", fontStyle: "italic" }}>
-                    "{t.quote}"
-                  </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 8, borderBottom: `1px solid ${TOKENS.hair}` }}>
+                  <span>{cat.icon}</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: TOKENS.paper }}>{cat.category}</span>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14 }}>
-                  <span style={{ fontSize: 28 }}>{t.avatar}</span>
-                  <div>
-                    <div style={{ fontSize: 13.5, fontWeight: 700, color: TOKENS.paper }}>{t.author}</div>
-                    <div style={{ fontSize: 11.5, color: TOKENS.slate }}>{t.role} • <strong>{t.company}</strong></div>
-                  </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {cat.items.map((item, ii) => (
+                    <div key={ii}>
+                      <div style={{ fontSize: 12.5, fontWeight: 600, color: TOKENS.paper }}>{item.name}</div>
+                      <div style={{ fontSize: 10.5, color: TOKENS.slate }}>{item.desc}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Client Testimonials */}
+      <section style={{ padding: "80px 20px", maxWidth: 1100, margin: "0 auto" }}>
+        <SectionHeading
+          badge="Enterprise Impact"
+          title="Trusted by Global Technology Leaders"
+          subtitle="See how our engineering teams have helped founders and CTOs ship world-class software platforms."
+        />
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+          {TESTIMONIALS.map((t, idx) => (
+            <div
+              key={idx}
+              style={{
+                background: TOKENS.panel,
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 12,
+                padding: 24,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+              }}
+            >
+              <div>
+                <div style={{ color: TOKENS.brass, fontSize: 16, marginBottom: 12 }}>{"★".repeat(t.rating)}</div>
+                <p style={{ fontSize: 13.5, color: TOKENS.paper, lineHeight: 1.6, margin: "0 0 20px", fontStyle: "italic" }}>
+                  "{t.quote}"
+                </p>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14 }}>
+                <span style={{ fontSize: 28 }}>{t.avatar}</span>
+                <div>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: TOKENS.paper }}>{t.author}</div>
+                  <div style={{ fontSize: 11.5, color: TOKENS.slate }}>{t.role} • <strong>{t.company}</strong></div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -2633,10 +2204,10 @@ function HomePage({ go, currency, openTracker, setSelectedProduct, openProductDe
           }}
         >
           <h2 style={{ fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 800, margin: "0 0 14px", letterSpacing: "-0.02em" }}>
-            Ready to Build Your Next Digital Product?
+            Ready to Accelerate Your Enterprise Software Roadmap?
           </h2>
           <p style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", maxWidth: 640, margin: "0 auto 30px", lineHeight: 1.6 }}>
-            Connect with our Senior Solutions Architects today. Receive a comprehensive technical scope proposal and estimated development sprints within 12 business hours.
+            Connect with our Senior Solutions Architects today. Receive a comprehensive technical scope proposal and estimated development sprints within 12 business hours under mutual NDA.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <button
@@ -2835,7 +2406,7 @@ function ServicesPage({ go, currency }) {
               </span>
             </div>
             <div style={{ fontSize: 12.5, color: TOKENS.slate, marginTop: 4 }}>
-              How our Senior Solutions Architects evaluate and choose the optimal architectural stack for client software products.
+              How our Senior Solutions Architects evaluate and choose the optimal architectural stack for enterprise software systems.
             </div>
           </div>
           <Button onClick={() => go("contact")} style={{ padding: "8px 16px", fontSize: 12.5 }}>
@@ -3138,19 +2709,56 @@ function ServicesPage({ go, currency }) {
 
 /* ---------------------------- Page 3: ProductsPage ---------------------------- */
 
-function ProductsPage({ currency, setSelectedProduct, openProductDemo, go }) {
+function IndustriesPage({ go }) {
+  const [activeTab, setActiveTab] = useState("all");
+
+  const filtered = activeTab === "all"
+    ? INDUSTRY_VERTICALS
+    : INDUSTRY_VERTICALS.filter((ind) => ind.id === activeTab);
+
   return (
     <div style={{ padding: "40px 20px 80px", maxWidth: 1280, margin: "0 auto" }}>
       <SectionHeading
-        badge="Software Suite"
-        title="Enterprise Software Platforms"
-        subtitle="Proprietary software products built by Abhimanyu Technologies, available as cloud SaaS or private on-premise deployments."
+        badge="Strategic Verticals"
+        title="Enterprise Solutions Across Global Industries"
+        subtitle="Proven domain expertise, regulatory compliance frameworks (RBI, PCI-DSS, HIPAA, SOC 2 Type II), and battle-tested distributed architectures across mission-critical sectors."
       />
 
+      {/* Industry Filter Pills */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 36 }}>
+        {[
+          { id: "all", label: "All Industries" },
+          { id: "fintech", label: "💳 Banking & FinTech" },
+          { id: "healthcare", label: "🏥 Healthcare & Pharma" },
+          { id: "retail", label: "🛍️ Retail & E-Commerce" },
+          { id: "logistics", label: "🚚 Logistics & Supply Chain" },
+          { id: "saas", label: "☁️ High-Tech Cloud SaaS" },
+          { id: "manufacturing", label: "🏭 Smart Manufacturing" },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              background: activeTab === tab.id ? TOKENS.blue : TOKENS.panel,
+              color: activeTab === tab.id ? "#FFFFFF" : TOKENS.slate,
+              border: `1px solid ${activeTab === tab.id ? TOKENS.blue : TOKENS.hair}`,
+              borderRadius: 6,
+              padding: "7px 14px",
+              fontSize: 12.5,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Industry Verticals List */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 32 }}>
-        {SOFTWARE_PRODUCTS.map((prod) => (
+        {filtered.map((ind) => (
           <div
-            key={prod.id}
+            key={ind.id}
             style={{
               background: TOKENS.panel,
               border: `1px solid ${TOKENS.hair}`,
@@ -3161,70 +2769,114 @@ function ProductsPage({ currency, setSelectedProduct, openProductDemo, go }) {
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14, marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <span style={{ fontSize: 40 }}>{prod.icon}</span>
+                <span style={{ fontSize: 40 }}>{ind.icon}</span>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <h3 style={{ fontSize: 22, fontWeight: 800, color: TOKENS.paper, margin: 0 }}>{prod.name}</h3>
+                    <h3 style={{ fontSize: 22, fontWeight: 800, color: TOKENS.paper, margin: 0 }}>{ind.name}</h3>
                     <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
-                      {prod.badge}
+                      {ind.badge}
                     </span>
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: TOKENS.teal, marginTop: 4 }}>{prod.tagline}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: TOKENS.teal, marginTop: 4 }}>{ind.tagline}</div>
                 </div>
               </div>
 
               <div style={{ display: "flex", gap: 8 }}>
-                <Button
-                  onClick={() => {
-                    setSelectedProduct(prod);
-                    openProductDemo();
-                  }}
-                  variant="outline"
-                  style={{ padding: "8px 14px", fontSize: 12.5 }}
-                >
-                  Interactive Walkthrough
+                <Button onClick={() => go("rfq-wizard")} variant="outline" style={{ padding: "8px 14px", fontSize: 12.5 }}>
+                  Request Vertical RFP →
                 </Button>
                 <Button onClick={() => go("contact")} style={{ padding: "8px 16px", fontSize: 12.5 }}>
-                  Schedule Live Demo →
+                  Schedule Consultation →
                 </Button>
               </div>
             </div>
 
             <p style={{ fontSize: 14, color: TOKENS.slate, lineHeight: 1.6, marginBottom: 20 }}>
-              {prod.shortDesc}
+              {ind.shortDesc}
             </p>
 
-            {/* Modules Grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 10, marginBottom: 24 }}>
-              {prod.modules.map((mod, mi) => (
-                <div key={mi} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 12px", fontSize: 12.5, color: TOKENS.paper }}>
-                  <span style={{ color: TOKENS.teal, fontWeight: 700, marginRight: 6 }}>✓</span>
-                  {mod}
+            {/* Key Outcomes / Metrics Row */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 22 }}>
+              {ind.metrics.map((m, mi) => (
+                <div key={mi} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: "12px 16px", textAlign: "center" }}>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: TOKENS.blue }}>{m.val}</div>
+                  <div style={{ fontSize: 11, color: TOKENS.slate, marginTop: 3 }}>{m.label}</div>
                 </div>
               ))}
             </div>
 
-            {/* Tiered Pricing Cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
-              {Object.keys(prod.pricing).map((k) => {
-                const plan = prod.pricing[k];
-                return (
-                  <div key={k} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 8, padding: 14 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: TOKENS.paper }}>{plan.label}</div>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: TOKENS.blue, margin: "6px 0" }}>
-                      {formatPrice(plan.inr, currency)}<span style={{ fontSize: 10.5, fontWeight: 400, color: TOKENS.slate }}>{plan.period}</span>
-                    </div>
-                    <div style={{ fontSize: 11, color: TOKENS.slate, lineHeight: 1.4 }}>{plan.desc}</div>
+            {/* Specialized Engineering Capabilities Grid */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: TOKENS.slate, marginBottom: 10, textTransform: "uppercase" }}>
+                Specialized Enterprise Capabilities Engineered for this Vertical
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 10 }}>
+                {ind.capabilities.map((cap, ci) => (
+                  <div key={ci} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "10px 14px", fontSize: 12.5, color: TOKENS.paper, display: "flex", alignItems: "flex-start", gap: 8 }}>
+                    <span style={{ color: TOKENS.teal, fontWeight: 700 }}>✓</span>
+                    <span>{cap}</span>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+            </div>
+
+            {/* Tech Stack Chips */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 14 }}>
+              <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.slate }}>
+                RECOMMENDED ARCHITECTURAL STACK:
+              </span>
+              {ind.techStack.map((tech, ti) => (
+                <span
+                  key={ti}
+                  style={{
+                    background: TOKENS.panelAlt,
+                    border: `1px solid ${TOKENS.hair}`,
+                    borderRadius: 4,
+                    padding: "3px 8px",
+                    fontSize: 11,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    color: TOKENS.paper,
+                  }}
+                >
+                  {tech}
+                </span>
+              ))}
             </div>
           </div>
         ))}
       </div>
+
+      {/* Enterprise Trust & Governance Box */}
+      <div
+        style={{
+          marginTop: 48,
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          padding: 28,
+          boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 14 }}>
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
+              🛡️ Enterprise Compliance, Governance & IP Protection
+            </div>
+            <div style={{ fontSize: 13, color: TOKENS.slate, marginTop: 4 }}>
+              Every engagement is backed by bilateral mutual Non-Disclosure Agreements (NDAs), complete intellectual property assignment to your enterprise, and compliance with SOC 2 Type II and ISO 27001 standards.
+            </div>
+          </div>
+          <Button onClick={() => go("contact")} style={{ padding: "10px 20px", fontSize: 13 }}>
+            Consult Our Lead Architect →
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
+
+// Backwards-compatibility alias for internal router
+const ProductsPage = IndustriesPage;
 
 /* ---------------------------- Page 4: Project Intake Wizard (rfq-wizard) ---------------------------- */
 
@@ -4148,7 +3800,7 @@ fun main() = runBlocking {
     "top_k": 4
   }'`,
 
-      invoice: `curl -X POST https://api.abhimanu-technologies.app/v1/products/erp/invoices \\
+      invoice: `curl -X POST https://api.abhimanu-technologies.app/v1/integrations/enterprise/events \\
   -H "Authorization: Bearer abh_live_94819488a0b94c3d" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -5071,7 +4723,7 @@ function CareersPage({ go }) {
       <SectionHeading
         badge="Join Our Team"
         title="Build Future-Proof Software with Us"
-        subtitle="Work on high-throughput microservices, cutting-edge Android apps, and generative AI products with top-tier engineers."
+        subtitle="Work on high-throughput microservices, cutting-edge Android apps, and enterprise cloud platforms with top-tier engineers."
       />
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -5387,7 +5039,7 @@ function ContactPage() {
                       "Backend & Microservices",
                       "Cloud & Kubernetes DevOps",
                       "Enterprise AI & Custom LLMs",
-                      "ERP / CRM SaaS Products",
+                      "Custom Enterprise Engineering",
                     ].map((p) => (
                       <button
                         type="button"
@@ -5672,7 +5324,7 @@ function Footer({ go, openStatusModal }) {
             <span style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper }}>Abhimanyu</span>
           </div>
           <p style={{ lineHeight: 1.6, margin: "0 0 16px" }}>
-            Enterprise IT Services, Full-Stack Web Development, Native Android & Mobile App Engineering, and Software Products. Sloganed to Scale Your Business.
+            Global Software Engineering, Cloud-Native Backends, Native Mobile & Web Platforms, and Enterprise Solutions. Sloganed to Scale Your Business.
           </p>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: TOKENS.teal }}>
             📍 Telangana • Pan-India • Global Delivery
@@ -5695,15 +5347,15 @@ function Footer({ go, openStatusModal }) {
 
         <div>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: TOKENS.paper, marginBottom: 14 }}>
-            SOFTWARE PRODUCTS
+            INDUSTRIES & SOLUTIONS
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu Cloud ERP</button>
-            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu CRM</button>
-            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu HRMS</button>
-            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu AI Studio</button>
-            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu DevPulse</button>
-            <button onClick={() => go("products")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Abhimanyu AppEngine</button>
+            <button onClick={() => go("industries")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Banking, FinTech & Payments</button>
+            <button onClick={() => go("industries")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Healthcare & Life Sciences</button>
+            <button onClick={() => go("industries")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Retail, E-Commerce & Omnichannel</button>
+            <button onClick={() => go("industries")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Logistics & Intelligent Supply Chain</button>
+            <button onClick={() => go("industries")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>High-Tech SaaS & Cloud Platforms</button>
+            <button onClick={() => go("industries")} style={{ background: "none", border: "none", color: TOKENS.slate, textAlign: "left", cursor: "pointer", padding: 0 }}>Smart Manufacturing & Industrial IoT</button>
           </div>
         </div>
 
@@ -5747,7 +5399,8 @@ function Footer({ go, openStatusModal }) {
 const PAGES = {
   home: HomePage,
   services: ServicesPage,
-  products: ProductsPage,
+  industries: IndustriesPage,
+  products: IndustriesPage,
   "rfq-wizard": ProjectWizardPage,
   "case-studies": CaseStudiesPage,
   knowledge: KnowledgePage,
@@ -5772,8 +5425,7 @@ export default function App() {
   // Modal states
   const [trackerOpen, setTrackerOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
-  const [productDemoOpen, setProductDemoOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(SOFTWARE_PRODUCTS[0]);
+  // Product state removed: MNC software company format
 
   const go = (id) => {
     setPage(id);
@@ -5832,8 +5484,7 @@ export default function App() {
           currentUser={currentUser}
           openTracker={() => setTrackerOpen(true)}
           openStatusModal={() => setStatusModalOpen(true)}
-          setSelectedProduct={setSelectedProduct}
-          openProductDemo={() => setProductDemoOpen(true)}
+          /* Clean MNC props */
         />
       </main>
 
@@ -5852,11 +5503,7 @@ export default function App() {
         onClose={() => setStatusModalOpen(false)}
       />
 
-      <ProductDemoModal
-        product={selectedProduct}
-        isOpen={productDemoOpen}
-        onClose={() => setProductDemoOpen(false)}
-      />
+      {/* ProductDemoModal removed */}
 
       {/* Fixed Mobile Bottom Navigation */}
       <nav
@@ -5883,7 +5530,7 @@ export default function App() {
           { icon: "🏠", label: "Home", id: "home" },
           { icon: "🛠", label: "Services", id: "services" },
           { icon: "⚡", label: "Plan", id: "rfq-wizard", highlight: true },
-          { icon: "📦", label: "Products", id: "products" },
+          { icon: "🏢", label: "Industries", id: "industries" },
           { icon: "📞", label: "Contact", id: "contact" },
         ].map((item) => (
           <button
