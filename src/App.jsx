@@ -3976,6 +3976,47 @@ function CaseStudiesPage({ go }) {
   );
 }
 
+
+/* ---------------------------- Enterprise Technology Radar Dataset ---------------------------- */
+
+const TECH_RADAR = [
+  // Languages & Frameworks
+  { name: "Next.js 14/15", ring: "Adopt", category: "Languages & Frameworks", desc: "Our default standard for SEO-critical web platforms and SSR dashboards." },
+  { name: "React 18/19", ring: "Adopt", category: "Languages & Frameworks", desc: "Component-driven design systems, server actions, and concurrent rendering." },
+  { name: "Go (Golang)", ring: "Adopt", category: "Languages & Frameworks", desc: "Ultra-low memory, compiled concurrency for distributed microservices." },
+  { name: "Kotlin & Jetpack Compose", ring: "Adopt", category: "Languages & Frameworks", desc: "Native Android standard delivering fluid 60fps reactive interfaces." },
+  { name: "TypeScript Strict Mode", ring: "Adopt", category: "Languages & Frameworks", desc: "Compulsory enterprise-wide type safety and developer productivity." },
+  { name: "Rust", ring: "Trial", category: "Languages & Frameworks", desc: "High-performance network filters, WebAssembly modules, and IoT daemons." },
+  { name: "Flutter", ring: "Adopt", category: "Languages & Frameworks", desc: "Fast time-to-market unified cross-platform mobile apps for Android & iOS." },
+  { name: "Python (FastAPI)", ring: "Adopt", category: "Languages & Frameworks", desc: "High-speed asynchronous AI inference pipelines and ML services." },
+  { name: "Bun Runtime", ring: "Assess", category: "Languages & Frameworks", desc: "High-performance JS bundler and runtime under evaluation for tooling." },
+  { name: "Monolithic Django", ring: "Hold", category: "Languages & Frameworks", desc: "Avoid for distributed multi-tier microservices; use FastAPI or Go instead." },
+
+  // Platforms & Cloud
+  { name: "Kubernetes (EKS / GKE)", ring: "Adopt", category: "Platforms & Cloud", desc: "Automated container orchestration, HPA autoscaling, and zero downtime." },
+  { name: "Terraform & OpenTofu", ring: "Adopt", category: "Platforms & Cloud", desc: "Declarative Infrastructure as Code (IaC) across multi-cloud regions." },
+  { name: "Cloudflare Anycast WAF", ring: "Adopt", category: "Platforms & Cloud", desc: "Global edge CDN, DDoS mitigation, and SSL/TLS 1.3 termination." },
+  { name: "AWS Graviton (ARM64)", ring: "Adopt", category: "Platforms & Cloud", desc: "40% superior price-performance for containerized workloads." },
+  { name: "WebAssembly (WASM)", ring: "Trial", category: "Platforms & Cloud", desc: "Edge compute sandboxing and low-latency client-side computation." },
+  { name: "Bare-Metal Self-Hosted K8s", ring: "Hold", category: "Platforms & Cloud", desc: "High maintenance overhead; prefer managed AWS EKS or GCP GKE." },
+
+  // Data & Messaging
+  { name: "PostgreSQL 16", ring: "Adopt", category: "Data & Messaging", desc: "ACID compliance, row-level security (RLS), and JSONB flexibility." },
+  { name: "Redis Cluster 7.2", ring: "Adopt", category: "Data & Messaging", desc: "Sub-millisecond caching, rate-limiting, and Pub/Sub queues." },
+  { name: "Apache Kafka", ring: "Adopt", category: "Data & Messaging", desc: "High-throughput, event-driven distributed streaming pipelines." },
+  { name: "Milvus / Qdrant", ring: "Trial", category: "Data & Messaging", desc: "Vector similarity search for enterprise RAG and semantic intelligence." },
+  { name: "TimescaleDB", ring: "Adopt", category: "Data & Messaging", desc: "Optimized relational time-series storage for IoT and financial logs." },
+  { name: "Un-indexed MongoDB", ring: "Hold", category: "Data & Messaging", desc: "Avoid document store sprawl without strict schema validation." },
+
+  // DevSecOps & Quality
+  { name: "Playwright", ring: "Adopt", category: "DevSecOps & Tools", desc: "Automated cross-browser end-to-end testing and visual regression." },
+  { name: "SonarQube & SAST", ring: "Adopt", category: "DevSecOps & Tools", desc: "Continuous static analysis preventing security vulnerabilities in CI/CD." },
+  { name: "OpenTelemetry & Prometheus", ring: "Adopt", category: "DevSecOps & Tools", desc: "Standardized distributed tracing and metric collection across pods." },
+  { name: "k6 Load Testing", ring: "Adopt", category: "DevSecOps & Tools", desc: "Stress testing APIs and web portals to 100,000+ concurrent virtual users." },
+  { name: "eBPF Kernel Probing", ring: "Assess", category: "DevSecOps & Tools", desc: "Deep Linux kernel observability and low-overhead network security." },
+  { name: "Manual QA Click-Testing", ring: "Hold", category: "DevSecOps & Tools", desc: "Replace fragile manual testing with automated Playwright suites." },
+];
+
 /* ---------------------------- Page 6: KnowledgePage (Tech Hub) ---------------------------- */
 
 function KnowledgePage({ go }) {
@@ -4264,15 +4305,14 @@ import kotlinx.coroutines.runBlocking
 fun main() = runBlocking {
     val client = AbhimanyuClient.Builder().apiKey("abh_live_94819488a0b94c3d").build()
 
-    val invoice = client.erp.createInvoice(
-        gstin = "36AAAAA0000A1Z5",
-        clientName = "Apex FinTech Solutions Pvt Ltd",
-        sku = "SKU-8841",
-        qty = 25,
-        unitPrice = 850.0
+    val event = client.events.publish(
+        topic = "telemetry.payments.settled",
+        clientId = "apex_fintech_solutions",
+        txId = "TXN-884192",
+        amountInr = 2500000.0
     )
 
-    println("Invoice: \${invoice.invoiceNumber} | Total: ₹\${invoice.grandTotal}")
+    println("Event Acknowledged: \${event.status} | Partition: \${event.partition}")
 }`,
 
       sprint: `package com.abhimanyu.android.demo
@@ -4360,6 +4400,73 @@ fun main() = runBlocking {
         subtitle="Insights, design patterns, and engineering standards developed across our production software deployments."
       />
 
+
+            {/* Interactive Technology Radar */}
+      <div
+        style={{
+          background: TOKENS.panel,
+          border: `1px solid ${TOKENS.hair}`,
+          borderRadius: 14,
+          padding: 28,
+          marginBottom: 36,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14, marginBottom: 20 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 22 }}>📡</span>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: TOKENS.paper }}>
+                Enterprise Technology Radar (Q4 Edition)
+              </h3>
+              <span style={{ background: TOKENS.badgeBg, color: TOKENS.blue, fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+                OPINIONATED TECH STANDARDS
+              </span>
+            </div>
+            <p style={{ margin: "4px 0 0", fontSize: 13, color: TOKENS.slate }}>
+              How our Senior Solutions Architects evaluate and choose technologies across our global client deployments.
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: 6 }}>
+            {["Adopt", "Trial", "Assess", "Hold"].map((r) => {
+              const bg = r === "Adopt" ? "#10B981" : r === "Trial" ? "#2563EB" : r === "Assess" ? "#D97706" : "#EF4444";
+              return (
+                <span key={r} style={{ background: `${bg}18`, color: bg, padding: "3px 8px", borderRadius: 4, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
+                  {r.toUpperCase()}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
+          {["Languages & Frameworks", "Platforms & Cloud", "Data & Messaging", "DevSecOps & Tools"].map((category) => (
+            <div key={category} style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 16 }}>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: TOKENS.paper, marginBottom: 12, borderBottom: `1px solid ${TOKENS.hair}`, paddingBottom: 6 }}>
+                {category}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {TECH_RADAR.filter((item) => item.category === category).map((tech, idx) => {
+                  const tagColor = tech.ring === "Adopt" ? "#10B981" : tech.ring === "Trial" ? "#2563EB" : tech.ring === "Assess" ? "#D97706" : "#EF4444";
+                  return (
+                    <div key={idx} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.hair}`, borderRadius: 6, padding: "8px 10px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper }}>{tech.name}</span>
+                        <span style={{ fontSize: 9.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: tagColor, background: `${tagColor}15`, padding: "1px 5px", borderRadius: 3 }}>
+                          {tech.ring.toUpperCase()}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 10.5, color: TOKENS.slate, marginTop: 4, lineHeight: 1.4 }}>
+                        {tech.desc}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Multi-Language Developer SDK & Integration Generator */}
       <div
@@ -4944,6 +5051,194 @@ function DashboardPage({ openTracker, go }) {
   );
 }
 
+
+/* ---------------------------- Enterprise Security & Compliance Evaluator ---------------------------- */
+
+function ComplianceSelfAuditScanner({ go }) {
+  const [domain, setDomain] = useState("fintech");
+  const [region, setRegion] = useState("global");
+  const [dataType, setDataType] = useState("card");
+  const [slaTier, setSlaTier] = useState("99.99");
+  const [downloadedReport, setDownloadedReport] = useState(false);
+
+  // Compute recommendations
+  const requiredStandards = [];
+  if (domain === "fintech" || dataType === "card") requiredStandards.push("PCI-DSS Level 1", "RBI Cyber Security Framework");
+  if (domain === "healthcare" || dataType === "health") requiredStandards.push("HIPAA BAA Ready", "HL7 / FHIR Standards");
+  if (region === "eu" || region === "global") requiredStandards.push("GDPR Compliance");
+  if (region === "india" || region === "global") requiredStandards.push("DPDP Act 2023");
+  requiredStandards.push("SOC 2 Type II", "ISO/IEC 27001:2022");
+
+  const readinessScore = domain === "fintech" && slaTier === "99.99" ? 98 : 95;
+
+  const handleExportReport = () => {
+    const text = `=============================================================
+ABHIMANYU TECHNOLOGIES — ENTERPRISE SECURITY & COMPLIANCE REPORT
+=============================================================
+Generated At: ${new Date().toISOString()}
+Domain Evaluation: ${domain.toUpperCase()}
+Target Geographic Regions: ${region.toUpperCase()}
+Data Sensitivity Tier: ${dataType.toUpperCase()}
+Uptime Availability SLA: ${slaTier}% Multi-AZ Active-Active
+
+READINESS SCORE: ${readinessScore} / 100 (Enterprise Grade)
+
+MANDATORY REGULATORY STANDARDS IDENTIFIED:
+${requiredStandards.map((s) => " - [x] " + s).join("\n")}
+
+RECOMMENDED DEVSECOPS & SYSTEM CONTROLS:
+ - Hardware Token MFA (YubiKey FIDO2 / WebAuthn) for Infrastructure Access
+ - Hardware Security Module (HSM) & AES-256-GCM Envelope Encryption
+ - Automated SAST / DAST Vulnerability Scanners in CI/CD (SonarQube + Snyk)
+ - Bilateral Mutual NDA & 100% Client Intellectual Property Assignment
+ - Zero-Trust VPC Network Peering with Mutual TLS (mTLS)
+
+AUDITED BY:
+Office of the Chief Technology Officer • Abhimanyu Technologies
+Telangana Enterprise Technology Campus • Hyderabad / Bengaluru / Global
+=============================================================`;
+
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "enterprise_compliance_roadmap.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    setDownloadedReport(true);
+    setTimeout(() => setDownloadedReport(false), 2500);
+  };
+
+  return (
+    <div
+      style={{
+        background: TOKENS.panel,
+        border: `1px solid ${TOKENS.hair}`,
+        borderRadius: 14,
+        padding: 26,
+        marginBottom: 44,
+        boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14, marginBottom: 20 }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 22 }}>🛡️</span>
+            <h3 style={{ margin: 0, fontSize: 19, fontWeight: 700, color: TOKENS.paper }}>
+              Enterprise Compliance & DevSecOps Self-Audit Scanner
+            </h3>
+            <span style={{ background: "rgba(16,185,129,0.12)", color: "#10B981", fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "2px 8px", borderRadius: 4 }}>
+              READINESS: {readinessScore}%
+            </span>
+          </div>
+          <p style={{ margin: "4px 0 0", fontSize: 13, color: TOKENS.slate }}>
+            Select your software requirements to generate an instant statutory compliance framework and security roadmap.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: 8 }}>
+          <Button onClick={handleExportReport} variant="secondary" style={{ padding: "8px 14px", fontSize: 12 }}>
+            {downloadedReport ? "✓ Report (.txt) Downloaded" : "📥 Export Compliance Roadmap (.txt)"}
+          </Button>
+          <Button onClick={() => go("contact")} style={{ padding: "8px 16px", fontSize: 12 }}>
+            Request Security Audit →
+          </Button>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 24, alignItems: "start" }}>
+        {/* Controls */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+              1. Industry Domain
+            </label>
+            <select
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, fontSize: 12.5, background: TOKENS.panelAlt }}
+            >
+              <option value="fintech">Banking & FinTech</option>
+              <option value="healthcare">Healthcare & Life Sciences</option>
+              <option value="retail">Retail & E-Commerce</option>
+              <option value="saas">High-Tech Cloud SaaS</option>
+              <option value="logistics">Logistics & Supply Chain</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+              2. Target Geography
+            </label>
+            <select
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, fontSize: 12.5, background: TOKENS.panelAlt }}
+            >
+              <option value="global">Pan-Global Multi-Region</option>
+              <option value="india">India (Telangana / Pan-India)</option>
+              <option value="us">United States & North America</option>
+              <option value="eu">European Union & UK</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+              3. Data Classification
+            </label>
+            <select
+              value={dataType}
+              onChange={(e) => setDataType(e.target.value)}
+              style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, fontSize: 12.5, background: TOKENS.panelAlt }}
+            >
+              <option value="card">Cardholder & Bank Account Data</option>
+              <option value="health">ePHI Electronic Health Records</option>
+              <option value="pii">Customer Identity & Personal Data</option>
+              <option value="telemetry">High-Volume System Telemetry</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 700, color: TOKENS.paper, display: "block", marginBottom: 6 }}>
+              4. Target Uptime SLA
+            </label>
+            <select
+              value={slaTier}
+              onChange={(e) => setSlaTier(e.target.value)}
+              style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: `1px solid ${TOKENS.hair}`, fontSize: 12.5, background: TOKENS.panelAlt }}
+            >
+              <option value="99.99">99.99% Multi-AZ Active-Active</option>
+              <option value="99.95">99.95% Standard High Availability</option>
+              <option value="99.999">99.999% Mission-Critical Fault Tolerant</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Results Card */}
+        <div style={{ background: TOKENS.panelAlt, border: `1px solid ${TOKENS.hair}`, borderRadius: 10, padding: 18 }}>
+          <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: TOKENS.slate, marginBottom: 8, textTransform: "uppercase" }}>
+            Mandatory Frameworks for this Deployment
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+            {requiredStandards.map((std, si) => (
+              <span key={si} style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.blue}44`, color: TOKENS.blue, padding: "3px 8px", borderRadius: 4, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>
+                ✓ {std}
+              </span>
+            ))}
+          </div>
+
+          <div style={{ borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 10, fontSize: 12, color: TOKENS.paper, lineHeight: 1.5 }}>
+            ⚡ <strong>Abhimanyu Pod Guarantees</strong>: All code repositories are delivered with clean SonarQube quality gates, zero critical CVEs, and automatic compliance with {requiredStandards[0]}.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------------------------- Page 8: AboutPage ---------------------------- */
 
 function AboutPage({ go }) {
@@ -5023,6 +5318,8 @@ function AboutPage({ go }) {
       </div>
 
       {/* Interactive Security, Compliance & Trust Center */}
+      <ComplianceSelfAuditScanner go={go} />
+
       <div
         style={{
           background: TOKENS.panel,
