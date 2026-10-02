@@ -2112,6 +2112,89 @@ function HomePage({ go, currency, openTracker }) {
         </div>
       </section>
 
+            {/* Enterprise SDLC & Engineering Methodology */}
+      <section style={{ padding: "80px 20px", maxWidth: 1280, margin: "0 auto" }}>
+        <SectionHeading
+          badge="Engineering Rigor"
+          title="Our 5-Stage Enterprise Engineering Methodology"
+          subtitle="A battle-tested software development lifecycle engineered to eliminate technical debt, ensure zero defect escapes, and accelerate time-to-production."
+        />
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
+          {[
+            {
+              step: "01",
+              title: "Discovery & Architecture",
+              icon: "📐",
+              desc: "Domain-Driven Design (DDD), Event Storming, and Non-Functional Requirement (NFR) definition to architect resilient, future-proof distributed foundations.",
+              tags: ["Domain Modeling", "NFR Benchmarking", "Tech Selection"],
+            },
+            {
+              step: "02",
+              title: "Design Systems & UX",
+              icon: "🎨",
+              desc: "Pixel-perfect tokenized component design systems in Figma, ensuring WCAG 2.1 AA accessibility compliance and seamless multi-device user journeys.",
+              tags: ["Design Tokens", "WCAG 2.1 AA", "Interactive Prototyping"],
+            },
+            {
+              step: "03",
+              title: "Agile Pod Execution",
+              icon: "⚡",
+              desc: "Autonomous 2-week sprint cadences with automated CI/CD pipelines, strict trunk-based git workflows, and 85%+ automated unit/integration test coverage.",
+              tags: ["2-Week Sprints", "Automated CI/CD", "85%+ Test Coverage"],
+            },
+            {
+              step: "04",
+              title: "DevSecOps & Hardening",
+              icon: "🛡️",
+              desc: "Continuous SAST/DAST code scanning, OWASP Top 10 penetration audits, dependency vulnerability patching, and compliance verification prior to rollout.",
+              tags: ["SAST / DAST", "OWASP Hardening", "SOC 2 Verification"],
+            },
+            {
+              step: "05",
+              title: "Continuous Observability",
+              icon: "📊",
+              desc: "Full-stack Prometheus, Grafana, and OpenTelemetry instrumentation with automated canary rollbacks, zero-downtime releases, and comprehensive runbooks.",
+              tags: ["24/7 APM Telemetry", "Canary Rollbacks", "SLA Hypercare"],
+            },
+          ].map((m, idx) => (
+            <div
+              key={idx}
+              style={{
+                background: TOKENS.panel,
+                border: `1px solid ${TOKENS.hair}`,
+                borderRadius: 12,
+                padding: 22,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+                position: "relative",
+              }}
+            >
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <span style={{ fontSize: 28 }}>{m.icon}</span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 800, color: TOKENS.blue, background: TOKENS.badgeBg, padding: "2px 8px", borderRadius: 4 }}>
+                    {m.step}
+                  </span>
+                </div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: TOKENS.paper, margin: "0 0 8px" }}>{m.title}</h3>
+                <p style={{ fontSize: 12.5, color: TOKENS.slate, lineHeight: 1.55, margin: "0 0 16px" }}>{m.desc}</p>
+              </div>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4, borderTop: `1px solid ${TOKENS.hair}`, paddingTop: 12 }}>
+                {m.tags.map((t, ti) => (
+                  <span key={ti} style={{ fontSize: 10, background: TOKENS.panelAlt, padding: "2px 6px", borderRadius: 4, fontFamily: "'JetBrains Mono', monospace", color: TOKENS.slate }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Tech Stack Matrix */}
       <section style={{ padding: "80px 20px", background: TOKENS.panelAlt }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
