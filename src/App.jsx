@@ -1416,6 +1416,7 @@ export default function App() {
   });
   const [contactSubmitted, setContactSubmitted] = useState(false);
   const [inquiryCopied, setInquiryCopied] = useState(false);
+  const [estimateCopied, setEstimateCopied] = useState(false);
 
   // Smooth scroll
   const scrollTo = (e, id) => {
@@ -2319,19 +2320,7 @@ export default function App() {
       <div style={styles.utilityBar}>
         <div style={styles.container}>
           <div style={styles.utilityContent}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{
-                display: 'inline-block',
-                width: '7px',
-                height: '7px',
-                borderRadius: '50%',
-                backgroundColor: '#10B981',
-                boxShadow: '0 0 8px #10B981'
-              }} />
-              <span style={{ fontWeight: '700', color: isDark ? '#A7F3D0' : '#065F46' }}>All Systems Operational</span>
-              <span style={{ opacity: 0.4 }}>•</span>
-              <span>APPS · MAINTENANCE · IT SERVICES · 3D ANIMATION</span>
-            </div>
+            <span>APPS · MAINTENANCE · IT SERVICES · 3D ANIMATION</span>
             <span style={styles.utilityRight}>
               Office: Telangana, India • Available for Global Engagements
             </span>
@@ -2712,6 +2701,34 @@ export default function App() {
                       </li>
                     ))}
                   </ul>
+
+                  <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid #F1F5F9' }}>
+                    <a
+                      href="#contact"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        playClickSound('click');
+                        setContactData((prev) => ({
+                          ...prev,
+                          serviceNeed: s.title,
+                          details: `Inquiring about ${s.title}: ${s.subtitle}`
+                        }));
+                        const elem = document.getElementById('contact');
+                        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      style={{
+                        color: '#2563EB',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      Enquire about this service &rarr;
+                    </a>
+                  </div>
                 </div>
               );
             })}
@@ -4019,9 +4036,38 @@ export default function App() {
                   Indicative only. We confirm scope, cost and dates after a short discovery call.
                 </p>
 
-                <button onClick={handleSendEstimateToContact} style={styles.sendEstimateBtn}>
-                  Send this estimate &rarr;
-                </button>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                  <button onClick={handleSendEstimateToContact} style={{ ...styles.sendEstimateBtn, flex: 2, margin: 0 }}>
+                    Send this estimate &rarr;
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playClickSound('click');
+                      const activeFeats = Object.keys(estFeatures).filter((k) => estFeatures[k]).join(', ');
+                      const summary = `Abhimanyu Technologies - Project Estimate\n\nProject Type: ${estBuildingType}\nFeatures: ${activeFeats || 'Standard'}\nComplexity: ${estComplexity}\nIndicative Timeline: ${calcTimelineWeeks()}\nEstimated Budget: ${calcEstimatedBudget()}\nSuggested Team: ${calcSuggestedTeam()}`;
+                      navigator.clipboard?.writeText(summary);
+                      setEstimateCopied(true);
+                      setTimeout(() => setEstimateCopied(false), 2000);
+                    }}
+                    style={{
+                      flex: 1,
+                      backgroundColor: estimateCopied ? '#10B981' : (isDark ? '#1E293B' : '#F1F5F9'),
+                      color: estimateCopied ? '#FFFFFF' : (isDark ? '#F1F5F9' : '#0F172A'),
+                      border: isDark ? '1px solid #334155' : '1px solid #CBD5E1',
+                      borderRadius: '8px',
+                      padding: '12px 14px',
+                      fontWeight: '700',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      transition: 'all 0.15s ease'
+                    }}
+                    title="Copy full project estimate specs to clipboard"
+                  >
+                    {estimateCopied ? '✓ Copied' : '📋 Copy Spec'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -4716,48 +4762,51 @@ export default function App() {
                 company: "TalentBridge SaaS"
               }
             ].map((t, i) => (
-              <div key={i} style={{
-                backgroundColor: isDark ? '#111827' : '#FFFFFF',
-                border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
-                borderRadius: '16px',
-                padding: '28px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px',
-                boxShadow: isDark ? 'none' : '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
-                {/* Stars */}
-                <div style={{ display: 'flex', gap: '3px' }}>
-                  {Array.from({ length: t.stars }).map((_, s) => (
-                    <span key={s} style={{ color: '#F59E0B', fontSize: '16px' }}>★</span>
-                  ))}
-                </div>
-                {/* Quote */}
-                <p style={{
-                  fontSize: '15px',
-                  color: isDark ? '#CBD5E1' : '#334155',
-                  lineHeight: '1.65',
-                  margin: 0,
-                  fontStyle: 'italic'
+              <RevealSection key={i} delay={i * 90}>
+                <div style={{
+                  backgroundColor: isDark ? '#111827' : '#FFFFFF',
+                  border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+                  borderRadius: '16px',
+                  padding: '28px',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                  boxShadow: isDark ? 'none' : '0 2px 8px rgba(0,0,0,0.04)'
                 }}>
-                  "{t.quote}"
-                </p>
-                {/* Author */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: 'auto' }}>
-                  <div style={{
-                    width: '40px', height: '40px', borderRadius: '50%',
-                    backgroundColor: '#2563EB',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: '#FFFFFF', fontWeight: '800', fontSize: '16px', flexShrink: 0
-                  }}>
-                    {t.name[0]}
+                  {/* Stars */}
+                  <div style={{ display: 'flex', gap: '3px' }}>
+                    {Array.from({ length: t.stars }).map((_, s) => (
+                      <span key={s} style={{ color: '#F59E0B', fontSize: '16px' }}>★</span>
+                    ))}
                   </div>
-                  <div>
-                    <div style={{ fontWeight: '700', fontSize: '14px', color: isDark ? '#FFFFFF' : '#0F172A' }}>{t.name}</div>
-                    <div style={{ fontSize: '12px', color: isDark ? '#64748B' : '#94A3B8' }}>{t.role} · {t.company}</div>
+                  {/* Quote */}
+                  <p style={{
+                    fontSize: '15px',
+                    color: isDark ? '#CBD5E1' : '#334155',
+                    lineHeight: '1.65',
+                    margin: 0,
+                    fontStyle: 'italic'
+                  }}>
+                    "{t.quote}"
+                  </p>
+                  {/* Author */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: 'auto' }}>
+                    <div style={{
+                      width: '40px', height: '40px', borderRadius: '50%',
+                      backgroundColor: '#2563EB',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: '#FFFFFF', fontWeight: '800', fontSize: '16px', flexShrink: 0
+                    }}>
+                      {t.name[0]}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '700', fontSize: '14px', color: isDark ? '#FFFFFF' : '#0F172A' }}>{t.name}</div>
+                      <div style={{ fontSize: '12px', color: isDark ? '#64748B' : '#94A3B8' }}>{t.role} · {t.company}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </RevealSection>
             ))}
           </div>
         </div>
