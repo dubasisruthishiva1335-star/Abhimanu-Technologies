@@ -1375,6 +1375,7 @@ export default function App() {
   // Client ROI Savings Calculator State
   const [roiTeamSize, setRoiTeamSize] = useState(3);
   const [roiDuration, setRoiDuration] = useState(6);
+  const [roiCopied, setRoiCopied] = useState(false);
 
   // Developer Code Sandbox State
   const [activeCodeTab, setActiveCodeTab] = useState('3d');
@@ -4779,9 +4780,14 @@ To convert this brief into an active proposal or book an engineering scoping ses
                     Estimated Net Cost Saved
                   </span>
                   <div style={{ fontSize: '32px', fontWeight: '900', color: '#10B981', margin: '4px 0' }}>
-                    {estCurrency === 'INR'
-                      ? `₹${((roiTeamSize * roiDuration * 80000) / 100000).toFixed(1)} Lakhs+`
-                      : `$${Math.round((roiTeamSize * roiDuration * 80000) / 85).toLocaleString()}+`}
+                    {(() => {
+                      const rawINR = roiTeamSize * roiDuration * 80000;
+                      if (estCurrency === 'INR') return `₹${(rawINR / 100000).toFixed(1)} Lakhs+`;
+                      if (estCurrency === 'USD') return `$${Math.round(rawINR / 85).toLocaleString()}+`;
+                      if (estCurrency === 'EUR') return `€${Math.round(rawINR / 92).toLocaleString()}+`;
+                      if (estCurrency === 'GBP') return `£${Math.round(rawINR / 110).toLocaleString()}+`;
+                      return `$${Math.round(rawINR / 85).toLocaleString()}+`;
+                    })()}
                   </div>
                   <span style={{ fontSize: '12px', fontWeight: '600', color: isDark ? '#94A3B8' : '#475569' }}>
                     (~41% overall savings vs. in-house hiring overhead)
@@ -4821,6 +4827,41 @@ To convert this brief into an active proposal or book an engineering scoping ses
                   }}
                 >
                   Lock In This Sprint Team &rarr;
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    playClickSound('click');
+                    const rawINR = roiTeamSize * roiDuration * 80000;
+                    let savingsFormatted = `$${Math.round(rawINR / 85).toLocaleString()}+`;
+                    if (estCurrency === 'INR') savingsFormatted = `₹${(rawINR / 100000).toFixed(1)} Lakhs+`;
+                    else if (estCurrency === 'USD') savingsFormatted = `$${Math.round(rawINR / 85).toLocaleString()}+`;
+                    else if (estCurrency === 'EUR') savingsFormatted = `€${Math.round(rawINR / 92).toLocaleString()}+`;
+                    else if (estCurrency === 'GBP') savingsFormatted = `£${Math.round(rawINR / 110).toLocaleString()}+`;
+
+                    const summary = `Abhimanyu Technologies - ROI & Savings Analysis\nTeam Size: ${roiTeamSize} Dedicated Engineers\nProject Horizon: ${roiDuration} Months\nEstimated Net Cost Saved: ${savingsFormatted} (~41% savings vs in-house overhead)\nRecruitment Time Saved: ~8 to 10 Weeks\nKickoff Speed: 48-72 Hours`;
+                    navigator.clipboard?.writeText(summary);
+                    setRoiCopied(true);
+                    setTimeout(() => setRoiCopied(false), 2000);
+                  }}
+                  style={{
+                    backgroundColor: roiCopied ? '#10B981' : (isDark ? '#1E293B' : '#FFFFFF'),
+                    color: roiCopied ? '#FFFFFF' : (isDark ? '#CBD5E1' : '#334155'),
+                    border: isDark ? '1px solid #334155' : '1px solid #CBD5E1',
+                    borderRadius: '8px',
+                    padding: '11px',
+                    fontWeight: '700',
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  {roiCopied ? '✓ ROI Analysis Copied' : '📋 Copy ROI Analysis'}
                 </button>
               </div>
             </div>
