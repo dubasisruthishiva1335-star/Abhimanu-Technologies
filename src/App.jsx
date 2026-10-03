@@ -22,7 +22,8 @@ const COMMAND_ITEMS = [
   { title: 'Cloud Infrastructure & DevOps', category: 'Service', anchor: 'services', desc: 'AWS, Azure, Docker, CI/CD automation' },
   { title: 'UI and UX Design', category: 'Service', anchor: 'services', desc: 'Figma prototypes, design systems, usability testing' },
   { title: 'AI and Automation', category: 'Service', anchor: 'services', desc: 'Chat assistants, document processing, workflows' },
-  { title: 'Engineering Insights & Articles', category: 'Navigation', anchor: 'insights', desc: 'Technical deep-dives on WebGL, TimescaleDB, and offline CRDTs' }
+  { title: 'Engineering Insights & Articles', category: 'Navigation', anchor: 'insights', desc: 'Technical deep-dives on WebGL, TimescaleDB, and offline CRDTs' },
+  { title: 'Security & Compliance Blueprint', category: 'Enterprise', anchor: 'support', desc: 'OWASP, encryption, mutual NDA, SOC-2 ready practices' }
 ];
 
 const BLOG_POSTS = [
@@ -1171,6 +1172,45 @@ export default function App() {
     setTimeout(() => setCodeCopied(false), 2000);
   };
 
+  // Enterprise Security Blueprint Modal State
+  const [securityModalOpen, setSecurityModalOpen] = useState(false);
+
+  // Procedural Web Audio Haptic Sound State
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const audioCtxRef = useRef(null);
+
+  const playClickSound = (type = 'click') => {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') ctx.resume();
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'click') {
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.05);
+      } else if (type === 'success') {
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.07, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.2);
+      }
+    } catch {}
+  };
+
   useEffect(() => {
     const sectionIds = ['top', 'services', 'studio', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
     const observers = [];
@@ -1318,6 +1358,7 @@ export default function App() {
     details: ''
   });
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [inquiryCopied, setInquiryCopied] = useState(false);
 
   // Smooth scroll
   const scrollTo = (e, id) => {
@@ -2031,6 +2072,137 @@ export default function App() {
         </div>
       )}
 
+      {/* --- ENTERPRISE SECURITY & COMPLIANCE BLUEPRINT MODAL --- */}
+      {securityModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10004,
+            padding: '20px'
+          }}
+          onClick={() => setSecurityModalOpen(false)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '680px',
+              backgroundColor: isDark ? '#111827' : '#FFFFFF',
+              border: isDark ? '1px solid #374151' : '1px solid #E2E8F0',
+              borderRadius: '20px',
+              padding: '32px',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+              position: 'relative',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: '800', color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                  Enterprise Assurance
+                </span>
+                <h3 style={{ fontSize: '22px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '4px 0 0 0' }}>
+                  Security & Compliance Blueprint
+                </h3>
+              </div>
+              <button
+                onClick={() => setSecurityModalOpen(false)}
+                style={{ background: 'none', border: 'none', color: isDark ? '#94A3B8' : '#64748B', fontSize: '24px', cursor: 'pointer', padding: '4px' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p style={{ fontSize: '14.5px', color: isDark ? '#CBD5E1' : '#475569', lineHeight: '1.6', marginBottom: '24px' }}>
+              We engineer software for clients whose businesses cannot afford downtime or data leaks. Every line of code and cloud deployment adheres to verified security baselines:
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+              {[
+                { title: 'OWASP Top 10 Mitigation', desc: 'Automated SAST scans, parameterized queries, strict input sanitation, and CSRF protection in all API routes.' },
+                { title: 'Bank-Grade Encryption', desc: 'AES-256 for all stored data & persistent database volumes; TLS 1.3 enforced for all ingress and egress transit.' },
+                { title: 'Zero-Trust Architecture', desc: 'IAM least-privilege scoping, MFA enforcement across all production consoles, and isolated VPC subnetting.' },
+                { title: '100% IP & Asset Assignment', desc: 'Complete copyright, source code, patentable IP, and deployment credential transfer on contract completion.' },
+                { title: 'Mutual NDA by Default', desc: 'Standard non-disclosure agreement executed before any proprietary data, designs, or APIs are exchanged.' },
+                { title: 'Continuous Dependency Auditing', desc: 'Automated GitHub Dependabot & Snyk alerts blocking high-severity CVEs before merging to main.' }
+              ].map((sec, sIdx) => (
+                <div
+                  key={sIdx}
+                  style={{
+                    backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+                    border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+                    borderRadius: '12px',
+                    padding: '16px'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <span style={{ color: '#10B981', fontSize: '14px', fontWeight: 'bold' }}>✓</span>
+                    <h4 style={{ fontSize: '14px', fontWeight: '700', color: isDark ? '#FFFFFF' : '#0F172A', margin: 0 }}>
+                      {sec.title}
+                    </h4>
+                  </div>
+                  <p style={{ fontSize: '12.5px', color: isDark ? '#94A3B8' : '#64748B', lineHeight: '1.5', margin: 0 }}>
+                    {sec.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0', paddingTop: '16px' }}>
+              <button
+                onClick={() => setSecurityModalOpen(false)}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: isDark ? '1px solid #374151' : '1px solid #CBD5E1',
+                  color: isDark ? '#94A3B8' : '#64748B',
+                  padding: '10px 18px',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setSecurityModalOpen(false);
+                  setContactData((prev) => ({
+                    ...prev,
+                    serviceNeed: 'IT services and consulting',
+                    details: 'Requesting mutual NDA and security architecture review.'
+                  }));
+                  const elem = document.getElementById('contact');
+                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                }}
+                style={{
+                  backgroundColor: '#2563EB',
+                  border: 'none',
+                  color: '#FFFFFF',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                Request Mutual NDA & Security Review &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* --- FLOATING ACTION BUTTONS (WhatsApp + Back to Top) --- */}
       {scrollProgress > 8 && (
         <div style={{
@@ -2161,6 +2333,20 @@ export default function App() {
               <kbd style={styles.kbdShortcut}>⌘K</kbd>
             </button>
 
+            {/* Sound Effects Toggle */}
+            <button
+              onClick={() => {
+                const next = !soundEnabled;
+                setSoundEnabled(next);
+                if (next) playClickSound('success');
+              }}
+              style={styles.themeToggleBtn}
+              title={soundEnabled ? 'Mute Interface Sound Effects' : 'Enable Subtle Interface Sound Effects'}
+              aria-label="Toggle interface sound effects"
+            >
+              {soundEnabled ? '🔊' : '🔇'}
+            </button>
+
             {/* Light / Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
@@ -2198,6 +2384,17 @@ export default function App() {
                 style={{ ...styles.searchCommandBtn, flex: 1, justifyContent: 'center' }}
               >
                 <span>🔍 Search (Ctrl+K)</span>
+              </button>
+              <button
+                onClick={() => {
+                  const next = !soundEnabled;
+                  setSoundEnabled(next);
+                  if (next) playClickSound('success');
+                }}
+                style={styles.themeToggleBtn}
+                title="Toggle Audio SFX"
+              >
+                {soundEnabled ? '🔊' : '🔇'}
               </button>
               <button
                 onClick={toggleTheme}
@@ -3824,6 +4021,31 @@ export default function App() {
               </div>
             ))}
           </div>
+
+          {/* Enterprise Security Blueprint Trigger */}
+          <div style={{ textAlign: 'center', marginTop: '40px' }}>
+            <button
+              onClick={() => setSecurityModalOpen(true)}
+              style={{
+                backgroundColor: isDark ? '#111827' : '#EFF6FF',
+                border: isDark ? '1px solid #1E293B' : '1px solid #BFDBFE',
+                color: '#2563EB',
+                padding: '12px 26px',
+                borderRadius: '30px',
+                fontSize: '14px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 14px rgba(37,99,235,0.08)',
+                transition: 'transform 0.15s ease'
+              }}
+            >
+              <span>🛡️</span>
+              <span>View Enterprise Security & Compliance Blueprint &rarr;</span>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -4007,6 +4229,54 @@ export default function App() {
                   <p>
                     We have received your project details. Our engineering lead will review your message and reply to <strong>{contactData.email}</strong> within one working day.
                   </p>
+
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center', margin: '18px 0 10px 0' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const summary = `Abhimanyu Technologies - Project Inquiry\n\nName: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService Need: ${contactData.serviceNeed}\nDetails: ${contactData.details}`;
+                        navigator.clipboard?.writeText(summary);
+                        setInquiryCopied(true);
+                        setTimeout(() => setInquiryCopied(false), 2500);
+                      }}
+                      style={{
+                        backgroundColor: inquiryCopied ? '#10B981' : (isDark ? '#1E293B' : '#EFF6FF'),
+                        color: inquiryCopied ? '#FFFFFF' : '#2563EB',
+                        border: isDark ? '1px solid #334155' : '1px solid #BFDBFE',
+                        padding: '10px 18px',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        fontSize: '13.5px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      {inquiryCopied ? '✓ Copied Summary!' : '📋 Copy Inquiry Summary'}
+                    </button>
+
+                    <a
+                      href={`mailto:hello@abhimanyutech.example?subject=Project%20Inquiry%20from%20${encodeURIComponent(contactData.name)}&body=${encodeURIComponent(
+                        `Hi Abhimanyu Technologies team,\n\nName: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService: ${contactData.serviceNeed}\n\nProject Details:\n${contactData.details}`
+                      )}`}
+                      style={{
+                        backgroundColor: '#2563EB',
+                        color: '#FFFFFF',
+                        textDecoration: 'none',
+                        padding: '10px 18px',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        fontSize: '13.5px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      ✉️ Open in Email Client
+                    </a>
+                  </div>
+
                   <button
                     onClick={() => {
                       setContactSubmitted(false);
