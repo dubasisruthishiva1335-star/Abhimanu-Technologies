@@ -1562,11 +1562,20 @@ export default function App() {
       const minL = (baseINR / 100000).toFixed(1);
       const maxL = ((baseINR * 1.35) / 100000).toFixed(1);
       return `₹${minL}L – ₹${maxL}L`;
-    } else {
+    } else if (estCurrency === 'USD') {
       const minUSD = Math.round((baseINR / 85) / 100) * 100;
       const maxUSD = Math.round(((baseINR * 1.35) / 85) / 100) * 100;
       return `$${minUSD.toLocaleString()} – $${maxUSD.toLocaleString()}`;
+    } else if (estCurrency === 'EUR') {
+      const minEUR = Math.round((baseINR / 92) / 100) * 100;
+      const maxEUR = Math.round(((baseINR * 1.35) / 92) / 100) * 100;
+      return `€${minEUR.toLocaleString()} – €${maxEUR.toLocaleString()}`;
+    } else if (estCurrency === 'GBP') {
+      const minGBP = Math.round((baseINR / 110) / 100) * 100;
+      const maxGBP = Math.round(((baseINR * 1.35) / 110) / 100) * 100;
+      return `£${minGBP.toLocaleString()} – £${maxGBP.toLocaleString()}`;
     }
+    return 'Contact for quote';
   };
 
   const calcSuggestedTeam = () => {
@@ -3825,6 +3834,86 @@ export default function App() {
                   </div>
                 ))}
               </div>
+
+              {/* Phase Navigation Bar */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '24px',
+                paddingTop: '16px',
+                borderTop: isDark ? '1px solid #1E293B' : '1px solid #F1F5F9',
+                flexWrap: 'wrap',
+                gap: '12px'
+              }}>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    disabled={activeRoadmapWeek === 0}
+                    onClick={() => {
+                      playClickSound('click');
+                      setActiveRoadmapWeek((prev) => Math.max(0, prev - 1));
+                    }}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: activeRoadmapWeek === 0 ? (isDark ? '#475569' : '#94A3B8') : (isDark ? '#CBD5E1' : '#334155'),
+                      border: isDark ? '1px solid #334155' : '1px solid #CBD5E1',
+                      padding: '7px 14px',
+                      borderRadius: '8px',
+                      fontSize: '12.5px',
+                      fontWeight: '600',
+                      cursor: activeRoadmapWeek === 0 ? 'not-allowed' : 'pointer',
+                      opacity: activeRoadmapWeek === 0 ? 0.5 : 1
+                    }}
+                  >
+                    ← Previous Phase
+                  </button>
+                  <button
+                    disabled={activeRoadmapWeek === ONBOARDING_WEEKS.length - 1}
+                    onClick={() => {
+                      playClickSound('click');
+                      setActiveRoadmapWeek((prev) => Math.min(ONBOARDING_WEEKS.length - 1, prev + 1));
+                    }}
+                    style={{
+                      backgroundColor: activeRoadmapWeek === ONBOARDING_WEEKS.length - 1 ? 'transparent' : '#2563EB',
+                      color: activeRoadmapWeek === ONBOARDING_WEEKS.length - 1 ? (isDark ? '#475569' : '#94A3B8') : '#FFFFFF',
+                      border: activeRoadmapWeek === ONBOARDING_WEEKS.length - 1 ? (isDark ? '1px solid #334155' : '1px solid #CBD5E1') : '1px solid #2563EB',
+                      padding: '7px 16px',
+                      borderRadius: '8px',
+                      fontSize: '12.5px',
+                      fontWeight: '700',
+                      cursor: activeRoadmapWeek === ONBOARDING_WEEKS.length - 1 ? 'not-allowed' : 'pointer',
+                      opacity: activeRoadmapWeek === ONBOARDING_WEEKS.length - 1 ? 0.5 : 1
+                    }}
+                  >
+                    Next Phase →
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                    Phase {activeRoadmapWeek + 1} of {ONBOARDING_WEEKS.length}
+                  </span>
+                  <div style={{ display: 'flex', gap: '4px', marginLeft: '6px' }}>
+                    {ONBOARDING_WEEKS.map((_, dotIdx) => (
+                      <div
+                        key={dotIdx}
+                        onClick={() => {
+                          playClickSound('click');
+                          setActiveRoadmapWeek(dotIdx);
+                        }}
+                        style={{
+                          width: dotIdx === activeRoadmapWeek ? '20px' : '6px',
+                          height: '6px',
+                          borderRadius: '3px',
+                          backgroundColor: dotIdx === activeRoadmapWeek ? '#2563EB' : (isDark ? '#334155' : '#CBD5E1'),
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -4065,37 +4154,33 @@ export default function App() {
                 <div style={styles.resultItem}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={styles.resultLabel}>Indicative investment</span>
-                    <div style={{ display: 'flex', gap: '4px', backgroundColor: isDark ? '#1E293B' : '#F1F5F9', padding: '2px', borderRadius: '6px' }}>
-                      <button
-                        onClick={() => setEstCurrency('INR')}
-                        style={{
-                          background: estCurrency === 'INR' ? '#2563EB' : 'transparent',
-                          color: estCurrency === 'INR' ? '#FFFFFF' : (isDark ? '#94A3B8' : '#64748B'),
-                          border: 'none',
-                          borderRadius: '4px',
-                          padding: '2px 8px',
-                          fontSize: '11px',
-                          fontWeight: '700',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        ₹ INR
-                      </button>
-                      <button
-                        onClick={() => setEstCurrency('USD')}
-                        style={{
-                          background: estCurrency === 'USD' ? '#2563EB' : 'transparent',
-                          color: estCurrency === 'USD' ? '#FFFFFF' : (isDark ? '#94A3B8' : '#64748B'),
-                          border: 'none',
-                          borderRadius: '4px',
-                          padding: '2px 8px',
-                          fontSize: '11px',
-                          fontWeight: '700',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        $ USD
-                      </button>
+                    <div style={{ display: 'flex', gap: '3px', backgroundColor: isDark ? '#1E293B' : '#F1F5F9', padding: '2px', borderRadius: '6px', flexWrap: 'wrap' }}>
+                      {[
+                        { code: 'INR', label: '₹ INR' },
+                        { code: 'USD', label: '$ USD' },
+                        { code: 'EUR', label: '€ EUR' },
+                        { code: 'GBP', label: '£ GBP' }
+                      ].map((curr) => (
+                        <button
+                          key={curr.code}
+                          onClick={() => {
+                            setEstCurrency(curr.code);
+                            playClickSound('click');
+                          }}
+                          style={{
+                            background: estCurrency === curr.code ? '#2563EB' : 'transparent',
+                            color: estCurrency === curr.code ? '#FFFFFF' : (isDark ? '#94A3B8' : '#64748B'),
+                            border: 'none',
+                            borderRadius: '4px',
+                            padding: '2px 7px',
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {curr.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
                   <div style={{ ...styles.timelineBigNumber, color: '#10B981', fontSize: '28px', marginTop: '2px' }}>
@@ -4606,6 +4691,50 @@ export default function App() {
                 >
                   📅 Book 15-Min Discovery Call
                 </button>
+              </div>
+
+              {/* Global Remote Delivery Hub & Timezone Alignment */}
+              <div style={{
+                backgroundColor: isDark ? '#111827' : '#F8FAFC',
+                border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+                borderRadius: '12px',
+                padding: '16px',
+                marginTop: '14px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '800', color: '#2563EB' }}>
+                    Global Remote Delivery Hub
+                  </span>
+                  <span style={{ fontSize: '11px', backgroundColor: '#DCFCE7', color: '#166534', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
+                    ● 100% Remote-Ready
+                  </span>
+                </div>
+
+                <div style={{ fontSize: '13.5px', color: isDark ? '#F1F5F9' : '#0F172A', fontWeight: '700', marginBottom: '3px' }}>
+                  HQ: Telangana, India (IST • UTC+5:30)
+                </div>
+                <div style={{ fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B', marginBottom: '12px', lineHeight: '1.4' }}>
+                  Dedicated daily overlap windows for real-time standups, sprint reviews, and direct Slack/Teams collaboration:
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+                  <div style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #334155' : '1px solid #E2E8F0' }}>
+                    <div style={{ fontSize: '11.5px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#1E293B' }}>🇺🇸 US (EST / PST)</div>
+                    <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: '600', marginTop: '2px' }}>3.5h – 4h Sync Window</div>
+                  </div>
+                  <div style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #334155' : '1px solid #E2E8F0' }}>
+                    <div style={{ fontSize: '11.5px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#1E293B' }}>🇬🇧 UK / Europe</div>
+                    <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: '600', marginTop: '2px' }}>4.5h – 5h Sync Window</div>
+                  </div>
+                  <div style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #334155' : '1px solid #E2E8F0' }}>
+                    <div style={{ fontSize: '11.5px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#1E293B' }}>🇦🇪 UAE / Middle East</div>
+                    <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: '600', marginTop: '2px' }}>6.5h Full Working Overlap</div>
+                  </div>
+                  <div style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #334155' : '1px solid #E2E8F0' }}>
+                    <div style={{ fontSize: '11.5px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#1E293B' }}>🇸🇬 Singapore / APAC</div>
+                    <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: '600', marginTop: '2px' }}>7h Direct Day Overlap</div>
+                  </div>
+                </div>
               </div>
             </div>
 
