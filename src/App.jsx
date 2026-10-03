@@ -3,6 +3,27 @@ import * as THREE from 'three';
 
 // --- DATA DEFINITIONS ---
 
+const COMMAND_ITEMS = [
+  { title: 'Services & Capabilities', category: 'Navigation', anchor: 'services', desc: 'Web apps, mobile apps, maintenance, cloud, UI/UX, 3D' },
+  { title: '3D Studio (Live Demo)', category: 'Navigation', anchor: 'studio', desc: 'Real-time WebGL shader & customizer' },
+  { title: 'Applications Showcase', category: 'Navigation', anchor: 'applications', desc: 'Live mobile mockup with orders & chat' },
+  { title: 'Industries We Serve', category: 'Navigation', anchor: 'industries', desc: 'Architecture, civil & EPC 3D building viewer' },
+  { title: 'Selected Work', category: 'Navigation', anchor: 'work', desc: 'A ring of ideas we can build for you' },
+  { title: 'How We Work (Process)', category: 'Navigation', anchor: 'process', desc: '4-step agile delivery framework' },
+  { title: 'Project Estimator', category: 'Navigation', anchor: 'estimate', desc: 'Calculate timeline, team, and phase split' },
+  { title: 'Maintenance & Support Plans', category: 'Navigation', anchor: 'support', desc: 'Essential, Growth, and Enterprise tiers' },
+  { title: 'Questions & FAQ', category: 'Navigation', anchor: 'faq', desc: 'Code ownership, teams, pricing, and 3D deliverables' },
+  { title: 'Contact & Inquiry', category: 'Navigation', anchor: 'contact', desc: 'Tell us what you want to build' },
+  { title: 'Mobile App Development', category: 'Service', anchor: 'services', desc: 'Flutter, React Native, Native iOS/Android' },
+  { title: 'Web Application Development', category: 'Service', anchor: 'services', desc: 'React, Next.js, Node.js, Python' },
+  { title: '3D Animation & Visuals', category: 'Service', anchor: 'studio', desc: 'Product renders, explainer films & WebGL' },
+  { title: 'Application Maintenance', category: 'Service', anchor: 'support', desc: 'Security updates, bug fixing, 24/7 SLA' },
+  { title: 'IT Services & Consulting', category: 'Service', anchor: 'services', desc: 'Architecture reviews & technical audits' },
+  { title: 'Cloud Infrastructure & DevOps', category: 'Service', anchor: 'services', desc: 'AWS, Azure, Docker, CI/CD automation' },
+  { title: 'UI and UX Design', category: 'Service', anchor: 'services', desc: 'Figma prototypes, design systems, usability testing' },
+  { title: 'AI and Automation', category: 'Service', anchor: 'services', desc: 'Chat assistants, document processing, workflows' }
+];
+
 const SERVICES = [
   {
     id: 'mobile-apps',
@@ -790,6 +811,59 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
+  // Theme State (Light / Dark)
+  const [theme, setTheme] = useState('light');
+  const isDark = theme === 'dark';
+  const styles = getStyles(isDark);
+
+  // Scroll Progress & Command Palette (Ctrl+K)
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [commandQuery, setCommandQuery] = useState('');
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  useEffect(() => {
+    document.body.style.backgroundColor = isDark ? '#0A0F1D' : '#FFFFFF';
+    document.documentElement.style.backgroundColor = isDark ? '#0A0F1D' : '#FFFFFF';
+  }, [isDark]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        setScrollProgress((window.scrollY / totalHeight) * 100);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandOpen((prev) => !prev);
+      } else if (e.key === 'Escape') {
+        setCommandOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const filteredCommands = COMMAND_ITEMS.filter((item) => {
+    if (!commandQuery.trim()) return true;
+    const q = commandQuery.toLowerCase();
+    return (
+      item.title.toLowerCase().includes(q) ||
+      item.desc.toLowerCase().includes(q) ||
+      item.category.toLowerCase().includes(q)
+    );
+  });
+
   // 3D Studio State
   const [studioShape, setStudioShape] = useState('torus');
   const [studioMaterial, setStudioMaterial] = useState('glossy');
@@ -934,6 +1008,64 @@ export default function App() {
 
   return (
     <div style={styles.page}>
+      {/* --- SCROLL PROGRESS BAR --- */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          height: '3px',
+          width: `${scrollProgress}%`,
+          background: 'linear-gradient(90deg, #2563EB, #38BDF8)',
+          zIndex: 9999,
+          transition: 'width 0.1s ease-out'
+        }}
+      />
+
+      {/* --- COMMAND PALETTE MODAL (CTRL+K) --- */}
+      {commandOpen && (
+        <div style={styles.commandModalOverlay} onClick={() => setCommandOpen(false)}>
+          <div style={styles.commandModalCard} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.commandSearchRow}>
+              <span style={styles.commandSearchIcon}>🔍</span>
+              <input
+                autoFocus
+                type="text"
+                value={commandQuery}
+                onChange={(e) => setCommandQuery(e.target.value)}
+                placeholder="Search sections, services, or tools... (e.g. 3D, mobile, estimator)"
+                style={styles.commandInput}
+              />
+              <span style={styles.commandEscHint}>ESC</span>
+            </div>
+            <div style={styles.commandList}>
+              {filteredCommands.length === 0 ? (
+                <div style={styles.commandEmpty}>No matching sections or services found.</div>
+              ) : (
+                filteredCommands.map((item, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => {
+                      setCommandOpen(false);
+                      setCommandQuery('');
+                      const elem = document.getElementById(item.anchor);
+                      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    style={styles.commandItem}
+                  >
+                    <div style={styles.commandItemMain}>
+                      <span style={styles.commandItemTitle}>{item.title}</span>
+                      <span style={styles.commandItemDesc}>{item.desc}</span>
+                    </div>
+                    <span style={styles.commandCategoryTag}>{item.category}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* --- TOP UTILITY BAR --- */}
       <div style={styles.utilityBar}>
         <div style={styles.container}>
@@ -965,6 +1097,27 @@ export default function App() {
           </nav>
 
           <div style={styles.headerActions}>
+            {/* Quick Search Ctrl+K Button */}
+            <button
+              onClick={() => setCommandOpen(true)}
+              style={styles.searchCommandBtn}
+              title="Quick Search and Command Menu (Ctrl+K)"
+            >
+              <span>🔍</span>
+              <span className="search-text-label">Search</span>
+              <kbd style={styles.kbdShortcut}>⌘K</kbd>
+            </button>
+
+            {/* Light / Dark Mode Toggle */}
+            <button
+              onClick={toggleTheme}
+              style={styles.themeToggleBtn}
+              title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+              aria-label="Toggle light or dark theme"
+            >
+              {isDark ? '☀️' : '🌙'}
+            </button>
+
             <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} style={styles.quoteBtn}>
               Get a quote
             </a>
@@ -983,6 +1136,23 @@ export default function App() {
 
         {mobileMenuOpen && (
           <div style={styles.mobileMenu}>
+            <div style={{ display: 'flex', gap: '8px', paddingBottom: '10px', borderBottom: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0' }}>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setCommandOpen(true);
+                }}
+                style={{ ...styles.searchCommandBtn, flex: 1, justifyContent: 'center' }}
+              >
+                <span>🔍 Search (Ctrl+K)</span>
+              </button>
+              <button
+                onClick={toggleTheme}
+                style={styles.themeToggleBtn}
+              >
+                {isDark ? '☀️ Light' : '🌙 Dark'}
+              </button>
+            </div>
             <a href="#services" onClick={(e) => scrollTo(e, 'services')} style={styles.mobileMenuItem}>Services</a>
             <a href="#studio" onClick={(e) => scrollTo(e, 'studio')} style={styles.mobileMenuItem}>3D Studio</a>
             <a href="#industries" onClick={(e) => scrollTo(e, 'industries')} style={styles.mobileMenuItem}>Industries</a>
@@ -3874,5 +4044,452 @@ const styles = {
   footerLegalLinks: {
     display: 'flex',
     gap: '8px'
+  },
+  searchCommandBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    backgroundColor: '#F1F5F9',
+    border: '1px solid #CBD5E1',
+    color: '#475569',
+    padding: '6px 12px',
+    borderRadius: '8px',
+    fontSize: '13px',
+    fontWeight: '500',
+    cursor: 'pointer'
+  },
+  kbdShortcut: {
+    fontSize: '10px',
+    fontWeight: '700',
+    backgroundColor: '#E2E8F0',
+    color: '#64748B',
+    padding: '2px 5px',
+    borderRadius: '4px'
+  },
+  themeToggleBtn: {
+    background: 'none',
+    border: '1px solid #CBD5E1',
+    color: '#0F172A',
+    padding: '6px 10px',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  commandModalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backdropFilter: 'blur(6px)',
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingTop: '12vh',
+    zIndex: 10000
+  },
+  commandModalCard: {
+    width: '90%',
+    maxWidth: '560px',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E2E8F0',
+    borderRadius: '16px',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  commandSearchRow: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '14px 18px',
+    borderBottom: '1px solid #E2E8F0',
+    gap: '12px'
+  },
+  commandSearchIcon: {
+    fontSize: '18px'
+  },
+  commandInput: {
+    flex: 1,
+    border: 'none',
+    outline: 'none',
+    fontSize: '15px',
+    backgroundColor: 'transparent',
+    color: '#0F172A'
+  },
+  commandEscHint: {
+    fontSize: '11px',
+    fontWeight: '700',
+    color: '#64748B',
+    backgroundColor: '#F1F5F9',
+    padding: '2px 6px',
+    borderRadius: '4px'
+  },
+  commandList: {
+    maxHeight: '340px',
+    overflowY: 'auto',
+    padding: '8px'
+  },
+  commandItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 14px',
+    borderRadius: '8px',
+    cursor: 'pointer'
+  },
+  commandItemMain: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px'
+  },
+  commandItemTitle: {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#0F172A'
+  },
+  commandItemDesc: {
+    fontSize: '12px',
+    color: '#64748B'
+  },
+  commandCategoryTag: {
+    fontSize: '11px',
+    fontWeight: '700',
+    color: '#2563EB',
+    backgroundColor: '#EFF6FF',
+    padding: '3px 8px',
+    borderRadius: '4px'
+  },
+  commandEmpty: {
+    padding: '24px',
+    textAlign: 'center',
+    color: '#64748B',
+    fontSize: '14px'
   }
+};
+
+function getStyles(isDark) {
+  const base = styles;
+  if (!isDark) return base;
+
+  return {
+    ...base,
+    page: {
+      ...base.page,
+      backgroundColor: '#0A0F1D',
+      color: '#F8FAFC'
+    },
+    navHeader: {
+      ...base.navHeader,
+      backgroundColor: 'rgba(10, 15, 29, 0.96)',
+      borderBottom: '1px solid #1E293B'
+    },
+    brandMain: {
+      ...base.brandMain,
+      color: '#FFFFFF'
+    },
+    navItem: {
+      ...base.navItem,
+      color: '#CBD5E1'
+    },
+    mobileMenu: {
+      ...base.mobileMenu,
+      backgroundColor: '#0F172A',
+      borderTop: '1px solid #1E293B'
+    },
+    mobileMenuItem: {
+      ...base.mobileMenuItem,
+      color: '#FFFFFF'
+    },
+    heroSection: {
+      ...base.heroSection,
+      backgroundColor: '#0B1120',
+      borderBottom: '1px solid #1E293B'
+    },
+    heroTitle: {
+      ...base.heroTitle,
+      color: '#FFFFFF'
+    },
+    heroSubtitle: {
+      ...base.heroSubtitle,
+      color: '#94A3B8'
+    },
+    heroPill: {
+      ...base.heroPill,
+      backgroundColor: '#1E293B',
+      border: '1px solid #334155',
+      color: '#CBD5E1'
+    },
+    secondaryCta: {
+      ...base.secondaryCta,
+      backgroundColor: '#1E293B',
+      border: '1px solid #334155',
+      color: '#FFFFFF'
+    },
+    section: {
+      ...base.section,
+      backgroundColor: '#0A0F1D',
+      borderBottom: '1px solid #1E293B'
+    },
+    sectionLight: {
+      ...base.sectionLight,
+      backgroundColor: '#0F172A',
+      borderBottom: '1px solid #1E293B'
+    },
+    sectionTitle: {
+      ...base.sectionTitle,
+      color: '#FFFFFF'
+    },
+    sectionSubtitle: {
+      ...base.sectionSubtitle,
+      color: '#94A3B8'
+    },
+    serviceCard: {
+      ...base.serviceCard,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    serviceName: {
+      ...base.serviceName,
+      color: '#FFFFFF'
+    },
+    serviceDesc: {
+      ...base.serviceDesc,
+      color: '#94A3B8'
+    },
+    bulletItem: {
+      ...base.bulletItem,
+      color: '#CBD5E1'
+    },
+    appTab: {
+      ...base.appTab,
+      backgroundColor: '#1E293B',
+      border: '1px solid #334155',
+      color: '#CBD5E1'
+    },
+    buildingControlsCol: {
+      ...base.buildingControlsCol,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    controlsHeading: {
+      ...base.controlsHeading,
+      color: '#FFFFFF'
+    },
+    checkLabel: {
+      ...base.checkLabel,
+      color: '#CBD5E1'
+    },
+    solutionCard: {
+      ...base.solutionCard,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    solutionTitle: {
+      ...base.solutionTitle,
+      color: '#FFFFFF'
+    },
+    solutionDesc: {
+      ...base.solutionDesc,
+      color: '#94A3B8'
+    },
+    chipTool: {
+      ...base.chipTool,
+      backgroundColor: '#1E293B',
+      border: '1px solid #334155',
+      color: '#CBD5E1'
+    },
+    ringCarouselBox: {
+      ...base.ringCarouselBox,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    conceptTitle: {
+      ...base.conceptTitle,
+      color: '#FFFFFF'
+    },
+    conceptDesc: {
+      ...base.conceptDesc,
+      color: '#94A3B8'
+    },
+    ringTab: {
+      ...base.ringTab,
+      backgroundColor: '#1E293B',
+      border: '1px solid #334155',
+      color: '#94A3B8'
+    },
+    processCard: {
+      ...base.processCard,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    processStepTitle: {
+      ...base.processStepTitle,
+      color: '#FFFFFF'
+    },
+    processStepDesc: {
+      ...base.processStepDesc,
+      color: '#94A3B8'
+    },
+    estTypeBtn: {
+      ...base.estTypeBtn,
+      backgroundColor: '#111827',
+      border: '1px solid #334155',
+      color: '#CBD5E1'
+    },
+    compBtn: {
+      ...base.compBtn,
+      backgroundColor: '#111827',
+      border: '1px solid #334155',
+      color: '#CBD5E1'
+    },
+    featureCheckboxLabel: {
+      ...base.featureCheckboxLabel,
+      color: '#CBD5E1'
+    },
+    estLabel: {
+      ...base.estLabel,
+      color: '#FFFFFF'
+    },
+    estResultCard: {
+      ...base.estResultCard,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    teamDescription: {
+      ...base.teamDescription,
+      color: '#FFFFFF'
+    },
+    supportCard: {
+      ...base.supportCard,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    supportCardPopular: {
+      ...base.supportCardPopular,
+      backgroundColor: '#111827',
+      border: '2px solid #2563EB'
+    },
+    planName: {
+      ...base.planName,
+      color: '#FFFFFF'
+    },
+    responseBox: {
+      ...base.responseBox,
+      backgroundColor: '#0B0F19'
+    },
+    responseSpeed: {
+      ...base.responseSpeed,
+      color: '#FFFFFF'
+    },
+    planFeatureItem: {
+      ...base.planFeatureItem,
+      color: '#CBD5E1'
+    },
+    planBtn: {
+      ...base.planBtn,
+      backgroundColor: '#1E293B',
+      border: '1px solid #334155',
+      color: '#38BDF8'
+    },
+    faqAccordionItem: {
+      ...base.faqAccordionItem,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    faqQText: {
+      ...base.faqQText,
+      color: '#FFFFFF'
+    },
+    faqAText: {
+      ...base.faqAText,
+      color: '#CBD5E1'
+    },
+    faqAnswerBox: {
+      ...base.faqAnswerBox,
+      borderTop: '1px solid #1F2937'
+    },
+    contactAddress: {
+      ...base.contactAddress,
+      color: '#FFFFFF'
+    },
+    instantWhatsappBox: {
+      ...base.instantWhatsappBox,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    contactFormSide: {
+      ...base.contactFormSide,
+      backgroundColor: '#111827',
+      border: '1px solid #1F2937'
+    },
+    fieldLabel: {
+      ...base.fieldLabel,
+      color: '#CBD5E1'
+    },
+    fieldInput: {
+      ...base.fieldInput,
+      backgroundColor: '#0F172A',
+      color: '#FFFFFF',
+      border: '1px solid #334155'
+    },
+    fieldSelect: {
+      ...base.fieldSelect,
+      backgroundColor: '#0F172A',
+      color: '#FFFFFF',
+      border: '1px solid #334155'
+    },
+    fieldTextarea: {
+      ...base.fieldTextarea,
+      backgroundColor: '#0F172A',
+      color: '#FFFFFF',
+      border: '1px solid #334155'
+    },
+    searchCommandBtn: {
+      ...base.searchCommandBtn,
+      backgroundColor: '#1E293B',
+      border: '1px solid #334155',
+      color: '#CBD5E1'
+    },
+    kbdShortcut: {
+      ...base.kbdShortcut,
+      backgroundColor: '#0F172A',
+      color: '#CBD5E1'
+    },
+    themeToggleBtn: {
+      ...base.themeToggleBtn,
+      border: '1px solid #334155',
+      color: '#FFFFFF'
+    },
+    commandModalCard: {
+      ...base.commandModalCard,
+      backgroundColor: '#111827',
+      border: '1px solid #374151'
+    },
+    commandSearchRow: {
+      ...base.commandSearchRow,
+      borderBottom: '1px solid #1F2937'
+    },
+    commandInput: {
+      ...base.commandInput,
+      color: '#FFFFFF'
+    },
+    commandEscHint: {
+      ...base.commandEscHint,
+      backgroundColor: '#1E293B',
+      color: '#94A3B8'
+    },
+    commandItemTitle: {
+      ...base.commandItemTitle,
+      color: '#FFFFFF'
+    },
+    commandItemDesc: {
+      ...base.commandItemDesc,
+      color: '#94A3B8'
+    }
+  };
 };
