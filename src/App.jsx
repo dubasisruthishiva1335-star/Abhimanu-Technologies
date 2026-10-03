@@ -815,6 +815,18 @@ export default function App() {
     { sender: 'bot', text: 'Anything else I can help with?' }
   ]);
   const [chatInput, setChatInput] = useState('');
+  const [phoneTilt, setPhoneTilt] = useState({ x: 0, y: 0 });
+
+  const handlePhonePointerMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setPhoneTilt({ x: -y * 18, y: x * 18 });
+  };
+
+  const handlePhonePointerLeave = () => {
+    setPhoneTilt({ x: 0, y: 0 });
+  };
 
   // Selected Work Ring Carousel State
   const [ringIndex, setRingIndex] = useState(0);
@@ -1295,7 +1307,15 @@ export default function App() {
 
           {/* Interactive Phone Mockup Box */}
           <div className="phone-showcase" style={styles.phoneShowcaseWrapper}>
-            <div style={styles.phoneDeviceCard}>
+            <div
+              onPointerMove={handlePhonePointerMove}
+              onPointerLeave={handlePhonePointerLeave}
+              style={{
+                ...styles.phoneDeviceCard,
+                transform: `perspective(1000px) rotateX(${phoneTilt.x}deg) rotateY(${phoneTilt.y}deg)`,
+                transition: 'transform 0.12s ease-out'
+              }}
+            >
               <div style={styles.phoneSpeakerNotch} />
 
               <div style={styles.phoneScreenContent}>
@@ -1589,6 +1609,19 @@ export default function App() {
               >
                 Next &rarr;
               </button>
+            </div>
+
+            <div style={styles.conceptRingTabs}>
+              {SAMPLE_CONCEPTS.map((sc, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setRingIndex(idx)}
+                  style={ringIndex === idx ? styles.activeRingTab : styles.ringTab}
+                >
+                  <span style={styles.ringTabNum}>0{idx + 1}</span>
+                  <span style={styles.ringTabLabel}>{sc.title}</span>
+                </button>
+              ))}
             </div>
 
             <div style={styles.ringCardDisplay}>
@@ -3208,6 +3241,46 @@ const styles = {
     fontSize: '13px',
     fontWeight: '700',
     color: '#64748B'
+  },
+  conceptRingTabs: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px',
+    justifyContent: 'center',
+    marginBottom: '20px'
+  },
+  ringTab: {
+    backgroundColor: '#F8FAFC',
+    border: '1px solid #E2E8F0',
+    color: '#64748B',
+    padding: '6px 12px',
+    borderRadius: '20px',
+    fontSize: '12px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
+  },
+  activeRingTab: {
+    backgroundColor: '#EFF6FF',
+    border: '1px solid #2563EB',
+    color: '#1D4ED8',
+    padding: '6px 12px',
+    borderRadius: '20px',
+    fontSize: '12px',
+    fontWeight: '700',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
+  },
+  ringTabNum: {
+    color: '#2563EB',
+    fontWeight: '800'
+  },
+  ringTabLabel: {
+    whiteSpace: 'nowrap'
   },
   ringCardDisplay: {
     display: 'flex',
