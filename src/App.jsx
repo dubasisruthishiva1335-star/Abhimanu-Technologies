@@ -4599,8 +4599,37 @@ export default function App() {
             ))}
           </div>
 
+          {/* Security & Compliance Badges Bar */}
+          <div style={{
+            marginTop: '42px',
+            backgroundColor: isDark ? '#111827' : '#FFFFFF',
+            border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+            borderRadius: '16px',
+            padding: '24px 28px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '18px',
+            alignItems: 'center',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
+          }}>
+            {[
+              { icon: '🔒', title: 'OWASP Top 10', desc: 'Pre-deploy vulnerability auditing' },
+              { icon: '🛡️', title: 'SOC-2 Ready', desc: 'Zero-trust IAM & audit trails' },
+              { icon: '🔑', title: '100% IP Transfer', desc: 'Full code & repo handover' },
+              { icon: '📜', title: 'Mutual Bilateral NDA', desc: 'Strict confidentiality agreements' }
+            ].map((badge, bIdx) => (
+              <div key={bIdx} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '24px' }}>{badge.icon}</span>
+                <div>
+                  <div style={{ fontSize: '13.5px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A' }}>{badge.title}</div>
+                  <div style={{ fontSize: '11.5px', color: isDark ? '#94A3B8' : '#64748B' }}>{badge.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
           {/* Enterprise Security Blueprint Trigger */}
-          <div style={{ textAlign: 'center', marginTop: '40px' }}>
+          <div style={{ textAlign: 'center', marginTop: '24px' }}>
             <button
               onClick={() => setSecurityModalOpen(true)}
               style={{
@@ -5149,21 +5178,24 @@ export default function App() {
                 quote: "Abhimanyu Technologies delivered our construction project dashboard on time and within budget. The building viewer blew our site teams away — they can now review BIM models on any device without installing anything.",
                 name: "Rajesh Kumar",
                 role: "VP Engineering",
-                company: "Infra Build Group"
+                company: "Infra Build Group",
+                metrics: ['⚡ 60 FPS WebGL BIM', '14:1 CAD Compression', 'Zero Plugins']
               },
               {
                 stars: 5,
                 quote: "We needed a Flutter app that worked offline on construction sites. Abhimanyu's team built exactly that, with seamless sync once connectivity returned. The QA process was meticulous and the code they handed over is clean.",
                 name: "Priya Sharma",
                 role: "Head of Product",
-                company: "SiteOps Pvt Ltd"
+                company: "SiteOps Pvt Ltd",
+                metrics: ['📱 Offline-First SQLite', '0 Conflict Merges', 'Cross-Platform iOS/Android']
               },
               {
                 stars: 5,
                 quote: "Their Growth support plan means we never worry about the app. Monthly patching, a health report every month, and someone on call when our quarterly release goes live. Exactly what a growing SaaS needs.",
                 name: "Anil Verma",
                 role: "CTO",
-                company: "TalentBridge SaaS"
+                company: "TalentBridge SaaS",
+                metrics: ['🛡️ 99.98% Uptime SLA', '< 2h Incident Resolution', 'Monthly Health Audits']
               }
             ].map((t, i) => (
               <RevealSection key={i} delay={i * 90}>
@@ -5184,6 +5216,7 @@ export default function App() {
                       <span key={s} style={{ color: '#F59E0B', fontSize: '16px' }}>★</span>
                     ))}
                   </div>
+
                   {/* Quote */}
                   <p style={{
                     fontSize: '15px',
@@ -5194,8 +5227,26 @@ export default function App() {
                   }}>
                     "{t.quote}"
                   </p>
+
+                  {/* Verified Project Impact Badges */}
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: 'auto' }}>
+                    {t.metrics.map((m, mIdx) => (
+                      <span key={mIdx} style={{
+                        backgroundColor: isDark ? 'rgba(37,99,235,0.18)' : '#EFF6FF',
+                        color: isDark ? '#93C5FD' : '#2563EB',
+                        border: isDark ? '1px solid rgba(37,99,235,0.3)' : '1px solid #BFDBFE',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '700'
+                      }}>
+                        {m}
+                      </span>
+                    ))}
+                  </div>
+
                   {/* Author */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: 'auto' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingTop: '8px', borderTop: isDark ? '1px solid #1E293B' : '1px solid #F1F5F9' }}>
                     <div style={{
                       width: '40px', height: '40px', borderRadius: '50%',
                       backgroundColor: '#2563EB',
