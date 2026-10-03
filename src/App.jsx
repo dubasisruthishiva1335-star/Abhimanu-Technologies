@@ -1066,6 +1066,61 @@ export default function App() {
         </div>
       )}
 
+      {/* --- FLOATING ACTION BUTTONS (WhatsApp + Back to Top) --- */}
+      {scrollProgress > 8 && (
+        <div style={{
+          position: 'fixed',
+          bottom: '28px',
+          right: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          zIndex: 9000
+        }}>
+          <a
+            href="https://wa.me/91XXXXXXXXXX?text=Hi%20Abhimanyu%20Technologies%2C%20I%20would%20like%20to%20discuss%20a%20project."
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Chat on WhatsApp"
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: '#25D366',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 14px rgba(37, 211, 102, 0.45)',
+              textDecoration: 'none',
+              fontSize: '22px',
+              transition: 'transform 0.2s ease'
+            }}
+          >
+            💬
+          </a>
+          <button
+            onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            title="Back to top"
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: isDark ? '#1E293B' : '#0F172A',
+              color: '#FFFFFF',
+              border: 'none',
+              fontSize: '18px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            ↑
+          </button>
+        </div>
+      )}
+
       {/* --- TOP UTILITY BAR --- */}
       <div style={styles.utilityBar}>
         <div style={styles.container}>
@@ -1205,6 +1260,51 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {/* --- STATS / SOCIAL PROOF BAR --- */}
+      <div style={{
+        backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+        borderTop: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+        borderBottom: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+        padding: '28px 0'
+      }}>
+        <div style={styles.container}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '12px',
+            textAlign: 'center'
+          }} className="stats-grid">
+            {[
+              { value: '120+', label: 'Projects delivered', icon: '🚀' },
+              { value: '98%', label: 'Client satisfaction', icon: '⭐' },
+              { value: '< 4h', label: 'Avg. first response', icon: '⚡' },
+              { value: '5+', label: 'Years of engineering', icon: '🏗️' }
+            ].map((stat, i) => (
+              <div key={i} style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '16px 8px'
+              }}>
+                <span style={{ fontSize: '22px', marginBottom: '2px' }}>{stat.icon}</span>
+                <span style={{
+                  fontSize: '32px',
+                  fontWeight: '900',
+                  color: '#2563EB',
+                  lineHeight: '1'
+                }}>{stat.value}</span>
+                <span style={{
+                  fontSize: '13px',
+                  color: isDark ? '#94A3B8' : '#64748B',
+                  fontWeight: '500'
+                }}>{stat.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* --- WHAT WE DO / SERVICES SECTION --- */}
       <section id="services" style={styles.section}>
@@ -2215,6 +2315,36 @@ export default function App() {
               <span style={styles.footerLocationBadge}>
                 📍 Based in Telangana, India • Global Support
               </span>
+              {/* Social Links */}
+              <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                {[
+                  { href: 'https://github.com/dubasisruthishiva1335-star/Abhimanu-Technologies', label: 'GitHub', icon: '🐙' },
+                  { href: 'https://linkedin.com/', label: 'LinkedIn', icon: '💼' },
+                  { href: 'mailto:hello@abhimanyutech.example', label: 'Email', icon: '✉️' }
+                ].map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={s.label}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '34px',
+                      height: '34px',
+                      borderRadius: '8px',
+                      backgroundColor: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      fontSize: '15px',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    {s.icon}
+                  </a>
+                ))}
+              </div>
             </div>
 
             {/* Services Links */}
