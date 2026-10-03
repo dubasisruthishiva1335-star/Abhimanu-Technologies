@@ -806,6 +806,35 @@ function BuildingCanvas({ storeys, explodePercent, showStructure, showServices, 
   );
 }
 
+// --- SCROLL REVEAL WRAPPER ---
+function RevealSection({ children, delay = 0, style = {} }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.07 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0px)' : 'translateY(28px)',
+        transition: `opacity 0.65s ease ${delay}ms, transform 0.65s ease ${delay}ms`,
+        ...style
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -1374,13 +1403,15 @@ export default function App() {
       {/* --- WHAT WE DO / SERVICES SECTION --- */}
       <section id="services" style={styles.section}>
         <div style={styles.container}>
-          <div style={styles.sectionHeader}>
-            <span style={styles.sectionEyebrow}>What we do</span>
-            <h2 style={styles.sectionTitle}>Build it. Run it. Make it unforgettable.</h2>
-            <p style={styles.sectionSubtitle}>
-              One team for the whole life of your software, from the first screen design to the on-call phone at 3 a.m.
-            </p>
-          </div>
+          <RevealSection>
+            <div style={styles.sectionHeader}>
+              <span style={styles.sectionEyebrow}>What we do</span>
+              <h2 style={styles.sectionTitle}>Build it. Run it. Make it unforgettable.</h2>
+              <p style={styles.sectionSubtitle}>
+                One team for the whole life of your software, from the first screen design to the on-call phone at 3 a.m.
+              </p>
+            </div>
+          </RevealSection>
 
           <div style={styles.servicesGrid}>
             {SERVICES.map((s) => (
@@ -2006,6 +2037,68 @@ export default function App() {
         </div>
       </section>
 
+      {/* --- WHY CHOOSE US --- */}
+      <section style={{
+        backgroundColor: isDark ? '#0A0F1D' : '#FFFFFF',
+        borderBottom: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+        padding: '72px 0'
+      }}>
+        <div style={styles.container}>
+          <RevealSection>
+            <div style={styles.sectionHeader}>
+              <span style={styles.sectionEyebrow}>Why choose us</span>
+              <h2 style={styles.sectionTitle}>Six reasons businesses stay with us.</h2>
+              <p style={styles.sectionSubtitle}>
+                We're a small team that ships like a large one, with none of the agency overhead.
+              </p>
+            </div>
+          </RevealSection>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '20px',
+            marginTop: '40px'
+          }}>
+            {[
+              { icon: '🔑', title: 'You own everything', desc: 'Full source code, all accounts, every design asset — handed over at the end of the project with no lock-in.' },
+              { icon: '⚡', title: 'Two-week sprint demos', desc: 'Every fortnight you see a working demo. No waiting months to find out the build went in the wrong direction.' },
+              { icon: '🔒', title: 'Security by default', desc: 'OWASP Top 10 checks, monthly dependency auditing, and HTTPS everywhere baked into every project from day one.' },
+              { icon: '🌐', title: 'In-house 3D & WebGL', desc: 'We don\'t outsource 3D. Our engineers write the shaders. That means faster iteration and consistent quality.' },
+              { icon: '📊', title: 'Full transparency', desc: 'Shared project board, automated test reports, a monthly health dashboard, and a single point of contact who responds same day.' },
+              { icon: '🤝', title: 'Fixed price or monthly team', desc: 'Well-scoped projects get a fixed price. Evolving products get a monthly team you can scale up or down any quarter.' }
+            ].map((item, i) => (
+              <RevealSection key={i} delay={i * 80}>
+                <div style={{
+                  backgroundColor: isDark ? '#111827' : '#F8FAFC',
+                  border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+                  borderRadius: '16px',
+                  padding: '28px',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px'
+                }}>
+                  <span style={{ fontSize: '28px' }}>{item.icon}</span>
+                  <h3 style={{
+                    fontSize: '17px',
+                    fontWeight: '700',
+                    color: isDark ? '#FFFFFF' : '#0F172A',
+                    margin: 0
+                  }}>{item.title}</h3>
+                  <p style={{
+                    fontSize: '14px',
+                    color: isDark ? '#94A3B8' : '#475569',
+                    lineHeight: '1.6',
+                    margin: 0
+                  }}>{item.desc}</p>
+                </div>
+              </RevealSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* --- PROJECT ESTIMATOR --- */}
       <section id="estimate" style={styles.sectionLight}>
         <div style={styles.container}>
@@ -2361,6 +2454,78 @@ export default function App() {
               )}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* --- PRE-FOOTER CTA BANNER --- */}
+      <section style={{
+        background: 'linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #0EA5E9 100%)',
+        padding: '80px 0',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Decorative blurred circles */}
+        <div style={{
+          position: 'absolute', top: '-60px', right: '-60px',
+          width: '240px', height: '240px', borderRadius: '50%',
+          backgroundColor: 'rgba(255,255,255,0.06)', pointerEvents: 'none'
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-80px', left: '-40px',
+          width: '300px', height: '300px', borderRadius: '50%',
+          backgroundColor: 'rgba(255,255,255,0.05)', pointerEvents: 'none'
+        }} />
+        <div style={styles.container}>
+          <RevealSection>
+            <p style={{
+              fontSize: '13px', fontWeight: '700', letterSpacing: '1.2px',
+              color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase',
+              margin: '0 0 16px 0'
+            }}>
+              Ready to start?
+            </p>
+            <h2 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)',
+              fontWeight: '900', color: '#FFFFFF',
+              margin: '0 0 18px 0', lineHeight: '1.1'
+            }}>
+              Let's build something great together.
+            </h2>
+            <p style={{
+              fontSize: '18px', color: 'rgba(255,255,255,0.75)',
+              maxWidth: '520px', margin: '0 auto 36px auto', lineHeight: '1.55'
+            }}>
+              Tell us what you're building. We'll reply within one business day with a plan and a first step.
+            </p>
+            <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <a
+                href="#contact"
+                onClick={(e) => scrollTo(e, 'contact')}
+                style={{
+                  backgroundColor: '#FFFFFF', color: '#1D4ED8',
+                  textDecoration: 'none', padding: '14px 30px',
+                  borderRadius: '10px', fontWeight: '700', fontSize: '16px',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.2)'
+                }}
+              >
+                Get a quote →
+              </a>
+              <a
+                href="#estimate"
+                onClick={(e) => scrollTo(e, 'estimate')}
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.15)',
+                  color: '#FFFFFF', textDecoration: 'none',
+                  padding: '14px 30px', borderRadius: '10px',
+                  fontWeight: '600', fontSize: '16px',
+                  border: '1px solid rgba(255,255,255,0.3)'
+                }}
+              >
+                Estimate first
+              </a>
+            </div>
+          </RevealSection>
         </div>
       </section>
 
