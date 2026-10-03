@@ -162,6 +162,29 @@
         transform: rotateY(180deg);
       }
 
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+      .typing-cursor {
+        animation: blink 0.9s step-start infinite;
+        font-weight: 300;
+        color: #2563EB;
+      }
+
+      @keyframes marquee-scroll {
+        0%   { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee-scroll 28s linear infinite;
+      }
+      .marquee-track:hover {
+        animation-play-state: paused;
+      }
+
       @media (max-width: 868px) {
         .desktop-nav {
           display: none !important;

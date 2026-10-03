@@ -906,6 +906,28 @@ export default function App() {
   const [ringIndex, setRingIndex] = useState(0);
   const [ringAutoTurn, setRingAutoTurn] = useState(true);
 
+  // Hero Typing Animation State
+  const TYPING_PHRASES = ['web applications', 'mobile apps', '3D experiences', 'IT systems'];
+  const [typingPhrase, setTypingPhrase] = useState('');
+  const [typingPhraseIdx, setTypingPhraseIdx] = useState(0);
+  const [typingDeleting, setTypingDeleting] = useState(false);
+
+  useEffect(() => {
+    const fullWord = TYPING_PHRASES[typingPhraseIdx];
+    let timeout;
+    if (!typingDeleting && typingPhrase === fullWord) {
+      timeout = setTimeout(() => setTypingDeleting(true), 1800);
+    } else if (typingDeleting && typingPhrase === '') {
+      setTypingDeleting(false);
+      setTypingPhraseIdx((prev) => (prev + 1) % TYPING_PHRASES.length);
+    } else if (typingDeleting) {
+      timeout = setTimeout(() => setTypingPhrase((p) => p.slice(0, -1)), 60);
+    } else {
+      timeout = setTimeout(() => setTypingPhrase(fullWord.slice(0, typingPhrase.length + 1)), 90);
+    }
+    return () => clearTimeout(timeout);
+  }, [typingPhrase, typingDeleting, typingPhraseIdx]);
+
   // Estimator State
   const [estBuildingType, setEstBuildingType] = useState('Web application development');
   const [estFeatures, setEstFeatures] = useState({
@@ -1230,7 +1252,12 @@ export default function App() {
               </div>
 
               <h1 className="hero-title" style={styles.heroTitle}>
-                We <em>build</em> your applications, keep them running and bring them to life in 3D.
+                We <em>build</em>{' '}
+                <span style={{ color: '#2563EB', display: 'inline' }}>
+                  {typingPhrase}
+                  <span className="typing-cursor">|</span>
+                </span>
+                {' '}— apps, maintenance, IT services and 3D.
               </h1>
 
               <p className="hero-subtitle" style={styles.heroSubtitle}>
@@ -1303,6 +1330,44 @@ export default function App() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* --- TECH STACK MARQUEE STRIP --- */}
+      <div style={{
+        overflow: 'hidden',
+        borderBottom: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+        backgroundColor: isDark ? '#0A0F1D' : '#FFFFFF',
+        padding: '18px 0',
+        userSelect: 'none'
+      }}>
+        <div className="marquee-track">
+          {[
+            'React', 'Next.js', 'Node.js', 'Python', 'Flutter', 'React Native',
+            'TypeScript', 'AWS', 'Google Cloud', 'Azure', 'Docker', 'PostgreSQL',
+            'MongoDB', 'GraphQL', 'Three.js', 'WebGL', 'Figma', 'Kubernetes',
+            // duplicate for seamless loop
+            'React', 'Next.js', 'Node.js', 'Python', 'Flutter', 'React Native',
+            'TypeScript', 'AWS', 'Google Cloud', 'Azure', 'Docker', 'PostgreSQL',
+            'MongoDB', 'GraphQL', 'Three.js', 'WebGL', 'Figma', 'Kubernetes'
+          ].map((tech, i) => (
+            <span key={i} style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '6px 20px',
+              margin: '0 4px',
+              borderRadius: '99px',
+              border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+              backgroundColor: isDark ? '#111827' : '#F8FAFC',
+              color: isDark ? '#94A3B8' : '#475569',
+              fontSize: '13px',
+              fontWeight: '600',
+              whiteSpace: 'nowrap',
+              letterSpacing: '0.3px'
+            }}>
+              {tech}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -2295,6 +2360,95 @@ export default function App() {
                 </form>
               )}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- TESTIMONIALS SECTION --- */}
+      <section style={{
+        backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+        borderTop: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+        padding: '72px 0'
+      }}>
+        <div style={styles.container}>
+          <div style={styles.sectionHeader}>
+            <span style={styles.sectionEyebrow}>Client voices</span>
+            <h2 style={styles.sectionTitle}>What our clients say.</h2>
+            <p style={styles.sectionSubtitle}>A few words from businesses we've built for and supported.</p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '24px',
+            marginTop: '40px'
+          }}>
+            {[
+              {
+                stars: 5,
+                quote: "Abhimanyu Technologies delivered our construction project dashboard on time and within budget. The building viewer blew our site teams away — they can now review BIM models on any device without installing anything.",
+                name: "Rajesh Kumar",
+                role: "VP Engineering",
+                company: "Infra Build Group"
+              },
+              {
+                stars: 5,
+                quote: "We needed a Flutter app that worked offline on construction sites. Abhimanyu's team built exactly that, with seamless sync once connectivity returned. The QA process was meticulous and the code they handed over is clean.",
+                name: "Priya Sharma",
+                role: "Head of Product",
+                company: "SiteOps Pvt Ltd"
+              },
+              {
+                stars: 5,
+                quote: "Their Growth support plan means we never worry about the app. Monthly patching, a health report every month, and someone on call when our quarterly release goes live. Exactly what a growing SaaS needs.",
+                name: "Anil Verma",
+                role: "CTO",
+                company: "TalentBridge SaaS"
+              }
+            ].map((t, i) => (
+              <div key={i} style={{
+                backgroundColor: isDark ? '#111827' : '#FFFFFF',
+                border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+                borderRadius: '16px',
+                padding: '28px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                boxShadow: isDark ? 'none' : '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                {/* Stars */}
+                <div style={{ display: 'flex', gap: '3px' }}>
+                  {Array.from({ length: t.stars }).map((_, s) => (
+                    <span key={s} style={{ color: '#F59E0B', fontSize: '16px' }}>★</span>
+                  ))}
+                </div>
+                {/* Quote */}
+                <p style={{
+                  fontSize: '15px',
+                  color: isDark ? '#CBD5E1' : '#334155',
+                  lineHeight: '1.65',
+                  margin: 0,
+                  fontStyle: 'italic'
+                }}>
+                  "{t.quote}"
+                </p>
+                {/* Author */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: 'auto' }}>
+                  <div style={{
+                    width: '40px', height: '40px', borderRadius: '50%',
+                    backgroundColor: '#2563EB',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#FFFFFF', fontWeight: '800', fontSize: '16px', flexShrink: 0
+                  }}>
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: '700', fontSize: '14px', color: isDark ? '#FFFFFF' : '#0F172A' }}>{t.name}</div>
+                    <div style={{ fontSize: '12px', color: isDark ? '#64748B' : '#94A3B8' }}>{t.role} · {t.company}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
