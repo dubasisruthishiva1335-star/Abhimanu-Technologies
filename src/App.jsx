@@ -21,7 +21,41 @@ const COMMAND_ITEMS = [
   { title: 'IT Services & Consulting', category: 'Service', anchor: 'services', desc: 'Architecture reviews & technical audits' },
   { title: 'Cloud Infrastructure & DevOps', category: 'Service', anchor: 'services', desc: 'AWS, Azure, Docker, CI/CD automation' },
   { title: 'UI and UX Design', category: 'Service', anchor: 'services', desc: 'Figma prototypes, design systems, usability testing' },
-  { title: 'AI and Automation', category: 'Service', anchor: 'services', desc: 'Chat assistants, document processing, workflows' }
+  { title: 'AI and Automation', category: 'Service', anchor: 'services', desc: 'Chat assistants, document processing, workflows' },
+  { title: 'Engineering Insights & Articles', category: 'Navigation', anchor: 'insights', desc: 'Technical deep-dives on WebGL, TimescaleDB, and offline CRDTs' }
+];
+
+const BLOG_POSTS = [
+  {
+    id: 'webgl-bim',
+    title: 'Rendering High-Poly IFC Building Models in WebGL at 60 FPS',
+    category: '3D & Graphics',
+    date: 'Oct 2026',
+    readTime: '6 min read',
+    excerpt: 'How we used Draco geometry compression, instanced meshes, and frustum culling to render complex BIM models in standard browsers without plugins.',
+    tags: ['Three.js', 'WebGL', 'BIM'],
+    content: 'Handling multi-storey IFC and Revit models in client-side WebGL browsers typically struggles with memory bottlenecks and draw calls. In this article, we detail our pipeline utilizing Draco compression to achieve a 14:1 reduction in asset size, combined with GPU instancing for repetitive structural elements (columns, mullions, glazing panels), keeping render loops locked at 60 frames per second on mobile and low-spec laptops.'
+  },
+  {
+    id: 'telematics-streaming',
+    title: 'Zero-Latency GPS Telematics with TimescaleDB and WebSockets',
+    category: 'Backend Architecture',
+    date: 'Sep 2026',
+    readTime: '8 min read',
+    excerpt: 'Architecting high-frequency fleet telematics ingestion pipelines that process 50,000 sensor pings per second with instant live dashboard dispatch.',
+    tags: ['Node.js', 'TimescaleDB', 'Kafka'],
+    content: 'Fleet tracking at enterprise scale requires ingesting continuous telemetry streams while providing millisecond geospatial indexing for automated dispatch and geofencing. We examine our hybrid PostgreSQL/TimescaleDB architecture paired with Redis pub/sub and WebSockets, enabling operators to visualize fleet movements and geofence alerts with sub-second latency across 5,000+ active commercial vehicles.'
+  },
+  {
+    id: 'offline-crdts',
+    title: 'Building Offline-First Field Apps with Conflict-Free Replicated Data (CRDTs)',
+    category: 'Mobile Engineering',
+    date: 'Aug 2026',
+    readTime: '5 min read',
+    excerpt: 'Ensuring zero data loss for civil engineers logging snag inspections in zero-connectivity tunnels and remote construction sites.',
+    tags: ['Flutter', 'SQLite', 'CRDTs'],
+    content: 'Construction and EPC site engineers often conduct snag inspections and equipment quality checks in subterranean tunnels or remote sites with completely dead cell coverage. Traditional REST sync leads to merge conflicts or lost logs. Here is our implementation using Flutter, local SQLite encrypted storage, and state-based CRDT delta reconciliation that seamlessly syncs when back in range.'
+  }
 ];
 
 const SERVICES = [
@@ -958,6 +992,26 @@ export default function App() {
   const [scheduleEmail, setScheduleEmail] = useState('');
   const [scheduleSuccess, setScheduleSuccess] = useState(false);
 
+  // Active section scroll-spy
+  const [activeSection, setActiveSection] = useState('top');
+  const [activeArticle, setActiveArticle] = useState(null);
+
+  useEffect(() => {
+    const sectionIds = ['top', 'services', 'studio', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
+    const observers = [];
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+        { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((obs) => obs.disconnect());
+  }, []);
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
@@ -1676,6 +1730,132 @@ export default function App() {
         </div>
       )}
 
+      {/* --- TECHNICAL ARTICLE DEEP-DIVE MODAL --- */}
+      {activeArticle && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10003,
+            padding: '20px'
+          }}
+          onClick={() => setActiveArticle(null)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '680px',
+              backgroundColor: isDark ? '#111827' : '#FFFFFF',
+              border: isDark ? '1px solid #374151' : '1px solid #E2E8F0',
+              borderRadius: '20px',
+              padding: '32px',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+              position: 'relative',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <div>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                    {activeArticle.category}
+                  </span>
+                  <span style={{ color: '#94A3B8', fontSize: '12px' }}>•</span>
+                  <span style={{ fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                    {activeArticle.date} · {activeArticle.readTime}
+                  </span>
+                </div>
+                <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: 0, lineHeight: '1.3' }}>
+                  {activeArticle.title}
+                </h3>
+              </div>
+              <button
+                onClick={() => setActiveArticle(null)}
+                style={{ background: 'none', border: 'none', color: isDark ? '#94A3B8' : '#64748B', fontSize: '24px', cursor: 'pointer', padding: '4px' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p style={{ fontSize: '15.5px', lineHeight: '1.7', color: isDark ? '#CBD5E1' : '#334155', margin: '20px 0' }}>
+              {activeArticle.content}
+            </p>
+
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+              {activeArticle.tags.map((tag, tIdx) => (
+                <span
+                  key={tIdx}
+                  style={{
+                    backgroundColor: isDark ? '#1E293B' : '#EFF6FF',
+                    color: isDark ? '#93C5FD' : '#2563EB',
+                    border: isDark ? '1px solid #334155' : '1px solid #BFDBFE',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    padding: '4px 10px',
+                    borderRadius: '6px'
+                  }}
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', paddingTop: '16px', borderTop: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0' }}>
+              <button
+                onClick={() => setActiveArticle(null)}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: isDark ? '1px solid #374151' : '1px solid #CBD5E1',
+                  color: isDark ? '#94A3B8' : '#64748B',
+                  padding: '10px 18px',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  const title = activeArticle.title;
+                  setActiveArticle(null);
+                  setContactData((prev) => ({
+                    ...prev,
+                    serviceNeed: 'Engineering Architecture Consultation',
+                    details: `Interested in discussing engineering implementations similar to: "${title}".`
+                  }));
+                  const elem = document.getElementById('contact');
+                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                }}
+                style={{
+                  backgroundColor: '#2563EB',
+                  border: 'none',
+                  color: '#FFFFFF',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                Consult on Similar Architecture &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* --- FLOATING ACTION BUTTONS (WhatsApp + Back to Top) --- */}
       {scrollProgress > 8 && (
         <div style={{
@@ -1752,13 +1932,46 @@ export default function App() {
           </a>
 
           <nav className="desktop-nav" style={styles.navLinks}>
-            <a href="#services" onClick={(e) => scrollTo(e, 'services')} style={styles.navItem}>Services</a>
-            <a href="#studio" onClick={(e) => scrollTo(e, 'studio')} style={styles.navItem}>3D Studio</a>
-            <a href="#industries" onClick={(e) => scrollTo(e, 'industries')} style={styles.navItem}>Industries</a>
-            <a href="#work" onClick={(e) => scrollTo(e, 'work')} style={styles.navItem}>Work</a>
-            <a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.navItem}>Estimator</a>
-            <a href="#support" onClick={(e) => scrollTo(e, 'support')} style={styles.navItem}>Support</a>
-            <a href="#faq" onClick={(e) => scrollTo(e, 'faq')} style={styles.navItem}>FAQ</a>
+            {[
+              { id: 'services', label: 'Services' },
+              { id: 'studio', label: '3D Studio' },
+              { id: 'industries', label: 'Industries' },
+              { id: 'work', label: 'Work' },
+              { id: 'insights', label: 'Insights' },
+              { id: 'estimate', label: 'Estimator' },
+              { id: 'support', label: 'Support' },
+              { id: 'faq', label: 'FAQ' }
+            ].map((nav) => {
+              const isActive = activeSection === nav.id;
+              return (
+                <a
+                  key={nav.id}
+                  href={`#${nav.id}`}
+                  onClick={(e) => scrollTo(e, nav.id)}
+                  style={{
+                    ...styles.navItem,
+                    color: isActive ? '#2563EB' : styles.navItem.color,
+                    fontWeight: isActive ? '700' : styles.navItem.fontWeight,
+                    position: 'relative'
+                  }}
+                >
+                  {nav.label}
+                  {isActive && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        bottom: '-4px',
+                        left: 0,
+                        right: 0,
+                        height: '2px',
+                        backgroundColor: '#2563EB',
+                        borderRadius: '2px'
+                      }}
+                    />
+                  )}
+                </a>
+              );
+            })}
           </nav>
 
           <div style={styles.headerActions}>
@@ -1818,13 +2031,35 @@ export default function App() {
                 {isDark ? '☀️ Light' : '🌙 Dark'}
               </button>
             </div>
-            <a href="#services" onClick={(e) => scrollTo(e, 'services')} style={styles.mobileMenuItem}>Services</a>
-            <a href="#studio" onClick={(e) => scrollTo(e, 'studio')} style={styles.mobileMenuItem}>3D Studio</a>
-            <a href="#industries" onClick={(e) => scrollTo(e, 'industries')} style={styles.mobileMenuItem}>Industries</a>
-            <a href="#work" onClick={(e) => scrollTo(e, 'work')} style={styles.mobileMenuItem}>Work</a>
-            <a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.mobileMenuItem}>Estimator</a>
-            <a href="#support" onClick={(e) => scrollTo(e, 'support')} style={styles.mobileMenuItem}>Support</a>
-            <a href="#faq" onClick={(e) => scrollTo(e, 'faq')} style={styles.mobileMenuItem}>FAQ</a>
+            {[
+              { id: 'services', label: 'Services' },
+              { id: 'studio', label: '3D Studio' },
+              { id: 'industries', label: 'Industries' },
+              { id: 'work', label: 'Work' },
+              { id: 'insights', label: 'Insights' },
+              { id: 'estimate', label: 'Estimator' },
+              { id: 'support', label: 'Support' },
+              { id: 'faq', label: 'FAQ' }
+            ].map((nav) => {
+              const isActive = activeSection === nav.id;
+              return (
+                <a
+                  key={nav.id}
+                  href={`#${nav.id}`}
+                  onClick={(e) => scrollTo(e, nav.id)}
+                  style={{
+                    ...styles.mobileMenuItem,
+                    color: isActive ? '#2563EB' : styles.mobileMenuItem.color,
+                    fontWeight: isActive ? '700' : '500',
+                    backgroundColor: isActive ? (isDark ? 'rgba(37,99,235,0.12)' : '#EFF6FF') : 'transparent',
+                    borderRadius: '8px',
+                    padding: '8px 12px'
+                  }}
+                >
+                  {nav.label}
+                </a>
+              );
+            })}
             <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} style={styles.mobileQuoteBtn}>Get a quote</a>
           </div>
         )}
@@ -2660,6 +2895,129 @@ export default function App() {
         </div>
       </section>
 
+      {/* --- ENGINEERING INSIGHTS & ARTICLES --- */}
+      <section id="insights" style={{
+        backgroundColor: isDark ? '#0A0F1D' : '#F8FAFC',
+        borderTop: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+        borderBottom: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+        padding: '80px 0'
+      }}>
+        <div style={styles.container}>
+          <RevealSection>
+            <div style={styles.sectionHeader}>
+              <span style={styles.sectionEyebrow}>Technical Insights</span>
+              <h2 style={styles.sectionTitle}>How we solve hard engineering problems.</h2>
+              <p style={styles.sectionSubtitle}>
+                Articles and architectural write-ups from our engineers on WebGL optimization, distributed systems, and offline-first mobile apps.
+              </p>
+            </div>
+          </RevealSection>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '24px',
+            marginTop: '36px'
+          }}>
+            {BLOG_POSTS.map((post) => (
+              <div
+                key={post.id}
+                style={{
+                  backgroundColor: isDark ? '#111827' : '#FFFFFF',
+                  border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+                  borderRadius: '16px',
+                  padding: '28px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setActiveArticle(post)}
+              >
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      color: '#2563EB',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.8px',
+                      backgroundColor: isDark ? 'rgba(37,99,235,0.15)' : '#EFF6FF',
+                      padding: '4px 10px',
+                      borderRadius: '6px'
+                    }}>
+                      {post.category}
+                    </span>
+                    <span style={{ fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                      {post.date} · {post.readTime}
+                    </span>
+                  </div>
+
+                  <h3 style={{
+                    fontSize: '19px',
+                    fontWeight: '800',
+                    color: isDark ? '#FFFFFF' : '#0F172A',
+                    lineHeight: '1.4',
+                    margin: '0 0 12px 0'
+                  }}>
+                    {post.title}
+                  </h3>
+
+                  <p style={{
+                    fontSize: '14px',
+                    lineHeight: '1.6',
+                    color: isDark ? '#94A3B8' : '#64748B',
+                    margin: '0 0 20px 0'
+                  }}>
+                    {post.excerpt}
+                  </p>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
+                    {post.tags.map((t, idx) => (
+                      <span key={idx} style={{
+                        fontSize: '11.5px',
+                        fontWeight: '600',
+                        color: isDark ? '#CBD5E1' : '#475569',
+                        backgroundColor: isDark ? '#1E293B' : '#F1F5F9',
+                        padding: '3px 8px',
+                        borderRadius: '4px'
+                      }}>
+                        #{t}
+                      </span>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveArticle(post);
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      color: '#2563EB',
+                      fontWeight: '700',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    Read article &rarr;
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* --- HOW WE WORK --- */}
       <section id="process" style={styles.section}>
         <div style={styles.container}>
@@ -3477,6 +3835,7 @@ export default function App() {
               <ul style={styles.footerLinksList}>
                 <li><a href="#industries" onClick={(e) => scrollTo(e, 'industries')} style={styles.fLink}>Industries</a></li>
                 <li><a href="#work" onClick={(e) => scrollTo(e, 'work')} style={styles.fLink}>Selected work</a></li>
+                <li><a href="#insights" onClick={(e) => scrollTo(e, 'insights')} style={styles.fLink}>Technical Insights</a></li>
                 <li><a href="#process" onClick={(e) => scrollTo(e, 'process')} style={styles.fLink}>How we work</a></li>
                 <li><a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.fLink}>Estimator</a></li>
                 <li><a href="#faq" onClick={(e) => scrollTo(e, 'faq')} style={styles.fLink}>FAQ</a></li>
