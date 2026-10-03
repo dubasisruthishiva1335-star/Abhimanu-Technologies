@@ -174,6 +174,29 @@ class SnagInspectionCRDT {
     // Conflict-free reconciliation triggers on reconnection
   }
 }`
+  },
+  'cloud': {
+    filename: 'CloudInfraCluster.tf',
+    lang: 'hcl',
+    badge: 'Cloud & DevOps',
+    code: `# Terraform AWS ECS Fargate Cluster with CloudFront CDN & WAF
+module "ecs_app_cluster" {
+  source  = "terraform-aws-modules/ecs/aws"
+  version = "~> 5.0"
+
+  cluster_name = "abhimanyu-prod-cluster"
+
+  fargate_capacity_providers = {
+    FARGATE = { default_capacity_provider_strategy = { weight = 1 } }
+    FARGATE_SPOT = { default_capacity_provider_strategy = { weight = 2 } }
+  }
+
+  tags = {
+    Environment = "production"
+    ManagedBy   = "Abhimanyu Technologies CI/CD"
+    Compliance  = "SOC2-Type-II"
+  }
+}`
   }
 };
 
@@ -1723,6 +1746,52 @@ To convert this brief into an active proposal or book an engineering scoping ses
     const link = document.createElement('a');
     link.href = url;
     link.download = `Abhimanyu-Technologies-Scope-RFP-${estBuildingType.toLowerCase().replace(/[^a-z0-9]/g, '-')}.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadRoadmap = () => {
+    playClickSound('success');
+    const weeksContent = ONBOARDING_WEEKS.map((w) => `### ${w.week}: ${w.title}\n*${w.subtitle}*\nDeliverables:\n${w.deliverables.map((d) => `  - [x] ${d}`).join('\n')}`).join('\n\n');
+    const content = `# 30-DAY CLIENT ONBOARDING & SPRINT ZERO ROADMAP
+Abhimanyu Technologies — Enterprise Agile Delivery
+Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+Website: https://abhimanu-technologies.vercel.app/
+
+--------------------------------------------------------------------------------
+EXECUTIVE OVERVIEW
+--------------------------------------------------------------------------------
+We eliminate traditional agency procurement delay. From signed contract to your
+first live working demo in staging takes exactly 14 days, followed by bi-weekly
+feature sprint demos and automated continuous delivery.
+
+--------------------------------------------------------------------------------
+WEEK-BY-WEEK MILESTONE DELIVERABLES
+--------------------------------------------------------------------------------
+${weeksContent}
+
+--------------------------------------------------------------------------------
+COMPLIANCE & GOVERNANCE GUARANTEE
+--------------------------------------------------------------------------------
+• Bilateral Mutual NDA executed prior to Sprint Zero
+• 100% Client Ownership of all Git branches, build pipelines, and documentation
+• OWASP Top 10 pre-launch vulnerability sign-off
+• 2-Week sprint reviews with recorded video walkthroughs and staging links
+
+--------------------------------------------------------------------------------
+COORDINATION
+--------------------------------------------------------------------------------
+• Office: Telangana, India • Available for Global Engagements
+• Contact: hello@abhimanyutech.example
+• WhatsApp: wa.me/919999999999
+`;
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Abhimanyu-Technologies-30-Day-Onboarding-Roadmap.md`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -3936,7 +4005,8 @@ To convert this brief into an active proposal or book an engineering scoping ses
               {[
                 { id: '3d', label: 'WebGL3DShader.ts', icon: '🌐' },
                 { id: 'telematics', label: 'TelematicsStream.ts', icon: '⚡' },
-                { id: 'crdt', label: 'OfflineCRDTSync.dart', icon: '📱' }
+                { id: 'crdt', label: 'OfflineCRDTSync.dart', icon: '📱' },
+                { id: 'cloud', label: 'CloudInfraCluster.tf', icon: '☁️' }
               ].map((tab) => {
                 const active = activeCodeTab === tab.id;
                 return (
@@ -4103,7 +4173,7 @@ To convert this brief into an active proposal or book an engineering scoping ses
                 flexWrap: 'wrap',
                 gap: '12px'
               }}>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
                   <button
                     disabled={activeRoadmapWeek === 0}
                     onClick={() => {
@@ -4143,6 +4213,26 @@ To convert this brief into an active proposal or book an engineering scoping ses
                     }}
                   >
                     Next Phase →
+                  </button>
+                  <button
+                    onClick={handleDownloadRoadmap}
+                    title="Download 30-Day Client Onboarding & Sprint Zero Roadmap as Markdown"
+                    style={{
+                      backgroundColor: isDark ? 'rgba(37,99,235,0.12)' : '#EFF6FF',
+                      color: isDark ? '#93C5FD' : '#1D4ED8',
+                      border: isDark ? '1px solid rgba(59,130,246,0.3)' : '1px solid #BFDBFE',
+                      padding: '7px 14px',
+                      borderRadius: '8px',
+                      fontSize: '12.5px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <span>📥 Export Roadmap (.md)</span>
                   </button>
                 </div>
 
