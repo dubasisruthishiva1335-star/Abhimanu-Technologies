@@ -58,6 +58,98 @@ const BLOG_POSTS = [
   }
 ];
 
+const CODE_SNIPPETS = {
+  '3d': {
+    filename: 'WebGL3DShader.ts',
+    lang: 'typescript',
+    badge: '3D Graphics',
+    code: `import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+export class ModelViewer3D {
+  private scene: THREE.Scene;
+  private renderer: THREE.WebGLRenderer;
+
+  constructor(canvas: HTMLCanvasElement) {
+    this.scene = new THREE.Scene();
+    this.renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance'
+    });
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.setupDracoPipeline();
+  }
+
+  private setupDracoPipeline() {
+    const draco = new DRACOLoader();
+    draco.setDecoderPath('/draco/');
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(draco);
+    // 14:1 geometry compression for 60 FPS mobile WebGL
+  }
+}`
+  },
+  'telematics': {
+    filename: 'TelematicsStream.ts',
+    lang: 'typescript',
+    badge: 'Backend Architecture',
+    code: `import { WebSocketServer } from 'ws';
+import { Pool } from 'pg';
+import Redis from 'ioredis';
+
+const db = new Pool({ connectionString: process.env.TIMESCALE_URL });
+const redis = new Redis(process.env.REDIS_URL);
+
+export async function handleTelemetryPing(vehicleId: string, lat: number, lng: number, speed: number) {
+  const timestamp = new Date();
+  
+  // 1. Time-series hypertable ingestion
+  await db.query(
+    'INSERT INTO vehicle_telemetry (time, vehicle_id, location, speed) VALUES ($1, $2, ST_MakePoint($3, $4), $5)',
+    [timestamp, vehicleId, lng, lat, speed]
+  );
+
+  // 2. Real-time geospatial dispatch via Redis PubSub
+  await redis.publish('fleet:live', JSON.stringify({ vehicleId, lat, lng, speed, timestamp }));
+}`
+  },
+  'crdt': {
+    filename: 'OfflineCRDTSync.dart',
+    lang: 'dart',
+    badge: 'Mobile Systems',
+    code: `import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
+
+class SnagInspectionCRDT {
+  final Database db;
+  SnagInspectionCRDT(this.db);
+
+  Future<void> recordSiteSnag({
+    required String projectId,
+    required String issueDescription,
+    required String photoSha256,
+  }) async {
+    final recordId = const Uuid().v4();
+    final lamportClock = DateTime.now().millisecondsSinceEpoch;
+
+    // Local-first SQLite store with Lamport vector timestamp
+    await db.insert('offline_snags', {
+      'id': recordId,
+      'project_id': projectId,
+      'description': issueDescription,
+      'photo_hash': photoSha256,
+      'lamport_clock': lamportClock,
+      'synced': 0
+    });
+    // Conflict-free reconciliation triggers on reconnection
+  }
+}`
+  }
+};
+
 const SERVICES = [
   {
     id: 'mobile-apps',
@@ -1063,6 +1155,21 @@ export default function App() {
   // Active section scroll-spy
   const [activeSection, setActiveSection] = useState('top');
   const [activeArticle, setActiveArticle] = useState(null);
+
+  // Client ROI Savings Calculator State
+  const [roiTeamSize, setRoiTeamSize] = useState(3);
+  const [roiDuration, setRoiDuration] = useState(6);
+
+  // Developer Code Sandbox State
+  const [activeCodeTab, setActiveCodeTab] = useState('3d');
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  const handleCopyCode = () => {
+    const code = CODE_SNIPPETS[activeCodeTab].code;
+    navigator.clipboard?.writeText(code);
+    setCodeCopied(true);
+    setTimeout(() => setCodeCopied(false), 2000);
+  };
 
   useEffect(() => {
     const sectionIds = ['top', 'services', 'studio', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
@@ -3083,6 +3190,106 @@ export default function App() {
               </div>
             ))}
           </div>
+
+          {/* Developer Code Terminal Explorer */}
+          <div style={{
+            marginTop: '56px',
+            backgroundColor: isDark ? '#080D1A' : '#0F172A',
+            border: isDark ? '1px solid #1E293B' : '1px solid #334155',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+          }}>
+            {/* Terminal Header */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '12px 18px',
+              backgroundColor: isDark ? '#050811' : '#090E17',
+              borderBottom: '1px solid rgba(255,255,255,0.08)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '11px', height: '11px', borderRadius: '50%', backgroundColor: '#EF4444' }} />
+                <div style={{ width: '11px', height: '11px', borderRadius: '50%', backgroundColor: '#F59E0B' }} />
+                <div style={{ width: '11px', height: '11px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+                <span style={{ fontSize: '12px', color: '#64748B', marginLeft: '12px', fontFamily: 'monospace' }}>
+                  abhimanyu-tech / codebase-peek
+                </span>
+              </div>
+              <button
+                onClick={handleCopyCode}
+                style={{
+                  backgroundColor: codeCopied ? '#10B981' : 'rgba(255,255,255,0.08)',
+                  color: '#FFFFFF',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: '6px',
+                  padding: '4px 10px',
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                {codeCopied ? '✓ Copied!' : '📋 Copy Code'}
+              </button>
+            </div>
+
+            {/* Terminal File Tabs */}
+            <div style={{
+              display: 'flex',
+              backgroundColor: isDark ? '#0A0F1D' : '#0D1524',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+              overflowX: 'auto'
+            }}>
+              {[
+                { id: '3d', label: 'WebGL3DShader.ts', icon: '🌐' },
+                { id: 'telematics', label: 'TelematicsStream.ts', icon: '⚡' },
+                { id: 'crdt', label: 'OfflineCRDTSync.dart', icon: '📱' }
+              ].map((tab) => {
+                const active = activeCodeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveCodeTab(tab.id)}
+                    style={{
+                      backgroundColor: active ? (isDark ? '#080D1A' : '#0F172A') : 'transparent',
+                      color: active ? '#60A5FA' : '#94A3B8',
+                      border: 'none',
+                      borderBottom: active ? '2px solid #2563EB' : '2px solid transparent',
+                      padding: '10px 18px',
+                      fontSize: '12.5px',
+                      fontFamily: 'monospace',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    <span>{tab.icon}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Code Body */}
+            <div style={{ padding: '20px 24px', overflowX: 'auto' }}>
+              <pre style={{
+                margin: 0,
+                color: '#E2E8F0',
+                fontSize: '13px',
+                lineHeight: '1.65',
+                fontFamily: 'Consolas, Monaco, "Courier New", monospace'
+              }}>
+                <code>{CODE_SNIPPETS[activeCodeTab].code}</code>
+              </pre>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -3406,6 +3613,159 @@ export default function App() {
 
                 <button onClick={handleSendEstimateToContact} style={styles.sendEstimateBtn}>
                   Send this estimate &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Client ROI & Cost Savings Calculator */}
+          <div style={{
+            marginTop: '56px',
+            backgroundColor: isDark ? '#111827' : '#FFFFFF',
+            border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+            borderRadius: '20px',
+            padding: '36px',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.06)'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                Cost Efficiency Model
+              </span>
+              <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
+                Calculate Your Cost & Time Savings
+              </h3>
+              <p style={{ fontSize: '14px', color: isDark ? '#94A3B8' : '#64748B', maxWidth: '540px', margin: '8px auto 0 auto' }}>
+                Compare the real total cost of in-house recruitment and payroll overhead versus our dedicated sprint teams.
+              </p>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '28px',
+              alignItems: 'center'
+            }}>
+              {/* Sliders Side */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label style={{ fontSize: '13.5px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A' }}>
+                      Engineers Needed:
+                    </label>
+                    <span style={{ fontSize: '14px', fontWeight: '800', color: '#2563EB' }}>
+                      {roiTeamSize} {roiTeamSize === 1 ? 'Engineer' : 'Engineers'}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="6"
+                    step="1"
+                    value={roiTeamSize}
+                    onChange={(e) => setRoiTeamSize(Number(e.target.value))}
+                    style={{ width: '100%', accentColor: '#2563EB', cursor: 'pointer' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#94A3B8', marginTop: '4px' }}>
+                    <span>1 (Focused MVP)</span>
+                    <span>3 (Full Squad)</span>
+                    <span>6 (Scale-up)</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label style={{ fontSize: '13.5px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A' }}>
+                      Project Horizon:
+                    </label>
+                    <span style={{ fontSize: '14px', fontWeight: '800', color: '#2563EB' }}>
+                      {roiDuration} Months
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="3"
+                    max="12"
+                    step="1"
+                    value={roiDuration}
+                    onChange={(e) => setRoiDuration(Number(e.target.value))}
+                    style={{ width: '100%', accentColor: '#2563EB', cursor: 'pointer' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#94A3B8', marginTop: '4px' }}>
+                    <span>3 Months</span>
+                    <span>6 Months</span>
+                    <span>12 Months</span>
+                  </div>
+                </div>
+
+                <div style={{
+                  backgroundColor: isDark ? '#1E293B' : '#F8FAFC',
+                  borderRadius: '12px',
+                  padding: '14px 16px',
+                  fontSize: '12.5px',
+                  color: isDark ? '#94A3B8' : '#64748B',
+                  lineHeight: '1.5'
+                }}>
+                  💡 <em>In-house estimate factors in recruitment agency fees (15%), workstation/benefits (20%), and 8 weeks recruitment lag time.</em>
+                </div>
+              </div>
+
+              {/* Savings Results Card */}
+              <div style={{
+                backgroundColor: isDark ? '#0A0F1D' : '#EFF6FF',
+                border: isDark ? '1px solid #1E293B' : '1px solid #BFDBFE',
+                borderRadius: '16px',
+                padding: '28px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px'
+              }}>
+                <div>
+                  <span style={{ fontSize: '11.5px', fontWeight: '700', textTransform: 'uppercase', color: '#2563EB' }}>
+                    Estimated Net Cost Saved
+                  </span>
+                  <div style={{ fontSize: '32px', fontWeight: '900', color: '#10B981', margin: '4px 0' }}>
+                    {estCurrency === 'INR'
+                      ? `₹${((roiTeamSize * roiDuration * 80000) / 100000).toFixed(1)} Lakhs+`
+                      : `$${Math.round((roiTeamSize * roiDuration * 80000) / 85).toLocaleString()}+`}
+                  </div>
+                  <span style={{ fontSize: '12px', fontWeight: '600', color: isDark ? '#94A3B8' : '#475569' }}>
+                    (~41% overall savings vs. in-house hiring overhead)
+                  </span>
+                </div>
+
+                <div style={{ borderTop: isDark ? '1px solid #1E293B' : '1px solid #DBEAFE', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '13px', color: isDark ? '#CBD5E1' : '#334155' }}>Recruitment Time Saved:</span>
+                  <strong style={{ fontSize: '13px', color: '#2563EB' }}>~8 to 10 Weeks</strong>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '13px', color: isDark ? '#CBD5E1' : '#334155' }}>Kickoff Speed:</span>
+                  <strong style={{ fontSize: '13px', color: '#10B981' }}>Within 48-72 Hours</strong>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setContactData((prev) => ({
+                      ...prev,
+                      serviceNeed: 'Dedicated Sprint Team Engagement',
+                      details: `Inquiring for a dedicated sprint team of ${roiTeamSize} engineers for an estimated horizon of ${roiDuration} months.`
+                    }));
+                    const elem = document.getElementById('contact');
+                    if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  style={{
+                    backgroundColor: '#2563EB',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    marginTop: '4px'
+                  }}
+                >
+                  Lock In This Sprint Team &rarr;
                 </button>
               </div>
             </div>
