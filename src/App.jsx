@@ -653,13 +653,54 @@ const FAQS = [
   }
 ];
 
+const CHAKRA_THEMES = {
+  cyan: {
+    name: 'Cyber Cyan',
+    colors: [0x2563eb, 0x0ea5e9, 0x06b6d4, 0x38bdf8, 0x0284c7, 0x1d4ed8],
+    core: 0x2563eb,
+    emissive: 0x1d4ed8,
+    spoke: 0x38bdf8,
+    light1: 0x38bdf8,
+    light2: 0x818cf8
+  },
+  emerald: {
+    name: 'Quantum Emerald',
+    colors: [0x059669, 0x10b981, 0x34d399, 0x6ee7b7, 0x047857, 0x065f46],
+    core: 0x059669,
+    emissive: 0x10b981,
+    spoke: 0x34d399,
+    light1: 0x34d399,
+    light2: 0x6ee7b7
+  },
+  gold: {
+    name: 'Solar Gold',
+    colors: [0xd97706, 0xf59e0b, 0xfbbf24, 0xfde68a, 0xb45309, 0x78350f],
+    core: 0xd97706,
+    emissive: 0xf59e0b,
+    spoke: 0xfbbf24,
+    light1: 0xfbbf24,
+    light2: 0xfde68a
+  },
+  violet: {
+    name: 'Cosmic Violet',
+    colors: [0x7c3aed, 0x8b5cf6, 0xa78bfa, 0xc4b5fd, 0x6d28d9, 0x4c1d95],
+    core: 0x7c3aed,
+    emissive: 0x8b5cf6,
+    spoke: 0xa78bfa,
+    light1: 0xa78bfa,
+    light2: 0xc4b5fd
+  }
+};
+
 // --- THREE.JS 3D HERO CANVAS (CHAKRA - 6 RINGS) ---
-function ChakraCanvas() {
+function ChakraCanvas({ themeKey = 'cyan' }) {
   const mountRef = useRef(null);
 
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
+
+    const t = CHAKRA_THEMES[themeKey] || CHAKRA_THEMES.cyan;
 
     const width = container.clientWidth || 360;
     const height = container.clientHeight || 360;
@@ -679,7 +720,7 @@ function ChakraCanvas() {
 
     const rings = [];
     const ringCount = 6;
-    const ringColors = [0x2563eb, 0x0ea5e9, 0x06b6d4, 0x10b981, 0x8b5cf6, 0xd97706];
+    const ringColors = t.colors;
 
     for (let i = 0; i < ringCount; i++) {
       const radius = 1.0 + i * 0.45;
@@ -700,7 +741,7 @@ function ChakraCanvas() {
       // Add orbiting spoke satellites on alternate rings
       if (i % 2 === 0) {
         const spokeGeom = new THREE.SphereGeometry(0.08, 12, 12);
-        const spokeMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+        const spokeMat = new THREE.MeshBasicMaterial({ color: t.spoke });
         const spoke = new THREE.Mesh(spokeGeom, spokeMat);
         spoke.position.x = radius;
         ringMesh.add(spoke);
@@ -710,8 +751,8 @@ function ChakraCanvas() {
     // Central glowing core orb
     const coreGeom = new THREE.IcosahedronGeometry(0.45, 2);
     const coreMat = new THREE.MeshStandardMaterial({
-      color: 0x2563eb,
-      emissive: 0x1d4ed8,
+      color: t.core,
+      emissive: t.emissive,
       roughness: 0.1,
       metalness: 0.8
     });
@@ -722,11 +763,11 @@ function ChakraCanvas() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0x38bdf8, 2, 20);
+    const pointLight1 = new THREE.PointLight(t.light1, 2, 20);
     pointLight1.position.set(5, 5, 5);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0x818cf8, 1.5, 20);
+    const pointLight2 = new THREE.PointLight(t.light2, 1.5, 20);
     pointLight2.position.set(-5, -5, 3);
     scene.add(pointLight2);
 
@@ -790,7 +831,7 @@ function ChakraCanvas() {
       }
       renderer.dispose();
     };
-  }, []);
+  }, [themeKey]);
 
   return (
     <div style={styles.chakraContainer}>
@@ -1313,6 +1354,7 @@ export default function App() {
   const [hoveredServiceId, setHoveredServiceId] = useState(null);
   const [serviceCategory, setServiceCategory] = useState('All');
   const [techFilter, setTechFilter] = useState('All');
+  const [chakraThemeKey, setChakraThemeKey] = useState('cyan');
 
   // FAQ Category & Search Filter
   const [faqCategory, setFaqCategory] = useState('All');
@@ -2726,7 +2768,42 @@ To convert this brief into an active proposal or book an engineering scoping ses
 
             {/* Hero 3D Chakra Interactive */}
             <div style={styles.hero3DCol}>
-              <ChakraCanvas />
+              <ChakraCanvas themeKey={chakraThemeKey} />
+              {/* Interactive Shader Mode Switcher */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '5px',
+                marginTop: '12px',
+                flexWrap: 'wrap'
+              }}>
+                <span style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#94A3B8' : '#64748B', letterSpacing: '0.4px', textTransform: 'uppercase' }}>
+                  Shader:
+                </span>
+                {Object.keys(CHAKRA_THEMES).map((k) => (
+                  <button
+                    key={k}
+                    onClick={() => {
+                      setChakraThemeKey(k);
+                      playClickSound('click');
+                    }}
+                    style={{
+                      backgroundColor: chakraThemeKey === k ? '#2563EB' : (isDark ? '#1E293B' : '#FFFFFF'),
+                      color: chakraThemeKey === k ? '#FFFFFF' : (isDark ? '#CBD5E1' : '#475569'),
+                      border: chakraThemeKey === k ? '1px solid #2563EB' : (isDark ? '1px solid #334155' : '1px solid #CBD5E1'),
+                      padding: '3px 9px',
+                      borderRadius: '12px',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {CHAKRA_THEMES[k].name}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
