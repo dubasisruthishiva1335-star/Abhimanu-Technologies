@@ -24,7 +24,8 @@ const COMMAND_ITEMS = [
   { title: 'AI and Automation', category: 'Service', anchor: 'services', desc: 'Chat assistants, document processing, workflows' },
   { title: 'Engineering Insights & Articles', category: 'Navigation', anchor: 'insights', desc: 'Technical deep-dives on WebGL, TimescaleDB, and offline CRDTs' },
   { title: 'Security & Compliance Blueprint', category: 'Enterprise', anchor: 'support', desc: 'OWASP, encryption, mutual NDA, SOC-2 ready practices' },
-  { title: 'Technology Architecture Matrix', category: 'Navigation', anchor: 'tech-stack', desc: 'Full-stack engineering layers, SLAs, and production tools' }
+  { title: 'Technology Architecture Matrix', category: 'Navigation', anchor: 'tech-stack', desc: 'Full-stack engineering layers, SLAs, and production tools' },
+  { title: 'Global Delivery Footprint & Cloud Regions', category: 'Navigation', anchor: 'global-presence', desc: 'India HQ, North America, UK/Europe, GCC, and APAC hubs' }
 ];
 
 const TECH_MATRIX = [
@@ -4239,6 +4240,123 @@ To convert this brief into an active proposal or book an engineering scoping ses
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      {/* --- GLOBAL ENGAGEMENT & CLOUD FOOTPRINT --- */}
+      <section id="global-presence" style={{
+        backgroundColor: isDark ? '#070C18' : '#F1F5F9',
+        borderBottom: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+        padding: '64px 0'
+      }}>
+        <div style={styles.container}>
+          <RevealSection>
+            <div style={styles.sectionHeader}>
+              <span style={styles.sectionEyebrow}>Global Delivery Model</span>
+              <h2 style={styles.sectionTitle}>Engineered in India. Deployed Worldwide.</h2>
+              <p style={styles.sectionSubtitle}>
+                We partner with high-growth startups and multinational enterprises across 5 global regions with synchronized timezones and local cloud data residency.
+              </p>
+            </div>
+          </RevealSection>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '20px',
+            marginTop: '36px'
+          }}>
+            {[
+              {
+                flag: '🇮🇳',
+                region: 'India (HQ & Core Studio)',
+                city: 'Telangana & Hyderabad Hub',
+                tz: 'IST (UTC+5:30)',
+                cloud: 'AWS ap-south-1 / GCP asia-south1',
+                highlight: 'Global R&D, 3D Graphics Lab & Agile Sprint Pods',
+                status: 'HQ Active'
+              },
+              {
+                flag: '🇺🇸',
+                region: 'North America',
+                city: 'New York & San Francisco Alignment',
+                tz: 'EST / PST (4h Daily Overlap)',
+                cloud: 'AWS us-east-1 / us-west-2',
+                highlight: 'SOC-2 readiness, Delaware corporate contracting',
+                status: 'Sprint Sync Ready'
+              },
+              {
+                flag: '🇬🇧',
+                region: 'United Kingdom & Europe',
+                city: 'London & Frankfurt Hubs',
+                tz: 'GMT / BST / CET (5h Daily Overlap)',
+                cloud: 'AWS eu-west-1 / eu-central-1',
+                highlight: 'GDPR strict privacy compliance & localized CDNs',
+                status: 'Sprint Sync Ready'
+              },
+              {
+                flag: '🇦🇪',
+                region: 'Middle East & GCC',
+                city: 'Dubai & Riyadh Engagements',
+                tz: 'GST (UTC+4 • 6.5h Full Overlap)',
+                cloud: 'AWS me-central-1 / me-south-1',
+                highlight: 'GCC data residency, FinTech & logistics platforms',
+                status: 'Full Day Overlap'
+              },
+              {
+                flag: '🇸🇬',
+                region: 'Southeast Asia & APAC',
+                city: 'Singapore & Sydney Alignment',
+                tz: 'SGT (UTC+8 • 7h Direct Overlap)',
+                cloud: 'AWS ap-southeast-1',
+                highlight: 'Cross-border commerce, high-frequency IoT streaming',
+                status: 'Direct Day Overlap'
+              }
+            ].map((hub, hIdx) => (
+              <RevealSection key={hIdx} delay={hIdx * 80}>
+                <div style={{
+                  backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
+                  border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '26px' }}>{hub.flag}</span>
+                      <strong style={{ fontSize: '15.5px', color: isDark ? '#FFFFFF' : '#0F172A' }}>{hub.region}</strong>
+                    </div>
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      backgroundColor: isDark ? 'rgba(37,99,235,0.2)' : '#EFF6FF',
+                      color: isDark ? '#93C5FD' : '#2563EB',
+                      padding: '2px 8px',
+                      borderRadius: '12px'
+                    }}>
+                      ● {hub.status}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: '12.5px', fontWeight: '600', color: isDark ? '#38BDF8' : '#0284C7' }}>
+                    {hub.city} · {hub.tz}
+                  </div>
+
+                  <div style={{ fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B', backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#F8FAFC', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #1E293B' : '1px solid #F1F5F9' }}>
+                    <strong>Cloud Edge:</strong> {hub.cloud}
+                  </div>
+
+                  <p style={{ margin: 'auto 0 0 0', fontSize: '13px', color: isDark ? '#CBD5E1' : '#475569', lineHeight: '1.5' }}>
+                    {hub.highlight}
+                  </p>
+                </div>
+              </RevealSection>
+            ))}
           </div>
         </div>
       </section>
