@@ -318,6 +318,7 @@ const SAMPLE_CONCEPTS = [
   {
     title: 'BIM Cloud Collaborator',
     tag: 'AEC & Construction',
+    category: '3D & WebGL',
     desc: 'Browser-based 3D architectural viewer with live clash detection and multi-user issue pinning.',
     stack: ['React', 'Three.js', 'WebSockets', 'IFC.js', 'PostgreSQL'],
     architecture: 'Microservices with spatial indexing and real-time WebSockets synchronization.',
@@ -327,6 +328,7 @@ const SAMPLE_CONCEPTS = [
   {
     title: 'Fleet & Route Telematics',
     tag: 'Logistics',
+    category: 'Backend & IoT',
     desc: 'Real-time GPS tracking dashboard with geofencing, driver fatigue alerts, and automated trip logs.',
     stack: ['Next.js', 'Node.js', 'Redis', 'Mapbox GL', 'TimescaleDB'],
     architecture: 'High-throughput event streaming via Kafka & TimescaleDB time-series ingestion.',
@@ -336,6 +338,7 @@ const SAMPLE_CONCEPTS = [
   {
     title: 'FieldOps Snag Inspection',
     tag: 'Site Engineering',
+    category: 'Mobile & Offline',
     desc: 'Offline-first tablet app for civil site engineers with voice memos, photo markup, and automated BOQ sync.',
     stack: ['Flutter', 'SQLite', 'Node.js', 'AWS S3', 'FastAPI'],
     architecture: 'CRDT-based conflict-free offline synchronization with AWS S3 media pipeline.',
@@ -345,6 +348,7 @@ const SAMPLE_CONCEPTS = [
   {
     title: '3D Product Customizer',
     tag: 'E-Commerce',
+    category: '3D & WebGL',
     desc: 'Photorealistic WebGL configurator allowing shoppers to personalize colors, finishes, and order in AR.',
     stack: ['Three.js', 'React', 'WebGL Shaders', 'Shopify API', 'Draco'],
     architecture: 'Draco-compressed GLTF assets with progressive level-of-detail (LOD) streaming.',
@@ -354,6 +358,7 @@ const SAMPLE_CONCEPTS = [
   {
     title: 'Tele-Health Clinic Portal',
     tag: 'Healthcare',
+    category: 'Web Platforms',
     desc: 'HIPAA-compliant web platform for encrypted video consults, prescription routing, and patient records.',
     stack: ['React', 'WebRTC', 'FastAPI', 'PostgreSQL', 'Docker'],
     architecture: 'End-to-end encrypted WebRTC mesh media pipeline with audit-logged EHR storage.',
@@ -363,11 +368,59 @@ const SAMPLE_CONCEPTS = [
   {
     title: 'FinTech Micro-Lending Hub',
     tag: 'Finance',
+    category: 'Backend & IoT',
     desc: 'Instant KYC verification, credit scoring algorithms, and automated disbursal rails via UPI and netbanking.',
     stack: ['React', 'Python', 'Go', 'PostgreSQL', 'AWS KMS'],
     architecture: 'Zero-trust banking gateway with tokenized HSM cryptographic signatures.',
     metrics: 'Under 90 seconds from application to instant UPI disbursal.',
     modules: ['DigiLocker e-KYC', 'Rule-based Credit Underwriter', 'UPI Autopay Mandates', 'Fraud Detection']
+  }
+];
+
+const ONBOARDING_WEEKS = [
+  {
+    week: 'Week 1',
+    title: 'Sprint Zero & Environment Provisioning',
+    subtitle: 'Foundation setup, mutual NDA, and repository scaffolding.',
+    deliverables: [
+      'Bilateral Mutual NDA executed & project workspace created',
+      'Architecture discovery session & feature prioritization backlog',
+      'Private GitHub repository configured with CI/CD GitHub Actions',
+      'Isolated cloud sandbox & database instance provisioned'
+    ]
+  },
+  {
+    week: 'Week 2',
+    title: 'Core Architecture & First Interactive Demo',
+    subtitle: 'Working prototype deployed to staging within 14 days.',
+    deliverables: [
+      'Database schema, API contracts, and authentication flow deployed',
+      'First working interactive prototype delivered in staging environment',
+      'Sprint review demo call with project stakeholders',
+      'Feedback incorporated into sprint backlog'
+    ]
+  },
+  {
+    week: 'Week 3-4',
+    title: 'Feature Sprints & Bi-Weekly Demos',
+    subtitle: 'Production code velocity with continuous automated testing.',
+    deliverables: [
+      'Core business logic, integrations, and 3D WebGL scenes implemented',
+      'Automated unit & integration test coverage runs on every push',
+      'Weekly progress metrics & burndown reports on shared board',
+      'End-to-end user acceptance testing (UAT) deployment'
+    ]
+  },
+  {
+    week: 'Week 5+',
+    title: 'Production Hardening & Full IP Transfer',
+    subtitle: 'Pen-testing, deployment sign-off, and complete asset handover.',
+    deliverables: [
+      'OWASP security audit, load testing, and penetration assessment',
+      'Production DNS cutover & iOS App Store / Google Play submission',
+      'Complete transfer of all repository ownership and deployment keys',
+      'Optional onboarding into 24/7 SLA maintenance tier'
+    ]
   }
 ];
 
@@ -1311,6 +1364,10 @@ export default function App() {
   // Selected Work Ring Carousel State
   const [ringIndex, setRingIndex] = useState(0);
   const [ringAutoTurn, setRingAutoTurn] = useState(true);
+  const [conceptFilter, setConceptFilter] = useState('All');
+
+  // Client Onboarding Sprint Roadmap State
+  const [activeRoadmapWeek, setActiveRoadmapWeek] = useState(0);
 
   // Hero Typing Animation State
   const TYPING_PHRASES = ['web applications', 'mobile apps', '3D experiences', 'IT systems'];
@@ -2262,7 +2319,19 @@ export default function App() {
       <div style={styles.utilityBar}>
         <div style={styles.container}>
           <div style={styles.utilityContent}>
-            <span>APPS · MAINTENANCE · IT SERVICES · 3D ANIMATION</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                display: 'inline-block',
+                width: '7px',
+                height: '7px',
+                borderRadius: '50%',
+                backgroundColor: '#10B981',
+                boxShadow: '0 0 8px #10B981'
+              }} />
+              <span style={{ fontWeight: '700', color: isDark ? '#A7F3D0' : '#065F46' }}>All Systems Operational</span>
+              <span style={{ opacity: 0.4 }}>•</span>
+              <span>APPS · MAINTENANCE · IT SERVICES · 3D ANIMATION</span>
+            </div>
             <span style={styles.utilityRight}>
               Office: Telangana, India • Available for Global Engagements
             </span>
@@ -3172,9 +3241,46 @@ export default function App() {
           </div>
 
           <div style={styles.ringCarouselBox}>
+            {/* Concept Category Filter Pills */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '24px' }}>
+              {['All', '3D & WebGL', 'Mobile & Offline', 'Backend & IoT', 'Web Platforms'].map((cat) => {
+                const active = conceptFilter === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => {
+                      playClickSound('click');
+                      setConceptFilter(cat);
+                      const filtered = SAMPLE_CONCEPTS.filter((sc) => cat === 'All' || sc.category === cat);
+                      if (filtered.length > 0) {
+                        const targetIdx = SAMPLE_CONCEPTS.findIndex((sc) => sc.title === filtered[0].title);
+                        if (targetIdx !== -1) setRingIndex(targetIdx);
+                      }
+                    }}
+                    style={{
+                      backgroundColor: active ? '#2563EB' : (isDark ? '#1E293B' : '#FFFFFF'),
+                      color: active ? '#FFFFFF' : (isDark ? '#CBD5E1' : '#475569'),
+                      border: active ? '1px solid #2563EB' : (isDark ? '1px solid #334155' : '1px solid #CBD5E1'),
+                      padding: '6px 14px',
+                      borderRadius: '20px',
+                      fontSize: '12.5px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+
             <div style={styles.ringControlsRow}>
               <button
-                onClick={() => setRingIndex((prev) => (prev === 0 ? SAMPLE_CONCEPTS.length - 1 : prev - 1))}
+                onClick={() => {
+                  playClickSound('click');
+                  setRingIndex((prev) => (prev === 0 ? SAMPLE_CONCEPTS.length - 1 : prev - 1));
+                }}
                 style={styles.ringArrowBtn}
                 aria-label="Previous concept"
               >
@@ -3184,7 +3290,10 @@ export default function App() {
                 {ringIndex + 1} / {SAMPLE_CONCEPTS.length}
               </span>
               <button
-                onClick={() => setRingIndex((prev) => (prev + 1) % SAMPLE_CONCEPTS.length)}
+                onClick={() => {
+                  playClickSound('click');
+                  setRingIndex((prev) => (prev + 1) % SAMPLE_CONCEPTS.length);
+                }}
                 style={styles.ringArrowBtn}
                 aria-label="Next concept"
               >
@@ -3193,16 +3302,23 @@ export default function App() {
             </div>
 
             <div style={styles.conceptRingTabs}>
-              {SAMPLE_CONCEPTS.map((sc, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setRingIndex(idx)}
-                  style={ringIndex === idx ? styles.activeRingTab : styles.ringTab}
-                >
-                  <span style={styles.ringTabNum}>0{idx + 1}</span>
-                  <span style={styles.ringTabLabel}>{sc.title}</span>
-                </button>
-              ))}
+              {SAMPLE_CONCEPTS.map((sc, idx) => {
+                const isMatch = conceptFilter === 'All' || sc.category === conceptFilter;
+                if (!isMatch) return null;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      playClickSound('click');
+                      setRingIndex(idx);
+                    }}
+                    style={ringIndex === idx ? styles.activeRingTab : styles.ringTab}
+                  >
+                    <span style={styles.ringTabNum}>0{idx + 1}</span>
+                    <span style={styles.ringTabLabel}>{sc.title}</span>
+                  </button>
+                );
+              })}
             </div>
 
             <div style={styles.ringCardDisplay}>
@@ -3506,6 +3622,101 @@ export default function App() {
                 <p style={styles.processStepDesc}>{ps.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Client Onboarding Sprint Roadmap */}
+          <div style={{
+            marginTop: '56px',
+            backgroundColor: isDark ? '#111827' : '#F8FAFC',
+            border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+            borderRadius: '20px',
+            padding: '36px',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.04)'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                Fast-Track Kickoff
+              </span>
+              <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
+                What Your First 30 Days Look Like
+              </h3>
+              <p style={{ fontSize: '14px', color: isDark ? '#94A3B8' : '#64748B', maxWidth: '540px', margin: '8px auto 0 auto' }}>
+                We eliminate the traditional agency delay. Here is how we take you from signed contract to a working demo in 14 days.
+              </p>
+            </div>
+
+            {/* Week Selector Tabs */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '28px' }}>
+              {ONBOARDING_WEEKS.map((w, idx) => {
+                const active = activeRoadmapWeek === idx;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      playClickSound('click');
+                      setActiveRoadmapWeek(idx);
+                    }}
+                    style={{
+                      backgroundColor: active ? '#2563EB' : (isDark ? '#1E293B' : '#FFFFFF'),
+                      color: active ? '#FFFFFF' : (isDark ? '#CBD5E1' : '#475569'),
+                      border: active ? '1px solid #2563EB' : (isDark ? '1px solid #334155' : '1px solid #CBD5E1'),
+                      padding: '10px 20px',
+                      borderRadius: '12px',
+                      fontSize: '13.5px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: active ? '0 4px 14px rgba(37,99,235,0.25)' : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <span>{w.week}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active Week Deliverables Card */}
+            <div style={{
+              backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
+              border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+              borderRadius: '16px',
+              padding: '28px'
+            }}>
+              <div style={{ marginBottom: '18px' }}>
+                <span style={{ fontSize: '12px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase' }}>
+                  {ONBOARDING_WEEKS[activeRoadmapWeek].week} Milestone
+                </span>
+                <h4 style={{ fontSize: '19px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '4px 0 2px 0' }}>
+                  {ONBOARDING_WEEKS[activeRoadmapWeek].title}
+                </h4>
+                <p style={{ fontSize: '13.5px', color: isDark ? '#94A3B8' : '#64748B', margin: 0 }}>
+                  {ONBOARDING_WEEKS[activeRoadmapWeek].subtitle}
+                </p>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+                {ONBOARDING_WEEKS[activeRoadmapWeek].deliverables.map((item, dIdx) => (
+                  <div
+                    key={dIdx}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '10px',
+                      padding: '12px 14px',
+                      backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#F8FAFC',
+                      borderRadius: '10px',
+                      border: isDark ? '1px solid #1E293B' : '1px solid #F1F5F9'
+                    }}
+                  >
+                    <span style={{ color: '#10B981', fontSize: '15px', fontWeight: 'bold', marginTop: '-1px' }}>✓</span>
+                    <span style={{ fontSize: '13.5px', color: isDark ? '#E2E8F0' : '#334155', lineHeight: '1.45' }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
