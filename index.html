@@ -227,6 +227,23 @@
           display: none !important;
         }
       }
+
+      @media print {
+        header, nav, #top canvas, footer, button, input, .marquee-track {
+          display: none !important;
+        }
+        body, html, #root {
+          background: #FFFFFF !important;
+          color: #0F172A !important;
+        }
+        #estimate {
+          padding: 20px 0 !important;
+          background: #FFFFFF !important;
+        }
+        .estimator-grid {
+          display: block !important;
+        }
+      }
     </style>
   </head>
 

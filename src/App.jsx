@@ -23,7 +23,32 @@ const COMMAND_ITEMS = [
   { title: 'UI and UX Design', category: 'Service', anchor: 'services', desc: 'Figma prototypes, design systems, usability testing' },
   { title: 'AI and Automation', category: 'Service', anchor: 'services', desc: 'Chat assistants, document processing, workflows' },
   { title: 'Engineering Insights & Articles', category: 'Navigation', anchor: 'insights', desc: 'Technical deep-dives on WebGL, TimescaleDB, and offline CRDTs' },
-  { title: 'Security & Compliance Blueprint', category: 'Enterprise', anchor: 'support', desc: 'OWASP, encryption, mutual NDA, SOC-2 ready practices' }
+  { title: 'Security & Compliance Blueprint', category: 'Enterprise', anchor: 'support', desc: 'OWASP, encryption, mutual NDA, SOC-2 ready practices' },
+  { title: 'Technology Architecture Matrix', category: 'Navigation', anchor: 'tech-stack', desc: 'Full-stack engineering layers, SLAs, and production tools' }
+];
+
+const TECH_MATRIX = [
+  // Frontend & Web
+  { name: 'React 18 / Next.js', category: 'Frontend & Web', badge: 'Tier 1 Standard', icon: '⚛️', desc: 'Server-side rendering, streaming hydration, and static edge delivery.' },
+  { name: 'TypeScript', category: 'Frontend & Web', badge: 'Strict Typing', icon: '🔷', desc: '100% strict type safety eliminating production runtime type errors.' },
+  { name: 'Tailwind CSS', category: 'Frontend & Web', badge: 'Design System', icon: '🎨', desc: 'Rapid, component-driven UI systems with sub-10KB purge-optimized CSS.' },
+  // Mobile Engineering
+  { name: 'Flutter & Dart', category: 'Mobile Engineering', badge: 'Cross-Platform', icon: '📱', desc: 'Single codebase targeting iOS & Android with 60/120 FPS Skia canvas.' },
+  { name: 'React Native', category: 'Mobile Engineering', badge: 'Native Bridge', icon: '⚡', desc: 'JavaScript ecosystem reuse with native thread optimization.' },
+  { name: 'Offline CRDT Sync', category: 'Mobile Engineering', badge: 'Offline-First', icon: '🔄', desc: 'Zero-conflict local SQLite sync for remote field operations.' },
+  // Backend & Cloud
+  { name: 'Node.js & Express', category: 'Backend & Cloud', badge: 'High-Throughput', icon: '🟢', desc: 'Event-driven asynchronous microservices and API gateways.' },
+  { name: 'Python & FastAPI', category: 'Backend & Cloud', badge: 'AI & Data Services', icon: '🐍', desc: 'High-speed OpenAPI REST endpoints with asynchronous background workers.' },
+  { name: 'AWS & Cloud Infrastructure', category: 'Backend & Cloud', badge: 'SOC-2 Ready', icon: '☁️', desc: 'ECS Fargate, Lambda serverless, S3, CloudFront and Terraform IaC.' },
+  { name: 'Docker & Kubernetes', category: 'Backend & Cloud', badge: 'Containerized', icon: '🐳', desc: 'Isolated reproducible builds and zero-downtime rolling deployments.' },
+  // 3D & WebGL
+  { name: 'Three.js & WebGL', category: '3D & WebGL', badge: 'In-House Studio', icon: '🌐', desc: 'Interactive 3D configurators, custom GLSL shaders, and orbit controls.' },
+  { name: 'Draco Compression', category: '3D & WebGL', badge: '14:1 Reduction', icon: '📦', desc: 'Sub-second model downloads for instant mobile 3D viewing.' },
+  { name: 'GLTF / USDZ Pipeline', category: '3D & WebGL', badge: 'AR Spatial', icon: '🕶️', desc: 'Apple Quick Look and Android WebXR ready deliverables.' },
+  // Databases & Ingestion
+  { name: 'PostgreSQL', category: 'Databases & Ingestion', badge: 'Primary RDBMS', icon: '🐘', desc: 'ACID transactions, JSONB document storage, and row-level security.' },
+  { name: 'TimescaleDB', category: 'Databases & Ingestion', badge: 'Time-Series', icon: '⏱️', desc: 'Continuous telemetry aggregation for IoT and fleet streams.' },
+  { name: 'Redis Cache', category: 'Databases & Ingestion', badge: 'Sub-Millisecond', icon: '⚡', desc: 'In-memory caching, rate limiting, and pub/sub message brokers.' }
 ];
 
 const BLOG_POSTS = [
@@ -1286,6 +1311,7 @@ export default function App() {
   // Service card hover & filter state
   const [hoveredServiceId, setHoveredServiceId] = useState(null);
   const [serviceCategory, setServiceCategory] = useState('All');
+  const [techFilter, setTechFilter] = useState('All');
 
   // FAQ Category & Search Filter
   const [faqCategory, setFaqCategory] = useState('All');
@@ -2727,6 +2753,96 @@ export default function App() {
           ))}
         </div>
       </div>
+
+      {/* --- TECHNOLOGY ARCHITECTURE MATRIX --- */}
+      <section id="tech-stack" style={{
+        backgroundColor: isDark ? '#070C18' : '#F8FAFC',
+        borderBottom: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+        padding: '56px 0'
+      }}>
+        <div style={styles.container}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px', marginBottom: '28px' }}>
+            <div>
+              <span style={styles.sectionEyebrow}>Enterprise Stack</span>
+              <h2 style={{ ...styles.sectionTitle, margin: '6px 0 0 0', fontSize: '26px' }}>Technology Architecture Matrix</h2>
+              <p style={{ ...styles.sectionSubtitle, margin: '6px 0 0 0', maxWidth: '600px' }}>
+                Tested production frameworks, databases, and 3D pipelines engineered for performance and scalability.
+              </p>
+            </div>
+
+            {/* Filter Pills */}
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {['All', 'Frontend & Web', 'Mobile Engineering', 'Backend & Cloud', '3D & WebGL', 'Databases & Ingestion'].map((cat) => {
+                const active = techFilter === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => {
+                      setTechFilter(cat);
+                      playClickSound('click');
+                    }}
+                    style={{
+                      backgroundColor: active ? '#2563EB' : (isDark ? '#1E293B' : '#FFFFFF'),
+                      color: active ? '#FFFFFF' : (isDark ? '#CBD5E1' : '#475569'),
+                      border: active ? '1px solid #2563EB' : (isDark ? '1px solid #334155' : '1px solid #CBD5E1'),
+                      padding: '6px 14px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+            gap: '16px'
+          }}>
+            {TECH_MATRIX.filter((item) => techFilter === 'All' || item.category === techFilter).map((item, idx) => (
+              <div
+                key={idx}
+                style={{
+                  backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
+                  border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+                  borderRadius: '12px',
+                  padding: '18px 20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '20px' }}>{item.icon}</span>
+                    <strong style={{ fontSize: '14.5px', color: isDark ? '#F1F5F9' : '#0F172A' }}>{item.name}</strong>
+                  </div>
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    backgroundColor: isDark ? 'rgba(37,99,235,0.2)' : '#EFF6FF',
+                    color: isDark ? '#93C5FD' : '#2563EB',
+                    padding: '2px 8px',
+                    borderRadius: '4px'
+                  }}>
+                    {item.badge}
+                  </span>
+                </div>
+                <p style={{ margin: 0, fontSize: '12.5px', color: isDark ? '#94A3B8' : '#64748B', lineHeight: '1.45' }}>
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* --- WHAT WE DO / SERVICES SECTION --- */}
       <section id="services" style={styles.section}>
@@ -4213,8 +4329,8 @@ export default function App() {
                   Indicative only. We confirm scope, cost and dates after a short discovery call.
                 </p>
 
-                <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                  <button onClick={handleSendEstimateToContact} style={{ ...styles.sendEstimateBtn, flex: 2, margin: 0 }}>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
+                  <button onClick={handleSendEstimateToContact} style={{ ...styles.sendEstimateBtn, flex: 2, margin: 0, minWidth: '160px' }}>
                     Send this estimate &rarr;
                   </button>
                   <button
@@ -4243,6 +4359,33 @@ export default function App() {
                     title="Copy full project estimate specs to clipboard"
                   >
                     {estimateCopied ? '✓ Copied' : '📋 Copy Spec'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playClickSound('click');
+                      window.print();
+                    }}
+                    style={{
+                      flex: 1,
+                      backgroundColor: isDark ? '#1E293B' : '#F8FAFC',
+                      color: isDark ? '#93C5FD' : '#2563EB',
+                      border: isDark ? '1px solid #334155' : '1px solid #BFDBFE',
+                      borderRadius: '8px',
+                      padding: '12px 14px',
+                      fontWeight: '700',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                      transition: 'all 0.15s ease'
+                    }}
+                    title="Print or Save Project Estimate as PDF"
+                  >
+                    🖨️ PDF / Print
                   </button>
                 </div>
               </div>
