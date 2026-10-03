@@ -28,6 +28,7 @@ const SERVICES = [
   {
     id: 'mobile-apps',
     title: 'Mobile app development',
+    category: 'Engineering & Apps',
     subtitle: 'Android and iOS apps that feel native and ship from one codebase when that makes sense.',
     bullets: ['Flutter and React Native', 'Native Android and iOS', 'App store launch'],
     badge: null
@@ -35,6 +36,7 @@ const SERVICES = [
   {
     id: 'web-development',
     title: 'Web application development',
+    category: 'Engineering & Apps',
     subtitle: 'Fast, secure web platforms, portals and dashboards built to grow with your business.',
     bullets: ['React, Node.js, Python', 'APIs and integrations', 'Admin dashboards'],
     badge: null
@@ -42,6 +44,7 @@ const SERVICES = [
   {
     id: 'maintenance',
     title: 'Application maintenance',
+    category: 'Cloud & Support',
     subtitle: 'Bug fixes, security patches, performance tuning and new features after launch, under a clear service agreement.',
     bullets: ['Monitoring and alerts', 'Monthly patch cycle', 'Support plans from 8x5 to 24x7'],
     badge: null
@@ -49,6 +52,7 @@ const SERVICES = [
   {
     id: 'it-services',
     title: 'IT services and consulting',
+    category: 'Cloud & Support',
     subtitle: 'Architecture reviews, technology selection, system integration and ongoing IT support for your team.',
     bullets: ['Technical audits', 'System integration', 'Staff augmentation'],
     badge: null
@@ -56,6 +60,7 @@ const SERVICES = [
   {
     id: 'cloud-devops',
     title: 'Cloud and DevOps',
+    category: 'Cloud & Support',
     subtitle: 'Hosting, pipelines and infrastructure that deploy safely many times a day and scale on demand.',
     bullets: ['AWS, Azure, Google Cloud', 'CI/CD automation', 'Cost optimization'],
     badge: null
@@ -63,6 +68,7 @@ const SERVICES = [
   {
     id: 'ui-ux',
     title: 'UI and UX design',
+    category: 'Engineering & Apps',
     subtitle: 'Research-led interface design with prototypes you can click before a line of code is written.',
     bullets: ['Design systems', 'Interactive prototypes', 'Usability testing'],
     badge: null
@@ -70,6 +76,7 @@ const SERVICES = [
   {
     id: '3d-animation',
     title: '3D animation and visuals',
+    category: '3D & Innovation',
     subtitle: 'Product renders, explainer animations and interactive 3D for websites and apps, built in-house.',
     bullets: ['Product visualization', 'WebGL experiences', 'Motion and promo films'],
     badge: 'NEW'
@@ -77,6 +84,7 @@ const SERVICES = [
   {
     id: 'ai-automation',
     title: 'AI and automation',
+    category: '3D & Innovation',
     subtitle: 'Chat assistants, document processing and workflow automation connected to your own data.',
     bullets: ['Support chatbots', 'Process automation', 'Smart search'],
     badge: 'NEW'
@@ -305,24 +313,44 @@ const SUPPORT_PLANS = [
 
 const FAQS = [
   {
+    category: 'Ownership & IP',
     q: 'Who owns the source code?',
-    a: 'You do. At the end of the project we hand over the full source code, documentation and access to every account we set up for you.'
+    a: 'You do. At the end of the project we hand over the full source code, documentation and access to every account we set up for you. Zero vendor lock-in.'
   },
   {
+    category: 'Maintenance',
     q: 'Can you take over an app someone else built?',
     a: 'Yes. We start with a short technical audit of the code, hosting and security, then give you a plan to stabilize it and a support plan to keep it healthy.'
   },
   {
+    category: 'Engagements',
     q: 'Do you work on fixed price or monthly teams?',
-    a: 'Both. Clear scopes suit a fixed price. Evolving products usually work better with a monthly team that you can grow or shrink.'
+    a: 'Both. Clear scopes suit a fixed price. Evolving products usually work better with a monthly dedicated team that you can grow or shrink.'
   },
   {
+    category: '3D Visuals',
     q: 'What do your 3D projects include?',
-    a: 'Modeling, texturing, lighting, animation and rendering for videos and images, plus real-time 3D that runs inside websites and apps.'
+    a: 'Modeling, texturing, lighting, animation and rendering for videos and images, plus real-time 3D that runs directly inside websites and mobile apps.'
   },
   {
+    category: 'Communication',
     q: 'How do we stay in touch during a project?',
-    a: 'You get a shared board, a demo every two weeks and a single point of contact who answers within one working day.'
+    a: 'You get a shared board, bi-weekly sprint demos and a single technical point of contact who answers within one working day.'
+  },
+  {
+    category: 'Security & NDA',
+    q: 'Do you sign non-disclosure agreements (NDAs) before discovery?',
+    a: 'Yes, absolutely. We execute mutual NDAs prior to reviewing proprietary drawings, codebase repos, or business models.'
+  },
+  {
+    category: 'Engagements',
+    q: 'Can we start with a small pilot or proof-of-concept?',
+    a: 'Yes. Many clients start with a 2 to 3-week pilot sprint or interactive clickable prototype before committing to full application build.'
+  },
+  {
+    category: 'Maintenance',
+    q: 'What are your uptime and critical issue response SLAs?',
+    a: 'Under our Enterprise tier, we guarantee critical response within 1 hour, 24×7 on-call coverage, and 99.9% uptime monitoring with monthly audits.'
   }
 ];
 
@@ -914,8 +942,21 @@ export default function App() {
     setCookieAccepted(true);
   };
 
-  // Service card hover state
+  // Service card hover & filter state
   const [hoveredServiceId, setHoveredServiceId] = useState(null);
+  const [serviceCategory, setServiceCategory] = useState('All');
+
+  // FAQ Category & Search Filter
+  const [faqCategory, setFaqCategory] = useState('All');
+  const [faqSearch, setFaqSearch] = useState('');
+
+  // 15-Min Discovery Call Scheduler Modal
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState('Tomorrow');
+  const [scheduleSlot, setScheduleSlot] = useState('11:00 AM IST');
+  const [scheduleName, setScheduleName] = useState('');
+  const [scheduleEmail, setScheduleEmail] = useState('');
+  const [scheduleSuccess, setScheduleSuccess] = useState(false);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
@@ -1425,6 +1466,216 @@ export default function App() {
         </div>
       )}
 
+      {/* --- 15-MIN DISCOVERY CALL SCHEDULER MODAL --- */}
+      {scheduleModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10002,
+            padding: '20px'
+          }}
+          onClick={() => { setScheduleModalOpen(false); setScheduleSuccess(false); }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '540px',
+              backgroundColor: isDark ? '#111827' : '#FFFFFF',
+              border: isDark ? '1px solid #374151' : '1px solid #E2E8F0',
+              borderRadius: '20px',
+              padding: '32px',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+              position: 'relative',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                  Engineering Consultation
+                </span>
+                <h3 style={{ fontSize: '22px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '4px 0 0 0' }}>
+                  Book a 15-Min Discovery Call
+                </h3>
+              </div>
+              <button
+                onClick={() => { setScheduleModalOpen(false); setScheduleSuccess(false); }}
+                style={{ background: 'none', border: 'none', color: isDark ? '#94A3B8' : '#64748B', fontSize: '24px', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {scheduleSuccess ? (
+              <div style={{ textAlign: 'center', padding: '30px 10px' }}>
+                <div style={{ fontSize: '42px', color: '#10B981', marginBottom: '14px' }}>✓</div>
+                <h4 style={{ fontSize: '20px', fontWeight: '700', color: isDark ? '#FFFFFF' : '#0F172A', marginBottom: '8px' }}>
+                  Call Reserved for {scheduleDate}!
+                </h4>
+                <p style={{ fontSize: '14.5px', color: isDark ? '#CBD5E1' : '#475569', lineHeight: '1.6', marginBottom: '24px' }}>
+                  We have sent a calendar invite and confirmation to <strong>{scheduleEmail}</strong> for {scheduleSlot}.
+                </p>
+                <button
+                  onClick={() => { setScheduleModalOpen(false); setScheduleSuccess(false); }}
+                  style={{
+                    backgroundColor: '#2563EB',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '10px 24px',
+                    borderRadius: '8px',
+                    fontWeight: '700',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!scheduleName || !scheduleEmail) {
+                    alert('Please enter your name and work email.');
+                    return;
+                  }
+                  setScheduleSuccess(true);
+                }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+              >
+                <div>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: isDark ? '#CBD5E1' : '#334155', marginBottom: '8px' }}>
+                    1. Select Day
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {['Tomorrow', 'In 2 Days', 'Next Monday'].map((day) => (
+                      <button
+                        type="button"
+                        key={day}
+                        onClick={() => setScheduleDate(day)}
+                        style={{
+                          flex: 1,
+                          padding: '10px',
+                          borderRadius: '8px',
+                          border: scheduleDate === day ? '2px solid #2563EB' : (isDark ? '1px solid #374151' : '1px solid #CBD5E1'),
+                          backgroundColor: scheduleDate === day ? (isDark ? '#1E293B' : '#EFF6FF') : (isDark ? '#0F172A' : '#F8FAFC'),
+                          color: scheduleDate === day ? '#2563EB' : (isDark ? '#CBD5E1' : '#475569'),
+                          fontWeight: '700',
+                          fontSize: '13px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {day}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: isDark ? '#CBD5E1' : '#334155', marginBottom: '8px' }}>
+                    2. Select Time Window (IST)
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                    {['11:00 AM IST', '2:30 PM IST', '4:30 PM IST', '6:00 PM IST', '7:30 PM IST', '9:00 PM IST'].map((slot) => (
+                      <button
+                        type="button"
+                        key={slot}
+                        onClick={() => setScheduleSlot(slot)}
+                        style={{
+                          padding: '8px',
+                          borderRadius: '8px',
+                          border: scheduleSlot === slot ? '2px solid #2563EB' : (isDark ? '1px solid #374151' : '1px solid #CBD5E1'),
+                          backgroundColor: scheduleSlot === slot ? (isDark ? '#1E293B' : '#EFF6FF') : (isDark ? '#0F172A' : '#F8FAFC'),
+                          color: scheduleSlot === slot ? '#2563EB' : (isDark ? '#CBD5E1' : '#475569'),
+                          fontWeight: '600',
+                          fontSize: '12px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {slot}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: isDark ? '#CBD5E1' : '#334155', marginBottom: '6px' }}>
+                    Your Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={scheduleName}
+                    onChange={(e) => setScheduleName(e.target.value)}
+                    placeholder="e.g. John Doe"
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: isDark ? '1px solid #374151' : '1px solid #CBD5E1',
+                      backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
+                      color: isDark ? '#FFFFFF' : '#0F172A',
+                      fontSize: '14px',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: isDark ? '#CBD5E1' : '#334155', marginBottom: '6px' }}>
+                    Work Email *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={scheduleEmail}
+                    onChange={(e) => setScheduleEmail(e.target.value)}
+                    placeholder="john@company.com"
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      border: isDark ? '1px solid #374151' : '1px solid #CBD5E1',
+                      backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
+                      color: isDark ? '#FFFFFF' : '#0F172A',
+                      fontSize: '14px',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    backgroundColor: '#2563EB',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    fontWeight: '700',
+                    fontSize: '15px',
+                    cursor: 'pointer',
+                    marginTop: '6px'
+                  }}
+                >
+                  Confirm 15-Min Call ({scheduleDate}, {scheduleSlot}) &rarr;
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* --- FLOATING ACTION BUTTONS (WhatsApp + Back to Top) --- */}
       {scrollProgress > 8 && (
         <div style={{
@@ -1723,8 +1974,40 @@ export default function App() {
             </div>
           </RevealSection>
 
+          {/* Service Category Filter Pills */}
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            marginBottom: '32px'
+          }}>
+            {['All', 'Engineering & Apps', 'Cloud & Support', '3D & Innovation'].map((cat) => {
+              const active = serviceCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setServiceCategory(cat)}
+                  style={{
+                    backgroundColor: active ? '#2563EB' : (isDark ? '#1E293B' : '#F1F5F9'),
+                    color: active ? '#FFFFFF' : (isDark ? '#CBD5E1' : '#475569'),
+                    border: active ? '1px solid #2563EB' : (isDark ? '1px solid #334155' : '1px solid #CBD5E1'),
+                    padding: '8px 18px',
+                    borderRadius: '24px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
           <div style={styles.servicesGrid}>
-            {SERVICES.map((s) => {
+            {SERVICES.filter((s) => serviceCategory === 'All' || s.category === serviceCategory).map((s) => {
               const isHov = hoveredServiceId === s.id;
               return (
                 <div
@@ -2682,8 +2965,69 @@ export default function App() {
             <h2 style={styles.sectionTitle}>Things people ask before they start.</h2>
           </div>
 
+          {/* FAQ Category Filter & Search Bar */}
+          <div style={{ maxWidth: '800px', margin: '0 auto 24px auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              {['All', 'Ownership & IP', 'Maintenance', 'Engagements', '3D Visuals', 'Security & NDA'].map((fCat) => {
+                const active = faqCategory === fCat;
+                return (
+                  <button
+                    key={fCat}
+                    onClick={() => setFaqCategory(fCat)}
+                    style={{
+                      backgroundColor: active ? '#2563EB' : (isDark ? '#1E293B' : '#FFFFFF'),
+                      color: active ? '#FFFFFF' : (isDark ? '#CBD5E1' : '#475569'),
+                      border: active ? '1px solid #2563EB' : (isDark ? '1px solid #334155' : '1px solid #CBD5E1'),
+                      padding: '6px 14px',
+                      borderRadius: '20px',
+                      fontSize: '12.5px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {fCat}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div style={{ position: 'relative' }}>
+              <input
+                type="text"
+                value={faqSearch}
+                onChange={(e) => setFaqSearch(e.target.value)}
+                placeholder="Search questions (e.g. source code, audit, SLA, demo)..."
+                style={{
+                  width: '100%',
+                  padding: '10px 16px 10px 38px',
+                  borderRadius: '10px',
+                  border: isDark ? '1px solid #334155' : '1px solid #CBD5E1',
+                  backgroundColor: isDark ? '#111827' : '#FFFFFF',
+                  color: isDark ? '#FFFFFF' : '#0F172A',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+              <span style={{ position: 'absolute', left: '12px', top: '10px', fontSize: '15px' }}>🔍</span>
+              {faqSearch && (
+                <button
+                  onClick={() => setFaqSearch('')}
+                  style={{ position: 'absolute', right: '12px', top: '9px', background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
           <div style={styles.faqWrapper}>
-            {FAQS.map((faq, idx) => {
+            {FAQS.filter((faq) => {
+              const matchesCat = faqCategory === 'All' || faq.category === faqCategory;
+              const matchesQuery = !faqSearch.trim() ||
+                faq.q.toLowerCase().includes(faqSearch.toLowerCase()) ||
+                faq.a.toLowerCase().includes(faqSearch.toLowerCase());
+              return matchesCat && matchesQuery;
+            }).map((faq, idx) => {
               const isOpen = openFaqIndex === idx;
               return (
                 <div key={idx} style={styles.faqAccordionItem}>
@@ -2751,6 +3095,36 @@ export default function App() {
                 >
                   Message on WhatsApp &rarr;
                 </a>
+              </div>
+
+              <div style={{
+                ...styles.instantWhatsappBox,
+                backgroundColor: isDark ? '#1E293B' : '#EFF6FF',
+                border: isDark ? '1px solid #334155' : '1px solid #BFDBFE',
+                marginTop: '14px'
+              }}>
+                <h4 style={{ color: isDark ? '#FFFFFF' : '#1E40AF', margin: '0 0 6px 0', fontSize: '15px' }}>
+                  Prefer a live video call?
+                </h4>
+                <p style={{ color: isDark ? '#94A3B8' : '#3B82F6', fontSize: '13px', margin: '0 0 12px 0' }}>
+                  Pick a 15-minute scoping slot directly with an engineering lead.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setScheduleModalOpen(true)}
+                  style={{
+                    backgroundColor: '#2563EB',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '9px 16px',
+                    borderRadius: '8px',
+                    fontWeight: '700',
+                    fontSize: '13.5px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  📅 Book 15-Min Discovery Call
+                </button>
               </div>
             </div>
 
@@ -2905,20 +3279,39 @@ export default function App() {
                 onClick={(e) => scrollTo(e, 'contact')}
                 style={{
                   backgroundColor: '#FFFFFF', color: '#1D4ED8',
-                  textDecoration: 'none', padding: '14px 30px',
+                  textDecoration: 'none', padding: '14px 28px',
                   borderRadius: '10px', fontWeight: '700', fontSize: '16px',
                   boxShadow: '0 4px 14px rgba(0,0,0,0.2)'
                 }}
               >
                 Get a quote →
               </a>
+              <button
+                onClick={() => setScheduleModalOpen(true)}
+                style={{
+                  backgroundColor: '#0F172A',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  padding: '14px 26px',
+                  borderRadius: '10px',
+                  fontWeight: '700',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.25)'
+                }}
+              >
+                📅 Book a 15-Min Call
+              </button>
               <a
                 href="#estimate"
                 onClick={(e) => scrollTo(e, 'estimate')}
                 style={{
                   backgroundColor: 'rgba(255,255,255,0.15)',
                   color: '#FFFFFF', textDecoration: 'none',
-                  padding: '14px 30px', borderRadius: '10px',
+                  padding: '14px 28px', borderRadius: '10px',
                   fontWeight: '600', fontSize: '16px',
                   border: '1px solid rgba(255,255,255,0.3)'
                 }}
