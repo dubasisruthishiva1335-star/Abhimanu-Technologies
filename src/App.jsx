@@ -263,6 +263,99 @@ const FLIP_CARDS = [
   }
 ];
 
+const APP_MOCK_DATA = {
+  'E-commerce and marketplaces': {
+    stats: [
+      { val: '248', label: 'Orders' },
+      { val: '₹1.9L', label: 'Revenue' },
+      { val: '96%', label: 'Delivery on time' }
+    ],
+    heading: 'Recent Orders',
+    items: [
+      { id: '#4821', title: 'Smart Sensor Node', desc: 'Packed · Expedited Air', status: 'Ready', statusStyle: 'statusReady' },
+      { id: '#4820', title: 'Industrial Gateway v2', desc: 'In transit · Out for delivery', status: 'On the way', statusStyle: 'statusTransit' },
+      { id: '#4819', title: 'Telemetry Antenna Kit', desc: 'Delivered · Signature verified', status: 'Done', statusStyle: 'statusDone' },
+      { id: '#4818', title: 'BLE Beacon Pack (x10)', desc: 'Delivered · Dock 3', status: 'Done', statusStyle: 'statusDone' },
+      { id: '#4817', title: 'Edge Compute Core', desc: 'Payment due · Net 30 invoice', status: 'Pending', statusStyle: 'statusPending' }
+    ]
+  },
+  'Booking and scheduling': {
+    stats: [
+      { val: '42', label: 'Bookings today' },
+      { val: '98%', label: 'Attendance rate' },
+      { val: '8m', label: 'Avg lead time' }
+    ],
+    heading: 'Upcoming Appointments',
+    items: [
+      { id: '10:30 AM', title: 'Architecture Review', desc: 'Client: Infra Build · 45m call', status: 'Active', statusStyle: 'statusReady' },
+      { id: '11:45 AM', title: 'Onsite BIM Survey', desc: 'Site #4 · Team Alpha', status: 'Confirmed', statusStyle: 'statusTransit' },
+      { id: '02:00 PM', title: 'Sprint 2 Demo Walkthrough', desc: 'Stakeholder Video Room', status: 'Scheduled', statusStyle: 'statusDone' },
+      { id: '04:15 PM', title: 'Security Audit Sign-off', desc: 'Compliance Review Call', status: 'Scheduled', statusStyle: 'statusDone' },
+      { id: '05:30 PM', title: 'Executive Debrief', desc: 'Q4 Product Roadmap', status: 'Pending', statusStyle: 'statusPending' }
+    ]
+  },
+  'Learning platforms': {
+    stats: [
+      { val: '1,840', label: 'Active learners' },
+      { val: '89%', label: 'Course finish' },
+      { val: '4.9★', label: 'Cohort rating' }
+    ],
+    heading: 'Live Cohort Modules',
+    items: [
+      { id: 'MOD-04', title: 'WebGL Shader Optimization', desc: '86 Submissions graded', status: 'Live', statusStyle: 'statusReady' },
+      { id: 'MOD-03', title: 'Distributed Event Streaming', desc: 'Kafka + TimescaleDB lab', status: 'Completed', statusStyle: 'statusDone' },
+      { id: 'MOD-02', title: 'Offline-First SQLite CRDTs', desc: 'Hands-on Flutter project', status: 'Completed', statusStyle: 'statusDone' },
+      { id: 'MOD-01', title: 'Microservices with Docker', desc: 'Architecture fundamentals', status: 'Completed', statusStyle: 'statusDone' },
+      { id: 'CAPSTONE', title: 'Production SaaS Submission', desc: 'Peer review window open', status: 'Reviewing', statusStyle: 'statusTransit' }
+    ]
+  },
+  'Logistics and field tracking': {
+    stats: [
+      { val: '38', label: 'Fleet vehicles' },
+      { val: '99.2%', label: 'Route compliance' },
+      { val: '< 2s', label: 'GPS ping latency' }
+    ],
+    heading: 'Live Vehicle Telemetry',
+    items: [
+      { id: 'TRUCK-14', title: 'Hyderabad ORR Outbound', desc: 'Speed: 64 km/h · Temp: 22°C', status: 'On Route', statusStyle: 'statusTransit' },
+      { id: 'VAN-08', title: 'Secunderabad Hub Dispatch', desc: 'Cargo: Medical Sensors', status: 'Dispatched', statusStyle: 'statusReady' },
+      { id: 'TRUCK-02', title: 'Warangal Ingestion Gate', desc: 'Weight Check Cleared', status: 'Docked', statusStyle: 'statusDone' },
+      { id: 'VAN-03', title: 'Gachibowli Last Mile', desc: 'Delivered 24 parcels', status: 'Done', statusStyle: 'statusDone' },
+      { id: 'TRAILER-9', title: 'Vijayawada Highway', desc: 'Refueling stop · 15m idle', status: 'Standby', statusStyle: 'statusPending' }
+    ]
+  },
+  'Fintech and wallets': {
+    stats: [
+      { val: '₹14.2L', label: 'Settled today' },
+      { val: '99.99%', label: 'UPI gateway SLA' },
+      { val: '1.2s', label: 'Avg disbursal' }
+    ],
+    heading: 'Recent Transactions',
+    items: [
+      { id: 'TXN-9021', title: 'Vendor Escrow Disbursal', desc: '₹85,000 · Verified UPI Autopay', status: 'Success', statusStyle: 'statusDone' },
+      { id: 'TXN-9020', title: 'e-KYC DigiLocker Check', desc: 'UIDAI Aadhaar Tokenized', status: 'Verified', statusStyle: 'statusReady' },
+      { id: 'TXN-9019', title: 'Micro-Loan Disbursal', desc: '₹25,000 · Instant Bank IMPS', status: 'Success', statusStyle: 'statusDone' },
+      { id: 'TXN-9018', title: 'QR Payment Settlement', desc: '₹12,450 · HDFC Merchant Rails', status: 'Settled', statusStyle: 'statusDone' },
+      { id: 'TXN-9017', title: 'Recurring Mandate Trigger', desc: 'Monthly SaaS Subscription', status: 'Processing', statusStyle: 'statusTransit' }
+    ]
+  },
+  'Healthcare and clinics': {
+    stats: [
+      { val: '64', label: 'Consults today' },
+      { val: '100%', label: 'Encrypted HIPAA' },
+      { val: '4.95★', label: 'Patient score' }
+    ],
+    heading: 'Patient Consult Queue',
+    items: [
+      { id: 'ROOM-01', title: 'Dr. Anita (Cardiology)', desc: 'Patient #912 · Video consult', status: 'In Session', statusStyle: 'statusReady' },
+      { id: 'RX-402', title: 'Digital E-Prescription', desc: 'Signed via Doctor Cryptographic Key', status: 'Issued', statusStyle: 'statusDone' },
+      { id: 'LAB-108', title: 'Biomarker Panel Ingestion', desc: 'Automated HL7/FHIR sync', status: 'Synced', statusStyle: 'statusDone' },
+      { id: 'ROOM-03', title: 'Dr. Vikram (Orthopedics)', desc: 'Next in queue · 5m wait', status: 'Waiting', statusStyle: 'statusTransit' },
+      { id: 'FOLLOWUP', title: 'Post-Op Remote Telemetry', desc: 'SPO2 & Blood Pressure normal', status: 'Monitoring', statusStyle: 'statusReady' }
+    ]
+  }
+};
+
 const PIPELINE_STEPS = [
   { step: '01', title: 'Concept & Storyboard', desc: 'Define visual style, camera choreography, and functional user interaction goals.' },
   { step: '02', title: '3D Modeling & CAD Clean', desc: 'Sculpt bespoke geometry or retopologize engineering CAD files for optimal fidelity.' },
@@ -2964,7 +3057,10 @@ export default function App() {
             ].map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActiveAppCategory(cat)}
+                onClick={() => {
+                  setActiveAppCategory(cat);
+                  playClickSound('click');
+                }}
                 style={activeAppCategory === cat ? styles.activeAppTab : styles.appTab}
               >
                 {cat}
@@ -3001,49 +3097,45 @@ export default function App() {
                   <span style={styles.livePulse}>● LIVE</span>
                 </div>
 
-                <div style={styles.statsWidgetRow}>
-                  <div style={styles.statWidget}>
-                    <div style={styles.statValue}>248</div>
-                    <div style={styles.statLabel}>Orders</div>
-                  </div>
-                  <div style={styles.statWidget}>
-                    <div style={styles.statValue}>₹1.9L</div>
-                    <div style={styles.statLabel}>Revenue</div>
-                  </div>
-                  <div style={styles.statWidget}>
-                    <div style={styles.statValue}>96%</div>
-                    <div style={styles.statLabel}>Delivery on time</div>
-                  </div>
-                </div>
+                {(() => {
+                  const currentMock = APP_MOCK_DATA[activeAppCategory] || APP_MOCK_DATA['E-commerce and marketplaces'];
+                  return (
+                    <>
+                      <div style={styles.statsWidgetRow}>
+                        {currentMock.stats.map((s, sIdx) => (
+                          <div key={sIdx} style={styles.statWidget}>
+                            <div style={styles.statValue}>{s.val}</div>
+                            <div style={styles.statLabel}>{s.label}</div>
+                          </div>
+                        ))}
+                      </div>
 
-                {/* Orders List */}
-                <div style={styles.ordersSection}>
-                  <div style={styles.ordersHeadingRow}>
-                    <span style={styles.ordersHeading}>Orders</span>
-                    <span style={styles.ordersFilter}>All (5)</span>
-                  </div>
+                      {/* Orders / Live Items List */}
+                      <div style={styles.ordersSection}>
+                        <div style={styles.ordersHeadingRow}>
+                          <span style={styles.ordersHeading}>{currentMock.heading}</span>
+                          <span style={styles.ordersFilter}>Live ({currentMock.items.length})</span>
+                        </div>
 
-                  <div style={styles.orderItem}>
-                    <span>#4821 · Packed</span>
-                    <span style={styles.statusReady}>Ready</span>
-                  </div>
-                  <div style={styles.orderItem}>
-                    <span>#4820 · In transit</span>
-                    <span style={styles.statusTransit}>On the way</span>
-                  </div>
-                  <div style={styles.orderItem}>
-                    <span>#4819 · Delivered</span>
-                    <span style={styles.statusDone}>Done</span>
-                  </div>
-                  <div style={styles.orderItem}>
-                    <span>#4818 · Delivered</span>
-                    <span style={styles.statusDone}>Done</span>
-                  </div>
-                  <div style={styles.orderItem}>
-                    <span>#4817 · Payment due</span>
-                    <span style={styles.statusPending}>Pending</span>
-                  </div>
-                </div>
+                        {currentMock.items.map((item, itIdx) => (
+                          <div key={itIdx} style={styles.orderItem}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', overflow: 'hidden', paddingRight: '8px' }}>
+                              <span style={{ fontWeight: 600, fontSize: '11px', color: '#0F172A', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                                {item.id} · {item.title}
+                              </span>
+                              <span style={{ fontSize: '10px', color: '#64748B', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                                {item.desc}
+                              </span>
+                            </div>
+                            <span style={{ flexShrink: 0, ...(styles[item.statusStyle] || styles.statusReady) }}>
+                              {item.status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  );
+                })()}
 
                 {/* Live Support Chat Simulation */}
                 <div style={styles.supportChatContainer}>
@@ -4369,34 +4461,74 @@ export default function App() {
             </div>
           </div>
 
-          <div style={styles.faqWrapper}>
-            {FAQS.filter((faq) => {
+          {(() => {
+            const filteredFaqs = FAQS.filter((faq) => {
               const matchesCat = faqCategory === 'All' || faq.category === faqCategory;
               const matchesQuery = !faqSearch.trim() ||
                 faq.q.toLowerCase().includes(faqSearch.toLowerCase()) ||
                 faq.a.toLowerCase().includes(faqSearch.toLowerCase());
               return matchesCat && matchesQuery;
-            }).map((faq, idx) => {
-              const isOpen = openFaqIndex === idx;
-              return (
-                <div key={idx} style={styles.faqAccordionItem}>
+            });
+
+            return (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+                  <span style={{ fontSize: '13px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                    Showing {filteredFaqs.length} {filteredFaqs.length === 1 ? 'question' : 'questions'}
+                  </span>
                   <button
-                    onClick={() => setOpenFaqIndex(isOpen ? -1 : idx)}
-                    style={styles.faqQuestionBtn}
-                    aria-expanded={isOpen}
+                    type="button"
+                    onClick={() => {
+                      setOpenFaqIndex(openFaqIndex === 'all' ? -1 : 'all');
+                      playClickSound('click');
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#2563EB',
+                      fontWeight: '600',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      padding: '4px 8px',
+                      borderRadius: '6px'
+                    }}
                   >
-                    <span style={styles.faqQText}>{faq.q}</span>
-                    <span style={styles.faqToggleChar}>{isOpen ? '−' : '+'}</span>
+                    {openFaqIndex === 'all' ? 'Collapse all −' : 'Expand all +'}
                   </button>
-                  {isOpen && (
-                    <div style={styles.faqAnswerBox}>
-                      <p style={styles.faqAText}>{faq.a}</p>
-                    </div>
-                  )}
                 </div>
-              );
-            })}
-          </div>
+
+                <div style={styles.faqWrapper}>
+                  {filteredFaqs.map((faq, idx) => {
+                    const isOpen = openFaqIndex === 'all' || openFaqIndex === idx;
+                    return (
+                      <div key={idx} style={styles.faqAccordionItem}>
+                        <button
+                          onClick={() => {
+                            if (openFaqIndex === 'all') {
+                              setOpenFaqIndex(-1);
+                            } else {
+                              setOpenFaqIndex(isOpen ? -1 : idx);
+                            }
+                            playClickSound('click');
+                          }}
+                          style={styles.faqQuestionBtn}
+                          aria-expanded={isOpen}
+                        >
+                          <span style={styles.faqQText}>{faq.q}</span>
+                          <span style={styles.faqToggleChar}>{isOpen ? '−' : '+'}</span>
+                        </button>
+                        {isOpen && (
+                          <div style={styles.faqAnswerBox}>
+                            <p style={styles.faqAText}>{faq.a}</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            );
+          })()}
         </div>
       </section>
 
