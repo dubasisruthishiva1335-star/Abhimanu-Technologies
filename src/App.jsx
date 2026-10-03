@@ -543,8 +543,18 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
   const mountRef = useRef(null);
   const meshRef = useRef(null);
   const dirLightRef = useRef(null);
+  const rendererRef = useRef(null);
   const isDraggingRef = useRef(false);
   const prevMousePos = useRef({ x: 0, y: 0 });
+
+  const handleDownloadSnapshot = () => {
+    if (!rendererRef.current) return;
+    const dataURL = rendererRef.current.domElement.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = dataURL;
+    a.download = `abhimanyu-3d-${shape}-${materialType}.png`;
+    a.click();
+  };
 
   useEffect(() => {
     const container = mountRef.current;
@@ -557,10 +567,11 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     camera.position.z = 4.8;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
     // Create Geometry based on selected shape
     let geom;
@@ -691,9 +702,32 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
 
   return (
     <div style={styles.studioCanvasBox}>
-      <div style={styles.studioCanvasBadgeRow}>
-        <span style={styles.webglTag}>REAL-TIME WEBGL</span>
-        <span style={styles.dragTag}>DRAG TO ROTATE</span>
+      <div style={{ ...styles.studioCanvasBadgeRow, justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <span style={styles.webglTag}>REAL-TIME WEBGL</span>
+          <span style={styles.dragTag}>DRAG TO ROTATE</span>
+        </div>
+        <button
+          onClick={handleDownloadSnapshot}
+          style={{
+            backgroundColor: 'rgba(37,99,235,0.85)',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontSize: '11px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            backdropFilter: 'blur(4px)',
+            transition: 'background-color 0.15s ease'
+          }}
+          title="Download PNG snapshot of your customized 3D model"
+        >
+          📷 Snapshot PNG
+        </button>
       </div>
       <div ref={mountRef} style={styles.canvasMount} />
     </div>
@@ -704,8 +738,18 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
 function BuildingCanvas({ storeys, explodePercent, showStructure, showServices, showFacade, autoRotate }) {
   const mountRef = useRef(null);
   const buildingGroupRef = useRef(null);
+  const rendererRef = useRef(null);
   const isDraggingRef = useRef(false);
   const prevMousePos = useRef({ x: 0, y: 0 });
+
+  const handleDownloadSnapshot = () => {
+    if (!rendererRef.current) return;
+    const dataURL = rendererRef.current.domElement.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = dataURL;
+    a.download = `abhimanyu-bim-${storeys}storeys.png`;
+    a.click();
+  };
 
   useEffect(() => {
     const container = mountRef.current;
@@ -719,10 +763,11 @@ function BuildingCanvas({ storeys, explodePercent, showStructure, showServices, 
     camera.position.set(6, 7, 9);
     camera.lookAt(0, storeys * 0.25, 0);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
     const buildingGroup = new THREE.Group();
     scene.add(buildingGroup);
@@ -883,9 +928,32 @@ function BuildingCanvas({ storeys, explodePercent, showStructure, showServices, 
 
   return (
     <div style={styles.buildingViewerBox}>
-      <div style={styles.studioCanvasBadgeRow}>
-        <span style={styles.webglTag}>WEB BUILDING VIEWER · DEMO</span>
-        <span style={styles.dragTag}>DRAG TO ROTATE</span>
+      <div style={{ ...styles.studioCanvasBadgeRow, justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <span style={styles.webglTag}>WEB BUILDING VIEWER · DEMO</span>
+          <span style={styles.dragTag}>DRAG TO ROTATE</span>
+        </div>
+        <button
+          onClick={handleDownloadSnapshot}
+          style={{
+            backgroundColor: 'rgba(37,99,235,0.85)',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontSize: '11px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            backdropFilter: 'blur(4px)',
+            transition: 'background-color 0.15s ease'
+          }}
+          title="Download PNG snapshot of the 3D building viewer"
+        >
+          📷 Snapshot PNG
+        </button>
       </div>
       <div ref={mountRef} style={styles.canvasMountTall} />
     </div>
@@ -3096,6 +3164,90 @@ export default function App() {
                 </div>
               </RevealSection>
             ))}
+          </div>
+
+          {/* Studio Comparison Table */}
+          <div style={{
+            marginTop: '48px',
+            backgroundColor: isDark ? '#111827' : '#F8FAFC',
+            border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+            borderRadius: '20px',
+            padding: '32px',
+            overflowX: 'auto'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                How We Compare
+              </span>
+              <h3 style={{ fontSize: '22px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
+                Traditional Agency vs. Abhimanyu Technologies Studio
+              </h3>
+            </div>
+
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '600px' }}>
+              <thead>
+                <tr style={{ borderBottom: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0' }}>
+                  <th style={{ padding: '12px 16px', fontSize: '13px', fontWeight: '700', color: isDark ? '#94A3B8' : '#64748B' }}>
+                    Criteria
+                  </th>
+                  <th style={{ padding: '12px 16px', fontSize: '13px', fontWeight: '700', color: isDark ? '#94A3B8' : '#64748B' }}>
+                    Traditional Agency / Outsourcing
+                  </th>
+                  <th style={{ padding: '12px 16px', fontSize: '13px', fontWeight: '700', color: '#2563EB' }}>
+                    Abhimanyu Technologies
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    feature: 'First Working Demo',
+                    traditional: '6 to 10 weeks of slide decks & wireframes',
+                    ours: 'Working demo by Sprint 1 (within 14 days)'
+                  },
+                  {
+                    feature: 'IP & Source Code Ownership',
+                    traditional: 'Vendor lock-in, proprietary runtime licenses',
+                    ours: '100% full IP transfer & repository access from Day 1'
+                  },
+                  {
+                    feature: '3D WebGL & Interactive Visuals',
+                    traditional: 'Sub-contracted to third-party 3D studios',
+                    ours: 'In-house Three.js & WebGL shader engineering'
+                  },
+                  {
+                    feature: 'Post-Launch Support & SLAs',
+                    traditional: 'Standard 9-to-5 ticket queue, slow escalation',
+                    ours: 'Guaranteed 1-hour critical response SLA (24x7 option)'
+                  },
+                  {
+                    feature: 'Contract Flexibility',
+                    traditional: 'Rigid 12-month lock-in contracts',
+                    ours: 'Sprint-based agile teams you can scale or pause'
+                  }
+                ].map((row, rIdx) => (
+                  <tr
+                    key={rIdx}
+                    style={{
+                      borderBottom: isDark ? '1px solid #1E293B' : '1px solid #F1F5F9',
+                      backgroundColor: rIdx % 2 === 0 ? 'transparent' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)')
+                    }}
+                  >
+                    <td style={{ padding: '14px 16px', fontSize: '14px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A' }}>
+                      {row.feature}
+                    </td>
+                    <td style={{ padding: '14px 16px', fontSize: '13.5px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                      <span style={{ color: '#EF4444', marginRight: '6px' }}>✕</span>
+                      {row.traditional}
+                    </td>
+                    <td style={{ padding: '14px 16px', fontSize: '13.5px', fontWeight: '600', color: isDark ? '#60A5FA' : '#1D4ED8' }}>
+                      <span style={{ color: '#10B981', marginRight: '6px' }}>✓</span>
+                      {row.ours}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
