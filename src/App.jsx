@@ -25,7 +25,8 @@ const COMMAND_ITEMS = [
   { title: 'Engineering Insights & Articles', category: 'Navigation', anchor: 'insights', desc: 'Technical deep-dives on WebGL, TimescaleDB, and offline CRDTs' },
   { title: 'Security & Compliance Blueprint', category: 'Enterprise', anchor: 'support', desc: 'OWASP, encryption, mutual NDA, SOC-2 ready practices' },
   { title: 'Technology Architecture Matrix', category: 'Navigation', anchor: 'tech-stack', desc: 'Full-stack engineering layers, SLAs, and production tools' },
-  { title: 'Global Delivery Footprint & Cloud Regions', category: 'Navigation', anchor: 'global-presence', desc: 'India HQ, North America, UK/Europe, GCC, and APAC hubs' }
+  { title: 'Global Delivery Footprint & Cloud Regions', category: 'Navigation', anchor: 'global-presence', desc: 'India HQ, North America, UK/Europe, GCC, and APAC hubs' },
+  { title: 'Codebase & Cloud Health Audit', category: 'Tool', anchor: 'support', desc: 'Free 60-second architecture, testing & security self-assessment' }
 ];
 
 const TECH_MATRIX = [
@@ -630,6 +631,49 @@ const SUPPORT_PLANS = [
     ],
     buttonText: 'Ask about Enterprise',
     isPopular: false
+  }
+];
+
+const HEALTH_AUDIT_QUESTIONS = [
+  {
+    id: 'arch',
+    title: '1. Architecture & Dependency Stack',
+    icon: '🏗️',
+    options: [
+      { text: 'Modern Decoupled (Next.js/React/Node/Go/Python, Microservices or Clean Monolith)', points: 25, label: 'Modern & Scalable' },
+      { text: 'Moderately Modular (Mixed frameworks, older LTS versions, manageable tech debt)', points: 15, label: 'Moderate Tech Debt' },
+      { text: 'Tightly Coupled Legacy (Monolith, outdated dependencies, high maintenance cost)', points: 5, label: 'High Fragility' }
+    ]
+  },
+  {
+    id: 'ci',
+    title: '2. CI/CD & Automated Regression Testing',
+    icon: '🧪',
+    options: [
+      { text: 'Fully Automated (>80% unit/E2E test coverage, GitHub Actions/GitLab CI pipelines)', points: 25, label: 'Continuous Delivery' },
+      { text: 'Partial CI (Basic linting, manual staging QA, ~30-50% regression coverage)', points: 15, label: 'Semi-Automated' },
+      { text: 'Manual Deployments (Direct SSH/FTP pushes, zero regression test automation)', points: 5, label: 'High Risk Manual' }
+    ]
+  },
+  {
+    id: 'sec',
+    title: '3. Cloud Security & Secrets Governance',
+    icon: '🔒',
+    options: [
+      { text: 'Enterprise Hardened (Secrets in Vault/KMS, automated CVE scanning, least-privilege IAM)', points: 25, label: 'Zero-Trust Ready' },
+      { text: 'Standard Security (Basic cloud IAM, TLS enabled, manual secret rotations)', points: 15, label: 'Baseline Security' },
+      { text: 'High Risk (Plaintext .env keys in Git, public database endpoints, unpatched CVEs)', points: 5, label: 'Critical Exposure' }
+    ]
+  },
+  {
+    id: 'perf',
+    title: '4. Performance, Observability & Uptime SLA',
+    icon: '⚡',
+    options: [
+      { text: 'High Performance (Sub-100ms P95 latency, distributed APM tracing, 99.95%+ uptime SLA)', points: 25, label: 'Sub-100ms Optimized' },
+      { text: 'Acceptable (Occasional peak-hour latency spikes, basic uptime pings, ~99% SLA)', points: 15, label: 'Moderate Latency' },
+      { text: 'Frequent Incidents (High memory leaks, crash under traffic spikes, unmonitored errors)', points: 5, label: 'Severe Degradation' }
+    ]
   }
 ];
 
@@ -1604,6 +1648,10 @@ export default function App() {
   const [inquiryCopied, setInquiryCopied] = useState(false);
   const [estimateCopied, setEstimateCopied] = useState(false);
 
+  // Codebase & Cloud Health Audit State
+  const [auditAnswers, setAuditAnswers] = useState({ arch: 0, ci: 1, sec: 1, perf: 0 });
+  const [auditCopied, setAuditCopied] = useState(false);
+
   // Smooth scroll
   const scrollTo = (e, id) => {
     e.preventDefault();
@@ -1796,6 +1844,56 @@ COORDINATION
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  };
+
+  const handleCopyAuditReport = () => {
+    playClickSound('success');
+    const totalScore = HEALTH_AUDIT_QUESTIONS.reduce((sum, q) => sum + q.options[auditAnswers[q.id]].points, 0);
+    const tier = totalScore >= 85 ? 'Enterprise Ready' : totalScore >= 60 ? 'Moderate Tech Debt' : 'High Architectural Risk';
+    const report = `# CODEBASE & CLOUD HEALTH AUDIT REPORT
+Abhimanyu Technologies — Enterprise Engineering Assessment
+Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+Website: https://abhimanu-technologies.vercel.app/
+
+--------------------------------------------------------------------------------
+HEALTH AUDIT SUMMARY
+--------------------------------------------------------------------------------
+• Overall Score: ${totalScore} / 100
+• Posture Tier: ${tier}
+
+--------------------------------------------------------------------------------
+ASSESSMENT BREAKDOWN
+--------------------------------------------------------------------------------
+1. Architecture & Stack: ${HEALTH_AUDIT_QUESTIONS[0].options[auditAnswers.arch].label} (+${HEALTH_AUDIT_QUESTIONS[0].options[auditAnswers.arch].points} pts)
+   ${HEALTH_AUDIT_QUESTIONS[0].options[auditAnswers.arch].text}
+
+2. CI/CD & Testing: ${HEALTH_AUDIT_QUESTIONS[1].options[auditAnswers.ci].label} (+${HEALTH_AUDIT_QUESTIONS[1].options[auditAnswers.ci].points} pts)
+   ${HEALTH_AUDIT_QUESTIONS[1].options[auditAnswers.ci].text}
+
+3. Cloud Security & Secrets: ${HEALTH_AUDIT_QUESTIONS[2].options[auditAnswers.sec].label} (+${HEALTH_AUDIT_QUESTIONS[2].options[auditAnswers.sec].points} pts)
+   ${HEALTH_AUDIT_QUESTIONS[2].options[auditAnswers.sec].text}
+
+4. Performance & SLA: ${HEALTH_AUDIT_QUESTIONS[3].options[auditAnswers.perf].label} (+${HEALTH_AUDIT_QUESTIONS[3].options[auditAnswers.perf].points} pts)
+   ${HEALTH_AUDIT_QUESTIONS[3].options[auditAnswers.perf].text}
+
+--------------------------------------------------------------------------------
+RECOMMENDED NEXT STEPS
+--------------------------------------------------------------------------------
+${totalScore >= 85
+  ? 'Maintain zero-debt velocity with our Growth or Enterprise SLA covering bi-weekly dependency updates, CI regression testing, and security patch monitoring.'
+  : totalScore >= 60
+  ? 'Schedule a 2-week Sprint Zero refactor to harden automated CI/CD coverage, isolate cloud secrets, and resolve technical debt before feature expansion.'
+  : 'Initiate an urgent comprehensive code & infrastructure audit. Decouple critical monolith bottlenecks and establish containerized automated deployments.'}
+
+--------------------------------------------------------------------------------
+COORDINATION
+--------------------------------------------------------------------------------
+Abhimanyu Technologies Engineering Advisory
+Email: hello@abhimanyutech.example | Office: Telangana, India • Available Globally
+`;
+    navigator.clipboard?.writeText(report);
+    setAuditCopied(true);
+    setTimeout(() => setAuditCopied(false), 2500);
   };
 
   const handleChatSend = (e) => {
@@ -5063,6 +5161,224 @@ COORDINATION
               <span>🛡️</span>
               <span>View Enterprise Security & Compliance Blueprint &rarr;</span>
             </button>
+          </div>
+
+          {/* Interactive Codebase & Cloud Health Audit Scorecard */}
+          <div style={{
+            marginTop: '48px',
+            backgroundColor: isDark ? '#111827' : '#FFFFFF',
+            border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+            borderRadius: '20px',
+            padding: '36px',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.06)'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                Technical Self-Assessment
+              </span>
+              <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
+                Codebase & Cloud Architecture Health Audit
+              </h3>
+              <p style={{ fontSize: '14px', color: isDark ? '#94A3B8' : '#64748B', maxWidth: '640px', margin: '8px auto 0 auto' }}>
+                Evaluate your engineering stability, CI/CD automation, and cloud security posture in 60 seconds to identify vulnerabilities before scaling.
+              </p>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '28px',
+              alignItems: 'start'
+            }}>
+              {/* Questions Column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                {HEALTH_AUDIT_QUESTIONS.map((q) => (
+                  <div key={q.id} style={{
+                    backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+                    border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+                    borderRadius: '12px',
+                    padding: '16px 18px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                      <span style={{ fontSize: '18px' }}>{q.icon}</span>
+                      <strong style={{ fontSize: '14px', color: isDark ? '#F1F5F9' : '#0F172A' }}>{q.title}</strong>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {q.options.map((opt, optIdx) => {
+                        const isSelected = auditAnswers[q.id] === optIdx;
+                        return (
+                          <div
+                            key={optIdx}
+                            onClick={() => {
+                              playClickSound('click');
+                              setAuditAnswers((prev) => ({ ...prev, [q.id]: optIdx }));
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              gap: '10px',
+                              padding: '10px 12px',
+                              borderRadius: '8px',
+                              backgroundColor: isSelected ? (isDark ? 'rgba(37,99,235,0.18)' : '#EFF6FF') : (isDark ? 'rgba(255,255,255,0.02)' : '#FFFFFF'),
+                              border: isSelected ? '1px solid #2563EB' : (isDark ? '1px solid #1E293B' : '1px solid #E2E8F0'),
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease'
+                            }}
+                          >
+                            <input
+                              type="radio"
+                              name={q.id}
+                              checked={isSelected}
+                              onChange={() => {}}
+                              style={{ marginTop: '3px', cursor: 'pointer', accentColor: '#2563EB' }}
+                            />
+                            <div style={{ flex: 1 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ fontSize: '13px', fontWeight: isSelected ? '700' : '600', color: isSelected ? (isDark ? '#93C5FD' : '#1D4ED8') : (isDark ? '#E2E8F0' : '#1E293B') }}>
+                                  {opt.label}
+                                </span>
+                                <span style={{ fontSize: '11px', fontWeight: '700', color: opt.points === 25 ? '#10B981' : opt.points === 15 ? '#F59E0B' : '#EF4444' }}>
+                                  +{opt.points} pts
+                                </span>
+                              </div>
+                              <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B', lineHeight: '1.4' }}>
+                                {opt.text}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Real-Time Scorecard Dashboard Column */}
+              <div style={{
+                position: 'sticky',
+                top: '90px',
+                backgroundColor: isDark ? '#0B1120' : '#F1F5F9',
+                border: isDark ? '1px solid #1E293B' : '1px solid #CBD5E1',
+                borderRadius: '16px',
+                padding: '28px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '20px'
+              }}>
+                <div>
+                  <div style={{ fontSize: '12px', fontWeight: '700', color: isDark ? '#94A3B8' : '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Calculated Health Posture
+                  </div>
+                  {(() => {
+                    const totalScore = HEALTH_AUDIT_QUESTIONS.reduce((sum, q) => sum + q.options[auditAnswers[q.id]].points, 0);
+                    const tierLabel = totalScore >= 85 ? 'Enterprise Ready' : totalScore >= 60 ? 'Moderate Tech Debt' : 'High Architectural Risk';
+                    const tierColor = totalScore >= 85 ? '#10B981' : totalScore >= 60 ? '#F59E0B' : '#EF4444';
+                    return (
+                      <>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginTop: '8px' }}>
+                          <span style={{ fontSize: '48px', fontWeight: '900', color: tierColor, lineHeight: '1' }}>
+                            {totalScore}
+                          </span>
+                          <span style={{ fontSize: '18px', fontWeight: '700', color: isDark ? '#64748B' : '#94A3B8' }}>/ 100</span>
+                        </div>
+                        <div style={{
+                          display: 'inline-block',
+                          marginTop: '10px',
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          backgroundColor: `${tierColor}18`,
+                          border: `1px solid ${tierColor}44`,
+                          color: tierColor,
+                          fontSize: '12.5px',
+                          fontWeight: '800'
+                        }}>
+                          {tierLabel}
+                        </div>
+                        <div style={{
+                          marginTop: '16px',
+                          height: '8px',
+                          borderRadius: '4px',
+                          backgroundColor: isDark ? '#1E293B' : '#E2E8F0',
+                          overflow: 'hidden'
+                        }}>
+                          <div style={{
+                            width: `${totalScore}%`,
+                            height: '100%',
+                            backgroundColor: tierColor,
+                            transition: 'all 0.3s ease'
+                          }} />
+                        </div>
+                        <p style={{ fontSize: '13px', color: isDark ? '#CBD5E1' : '#475569', lineHeight: '1.5', marginTop: '16px' }}>
+                          {totalScore >= 85
+                            ? 'Optimal technical foundation. Zero critical security debt. Our Growth or Enterprise support tier ensures continuous velocity and routine dependency CVE prevention.'
+                            : totalScore >= 60
+                            ? 'Functional baseline with emerging technical debt in test coverage or secrets management. A 2-week Sprint Zero refactor is recommended before heavy feature rollout.'
+                            : 'High architectural fragility and manual deployment risk. We advise an urgent comprehensive code & infrastructure audit and containerization migration.'}
+                        </p>
+                      </>
+                    );
+                  })()}
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button
+                    onClick={handleCopyAuditReport}
+                    style={{
+                      width: '100%',
+                      backgroundColor: auditCopied ? '#10B981' : (isDark ? '#1E293B' : '#FFFFFF'),
+                      color: auditCopied ? '#FFFFFF' : (isDark ? '#F1F5F9' : '#0F172A'),
+                      border: isDark ? '1px solid #334155' : '1px solid #CBD5E1',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      fontSize: '13.5px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <span>{auditCopied ? '✓ Audit Report Copied!' : '📋 Copy Audit Report'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      playClickSound('click');
+                      const totalScore = HEALTH_AUDIT_QUESTIONS.reduce((sum, q) => sum + q.options[auditAnswers[q.id]].points, 0);
+                      const tierLabel = totalScore >= 85 ? 'Enterprise Ready' : totalScore >= 60 ? 'Moderate Tech Debt' : 'High Architectural Risk';
+                      setContactData((prev) => ({
+                        ...prev,
+                        serviceNeed: 'Codebase & Cloud Architecture Audit',
+                        details: `Requested Technical Codebase & Cloud Audit.\nHealth Self-Check Score: ${totalScore}/100 (${tierLabel}).\n- Architecture: ${HEALTH_AUDIT_QUESTIONS[0].options[auditAnswers.arch].label}\n- CI/CD: ${HEALTH_AUDIT_QUESTIONS[1].options[auditAnswers.ci].label}\n- Security: ${HEALTH_AUDIT_QUESTIONS[2].options[auditAnswers.sec].label}\n- Performance: ${HEALTH_AUDIT_QUESTIONS[3].options[auditAnswers.perf].label}`
+                      }));
+                      const elem = document.getElementById('contact');
+                      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    style={{
+                      width: '100%',
+                      backgroundColor: '#2563EB',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      fontSize: '13.5px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      boxShadow: '0 4px 12px rgba(37,99,235,0.25)',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <span>Book Remediation Audit &rarr;</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
