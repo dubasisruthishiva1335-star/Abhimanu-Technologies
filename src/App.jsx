@@ -1,329 +1,984 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import * as THREE from 'three';
 
 // --- DATA DEFINITIONS ---
+
 const SERVICES = [
   {
-    id: 'web-development',
-    title: 'Custom Web Applications',
-    tagline: 'High-speed, responsive web platforms built with modern React & Next.js',
-    description: 'We design and engineer bespoke web applications, SaaS dashboards, and e-commerce platforms with optimal performance, responsive mobile-first layouts, and robust security.',
-    deliverables: [
-      'Single Page Apps (SPA) & Multi-Page Web Apps',
-      'Modern SaaS Dashboards & Admin Portals',
-      'SEO-Optimized Next.js Platforms',
-      'REST & GraphQL API Integration'
-    ],
-    tech: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Vite'],
-    badge: 'Popular'
-  },
-  {
     id: 'mobile-apps',
-    title: 'Mobile App Development',
-    tagline: 'Native and cross-platform mobile apps for iOS and Android',
-    description: 'Deliver smooth, responsive, and intuitive mobile experiences on smartphones and tablets. We leverage Flutter and React Native for cost-effective cross-platform launches or native Kotlin for deep device control.',
-    deliverables: [
-      'iOS & Android Cross-Platform Apps',
-      'Native Performance & Hardware Integrations',
-      'Offline-First Architecture & Push Notifications',
-      'App Store & Google Play Publishing'
-    ],
-    tech: ['Flutter', 'React Native', 'Kotlin', 'Swift', 'Firebase'],
-    badge: 'High Demand'
+    title: 'Mobile app development',
+    subtitle: 'Android and iOS apps that feel native and ship from one codebase when that makes sense.',
+    bullets: ['Flutter and React Native', 'Native Android and iOS', 'App store launch'],
+    badge: null
   },
   {
-    id: 'backend-apis',
-    title: 'Backend Systems & APIs',
-    tagline: 'Scalable microservices, high-throughput APIs, and databases',
-    description: 'Power your frontend and mobile clients with secure, lightning-fast backend services. We build microservices, integrate relational and NoSQL databases, and implement caching layers.',
-    deliverables: [
-      'RESTful & GraphQL API Architecture',
-      'Database Modeling (PostgreSQL, MongoDB)',
-      'Secure User Authentication & RBAC',
-      'Third-Party Payment & SMS Gateways'
-    ],
-    tech: ['Node.js', 'Express', 'Python FastAPI', 'PostgreSQL', 'Redis'],
-    badge: 'Core'
+    id: 'web-development',
+    title: 'Web application development',
+    subtitle: 'Fast, secure web platforms, portals and dashboards built to grow with your business.',
+    bullets: ['React, Node.js, Python', 'APIs and integrations', 'Admin dashboards'],
+    badge: null
+  },
+  {
+    id: 'maintenance',
+    title: 'Application maintenance',
+    subtitle: 'Bug fixes, security patches, performance tuning and new features after launch, under a clear service agreement.',
+    bullets: ['Monitoring and alerts', 'Monthly patch cycle', 'Support plans from 8x5 to 24x7'],
+    badge: null
+  },
+  {
+    id: 'it-services',
+    title: 'IT services and consulting',
+    subtitle: 'Architecture reviews, technology selection, system integration and ongoing IT support for your team.',
+    bullets: ['Technical audits', 'System integration', 'Staff augmentation'],
+    badge: null
   },
   {
     id: 'cloud-devops',
-    title: 'Cloud Infrastructure & DevOps',
-    tagline: 'Automated CI/CD pipelines, containerization, and cloud deployment',
-    description: 'Ensure your application is always online, fault-tolerant, and ready for sudden traffic spikes. We configure automated deployment pipelines, Docker containers, and scalable cloud hosting.',
-    deliverables: [
-      'Automated CI/CD Pipelines with GitHub Actions',
-      'Containerization with Docker',
-      'Cloud Hosting Setup on AWS & Vercel',
-      'SSL, Security Hardening & 99.9% Uptime'
-    ],
-    tech: ['AWS', 'Docker', 'Vercel', 'GitHub Actions', 'Linux'],
-    badge: 'DevOps'
+    title: 'Cloud and DevOps',
+    subtitle: 'Hosting, pipelines and infrastructure that deploy safely many times a day and scale on demand.',
+    bullets: ['AWS, Azure, Google Cloud', 'CI/CD automation', 'Cost optimization'],
+    badge: null
   },
   {
-    id: 'ui-ux-design',
-    title: 'UI/UX Design & Prototyping',
-    tagline: 'User-centric product interfaces and interactive Figma prototypes',
-    description: 'Turn your product concept into an intuitive, visually stunning reality. We craft interactive user journeys, wireframes, high-fidelity Figma mockups, and cohesive design systems before coding starts.',
-    deliverables: [
-      'User Journey & Wireframe Architecture',
-      'Interactive, Clickable Figma Prototypes',
-      'Responsive Design Systems & Component Libraries',
-      'Developer-Ready Design Handoff'
-    ],
-    tech: ['Figma', 'Design Systems', 'UX Research', 'Prototyping'],
-    badge: 'Design'
+    id: 'ui-ux',
+    title: 'UI and UX design',
+    subtitle: 'Research-led interface design with prototypes you can click before a line of code is written.',
+    bullets: ['Design systems', 'Interactive prototypes', 'Usability testing'],
+    badge: null
   },
   {
-    id: 'maintenance-support',
-    title: 'Software Maintenance & Upgrades',
-    tagline: 'Continuous monitoring, bug fixing, and legacy code modernization',
-    description: 'Software needs continuous care to stay secure and fast. We provide dedicated monthly maintenance, security patch application, performance tuning, and technical debt cleanup.',
-    deliverables: [
-      'Scheduled Security Updates & Dependency Upgrades',
-      'Database Performance & Query Optimization',
-      'Bug Fixing & 24-Hour Urgent Support SLA',
-      'Legacy Code Refactoring & Modernization'
-    ],
-    tech: ['Code Audits', 'Bug Tracking', 'Performance Tuning', 'SLA Support'],
-    badge: 'Support'
+    id: '3d-animation',
+    title: '3D animation and visuals',
+    subtitle: 'Product renders, explainer animations and interactive 3D for websites and apps, built in-house.',
+    bullets: ['Product visualization', 'WebGL experiences', 'Motion and promo films'],
+    badge: 'NEW'
+  },
+  {
+    id: 'ai-automation',
+    title: 'AI and automation',
+    subtitle: 'Chat assistants, document processing and workflow automation connected to your own data.',
+    bullets: ['Support chatbots', 'Process automation', 'Smart search'],
+    badge: 'NEW'
+  }
+];
+
+const FLIP_CARDS = [
+  {
+    id: 1,
+    frontTitle: 'Product Turntables & 360° Renders',
+    frontDesc: 'Photoreal 360-degree rotation models with physically based materials.',
+    backTitle: 'High-Poly CAD to Realtime',
+    backDesc: 'We ingest SolidWorks, Rhino, and STEP files, optimizing topology and baking realistic textures for instant browser spin.'
+  },
+  {
+    id: 2,
+    frontTitle: 'Explainer & Motion Films',
+    frontDesc: 'Dynamic keyframe camera animations highlighting core product value.',
+    backTitle: 'Cinematic Visuals & Video',
+    backDesc: 'From particle physics to exploded product views, we deliver 4K video for landing pages, investor decks, and ad campaigns.'
+  },
+  {
+    id: 3,
+    frontTitle: 'Interactive WebGL & Three.js',
+    frontDesc: 'Smooth 60 FPS 3D experiences built directly into websites without plugins.',
+    backTitle: 'Zero-Lag Web Performance',
+    backDesc: 'Custom shaders, draco mesh compression, and responsive lighting that run smoothly on every smartphone and laptop.'
+  },
+  {
+    id: 4,
+    frontTitle: 'Interactive Configurators',
+    frontDesc: 'Real-time color, material, and part customizers with live pricing.',
+    backTitle: 'E-Commerce Integration',
+    backDesc: 'Hook 3D variant options directly into Shopify, WooCommerce, or custom cart backends with instant visual feedback.'
+  },
+  {
+    id: 5,
+    frontTitle: 'AR-Ready Spatial Models',
+    frontDesc: 'Augmented reality models ready for instant mobile preview.',
+    backTitle: 'Apple Quick Look & Android AR',
+    backDesc: 'Automated conversion to .USDZ and .GLB for frictionless "View in Your Space" experiences with realistic ground shadows.'
+  },
+  {
+    id: 6,
+    frontTitle: 'Architectural & BIM Visuals',
+    frontDesc: 'Interactive multi-storey building models with layer slicing controls.',
+    backTitle: 'BIM & Structural Cutaways',
+    backDesc: 'Render HVAC ducts, MEP pipes, structural concrete, and exterior glass for client walkthroughs directly in browser.'
+  }
+];
+
+const PIPELINE_STEPS = [
+  { step: '01', title: 'Concept & Storyboard', desc: 'Define visual style, camera choreography, and functional user interaction goals.' },
+  { step: '02', title: '3D Modeling & CAD Clean', desc: 'Sculpt bespoke geometry or retopologize engineering CAD files for optimal fidelity.' },
+  { step: '03', title: 'PBR Shading & Lighting', desc: 'Physically based rendering (roughness, metalness, normal maps) and studio HDR lighting.' },
+  { step: '04', title: 'Rigging & Animation', desc: 'Custom bone rigs, procedural rotations, physics simulations, and exploded animations.' },
+  { step: '05', title: 'WebGL / Video Delivery', desc: 'Deliver production Three.js bundles, compressed .GLB / .USDZ files, or 4K ProRes films.' }
+];
+
+const DELIVERABLE_FORMATS = [
+  'GLTF / GLB (WebGL Web Ready)',
+  'USDZ (Apple iOS AR Quick Look)',
+  '4K ProRes & MP4 Video',
+  'Three.js / React Three Fiber Code',
+  'FBX & OBJ Raw Assets',
+  'Lottie 3D & WebP Animations'
+];
+
+const INDUSTRY_SOLUTIONS = [
+  {
+    title: 'Project and schedule apps',
+    desc: 'Dashboards for tasks, milestones, resources and approvals that stay in step with your planning tools.',
+    bullets: ['Progress and delay tracking', 'Role-based approvals', 'Owner and client portals']
+  },
+  {
+    title: 'BIM and 3D model viewers',
+    desc: 'Let clients and site teams open, slice and comment on a model in any browser, with nothing to install.',
+    bullets: ['Layer and floor controls', 'Pinned comments and issues', 'Model and drawing versions']
+  },
+  {
+    title: 'Site progress and inspection apps',
+    desc: 'Mobile apps for engineers on site: checklists, photos, measurements and snag lists that work offline.',
+    bullets: ['Offline data capture', 'Photo and location tagging', 'Daily and weekly reports']
+  },
+  {
+    title: 'Quantity and cost tools',
+    desc: 'Bills of quantities, estimates and purchase tracking in one place, ready to export to the spreadsheets your team already uses.',
+    bullets: ['BOQ and estimate builders', 'Vendor and purchase tracking', 'Budget versus actual']
+  }
+];
+
+const INDUSTRY_COMPANIES = [
+  'Architecture firms', 'Civil and infrastructure', 'Structural consultants',
+  'Mechanical and industrial', 'MEP contractors', 'EPC and plant engineering',
+  'Surveying and GIS', 'Real estate developers'
+];
+
+const INDUSTRY_TOOLS = [
+  'AutoCAD', 'Revit', 'Civil 3D', 'STAAD.Pro', 'ETABS', 'Tekla',
+  'Navisworks', 'SolidWorks', 'Primavera P6', 'MS Project', 'Excel', 'ArcGIS'
+];
+
+const SAMPLE_CONCEPTS = [
+  {
+    title: 'BIM Cloud Collaborator',
+    tag: 'AEC & Construction',
+    desc: 'Browser-based 3D architectural viewer with live clash detection and multi-user issue pinning.'
+  },
+  {
+    title: 'Fleet & Route Telematics',
+    tag: 'Logistics',
+    desc: 'Real-time GPS tracking dashboard with geofencing, driver fatigue alerts, and automated trip logs.'
+  },
+  {
+    title: 'FieldOps Snag Inspection',
+    tag: 'Site Engineering',
+    desc: 'Offline-first tablet app for civil site engineers with voice memos, photo markup, and automated BOQ sync.'
+  },
+  {
+    title: '3D Product Customizer',
+    tag: 'E-Commerce',
+    desc: 'Photorealistic WebGL configurator allowing shoppers to personalize colors, finishes, and order in AR.'
+  },
+  {
+    title: 'Tele-Health Clinic Portal',
+    tag: 'Healthcare',
+    desc: 'HIPAA-compliant web platform for encrypted video consults, prescription routing, and patient records.'
+  },
+  {
+    title: 'FinTech Micro-Lending Hub',
+    tag: 'Finance',
+    desc: 'Instant KYC verification, credit scoring algorithms, and automated disbursal rails via UPI and netbanking.'
   }
 ];
 
 const PROCESS_STEPS = [
   {
-    step: '01',
-    title: 'Discovery & Scope Definition',
-    duration: 'Days 1 – 3',
-    description: 'We meet to understand your goals, target audience, core feature requirements, and timeline. We prepare a crystal-clear Scope of Work (SOW) with fixed milestones and transparent deliverables.'
+    step: 'STEP 1',
+    title: 'Discover',
+    desc: 'We learn your goals, users and systems, then agree scope, timeline and budget in writing.'
   },
   {
-    step: '02',
-    title: 'UI/UX Design & Architecture',
-    duration: 'Week 1',
-    description: 'Our design and engineering team crafts clickable Figma prototypes and defines the database schemas, API contracts, and technology stack so you can visualize the exact product.'
+    step: 'STEP 2',
+    title: 'Design',
+    desc: 'Interface prototypes and architecture you can review and change before development starts.'
   },
   {
-    step: '03',
-    title: 'Agile Sprint Development',
-    duration: 'Weeks 2 – 5',
-    description: 'We write clean, modular, and tested code in 2-week agile sprints. You receive weekly demo builds on private staging environments so you can test features and provide immediate feedback.'
+    step: 'STEP 3',
+    title: 'Develop',
+    desc: 'Two-week sprints with a working demo at the end of each one and automated testing throughout.'
   },
   {
-    step: '04',
-    title: 'QA Testing, Launch & Handover',
-    duration: 'Week 6+',
-    description: 'After rigorous cross-device QA, security audits, and speed optimizations, we deploy your project to production. You receive 100% source code ownership, credentials, and post-launch warranty.'
+    step: 'STEP 4',
+    title: 'Launch and maintain',
+    desc: 'Release, monitor and keep improving, with a support plan that matches how critical your app is.'
   }
 ];
 
-const TECH_CATEGORIES = [
+const SUPPORT_PLANS = [
   {
-    category: 'Frontend & UI',
-    technologies: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Vite', 'HTML5/CSS3', 'Figma']
+    name: 'Essential',
+    response: 'Next business day',
+    responseLabel: 'RESPONSE TIME',
+    features: [
+      'Bug fixes and small changes',
+      'Monthly security patching',
+      'Uptime monitoring',
+      'Email support, Mon to Fri'
+    ],
+    buttonText: 'Ask about Essential',
+    isPopular: false
   },
   {
-    category: 'Backend & APIs',
-    technologies: ['Node.js', 'Express', 'Python FastAPI', 'Django', 'REST APIs', 'GraphQL']
+    name: 'Growth',
+    response: 'Within 4 hours',
+    responseLabel: 'RESPONSE TIME',
+    badge: 'MOST CHOSEN',
+    features: [
+      'Everything in Essential',
+      'Monthly hours for new features',
+      'Performance and cost reviews',
+      'Extended support hours',
+      'Monthly health report'
+    ],
+    buttonText: 'Ask about Growth',
+    isPopular: true
   },
   {
-    category: 'Mobile Development',
-    technologies: ['Flutter', 'React Native', 'Android (Kotlin)', 'iOS (Swift)']
-  },
-  {
-    category: 'Databases & Cloud',
-    technologies: ['PostgreSQL', 'MongoDB', 'Redis', 'AWS', 'Docker', 'Vercel', 'GitHub Actions']
+    name: 'Enterprise',
+    response: 'Within 1 hour',
+    responseLabel: 'CRITICAL ISSUES, 24 × 7',
+    features: [
+      'Dedicated support engineers',
+      '24 × 7 on-call coverage',
+      'Quarterly roadmap planning',
+      'Disaster recovery drills'
+    ],
+    buttonText: 'Ask about Enterprise',
+    isPopular: false
   }
 ];
 
 const FAQS = [
   {
-    question: 'How quickly can Abhimanyu Technologies begin our project?',
-    answer: 'We can typically kick off the discovery and scoping session within 24 to 48 hours of our initial consultation call. For straightforward projects, development starts immediately after scope sign-off.'
+    q: 'Who owns the source code?',
+    a: 'You do. At the end of the project we hand over the full source code, documentation and access to every account we set up for you.'
   },
   {
-    question: 'Do we own 100% of the source code and intellectual property?',
-    answer: 'Yes, absolutely. Upon completion of project milestones, you retain 100% intellectual property ownership of all source code, Figma design assets, database schemas, and documentation with zero vendor lock-in.'
+    q: 'Can you take over an app someone else built?',
+    a: 'Yes. We start with a short technical audit of the code, hosting and security, then give you a plan to stabilize it and a support plan to keep it healthy.'
   },
   {
-    question: 'How do you handle project pricing and payments?',
-    answer: 'We offer two transparent models: (1) Fixed-Price Milestone Contracts for projects with clearly defined scopes, and (2) Dedicated Monthly Sprints for evolving products and startups. Payments are tied to approved deliverables.'
+    q: 'Do you work on fixed price or monthly teams?',
+    a: 'Both. Clear scopes suit a fixed price. Evolving products usually work better with a monthly team that you can grow or shrink.'
   },
   {
-    question: 'Can you sign a Non-Disclosure Agreement (NDA) before we discuss details?',
-    answer: 'Yes. We treat all client ideas and trade secrets with strict confidentiality. We are pleased to execute our mutual NDA or review and sign your company’s standard agreement prior to our first detailed call.'
+    q: 'What do your 3D projects include?',
+    a: 'Modeling, texturing, lighting, animation and rendering for videos and images, plus real-time 3D that runs inside websites and apps.'
   },
   {
-    question: 'Do you provide maintenance and support after launch?',
-    answer: 'Yes. Every project includes a 30-day complimentary post-launch bug-fix warranty. After that, we offer affordable monthly SLA maintenance packages for updates, monitoring, and continuous feature additions.'
+    q: 'How do we stay in touch during a project?',
+    a: 'You get a shared board, a demo every two weeks and a single point of contact who answers within one working day.'
   }
 ];
 
+// --- THREE.JS 3D HERO CANVAS (CHAKRA - 6 RINGS) ---
+function ChakraCanvas() {
+  const mountRef = useRef(null);
+
+  useEffect(() => {
+    const container = mountRef.current;
+    if (!container) return;
+
+    const width = container.clientWidth || 360;
+    const height = container.clientHeight || 360;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.z = 8.5;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Group for the 6 concentric chakra rings
+    const chakraGroup = new THREE.Group();
+    scene.add(chakraGroup);
+
+    const rings = [];
+    const ringCount = 6;
+    const ringColors = [0x2563eb, 0x0ea5e9, 0x06b6d4, 0x10b981, 0x8b5cf6, 0xd97706];
+
+    for (let i = 0; i < ringCount; i++) {
+      const radius = 1.0 + i * 0.45;
+      const tube = 0.035 + (i % 2 === 0 ? 0.015 : 0.005);
+      const geometry = new THREE.TorusGeometry(radius, tube, 16, 64);
+      const material = new THREE.MeshStandardMaterial({
+        color: ringColors[i % ringColors.length],
+        metalness: 0.6,
+        roughness: 0.2,
+        wireframe: i === 1 || i === 4
+      });
+      const ringMesh = new THREE.Mesh(geometry, material);
+      ringMesh.rotation.x = (i * Math.PI) / 6;
+      ringMesh.rotation.y = (i * Math.PI) / 8;
+      chakraGroup.add(ringMesh);
+      rings.push(ringMesh);
+
+      // Add orbiting spoke satellites on alternate rings
+      if (i % 2 === 0) {
+        const spokeGeom = new THREE.SphereGeometry(0.08, 12, 12);
+        const spokeMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+        const spoke = new THREE.Mesh(spokeGeom, spokeMat);
+        spoke.position.x = radius;
+        ringMesh.add(spoke);
+      }
+    }
+
+    // Central glowing core orb
+    const coreGeom = new THREE.IcosahedronGeometry(0.45, 2);
+    const coreMat = new THREE.MeshStandardMaterial({
+      color: 0x2563eb,
+      emissive: 0x1d4ed8,
+      roughness: 0.1,
+      metalness: 0.8
+    });
+    const coreMesh = new THREE.Mesh(coreGeom, coreMat);
+    chakraGroup.add(coreMesh);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    scene.add(ambientLight);
+
+    const pointLight1 = new THREE.PointLight(0x38bdf8, 2, 20);
+    pointLight1.position.set(5, 5, 5);
+    scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0x818cf8, 1.5, 20);
+    pointLight2.position.set(-5, -5, 3);
+    scene.add(pointLight2);
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    const onPointerMove = (e) => {
+      const rect = container.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      targetX = x * 1.5;
+      targetY = y * 1.5;
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+
+    let animationFrameId;
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+
+      // Smooth mouse steering
+      mouseX += (targetX - mouseX) * 0.05;
+      mouseY += (targetY - mouseY) * 0.05;
+
+      chakraGroup.rotation.y += 0.008;
+      chakraGroup.rotation.x = mouseY;
+      chakraGroup.rotation.z = mouseX;
+
+      rings.forEach((ring, idx) => {
+        const speed = (idx + 1) * 0.003 * (idx % 2 === 0 ? 1 : -1);
+        ring.rotation.z += speed;
+      });
+
+      coreMesh.rotation.y -= 0.015;
+      coreMesh.rotation.x += 0.01;
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    const handleResize = () => {
+      if (!container) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('resize', handleResize);
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+    };
+  }, []);
+
+  return (
+    <div style={styles.chakraContainer}>
+      <div style={styles.chakraHeaderBadge}>
+        <span>CHAKRA · 6 RINGS · LIVE 3D</span>
+        <span style={styles.steerPill}>MOVE TO STEER</span>
+      </div>
+      <div ref={mountRef} style={styles.canvasMount} />
+    </div>
+  );
+}
+
+// --- THREE.JS 3D STUDIO CANVAS (SHAPES, MATERIALS, LIGHTS) ---
+function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle, autoRotate }) {
+  const mountRef = useRef(null);
+  const meshRef = useRef(null);
+  const dirLightRef = useRef(null);
+  const isDraggingRef = useRef(false);
+  const prevMousePos = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const container = mountRef.current;
+    if (!container) return;
+
+    const width = container.clientWidth || 400;
+    const height = container.clientHeight || 360;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.z = 4.8;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Create Geometry based on selected shape
+    let geom;
+    if (shape === 'torus') {
+      geom = new THREE.TorusGeometry(1.2, 0.45, 32, 64);
+    } else if (shape === 'knot') {
+      geom = new THREE.TorusKnotGeometry(0.9, 0.3, 80, 16);
+    } else if (shape === 'chakra') {
+      geom = new THREE.RingGeometry(0.6, 1.4, 32, 8);
+    } else if (shape === 'cube') {
+      geom = new THREE.BoxGeometry(1.6, 1.6, 1.6);
+    } else if (shape === 'sphere') {
+      geom = new THREE.SphereGeometry(1.25, 36, 36);
+    } else {
+      // diamond / octahedron
+      geom = new THREE.OctahedronGeometry(1.4, 0);
+    }
+
+    // Material selection
+    let mat;
+    const colorNum = parseInt(colorHex.replace('#', '0x'), 16);
+    if (materialType === 'wireframe') {
+      mat = new THREE.MeshBasicMaterial({ color: colorNum, wireframe: true });
+    } else if (materialType === 'glossy') {
+      mat = new THREE.MeshStandardMaterial({
+        color: colorNum,
+        roughness: 0.1,
+        metalness: 0.1
+      });
+    } else if (materialType === 'metallic') {
+      mat = new THREE.MeshStandardMaterial({
+        color: colorNum,
+        roughness: 0.2,
+        metalness: 0.95
+      });
+    } else {
+      // Glass / Iridescent
+      mat = new THREE.MeshPhysicalMaterial ? new THREE.MeshPhysicalMaterial({
+        color: colorNum,
+        roughness: 0.15,
+        transmission: 0.8,
+        thickness: 1.2,
+        transparent: true,
+        opacity: 0.85
+      }) : new THREE.MeshStandardMaterial({
+        color: colorNum,
+        roughness: 0.2,
+        metalness: 0.5,
+        transparent: true,
+        opacity: 0.8
+      });
+    }
+
+    const mesh = new THREE.Mesh(geom, mat);
+    scene.add(mesh);
+    meshRef.current = mesh;
+
+    // Lighting
+    const ambLight = new THREE.AmbientLight(0xffffff, 1.1);
+    scene.add(ambLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    const rad = (lightAngle * Math.PI) / 180;
+    dirLight.position.set(Math.cos(rad) * 6, 4, Math.sin(rad) * 6);
+    scene.add(dirLight);
+    dirLightRef.current = dirLight;
+
+    // Mouse drag handlers
+    const onMouseDown = (e) => {
+      isDraggingRef.current = true;
+      prevMousePos.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const onMouseMove = (e) => {
+      if (!isDraggingRef.current || !meshRef.current) return;
+      const dx = e.clientX - prevMousePos.current.x;
+      const dy = e.clientY - prevMousePos.current.y;
+      meshRef.current.rotation.y += dx * 0.01;
+      meshRef.current.rotation.x += dy * 0.01;
+      prevMousePos.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const onMouseUp = () => {
+      isDraggingRef.current = false;
+    };
+
+    container.addEventListener('pointerdown', onMouseDown);
+    window.addEventListener('pointermove', onMouseMove);
+    window.addEventListener('pointerup', onMouseUp);
+
+    let animId;
+    const animate = () => {
+      animId = requestAnimationFrame(animate);
+      if (meshRef.current && autoRotate && !isDraggingRef.current) {
+        meshRef.current.rotation.y += 0.01 * rotationSpeed;
+        meshRef.current.rotation.x += 0.005 * rotationSpeed;
+      }
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    const onResize = () => {
+      if (!container) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      container.removeEventListener('pointerdown', onMouseDown);
+      window.removeEventListener('pointermove', onMouseMove);
+      window.removeEventListener('pointerup', onMouseUp);
+      window.removeEventListener('resize', onResize);
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+      geom.dispose();
+      mat.dispose();
+    };
+  }, [shape, materialType, colorHex, rotationSpeed, lightAngle, autoRotate]);
+
+  return (
+    <div style={styles.studioCanvasBox}>
+      <div style={styles.studioCanvasBadgeRow}>
+        <span style={styles.webglTag}>REAL-TIME WEBGL</span>
+        <span style={styles.dragTag}>DRAG TO ROTATE</span>
+      </div>
+      <div ref={mountRef} style={styles.canvasMount} />
+    </div>
+  );
+}
+
+// --- THREE.JS 3D BUILDING VIEWER (INDUSTRIES SECTION) ---
+function BuildingCanvas({ storeys, explodePercent, showStructure, showServices, showFacade, autoRotate }) {
+  const mountRef = useRef(null);
+  const buildingGroupRef = useRef(null);
+  const isDraggingRef = useRef(false);
+  const prevMousePos = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const container = mountRef.current;
+    if (!container) return;
+
+    const width = container.clientWidth || 400;
+    const height = container.clientHeight || 420;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.set(6, 7, 9);
+    camera.lookAt(0, storeys * 0.25, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const buildingGroup = new THREE.Group();
+    scene.add(buildingGroup);
+    buildingGroupRef.current = buildingGroup;
+
+    // Materials
+    const slabMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.6, metalness: 0.1 });
+    const colMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.4 });
+    const serviceMat = new THREE.MeshStandardMaterial({ color: 0x0ea5e9, roughness: 0.3, metalness: 0.5 });
+    const ductMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3 });
+    const facadeMat = new THREE.MeshPhysicalMaterial ? new THREE.MeshPhysicalMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.35,
+      roughness: 0.1,
+      metalness: 0.2
+    }) : new THREE.MeshStandardMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.35
+    });
+
+    const floorHeight = 0.5;
+    const explodeOffset = (explodePercent / 100) * 0.8;
+
+    for (let f = 0; f < storeys; f++) {
+      const floorY = f * (floorHeight + explodeOffset);
+      const floorGroup = new THREE.Group();
+      floorGroup.position.y = floorY;
+
+      // 1. Structure (Slab + 4 Columns)
+      if (showStructure) {
+        // Floor slab
+        const slabGeom = new THREE.BoxGeometry(3.2, 0.08, 3.2);
+        const slab = new THREE.Mesh(slabGeom, slabMat);
+        floorGroup.add(slab);
+
+        // 4 Columns
+        const colGeom = new THREE.CylinderGeometry(0.06, 0.06, floorHeight, 8);
+        const colOffsets = [
+          [-1.3, -1.3], [1.3, -1.3], [-1.3, 1.3], [1.3, 1.3]
+        ];
+        colOffsets.forEach(([cx, cz]) => {
+          const col = new THREE.Mesh(colGeom, colMat);
+          col.position.set(cx, floorHeight / 2, cz);
+          floorGroup.add(col);
+        });
+      }
+
+      // 2. Services (Ducts & Pipes)
+      if (showServices) {
+        const pipeGeom = new THREE.CylinderGeometry(0.04, 0.04, 2.8, 8);
+        const pipe = new THREE.Mesh(pipeGeom, serviceMat);
+        pipe.rotation.z = Math.PI / 2;
+        pipe.position.set(0, floorHeight * 0.75, 0.5);
+        floorGroup.add(pipe);
+
+        const ductGeom = new THREE.BoxGeometry(0.25, 0.12, 2.4);
+        const duct = new THREE.Mesh(ductGeom, ductMat);
+        duct.position.set(-0.4, floorHeight * 0.8, 0);
+        floorGroup.add(duct);
+      }
+
+      // 3. Facade Glazing
+      if (showFacade) {
+        const facadeGeom = new THREE.BoxGeometry(3.3, floorHeight, 3.3);
+        const facade = new THREE.Mesh(facadeGeom, facadeMat);
+        facade.position.set(0, floorHeight / 2, 0);
+        floorGroup.add(facade);
+      }
+
+      buildingGroup.add(floorGroup);
+    }
+
+    // Ground plane
+    const groundGeom = new THREE.PlaneGeometry(16, 16);
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9 });
+    const ground = new THREE.Mesh(groundGeom, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.1;
+    scene.add(ground);
+
+    // Grid helper
+    const grid = new THREE.GridHelper(12, 12, 0x38bdf8, 0x1e293b);
+    grid.position.y = -0.05;
+    scene.add(grid);
+
+    // Lights
+    const amb = new THREE.AmbientLight(0xffffff, 1.2);
+    scene.add(amb);
+
+    const sun = new THREE.DirectionalLight(0xffffff, 2.5);
+    sun.position.set(8, 12, 6);
+    scene.add(sun);
+
+    const fill = new THREE.PointLight(0x38bdf8, 1.5, 20);
+    fill.position.set(-6, 4, -4);
+    scene.add(fill);
+
+    // Mouse drag controls
+    const onMouseDown = (e) => {
+      isDraggingRef.current = true;
+      prevMousePos.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const onMouseMove = (e) => {
+      if (!isDraggingRef.current || !buildingGroupRef.current) return;
+      const dx = e.clientX - prevMousePos.current.x;
+      const dy = e.clientY - prevMousePos.current.y;
+      buildingGroupRef.current.rotation.y += dx * 0.01;
+      camera.position.y = Math.max(2, Math.min(18, camera.position.y - dy * 0.03));
+      prevMousePos.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const onMouseUp = () => {
+      isDraggingRef.current = false;
+    };
+
+    container.addEventListener('pointerdown', onMouseDown);
+    window.addEventListener('pointermove', onMouseMove);
+    window.addEventListener('pointerup', onMouseUp);
+
+    let animId;
+    const animate = () => {
+      animId = requestAnimationFrame(animate);
+      if (buildingGroupRef.current && autoRotate && !isDraggingRef.current) {
+        buildingGroupRef.current.rotation.y += 0.005;
+      }
+      camera.lookAt(0, (storeys * floorHeight) / 2, 0);
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    const onResize = () => {
+      if (!container) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      container.removeEventListener('pointerdown', onMouseDown);
+      window.removeEventListener('pointermove', onMouseMove);
+      window.removeEventListener('pointerup', onMouseUp);
+      window.removeEventListener('resize', onResize);
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+    };
+  }, [storeys, explodePercent, showStructure, showServices, showFacade, autoRotate]);
+
+  return (
+    <div style={styles.buildingViewerBox}>
+      <div style={styles.studioCanvasBadgeRow}>
+        <span style={styles.webglTag}>WEB BUILDING VIEWER · DEMO</span>
+        <span style={styles.dragTag}>DRAG TO ROTATE</span>
+      </div>
+      <div ref={mountRef} style={styles.canvasMountTall} />
+    </div>
+  );
+}
+
+// --- MAIN APP COMPONENT ---
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState('web-development');
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
-  // Form State
-  const [formData, setFormData] = useState({
+  // 3D Studio State
+  const [studioShape, setStudioShape] = useState('torus');
+  const [studioMaterial, setStudioMaterial] = useState('glossy');
+  const [studioColor, setStudioColor] = useState('#2563EB');
+  const [studioRotationSpeed, setStudioRotationSpeed] = useState(1.0);
+  const [studioLightAngle, setStudioLightAngle] = useState(40);
+  const [studioAutoRotate, setStudioAutoRotate] = useState(true);
+
+  // Building Viewer State
+  const [buildingStoreys, setBuildingStoreys] = useState(10);
+  const [buildingExplode, setBuildingExplode] = useState(0);
+  const [layerStructure, setLayerStructure] = useState(true);
+  const [layerServices, setLayerServices] = useState(true);
+  const [layerFacade, setLayerFacade] = useState(true);
+  const [buildingAutoRotate, setBuildingAutoRotate] = useState(true);
+
+  // Application Interactive Showcase State
+  const [activeAppCategory, setActiveAppCategory] = useState('E-commerce and marketplaces');
+  const [supportChatMessages, setSupportChatMessages] = useState([
+    { sender: 'user', text: 'Hi, where is my order?' },
+    { sender: 'bot', text: 'Order #4820 is out for delivery and arrives by 6 pm.' },
+    { sender: 'user', text: 'Great, thank you!' },
+    { sender: 'bot', text: 'Anything else I can help with?' }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+
+  // Selected Work Ring Carousel State
+  const [ringIndex, setRingIndex] = useState(0);
+  const [ringAutoTurn, setRingAutoTurn] = useState(true);
+
+  // Estimator State
+  const [estBuildingType, setEstBuildingType] = useState('Web application development');
+  const [estFeatures, setEstFeatures] = useState({
+    auth: true,
+    payments: true,
+    realtime: false,
+    threeD: false,
+    admin: true,
+    offline: false,
+    ai: false
+  });
+  const [estComplexity, setEstComplexity] = useState('Standard');
+
+  // Contact Form State
+  const [contactData, setContactData] = useState({
     name: '',
     email: '',
     phone: '',
-    service: 'Custom Web Applications',
-    budget: '$1,000 – $5,000 (₹75k – ₹4L)',
-    message: ''
+    serviceNeed: 'Web application development',
+    details: ''
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
+  const [contactSubmitted, setContactSubmitted] = useState(false);
 
-  // Quick Quote Modal Form State
-  const [quoteData, setQuoteData] = useState({
-    name: '',
-    contact: '',
-    projectScope: 'Custom Web Application',
-    note: ''
-  });
-  const [quoteSubmitted, setQuoteSubmitted] = useState(false);
-
-  // Smooth scroll helper
-  const scrollToSection = (e, id) => {
+  // Smooth scroll
+  const scrollTo = (e, id) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    const elem = document.getElementById(id);
+    if (elem) elem.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  // Ring Auto-turn effect
+  useEffect(() => {
+    if (!ringAutoTurn) return;
+    const interval = setInterval(() => {
+      setRingIndex((prev) => (prev + 1) % SAMPLE_CONCEPTS.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [ringAutoTurn]);
+
+  // Estimator Calculations
+  const calcTimelineWeeks = () => {
+    let base = 4;
+    if (estBuildingType.includes('3D') || estBuildingType.includes('visuals')) base += 3;
+    if (estBuildingType.includes('Mobile')) base += 2;
+    if (estBuildingType.includes('Enterprise')) base += 4;
+
+    const featureCount = Object.values(estFeatures).filter(Boolean).length;
+    base += featureCount * 0.8;
+
+    if (estComplexity === 'Complex') base *= 1.3;
+    if (estComplexity === 'High Performance') base *= 1.6;
+
+    const minW = Math.round(base);
+    const maxW = Math.round(base * 1.35);
+    return `${minW} to ${maxW} weeks`;
   };
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
-      alert('Please fill in your name, email, and project message.');
-      return;
-    }
-
-    setFormLoading(true);
-    setTimeout(() => {
-      setFormLoading(false);
-      setFormSubmitted(true);
-    }, 600);
+  const calcSuggestedTeam = () => {
+    let roles = ['1 Lead Architect', '2 Full-Stack Engineers'];
+    if (estFeatures.threeD) roles.push('1 3D / WebGL Specialist');
+    if (estFeatures.ai) roles.push('1 AI & Data Engineer');
+    roles.push('1 UI/UX Designer', '1 QA Engineer');
+    return roles.join(' · ');
   };
 
-  const handleQuoteSubmit = (e) => {
-    e.preventDefault();
-    if (!quoteData.name || !quoteData.contact) {
-      alert('Please provide your name and contact details.');
-      return;
-    }
-    setQuoteSubmitted(true);
-    setTimeout(() => {
-      setQuoteModalOpen(false);
-      setQuoteSubmitted(false);
-      setQuoteData({ name: '', contact: '', projectScope: 'Custom Web Application', note: '' });
-      alert('Thank you! Our engineering lead will reach out to you within 24 hours.');
-    }, 1800);
-  };
-
-  const selectServiceForInquiry = (serviceTitle) => {
-    setFormData((prev) => ({ ...prev, service: serviceTitle }));
+  const handleSendEstimateToContact = () => {
+    const summary = `Selected Building: ${estBuildingType} | Complexity: ${estComplexity} | Features: ${Object.keys(estFeatures).filter((k) => estFeatures[k]).join(', ')} | Timeline: ${calcTimelineWeeks()}`;
+    setContactData((prev) => ({
+      ...prev,
+      serviceNeed: estBuildingType,
+      details: `Project Estimate Summary:\n${summary}\n\nAdditional notes:`
+    }));
     const contactElem = document.getElementById('contact');
-    if (contactElem) {
-      contactElem.scrollIntoView({ behavior: 'smooth' });
+    if (contactElem) contactElem.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleChatSend = (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    const newMsg = { sender: 'user', text: chatInput };
+    setSupportChatMessages((prev) => [...prev, newMsg]);
+    setChatInput('');
+    setTimeout(() => {
+      setSupportChatMessages((prev) => [
+        ...prev,
+        { sender: 'bot', text: 'Thank you! An engineer will be with you shortly.' }
+      ]);
+    }, 900);
+  };
+
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    if (!contactData.name || !contactData.email || !contactData.details) {
+      alert('Please fill out your name, email, and project details.');
+      return;
     }
+    setContactSubmitted(true);
   };
 
   return (
-    <div style={styles.pageWrapper}>
-      {/* --- TOP ANNOUNCEMENT BANNER --- */}
-      <div style={styles.topBanner}>
+    <div style={styles.page}>
+      {/* --- TOP UTILITY BAR --- */}
+      <div style={styles.utilityBar}>
         <div style={styles.container}>
-          <div style={styles.topBannerContent}>
-            <span>🚀 <strong>Now Accepting Projects:</strong> Partner with Abhimanyu Technologies to build your web or mobile app.</span>
-            <a
-              href="#contact"
-              onClick={(e) => scrollToSection(e, 'contact')}
-              style={styles.topBannerLink}
-            >
-              Get Free Estimate &rarr;
-            </a>
+          <div style={styles.utilityContent}>
+            <span>APPS · MAINTENANCE · IT SERVICES · 3D ANIMATION</span>
+            <span style={styles.utilityRight}>
+              Office: Telangana, India • Available for Global Engagements
+            </span>
           </div>
         </div>
       </div>
 
-      {/* --- SITE HEADER & NAVBAR --- */}
-      <header style={styles.header}>
+      {/* --- HEADER NAVIGATION --- */}
+      <header style={styles.navHeader}>
         <div style={styles.headerContainer}>
-          {/* Brand Logo */}
-          <a href="#" style={styles.brandLogo} onClick={(e) => scrollToSection(e, 'top')}>
-            <div style={styles.brandIconBox}>
-              <span style={styles.brandIconText}>AT</span>
-            </div>
-            <div style={styles.brandTextWrapper}>
-              <span style={styles.brandTitle}>Abhimanyu Technologies</span>
-              <span style={styles.brandSubtitle}>Software Engineering Startup</span>
-            </div>
+          <a href="#top" onClick={(e) => scrollTo(e, 'top')} style={styles.brandLink}>
+            <span style={styles.brandMain}>Abhimanyu</span>
+            <span style={styles.brandSub}>TECHNOLOGIES</span>
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="desktop-nav" style={styles.desktopNav}>
-            <a href="#services" onClick={(e) => scrollToSection(e, 'services')} style={styles.navLink}>Services</a>
-            <a href="#why-us" onClick={(e) => scrollToSection(e, 'why-us')} style={styles.navLink}>Why Us</a>
-            <a href="#process" onClick={(e) => scrollToSection(e, 'process')} style={styles.navLink}>How We Work</a>
-            <a href="#tech-stack" onClick={(e) => scrollToSection(e, 'tech-stack')} style={styles.navLink}>Tech Stack</a>
-            <a href="#about" onClick={(e) => scrollToSection(e, 'about')} style={styles.navLink}>About</a>
-            <a href="#faq" onClick={(e) => scrollToSection(e, 'faq')} style={styles.navLink}>FAQ</a>
-            <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} style={styles.navLink}>Contact</a>
+          <nav className="desktop-nav" style={styles.navLinks}>
+            <a href="#services" onClick={(e) => scrollTo(e, 'services')} style={styles.navItem}>Services</a>
+            <a href="#studio" onClick={(e) => scrollTo(e, 'studio')} style={styles.navItem}>3D Studio</a>
+            <a href="#industries" onClick={(e) => scrollTo(e, 'industries')} style={styles.navItem}>Industries</a>
+            <a href="#work" onClick={(e) => scrollTo(e, 'work')} style={styles.navItem}>Work</a>
+            <a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.navItem}>Estimator</a>
+            <a href="#support" onClick={(e) => scrollTo(e, 'support')} style={styles.navItem}>Support</a>
+            <a href="#faq" onClick={(e) => scrollTo(e, 'faq')} style={styles.navItem}>FAQ</a>
           </nav>
 
-          {/* Header Action Button */}
-          <div style={styles.headerCtaWrapper}>
-            <button
-              onClick={() => setQuoteModalOpen(true)}
-              style={styles.primaryBtnSmall}
-            >
-              Get a Quote
-            </button>
-            {/* Mobile Hamburger Toggle */}
+          <div style={styles.headerActions}>
+            <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} style={styles.quoteBtn}>
+              Get a quote
+            </a>
             <button
               className="mobile-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              style={styles.mobileMenuToggle}
-              aria-label="Toggle navigation menu"
+              style={styles.mobileHamburger}
+              aria-label="Toggle menu"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                {mobileMenuOpen ? (
-                  <path d="M18 6L6 18M6 6l12 12" />
-                ) : (
-                  <path d="M4 6h16M4 12h16M4 18h16" />
-                )}
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                {mobileMenuOpen ? <path d="M18 6L6 18M6 6l12 12" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
               </svg>
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div style={styles.mobileNavDrawer}>
-            <a href="#services" onClick={(e) => scrollToSection(e, 'services')} style={styles.mobileNavLink}>Services</a>
-            <a href="#why-us" onClick={(e) => scrollToSection(e, 'why-us')} style={styles.mobileNavLink}>Why Us</a>
-            <a href="#process" onClick={(e) => scrollToSection(e, 'process')} style={styles.mobileNavLink}>How We Work</a>
-            <a href="#tech-stack" onClick={(e) => scrollToSection(e, 'tech-stack')} style={styles.mobileNavLink}>Tech Stack</a>
-            <a href="#about" onClick={(e) => scrollToSection(e, 'about')} style={styles.mobileNavLink}>About</a>
-            <a href="#faq" onClick={(e) => scrollToSection(e, 'faq')} style={styles.mobileNavLink}>FAQ</a>
-            <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} style={styles.mobileNavLink}>Contact</a>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setQuoteModalOpen(true);
-              }}
-              style={styles.mobileCtaBtn}
-            >
-              Request a Free Quote
-            </button>
+          <div style={styles.mobileMenu}>
+            <a href="#services" onClick={(e) => scrollTo(e, 'services')} style={styles.mobileMenuItem}>Services</a>
+            <a href="#studio" onClick={(e) => scrollTo(e, 'studio')} style={styles.mobileMenuItem}>3D Studio</a>
+            <a href="#industries" onClick={(e) => scrollTo(e, 'industries')} style={styles.mobileMenuItem}>Industries</a>
+            <a href="#work" onClick={(e) => scrollTo(e, 'work')} style={styles.mobileMenuItem}>Work</a>
+            <a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.mobileMenuItem}>Estimator</a>
+            <a href="#support" onClick={(e) => scrollTo(e, 'support')} style={styles.mobileMenuItem}>Support</a>
+            <a href="#faq" onClick={(e) => scrollTo(e, 'faq')} style={styles.mobileMenuItem}>FAQ</a>
+            <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} style={styles.mobileQuoteBtn}>Get a quote</a>
           </div>
         )}
       </header>
@@ -331,128 +986,825 @@ export default function App() {
       {/* --- HERO SECTION --- */}
       <section id="top" style={styles.heroSection}>
         <div style={styles.container}>
-          <div style={styles.heroContent}>
-            <div style={styles.heroBadge}>
-              <span style={styles.heroBadgeDot}></span>
-              <span>Software Engineering & Digital Solutions Studio</span>
+          <div className="hero-grid" style={styles.heroGrid}>
+            <div style={styles.heroTextCol}>
+              <div style={styles.heroOverline}>
+                APPS · MAINTENANCE · IT SERVICES · 3D
+              </div>
+
+              <h1 className="hero-title" style={styles.heroTitle}>
+                We <em>build</em> your applications, keep them running and bring them to life in 3D.
+              </h1>
+
+              <p className="hero-subtitle" style={styles.heroSubtitle}>
+                Abhimanyu Technologies is a software company for businesses that want dependable apps and standout visuals. We design and develop web and mobile applications, maintain them after launch, deliver IT services, and create 3D animation and interactive 3D experiences.
+              </p>
+
+              <div style={styles.heroCtaRow}>
+                <a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.primaryCta}>
+                  Estimate your project
+                </a>
+                <a href="#studio" onClick={(e) => scrollTo(e, 'studio')} style={styles.secondaryCta}>
+                  Try the 3D Studio
+                </a>
+              </div>
+
+              <div style={styles.heroPillRow}>
+                {['Web apps', 'Mobile apps', 'Cloud', 'UI/UX', '3D animation', '24/7 support'].map((item, idx) => (
+                  <span key={idx} style={styles.heroPill}>{item}</span>
+                ))}
+              </div>
             </div>
 
-            <h1 className="hero-title" style={styles.heroTitle}>
-              We Build Modern Web & Mobile Software for Next-Gen Startups.
-            </h1>
-
-            <p className="hero-subtitle" style={styles.heroSubtitle}>
-              Abhimanyu Technologies is an agile software development startup based in Telangana, India.
-              We partner with founders, businesses, and forward-thinking teams to architect, design,
-              and ship robust digital platforms with clean code and rapid turnaround.
-            </p>
-
-            <div style={styles.heroActions}>
-              <a
-                href="#contact"
-                onClick={(e) => scrollToSection(e, 'contact')}
-                style={styles.primaryBtnLarge}
-              >
-                Start Your Project &rarr;
-              </a>
-              <a
-                href="#services"
-                onClick={(e) => scrollToSection(e, 'services')}
-                style={styles.secondaryBtnLarge}
-              >
-                Explore Services
-              </a>
-              <a
-                href="https://wa.me/919999999999?text=Hi%20Abhimanyu%20Technologies,%20I%20would%20like%20to%20discuss%20a%20software%20project."
-                target="_blank"
-                rel="noopener noreferrer"
-                style={styles.whatsappBtn}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.941-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.299.144.347.491 1.2.534 1.288.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.087-.179.182-.077.357.101.174.45 1.743 1.543 2.716 1.093.973 1.968 1.272 2.247 1.393.279.12.443.104.607-.087.164-.191.7-1.02.888-1.37.188-.35.376-.292.628-.198.252.094 1.597.753 1.871.89.274.137.457.205.525.321.068.116.068.673-.076 1.078z" />
-                </svg>
-                WhatsApp Chat
-              </a>
-            </div>
-
-            {/* Quick Trust Pillars Grid */}
-            <div style={styles.trustGrid}>
-              <div style={styles.trustCard}>
-                <div style={styles.trustIcon}>⚡</div>
-                <div style={styles.trustText}>
-                  <strong>Rapid Sprints</strong>
-                  <span>2-week agile cycles with continuous demos</span>
-                </div>
-              </div>
-              <div style={styles.trustCard}>
-                <div style={styles.trustIcon}>💎</div>
-                <div style={styles.trustText}>
-                  <strong>Clean Architecture</strong>
-                  <span>Maintainable, tested code ready for scale</span>
-                </div>
-              </div>
-              <div style={styles.trustCard}>
-                <div style={styles.trustIcon}>🛡️</div>
-                <div style={styles.trustText}>
-                  <strong>100% IP Ownership</strong>
-                  <span>Full source code and repositories handed over</span>
-                </div>
-              </div>
-              <div style={styles.trustCard}>
-                <div style={styles.trustIcon}>🤝</div>
-                <div style={styles.trustText}>
-                  <strong>Direct Access</strong>
-                  <span>Work directly with engineers, zero bureaucracy</span>
-                </div>
-              </div>
+            {/* Hero 3D Chakra Interactive */}
+            <div style={styles.hero3DCol}>
+              <ChakraCanvas />
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- SERVICES SECTION --- */}
+      {/* --- WHAT WE DO / SERVICES SECTION --- */}
       <section id="services" style={styles.section}>
         <div style={styles.container}>
           <div style={styles.sectionHeader}>
-            <span style={styles.sectionTag}>WHAT WE DO</span>
-            <h2 style={styles.sectionTitle}>Full-Stack Engineering Services</h2>
+            <span style={styles.sectionEyebrow}>What we do</span>
+            <h2 style={styles.sectionTitle}>Build it. Run it. Make it unforgettable.</h2>
             <p style={styles.sectionSubtitle}>
-              From early-stage product prototypes to robust, enterprise-grade cloud systems,
-              we deliver end-to-end digital solutions tailored to your unique requirements.
+              One team for the whole life of your software, from the first screen design to the on-call phone at 3 a.m.
             </p>
           </div>
 
           <div style={styles.servicesGrid}>
             {SERVICES.map((s) => (
               <div key={s.id} style={styles.serviceCard}>
-                <div style={styles.serviceCardHeader}>
-                  <span style={styles.serviceBadge}>{s.badge}</span>
-                  <h3 style={styles.serviceTitle}>{s.title}</h3>
-                  <p style={styles.serviceTagline}>{s.tagline}</p>
+                <div style={styles.serviceCardTop}>
+                  <h3 style={styles.serviceName}>{s.title}</h3>
+                  {s.badge && <span style={styles.newBadge}>{s.badge}</span>}
                 </div>
-                <p style={styles.serviceDesc}>{s.description}</p>
+                <p style={styles.serviceDesc}>{s.subtitle}</p>
+                <ul style={styles.serviceBullets}>
+                  {s.bullets.map((b, bIdx) => (
+                    <li key={bIdx} style={styles.bulletItem}>
+                      <span style={styles.bulletDot}>•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-                <div style={styles.deliverablesList}>
-                  <strong style={styles.deliverableHeading}>Key Deliverables:</strong>
-                  {s.deliverables.map((item, idx) => (
-                    <div key={idx} style={styles.deliverableItem}>
-                      <span style={styles.checkIcon}>✓</span>
-                      <span>{item}</span>
+      {/* --- 3D STUDIO · LIVE DEMO SECTION --- */}
+      <section id="studio" style={styles.sectionDark}>
+        <div style={styles.container}>
+          <div style={styles.sectionHeaderDark}>
+            <span style={styles.sectionEyebrowCyan}>3D Studio · live demo</span>
+            <h2 style={styles.sectionTitleDark}>This is rendering in your browser right now.</h2>
+            <p style={styles.sectionSubtitleDark}>
+              Change the shape, material, color and light. Drag the model to rotate it. This is the kind of interactive 3D we build into client websites, product pages and apps.
+            </p>
+          </div>
+
+          <div className="studio-layout" style={styles.studioLayout}>
+            {/* 3D Canvas Box */}
+            <div style={styles.studioCanvasCol}>
+              <StudioCanvas
+                shape={studioShape}
+                materialType={studioMaterial}
+                colorHex={studioColor}
+                rotationSpeed={studioRotationSpeed}
+                lightAngle={studioLightAngle}
+                autoRotate={studioAutoRotate}
+              />
+            </div>
+
+            {/* Controls Palette */}
+            <div style={styles.studioControlsCol}>
+              <div style={styles.controlGroup}>
+                <label style={styles.controlLabel}>Shape</label>
+                <div style={styles.btnSelectorGrid}>
+                  {[
+                    { id: 'torus', label: 'Torus' },
+                    { id: 'knot', label: 'Knot' },
+                    { id: 'chakra', label: 'Chakra' },
+                    { id: 'cube', label: 'Cube' },
+                    { id: 'sphere', label: 'Sphere' },
+                    { id: 'diamond', label: 'Diamond' }
+                  ].map((sh) => (
+                    <button
+                      key={sh.id}
+                      onClick={() => setStudioShape(sh.id)}
+                      style={studioShape === sh.id ? styles.activeSelectBtn : styles.selectBtn}
+                    >
+                      {sh.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={styles.controlGroup}>
+                <label style={styles.controlLabel}>Material</label>
+                <div style={styles.btnSelectorGrid}>
+                  {['wireframe', 'glossy', 'metallic', 'glass'].map((mat) => (
+                    <button
+                      key={mat}
+                      onClick={() => setStudioMaterial(mat)}
+                      style={studioMaterial === mat ? styles.activeSelectBtn : styles.selectBtn}
+                    >
+                      {mat.charAt(0).toUpperCase() + mat.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={styles.controlGroup}>
+                <label style={styles.controlLabel}>Color</label>
+                <div style={styles.colorPaletteRow}>
+                  {['#2563EB', '#06B6D4', '#F59E0B', '#10B981', '#8B5CF6', '#EF4444'].map((col) => (
+                    <button
+                      key={col}
+                      onClick={() => setStudioColor(col)}
+                      style={{
+                        ...styles.colorCircle,
+                        backgroundColor: col,
+                        outline: studioColor === col ? '3px solid #FFFFFF' : 'none'
+                      }}
+                      aria-label={`Select color ${col}`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div style={styles.controlGroup}>
+                <div style={styles.sliderLabelRow}>
+                  <label style={styles.controlLabel}>Rotation speed</label>
+                  <span style={styles.sliderValue}>{studioRotationSpeed.toFixed(1)}×</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.2"
+                  max="3.0"
+                  step="0.1"
+                  value={studioRotationSpeed}
+                  onChange={(e) => setStudioRotationSpeed(parseFloat(e.target.value))}
+                  style={styles.rangeInput}
+                />
+              </div>
+
+              <div style={styles.controlGroup}>
+                <div style={styles.sliderLabelRow}>
+                  <label style={styles.controlLabel}>Light angle</label>
+                  <span style={styles.sliderValue}>{studioLightAngle}°</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="360"
+                  value={studioLightAngle}
+                  onChange={(e) => setStudioLightAngle(parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+              </div>
+
+              <div style={styles.checkboxRow}>
+                <input
+                  type="checkbox"
+                  id="autoRotateCheck"
+                  checked={studioAutoRotate}
+                  onChange={(e) => setStudioAutoRotate(e.target.checked)}
+                  style={styles.checkbox}
+                />
+                <label htmlFor="autoRotateCheck" style={styles.checkboxLabel}>
+                  Auto-rotate
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* 3D Capabilities Row */}
+          <div style={styles.studioPillarsGrid}>
+            <div style={styles.studioPillarCard}>
+              <h4 style={styles.pillarTitle}>Product visualization</h4>
+              <p style={styles.pillarText}>Photoreal renders and turntables for catalogs and launch pages.</p>
+            </div>
+            <div style={styles.studioPillarCard}>
+              <h4 style={styles.pillarTitle}>Explainer animation</h4>
+              <p style={styles.pillarText}>Short 3D films that make a complex product easy to grasp.</p>
+            </div>
+            <div style={styles.studioPillarCard}>
+              <h4 style={styles.pillarTitle}>Interactive 3D for the web</h4>
+              <p style={styles.pillarText}>Configurators and showcases that run in any modern browser.</p>
+            </div>
+            <div style={styles.studioPillarCard}>
+              <h4 style={styles.pillarTitle}>AR-ready models</h4>
+              <p style={styles.pillarText}>Optimized 3D assets for mobile augmented reality previews.</p>
+            </div>
+          </div>
+
+          {/* --- 6 ANIMATED 3D FLIP CARDS --- */}
+          <div style={styles.flipCardsWrapper}>
+            <div style={styles.flipCardsHeader}>
+              <h3 style={styles.flipCardsTitle}>3D Production Modules & Capabilities</h3>
+              <p style={styles.flipCardsSubtitle}>Hover or tap any card to view detailed engineering deliverables and pipeline specifications.</p>
+            </div>
+
+            <div style={styles.flipCardsGrid}>
+              {FLIP_CARDS.map((card) => (
+                <div key={card.id} className="flip-card-container" style={styles.flipCardContainer}>
+                  <div className="flip-card-inner" style={styles.flipCardInner}>
+                    {/* Front */}
+                    <div style={styles.flipCardFront}>
+                      <span style={styles.cardIndexBadge}>0{card.id}</span>
+                      <h4 style={styles.cardFrontTitle}>{card.frontTitle}</h4>
+                      <p style={styles.cardFrontDesc}>{card.frontDesc}</p>
+                      <span style={styles.flipHint}>Flip for details ↻</span>
                     </div>
-                  ))}
+                    {/* Back */}
+                    <div style={styles.flipCardBack}>
+                      <h4 style={styles.cardBackTitle}>{card.backTitle}</h4>
+                      <p style={styles.cardBackDesc}>{card.backDesc}</p>
+                      <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} style={styles.cardBackCta}>
+                        Inquire &rarr;
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* --- 5-STEP 3D PRODUCTION PIPELINE --- */}
+          <div style={styles.pipelineWrapper}>
+            <h3 style={styles.pipelineHeaderTitle}>Our 5-Step 3D Engineering Pipeline</h3>
+            <div style={styles.pipelineGrid}>
+              {PIPELINE_STEPS.map((ps, idx) => (
+                <div key={idx} style={styles.pipelineStepCard}>
+                  <div style={styles.pipelineStepNum}>{ps.step}</div>
+                  <h4 style={styles.pipelineStepTitle}>{ps.title}</h4>
+                  <p style={styles.pipelineStepDesc}>{ps.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* --- DELIVERABLE FORMATS CHIPS --- */}
+          <div style={styles.formatsWrapper}>
+            <h4 style={styles.formatsHeading}>Delivery Formats We Supply:</h4>
+            <div style={styles.formatsChipList}>
+              {DELIVERABLE_FORMATS.map((fmt, idx) => (
+                <span key={idx} style={styles.formatChipItem}>{fmt}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- APPLICATIONS INTERACTIVE MOCKUP SHOWCASE --- */}
+      <section id="applications" style={styles.sectionLight}>
+        <div style={styles.container}>
+          <div style={styles.sectionHeader}>
+            <span style={styles.sectionEyebrow}>Applications</span>
+            <h2 style={styles.sectionTitle}>Apps your customers open every day.</h2>
+            <p style={styles.sectionSubtitle}>
+              Tap a screen to see the kind of product we build. Move your pointer over the phone to tilt it.
+            </p>
+          </div>
+
+          {/* Category Tabs */}
+          <div style={styles.appCategoryTabs}>
+            {[
+              'E-commerce and marketplaces',
+              'Booking and scheduling',
+              'Learning platforms',
+              'Logistics and field tracking',
+              'Fintech and wallets',
+              'Healthcare and clinics'
+            ].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveAppCategory(cat)}
+                style={activeAppCategory === cat ? styles.activeAppTab : styles.appTab}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Interactive Phone Mockup Box */}
+          <div className="phone-showcase" style={styles.phoneShowcaseWrapper}>
+            <div style={styles.phoneDeviceCard}>
+              <div style={styles.phoneSpeakerNotch} />
+
+              <div style={styles.phoneScreenContent}>
+                {/* Status Bar */}
+                <div style={styles.phoneStatusBar}>
+                  <span>9:41</span>
+                  <span>5G • 100%</span>
                 </div>
 
-                <div style={styles.techPillWrapper}>
-                  {s.tech.map((t, idx) => (
-                    <span key={idx} style={styles.techPill}>{t}</span>
+                {/* Header & Overview */}
+                <div style={styles.appHeaderRow}>
+                  <div>
+                    <span style={styles.appGreeting}>Today's overview</span>
+                    <h4 style={styles.appCategoryActiveTitle}>{activeAppCategory}</h4>
+                  </div>
+                  <span style={styles.livePulse}>● LIVE</span>
+                </div>
+
+                <div style={styles.statsWidgetRow}>
+                  <div style={styles.statWidget}>
+                    <div style={styles.statValue}>248</div>
+                    <div style={styles.statLabel}>Orders</div>
+                  </div>
+                  <div style={styles.statWidget}>
+                    <div style={styles.statValue}>₹1.9L</div>
+                    <div style={styles.statLabel}>Revenue</div>
+                  </div>
+                  <div style={styles.statWidget}>
+                    <div style={styles.statValue}>96%</div>
+                    <div style={styles.statLabel}>Delivery on time</div>
+                  </div>
+                </div>
+
+                {/* Orders List */}
+                <div style={styles.ordersSection}>
+                  <div style={styles.ordersHeadingRow}>
+                    <span style={styles.ordersHeading}>Orders</span>
+                    <span style={styles.ordersFilter}>All (5)</span>
+                  </div>
+
+                  <div style={styles.orderItem}>
+                    <span>#4821 · Packed</span>
+                    <span style={styles.statusReady}>Ready</span>
+                  </div>
+                  <div style={styles.orderItem}>
+                    <span>#4820 · In transit</span>
+                    <span style={styles.statusTransit}>On the way</span>
+                  </div>
+                  <div style={styles.orderItem}>
+                    <span>#4819 · Delivered</span>
+                    <span style={styles.statusDone}>Done</span>
+                  </div>
+                  <div style={styles.orderItem}>
+                    <span>#4818 · Delivered</span>
+                    <span style={styles.statusDone}>Done</span>
+                  </div>
+                  <div style={styles.orderItem}>
+                    <span>#4817 · Payment due</span>
+                    <span style={styles.statusPending}>Pending</span>
+                  </div>
+                </div>
+
+                {/* Live Support Chat Simulation */}
+                <div style={styles.supportChatContainer}>
+                  <div style={styles.chatHeader}>
+                    <span>Support chat</span>
+                    <span style={styles.chatOnline}>Online</span>
+                  </div>
+
+                  <div style={styles.chatMessagesArea}>
+                    {supportChatMessages.map((msg, idx) => (
+                      <div
+                        key={idx}
+                        style={msg.sender === 'user' ? styles.chatMsgUser : styles.chatMsgBot}
+                      >
+                        {msg.text}
+                      </div>
+                    ))}
+                  </div>
+
+                  <form onSubmit={handleChatSend} style={styles.chatInputForm}>
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      placeholder="Type a message..."
+                      style={styles.chatInput}
+                    />
+                    <button type="submit" style={styles.chatSendBtn}>
+                      Send
+                    </button>
+                  </form>
+                </div>
+
+                {/* Real-time Toast Badges */}
+                <div style={styles.floatingAlerts}>
+                  <span style={styles.floatingAlert}>✓ Release deployed</span>
+                  <span style={styles.floatingAlert}>🔔 New order received</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={styles.phoneSideCta}>
+              <h3 style={styles.sideCtaTitle}>Need an App Built for Your Industry?</h3>
+              <p style={styles.sideCtaDesc}>
+                Whether you are launching an on-demand marketplace, tracking field assets with offline sync, or managing medical clinics, we engineer end-to-end applications designed to handle high transaction volumes.
+              </p>
+              <a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.planAppBtn}>
+                Plan your app &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- INDUSTRIES WE SERVE --- */}
+      <section id="industries" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionHeader}>
+            <span style={styles.sectionEyebrow}>Industries we serve</span>
+            <h2 style={styles.sectionTitle}>Software for the people who design and build the physical world.</h2>
+            <p style={styles.sectionSubtitle}>
+              Architecture, civil, structural, mechanical and EPC companies run on drawings, models, schedules and site data. We build the web and mobile software that connects them.
+            </p>
+          </div>
+
+          <div className="building-layout" style={styles.industriesViewerLayout}>
+            {/* 3D Building Viewer Canvas */}
+            <div style={styles.buildingViewerCol}>
+              <BuildingCanvas
+                storeys={buildingStoreys}
+                explodePercent={buildingExplode}
+                showStructure={layerStructure}
+                showServices={layerServices}
+                showFacade={layerFacade}
+                autoRotate={buildingAutoRotate}
+              />
+            </div>
+
+            {/* Building Controls */}
+            <div style={styles.buildingControlsCol}>
+              <h3 style={styles.controlsHeading}>Model layers</h3>
+
+              <div style={styles.buildingCheckboxGroup}>
+                <label style={styles.checkLabel}>
+                  <input
+                    type="checkbox"
+                    checked={layerStructure}
+                    onChange={(e) => setLayerStructure(e.target.checked)}
+                  />
+                  <span>Structure (slabs and columns)</span>
+                </label>
+
+                <label style={styles.checkLabel}>
+                  <input
+                    type="checkbox"
+                    checked={layerServices}
+                    onChange={(e) => setLayerServices(e.target.checked)}
+                  />
+                  <span>Services (ducts and pipes)</span>
+                </label>
+
+                <label style={styles.checkLabel}>
+                  <input
+                    type="checkbox"
+                    checked={layerFacade}
+                    onChange={(e) => setLayerFacade(e.target.checked)}
+                  />
+                  <span>Facade glazing</span>
+                </label>
+              </div>
+
+              <div style={styles.sliderControl}>
+                <div style={styles.sliderLabelRow}>
+                  <span style={styles.controlLabel}>Storeys</span>
+                  <span style={styles.sliderValue}>{buildingStoreys}</span>
+                </div>
+                <input
+                  type="range"
+                  min="4"
+                  max="24"
+                  value={buildingStoreys}
+                  onChange={(e) => setBuildingStoreys(parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+              </div>
+
+              <div style={styles.sliderControl}>
+                <div style={styles.sliderLabelRow}>
+                  <span style={styles.controlLabel}>Explode floors</span>
+                  <span style={styles.sliderValue}>{buildingExplode}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={buildingExplode}
+                  onChange={(e) => setBuildingExplode(parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+              </div>
+
+              <div style={styles.checkboxRow}>
+                <input
+                  type="checkbox"
+                  id="bldAutoRotate"
+                  checked={buildingAutoRotate}
+                  onChange={(e) => setBuildingAutoRotate(e.target.checked)}
+                  style={styles.checkbox}
+                />
+                <label htmlFor="bldAutoRotate" style={styles.checkboxLabel}>
+                  Auto-rotate
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Industry Solution Cards */}
+          <div style={styles.industrySolutionGrid}>
+            {INDUSTRY_SOLUTIONS.map((sol, idx) => (
+              <div key={idx} style={styles.solutionCard}>
+                <h3 style={styles.solutionTitle}>{sol.title}</h3>
+                <p style={styles.solutionDesc}>{sol.desc}</p>
+                <ul style={styles.solutionBullets}>
+                  {sol.bullets.map((b, bIdx) => (
+                    <li key={bIdx} style={styles.bulletItem}>
+                      <span style={styles.bulletDot}>•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Companies We Build For */}
+          <div style={styles.chipsSection}>
+            <h4 style={styles.chipsHeading}>Companies we build for</h4>
+            <div style={styles.chipsRow}>
+              {INDUSTRY_COMPANIES.map((c, idx) => (
+                <span key={idx} style={styles.chipItem}>{c}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Built Around The Tools */}
+          <div style={styles.chipsSection}>
+            <h4 style={styles.chipsHeading}>Built around the tools your teams already use</h4>
+            <div style={styles.chipsRow}>
+              {INDUSTRY_TOOLS.map((t, idx) => (
+                <span key={idx} style={styles.chipTool}>{t}</span>
+              ))}
+            </div>
+          </div>
+
+          <div style={styles.firmCtaRow}>
+            <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} style={styles.primaryCta}>
+              Talk about software for your firm &rarr;
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* --- SELECTED WORK (RING OF IDEAS) --- */}
+      <section id="work" style={styles.sectionLight}>
+        <div style={styles.container}>
+          <div style={styles.sectionHeader}>
+            <span style={styles.sectionEyebrow}>Selected work</span>
+            <h2 style={styles.sectionTitle}>A ring of ideas we can build for you.</h2>
+            <p style={styles.sectionSubtitle}>
+              Use the arrows or wait for the ring to turn. These sample concepts show the range of products and visuals we take on.
+            </p>
+          </div>
+
+          <div style={styles.ringCarouselBox}>
+            <div style={styles.ringControlsRow}>
+              <button
+                onClick={() => setRingIndex((prev) => (prev === 0 ? SAMPLE_CONCEPTS.length - 1 : prev - 1))}
+                style={styles.ringArrowBtn}
+                aria-label="Previous concept"
+              >
+                &larr; Prev
+              </button>
+              <span style={styles.ringIndicator}>
+                {ringIndex + 1} / {SAMPLE_CONCEPTS.length}
+              </span>
+              <button
+                onClick={() => setRingIndex((prev) => (prev + 1) % SAMPLE_CONCEPTS.length)}
+                style={styles.ringArrowBtn}
+                aria-label="Next concept"
+              >
+                Next &rarr;
+              </button>
+            </div>
+
+            <div style={styles.ringCardDisplay}>
+              <span style={styles.conceptTag}>{SAMPLE_CONCEPTS[ringIndex].tag}</span>
+              <h3 style={styles.conceptTitle}>{SAMPLE_CONCEPTS[ringIndex].title}</h3>
+              <p style={styles.conceptDesc}>{SAMPLE_CONCEPTS[ringIndex].desc}</p>
+              <button
+                onClick={() => {
+                  setContactData((prev) => ({
+                    ...prev,
+                    serviceNeed: SAMPLE_CONCEPTS[ringIndex].title,
+                    details: `Interested in discussing concept: ${SAMPLE_CONCEPTS[ringIndex].title} (${SAMPLE_CONCEPTS[ringIndex].tag})`
+                  }));
+                  const elem = document.getElementById('contact');
+                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                }}
+                style={styles.conceptInquireBtn}
+              >
+                Discuss this concept &rarr;
+              </button>
+            </div>
+
+            <p style={styles.sampleDisclaimer}>
+              Sample concepts shown for illustration, not client projects.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* --- HOW WE WORK --- */}
+      <section id="process" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionHeader}>
+            <span style={styles.sectionEyebrow}>How we work</span>
+            <h2 style={styles.sectionTitle}>Four steps from idea to a product that stays healthy.</h2>
+          </div>
+
+          <div style={styles.processGrid}>
+            {PROCESS_STEPS.map((ps, idx) => (
+              <div key={idx} style={styles.processCard}>
+                <div style={styles.stepBadge}>{ps.step}</div>
+                <h3 style={styles.processStepTitle}>{ps.title}</h3>
+                <p style={styles.processStepDesc}>{ps.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- PROJECT ESTIMATOR --- */}
+      <section id="estimate" style={styles.sectionLight}>
+        <div style={styles.container}>
+          <div style={styles.sectionHeader}>
+            <span style={styles.sectionEyebrow}>Project estimator</span>
+            <h2 style={styles.sectionTitle}>See a realistic timeline in thirty seconds.</h2>
+            <p style={styles.sectionSubtitle}>
+              Choose what you want to build. The estimate updates as you click, and you can send it with your enquiry.
+            </p>
+          </div>
+
+          <div className="estimator-grid" style={styles.estimatorGrid}>
+            {/* Options Side */}
+            <div style={styles.estimatorOptions}>
+              <div style={styles.estimatorGroup}>
+                <h4 style={styles.estLabel}>What are you building?</h4>
+                <div style={styles.estTypeSelectGrid}>
+                  {[
+                    'Mobile app development',
+                    'Web application development',
+                    'Application maintenance',
+                    '3D animation and visuals',
+                    'IT services and consulting',
+                    'Cloud and DevOps'
+                  ].map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setEstBuildingType(t)}
+                      style={estBuildingType === t ? styles.estTypeBtnActive : styles.estTypeBtn}
+                    >
+                      {t}
+                    </button>
                   ))}
                 </div>
+              </div>
+
+              <div style={styles.estimatorGroup}>
+                <h4 style={styles.estLabel}>Features</h4>
+                <div style={styles.estFeaturesGrid}>
+                  {[
+                    { key: 'auth', label: 'User accounts & authentication' },
+                    { key: 'payments', label: 'Payment gateway integration' },
+                    { key: 'realtime', label: 'Real-time chat & notifications' },
+                    { key: 'threeD', label: '3D WebGL / Interactive model' },
+                    { key: 'admin', label: 'Admin dashboard & analytics' },
+                    { key: 'offline', label: 'Offline data & background sync' },
+                    { key: 'ai', label: 'AI chatbot & automation' }
+                  ].map((feat) => (
+                    <label key={feat.key} style={styles.featureCheckboxLabel}>
+                      <input
+                        type="checkbox"
+                        checked={estFeatures[feat.key]}
+                        onChange={(e) =>
+                          setEstFeatures({ ...estFeatures, [feat.key]: e.target.checked })
+                        }
+                      />
+                      <span>{feat.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div style={styles.estimatorGroup}>
+                <h4 style={styles.estLabel}>Complexity</h4>
+                <div style={styles.complexityBtnRow}>
+                  {['Standard', 'Complex', 'High Performance'].map((comp) => (
+                    <button
+                      key={comp}
+                      onClick={() => setEstComplexity(comp)}
+                      style={estComplexity === comp ? styles.compBtnActive : styles.compBtn}
+                    >
+                      {comp}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Results Side */}
+            <div style={styles.estimatorResultBox}>
+              <div style={styles.estResultCard}>
+                <div style={styles.resultItem}>
+                  <span style={styles.resultLabel}>Indicative timeline</span>
+                  <div style={styles.timelineBigNumber}>{calcTimelineWeeks()}</div>
+                </div>
+
+                <div style={styles.resultItem}>
+                  <span style={styles.resultLabel}>Suggested team</span>
+                  <div style={styles.teamDescription}>{calcSuggestedTeam()}</div>
+                </div>
+
+                <div style={styles.resultItem}>
+                  <span style={styles.resultLabel}>Phase split</span>
+                  <div style={styles.phaseBar}>
+                    <div style={{ ...styles.phaseSegment, width: '15%', backgroundColor: '#38BDF8' }} title="Discovery (15%)">15%</div>
+                    <div style={{ ...styles.phaseSegment, width: '20%', backgroundColor: '#60A5FA' }} title="Design (20%)">20%</div>
+                    <div style={{ ...styles.phaseSegment, width: '50%', backgroundColor: '#2563EB' }} title="Development (50%)">50%</div>
+                    <div style={{ ...styles.phaseSegment, width: '15%', backgroundColor: '#10B981' }} title="QA & Launch (15%)">15%</div>
+                  </div>
+                  <div style={styles.phaseLabels}>
+                    <span>Discover</span>
+                    <span>Design</span>
+                    <span>Develop</span>
+                    <span>Launch</span>
+                  </div>
+                </div>
+
+                <p style={styles.estNotice}>
+                  Indicative only. We confirm scope, cost and dates after a short discovery call.
+                </p>
+
+                <button onClick={handleSendEstimateToContact} style={styles.sendEstimateBtn}>
+                  Send this estimate &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- MAINTENANCE AND SUPPORT PLANS --- */}
+      <section id="support" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionHeader}>
+            <span style={styles.sectionEyebrow}>Maintenance and support</span>
+            <h2 style={styles.sectionTitle}>Launch is the beginning. We stay.</h2>
+            <p style={styles.sectionSubtitle}>
+              Pick the level of cover that fits how much your business depends on the app. Terms are written into a service agreement.
+            </p>
+          </div>
+
+          <div style={styles.supportGrid}>
+            {SUPPORT_PLANS.map((plan, idx) => (
+              <div
+                key={idx}
+                style={plan.isPopular ? styles.supportCardPopular : styles.supportCard}
+              >
+                {plan.badge && <span style={styles.mostChosenBadge}>{plan.badge}</span>}
+                <h3 style={styles.planName}>{plan.name}</h3>
+
+                <div style={styles.responseBox}>
+                  <span style={styles.responseSpeed}>{plan.response}</span>
+                  <span style={styles.responseLabel}>{plan.responseLabel}</span>
+                </div>
+
+                <ul style={styles.planFeaturesList}>
+                  {plan.features.map((feat, fIdx) => (
+                    <li key={fIdx} style={styles.planFeatureItem}>
+                      <span style={styles.bulletCheck}>✓</span>
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
 
                 <button
-                  onClick={() => selectServiceForInquiry(s.title)}
-                  style={styles.serviceInquireBtn}
+                  onClick={() => {
+                    setContactData((prev) => ({
+                      ...prev,
+                      serviceNeed: `Maintenance: ${plan.name} Plan`,
+                      details: `Inquiring about ${plan.name} maintenance support tier.`
+                    }));
+                    const elem = document.getElementById('contact');
+                    if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  style={plan.isPopular ? styles.planBtnPopular : styles.planBtn}
                 >
-                  Inquire About This Service &rarr;
+                  {plan.buttonText}
                 </button>
               </div>
             ))}
@@ -460,209 +1812,30 @@ export default function App() {
         </div>
       </section>
 
-      {/* --- WHY CHOOSE US SECTION --- */}
-      <section id="why-us" style={styles.sectionLight}>
-        <div style={styles.container}>
-          <div style={styles.sectionHeader}>
-            <span style={styles.sectionTag}>WHY ABHIMANYU TECHNOLOGIES</span>
-            <h2 style={styles.sectionTitle}>Built for Founders, Startups & Fast Movers</h2>
-            <p style={styles.sectionSubtitle}>
-              Large agencies charge enterprise overhead; freelance marketplaces lack accountability.
-              We provide the perfect balance: dedicated, senior-level engineering craftsmanship at startup speed.
-            </p>
-          </div>
-
-          <div style={styles.featuresGrid}>
-            <div style={styles.featureCard}>
-              <div style={styles.featureIconBox}>🎯</div>
-              <h3 style={styles.featureTitle}>Engineering-First Culture</h3>
-              <p style={styles.featureText}>
-                No non-technical intermediaries playing broken telephone. You collaborate directly with experienced engineers who write the code, solve architectural puzzles, and understand your product vision.
-              </p>
-            </div>
-
-            <div style={styles.featureCard}>
-              <div style={styles.featureIconBox}>⏱️</div>
-              <h3 style={styles.featureTitle}>Predictable Milestones & Pricing</h3>
-              <p style={styles.featureText}>
-                We believe in complete transparency. Every project milestone has clearly defined deliverables, verifiable test criteria, and guaranteed transparent pricing with zero surprise invoices.
-              </p>
-            </div>
-
-            <div style={styles.featureCard}>
-              <div style={styles.featureIconBox}>🔒</div>
-              <h3 style={styles.featureTitle}>Zero Vendor Lock-In</h3>
-              <p style={styles.featureText}>
-                You retain complete, exclusive ownership of your Git repositories, cloud deployment pipelines, Figma designs, and database schemas. Everything is documented for seamless future handoffs.
-              </p>
-            </div>
-
-            <div style={styles.featureCard}>
-              <div style={styles.featureIconBox}>🚀</div>
-              <h3 style={styles.featureTitle}>Modern, Scalable Tech Stacks</h3>
-              <p style={styles.featureText}>
-                We avoid obsolete frameworks. By building with modern standards like React, Next.js, Flutter, and Node/FastAPI, your product is fast, secure, and effortlessly extensible by future in-house engineers.
-              </p>
-            </div>
-
-            <div style={styles.featureCard}>
-              <div style={styles.featureIconBox}>🛡️</div>
-              <h3 style={styles.featureTitle}>Strict NDA & IP Confidentiality</h3>
-              <p style={styles.featureText}>
-                Your ideas, user data, and business strategies are protected under mutual Non-Disclosure Agreements before any technical discovery or architectural discussions commence.
-              </p>
-            </div>
-
-            <div style={styles.featureCard}>
-              <div style={styles.featureIconBox}>💬</div>
-              <h3 style={styles.featureTitle}>Daily Updates & Open Slack/WhatsApp</h3>
-              <p style={styles.featureText}>
-                Stay in the loop with daily asynchronous sprint summaries, working staging links, and direct real-time communication via your preferred channel (Slack, WhatsApp, or Google Meet).
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- HOW WE WORK / PROCESS SECTION --- */}
-      <section id="process" style={styles.section}>
-        <div style={styles.container}>
-          <div style={styles.sectionHeader}>
-            <span style={styles.sectionTag}>HOW WE WORK</span>
-            <h2 style={styles.sectionTitle}>Our 4-Step Agile Delivery Framework</h2>
-            <p style={styles.sectionSubtitle}>
-              A disciplined, transparent engineering methodology designed to take your idea from concept to production on schedule and within budget.
-            </p>
-          </div>
-
-          <div style={styles.processGrid}>
-            {PROCESS_STEPS.map((step, idx) => (
-              <div key={idx} style={styles.processCard}>
-                <div style={styles.processStepNumber}>{step.step}</div>
-                <div style={styles.processDurationBadge}>{step.duration}</div>
-                <h3 style={styles.processTitle}>{step.title}</h3>
-                <p style={styles.processDesc}>{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- TECH STACK SECTION --- */}
-      <section id="tech-stack" style={styles.sectionLight}>
-        <div style={styles.container}>
-          <div style={styles.sectionHeader}>
-            <span style={styles.sectionTag}>OUR TOOLS & STACK</span>
-            <h2 style={styles.sectionTitle}>Modern, Battle-Tested Technologies</h2>
-            <p style={styles.sectionSubtitle}>
-              We choose trusted, high-performance open-source tools that guarantee speed, reliability, and widespread talent availability for your company's long-term growth.
-            </p>
-          </div>
-
-          <div style={styles.techCategoryGrid}>
-            {TECH_CATEGORIES.map((cat, idx) => (
-              <div key={idx} style={styles.techCategoryCard}>
-                <h3 style={styles.techCategoryTitle}>{cat.category}</h3>
-                <div style={styles.techTagList}>
-                  {cat.technologies.map((t, tIdx) => (
-                    <span key={tIdx} style={styles.techBadgeItem}>{t}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- ABOUT US SECTION --- */}
-      <section id="about" style={styles.section}>
-        <div style={styles.container}>
-          <div className="about-wrapper" style={styles.aboutWrapper}>
-            <div style={styles.aboutTextCol}>
-              <span style={styles.sectionTag}>ABOUT US</span>
-              <h2 style={styles.sectionTitle}>An Engineering-First Startup from Telangana, India</h2>
-              <p style={styles.aboutParagraph}>
-                <strong>Abhimanyu Technologies</strong> was founded with a singular, clear mission:
-                to bridge the gap between high-level engineering talent and ambitious businesses
-                needing custom digital products.
-              </p>
-              <p style={styles.aboutParagraph}>
-                We operate as an agile, lean software engineering studio. Rather than relying on
-                heavy corporate hierarchies, we focus entirely on code craftsmanship, architectural
-                soundness, and genuine partnership with our clients. Whether you are an early-stage
-                founder launching an MVP or an established enterprise modernizing legacy systems,
-                we treat your product with the same dedication as our own venture.
-              </p>
-
-              <div style={styles.aboutValuesRow}>
-                <div style={styles.valueItem}>
-                  <div style={styles.valueNumber}>100%</div>
-                  <div style={styles.valueLabel}>Source Code Ownership</div>
-                </div>
-                <div style={styles.valueItem}>
-                  <div style={styles.valueNumber}>&lt; 24h</div>
-                  <div style={styles.valueLabel}>Response Turnaround</div>
-                </div>
-                <div style={styles.valueItem}>
-                  <div style={styles.valueNumber}>100%</div>
-                  <div style={styles.valueLabel}>Agile Sprint Transparency</div>
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.aboutCardCol}>
-              <div style={styles.missionCard}>
-                <h3 style={styles.missionCardTitle}>Our Guiding Principles</h3>
-                <ul style={styles.missionList}>
-                  <li>
-                    <strong>Clarity Over Jargon:</strong> We speak plainly about what your project requires, without hiding behind buzzwords or unnecessary complexity.
-                  </li>
-                  <li>
-                    <strong>Speed Without Shortcuts:</strong> We write clean, linted, tested code that allows fast iteration without generating crippling technical debt.
-                  </li>
-                  <li>
-                    <strong>True Partnership:</strong> We advise you on what not to build just as passionately as what to build, ensuring your budget is invested wisely.
-                  </li>
-                  <li>
-                    <strong>Full Confidentiality:</strong> Your intellectual property, user metrics, and business logic remain strictly guarded under mutual NDA.
-                  </li>
-                </ul>
-                <div style={styles.locationTag}>
-                  📍 Headquartered in Telangana, India • Serving Clients Globally
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- FAQ SECTION --- */}
+      {/* --- QUESTIONS / FAQ --- */}
       <section id="faq" style={styles.sectionLight}>
         <div style={styles.container}>
           <div style={styles.sectionHeader}>
-            <span style={styles.sectionTag}>FREQUENTLY ASKED QUESTIONS</span>
-            <h2 style={styles.sectionTitle}>Got Questions? We Have Answers</h2>
-            <p style={styles.sectionSubtitle}>
-              Everything you need to know about partnering with Abhimanyu Technologies for your software development needs.
-            </p>
+            <span style={styles.sectionEyebrow}>Questions</span>
+            <h2 style={styles.sectionTitle}>Things people ask before they start.</h2>
           </div>
 
-          <div style={styles.faqList}>
+          <div style={styles.faqWrapper}>
             {FAQS.map((faq, idx) => {
               const isOpen = openFaqIndex === idx;
               return (
-                <div key={idx} style={styles.faqItem}>
+                <div key={idx} style={styles.faqAccordionItem}>
                   <button
                     onClick={() => setOpenFaqIndex(isOpen ? -1 : idx)}
                     style={styles.faqQuestionBtn}
                     aria-expanded={isOpen}
                   >
-                    <span style={styles.faqQuestionText}>{faq.question}</span>
-                    <span style={styles.faqToggleIcon}>{isOpen ? '−' : '+'}</span>
+                    <span style={styles.faqQText}>{faq.q}</span>
+                    <span style={styles.faqToggleChar}>{isOpen ? '−' : '+'}</span>
                   </button>
                   {isOpen && (
-                    <div style={styles.faqAnswerContent}>
-                      <p style={styles.faqAnswerText}>{faq.answer}</p>
+                    <div style={styles.faqAnswerBox}>
+                      <p style={styles.faqAText}>{faq.a}</p>
                     </div>
                   )}
                 </div>
@@ -672,297 +1845,156 @@ export default function App() {
         </div>
       </section>
 
-      {/* --- CONTACT & ESTIMATE SECTION --- */}
+      {/* --- CONTACT SECTION --- */}
       <section id="contact" style={styles.section}>
         <div style={styles.container}>
           <div style={styles.sectionHeader}>
-            <span style={styles.sectionTag}>GET IN TOUCH</span>
-            <h2 style={styles.sectionTitle}>Ready to Build Something Remarkable?</h2>
+            <span style={styles.sectionEyebrow}>Contact</span>
+            <h2 style={styles.sectionTitle}>Tell us what you want to build.</h2>
             <p style={styles.sectionSubtitle}>
-              Tell us about your project or product idea. We’ll review your requirements and provide
-              an actionable scope, timeline estimate, and technical roadmap within 24 hours.
+              Share a few details and we will reply within one working day with questions and a suggested first step.
             </p>
           </div>
 
           <div className="contact-wrapper" style={styles.contactWrapper}>
-            {/* Contact Form */}
-            <div style={styles.contactFormCard}>
-              {formSubmitted ? (
-                <div style={styles.successCard}>
-                  <div style={styles.successIcon}>✓</div>
-                  <h3 style={styles.successTitle}>Inquiry Received!</h3>
-                  <p style={styles.successText}>
-                    Thank you, <strong>{formData.name}</strong>. We have received your project details regarding <strong>{formData.service}</strong>.
-                    Our lead engineer will review your scope and get in touch with you at <strong>{formData.email}</strong> within 24 hours.
-                  </p>
-                  <div style={styles.successActions}>
-                    <button
-                      onClick={() => {
-                        setFormSubmitted(false);
-                        setFormData({
-                          name: '',
-                          email: '',
-                          phone: '',
-                          service: 'Custom Web Applications',
-                          budget: '$1,000 – $5,000 (₹75k – ₹4L)',
-                          message: ''
-                        });
-                      }}
-                      style={styles.secondaryBtnSmall}
-                    >
-                      Send Another Message
-                    </button>
-                    <a
-                      href={`mailto:contact@abhimanu-technologies.app?subject=Project Inquiry - ${encodeURIComponent(formData.service)}&body=Name: ${encodeURIComponent(formData.name)}%0AEmail: ${encodeURIComponent(formData.email)}%0APhone: ${encodeURIComponent(formData.phone)}%0ABudget: ${encodeURIComponent(formData.budget)}%0A%0AProject Details:%0A${encodeURIComponent(formData.message)}`}
-                      style={styles.emailDirectBtn}
-                    >
-                      Open in Email App
-                    </a>
-                  </div>
-                </div>
-              ) : (
-                <form onSubmit={handleFormSubmit} style={styles.contactForm}>
-                  <h3 style={styles.formTitle}>Request a Project Consultation</h3>
-
-                  <div className="form-row" style={styles.formRow}>
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>Your Name *</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleFormChange}
-                        placeholder="e.g. Rahul Sharma"
-                        required
-                        style={styles.formInput}
-                      />
-                    </div>
-
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>Email Address *</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleFormChange}
-                        placeholder="e.g. rahul@company.com"
-                        required
-                        style={styles.formInput}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-row" style={styles.formRow}>
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>Phone / WhatsApp Number</label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleFormChange}
-                        placeholder="e.g. +91 98765 43210"
-                        style={styles.formInput}
-                      />
-                    </div>
-
-                    <div style={styles.formGroup}>
-                      <label style={styles.formLabel}>Service Needed</label>
-                      <select
-                        name="service"
-                        value={formData.service}
-                        onChange={handleFormChange}
-                        style={styles.formSelect}
-                      >
-                        <option value="Custom Web Applications">Custom Web Applications</option>
-                        <option value="Mobile App Development">Mobile App Development</option>
-                        <option value="Backend Systems & APIs">Backend Systems & APIs</option>
-                        <option value="Cloud Infrastructure & DevOps">Cloud Infrastructure & DevOps</option>
-                        <option value="UI/UX Design & Prototyping">UI/UX Design & Prototyping</option>
-                        <option value="Software Maintenance & Upgrades">Software Maintenance & Upgrades</option>
-                        <option value="Full MVP Package">Full MVP Development Package</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Estimated Budget Range</label>
-                    <select
-                      name="budget"
-                      value={formData.budget}
-                      onChange={handleFormChange}
-                      style={styles.formSelect}
-                    >
-                      <option value="Under $1,000 (Under ₹75k)">Under $1,000 (Under ₹75,000)</option>
-                      <option value="$1,000 – $5,000 (₹75k – ₹4L)">$1,000 – $5,000 (₹75,000 – ₹4,00,000)</option>
-                      <option value="$5,000 – $15,000 (₹4L – ₹12L)">$5,000 – $15,000 (₹4,00,000 – ₹12,00,000)</option>
-                      <option value="$15,000+ (₹12L+)">$15,000+ (₹12,00,000+)</option>
-                      <option value="Flexible / Need Consultation">Flexible / Need Consultation</option>
-                    </select>
-                  </div>
-
-                  <div style={styles.formGroup}>
-                    <label style={styles.formLabel}>Project Details & Requirements *</label>
-                    <textarea
-                      name="message"
-                      value={formData.message}
-                      onChange={handleFormChange}
-                      rows={5}
-                      placeholder="Briefly describe what you would like to build, your target timeline, or any specific features..."
-                      required
-                      style={styles.formTextarea}
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={formLoading}
-                    style={styles.formSubmitBtn}
-                  >
-                    {formLoading ? 'Submitting...' : 'Send Project Inquiry →'}
-                  </button>
-                  <p style={styles.formPrivacyNote}>
-                    🔒 We respect your privacy. All information is protected under mutual non-disclosure. No spam, ever.
-                  </p>
-                </form>
-              )}
-            </div>
-
-            {/* Direct Contact Info Card */}
-            <div style={styles.contactInfoCard}>
-              <h3 style={styles.contactInfoTitle}>Direct Communication</h3>
-              <p style={styles.contactInfoDesc}>
-                Prefer direct correspondence? Feel free to reach out to our team directly via email or WhatsApp.
-              </p>
-
-              <div style={styles.infoBlock}>
-                <div style={styles.infoLabel}>Official Email</div>
-                <a href="mailto:contact@abhimanu-technologies.app" style={styles.infoValueLink}>
-                  contact@abhimanu-technologies.app
+            {/* Direct Info List */}
+            <div style={styles.contactInfoSide}>
+              <div style={styles.contactInfoRow}>
+                <strong>New projects</strong>
+                <a href="mailto:hello@abhimanyutech.example" style={styles.contactInfoLink}>
+                  hello@abhimanyutech.example
                 </a>
               </div>
 
-              <div style={styles.infoBlock}>
-                <div style={styles.infoLabel}>Primary Location</div>
-                <div style={styles.infoValue}>
-                  Telangana, India
-                </div>
+              <div style={styles.contactInfoRow}>
+                <strong>Support for existing clients</strong>
+                <a href="mailto:support@abhimanyutech.example" style={styles.contactInfoLink}>
+                  support@abhimanyutech.example
+                </a>
               </div>
 
-              <div style={styles.infoBlock}>
-                <div style={styles.infoLabel}>Working Hours</div>
-                <div style={styles.infoValue}>
-                  Monday – Saturday: 9:00 AM – 7:00 PM IST
-                </div>
+              <div style={styles.contactInfoRow}>
+                <strong>Office</strong>
+                <span style={styles.contactAddress}>Telangana, India</span>
               </div>
 
-              <div style={styles.infoBlock}>
-                <div style={styles.infoLabel}>Response Time SLA</div>
-                <div style={styles.infoValue}>
-                  Within 24 business hours guaranteed
-                </div>
-              </div>
-
-              <hr style={styles.divider} />
-
-              <div style={styles.directChatBox}>
-                <h4 style={styles.chatBoxTitle}>Need an Instant Response?</h4>
-                <p style={styles.chatBoxDesc}>
-                  Chat with our technical founders directly on WhatsApp to discuss your software vision right away.
-                </p>
+              <div style={styles.instantWhatsappBox}>
+                <h4>Need an instant answer?</h4>
+                <p>Chat directly with our technical team on WhatsApp.</p>
                 <a
-                  href="https://wa.me/919999999999?text=Hi%20Abhimanyu%20Technologies,%20I'd%20like%20to%20discuss%20a%20new%20software%20project."
+                  href="https://wa.me/919999999999?text=Hi%20Abhimanyu%20Technologies,%20I%20would%20like%20to%20discuss%20a%20project."
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={styles.directWhatsAppBtn}
+                  style={styles.whatsappActionBtn}
                 >
                   Message on WhatsApp &rarr;
                 </a>
               </div>
             </div>
+
+            {/* Form */}
+            <div style={styles.contactFormSide}>
+              {contactSubmitted ? (
+                <div style={styles.submittedBox}>
+                  <div style={styles.checkIconBig}>✓</div>
+                  <h3>Thank you for reaching out!</h3>
+                  <p>
+                    We have received your project details. Our engineering lead will review your message and reply to <strong>{contactData.email}</strong> within one working day.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setContactSubmitted(false);
+                      setContactData({
+                        name: '',
+                        email: '',
+                        phone: '',
+                        serviceNeed: 'Web application development',
+                        details: ''
+                      });
+                    }}
+                    style={styles.sendAnotherBtn}
+                  >
+                    Send another inquiry
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} style={styles.contactForm}>
+                  <div style={styles.formGroup}>
+                    <label style={styles.fieldLabel}>Full name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={contactData.name}
+                      onChange={(e) => setContactData({ ...contactData, name: e.target.value })}
+                      placeholder="e.g. Ramesh V."
+                      style={styles.fieldInput}
+                    />
+                  </div>
+
+                  <div style={styles.formGroup}>
+                    <label style={styles.fieldLabel}>Email *</label>
+                    <input
+                      type="email"
+                      required
+                      value={contactData.email}
+                      onChange={(e) => setContactData({ ...contactData, email: e.target.value })}
+                      placeholder="ramesh@example.com"
+                      style={styles.fieldInput}
+                    />
+                  </div>
+
+                  <div style={styles.formGroup}>
+                    <label style={styles.fieldLabel}>Phone (optional)</label>
+                    <input
+                      type="tel"
+                      value={contactData.phone}
+                      onChange={(e) => setContactData({ ...contactData, phone: e.target.value })}
+                      placeholder="+91..."
+                      style={styles.fieldInput}
+                    />
+                  </div>
+
+                  <div style={styles.formGroup}>
+                    <label style={styles.fieldLabel}>I need help with</label>
+                    <select
+                      value={contactData.serviceNeed}
+                      onChange={(e) => setContactData({ ...contactData, serviceNeed: e.target.value })}
+                      style={styles.fieldSelect}
+                    >
+                      <option value="Mobile app development">Mobile app development</option>
+                      <option value="Web application development">Web application development</option>
+                      <option value="Application maintenance">Application maintenance</option>
+                      <option value="IT services and consulting">IT services and consulting</option>
+                      <option value="Cloud and DevOps">Cloud and DevOps</option>
+                      <option value="UI and UX design">UI and UX design</option>
+                      <option value="3D animation and visuals">3D animation and visuals</option>
+                      <option value="AI and automation">AI and automation</option>
+                      <option value="Engineering and construction software">Engineering and construction software</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div style={styles.formGroup}>
+                    <label style={styles.fieldLabel}>Project details *</label>
+                    <textarea
+                      required
+                      rows={5}
+                      value={contactData.details}
+                      onChange={(e) => setContactData({ ...contactData, details: e.target.value })}
+                      placeholder="Share what you are building, key milestones, or questions..."
+                      style={styles.fieldTextarea}
+                    />
+                  </div>
+
+                  <button type="submit" style={styles.submitBtn}>
+                    Send inquiry &rarr;
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </section>
-
-      {/* --- QUICK QUOTE MODAL --- */}
-      {quoteModalOpen && (
-        <div style={styles.modalOverlay} onClick={() => setQuoteModalOpen(false)}>
-          <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <h3 style={styles.modalTitle}>Request a Rapid Quote</h3>
-              <button
-                onClick={() => setQuoteModalOpen(false)}
-                style={styles.modalCloseBtn}
-                aria-label="Close modal"
-              >
-                &times;
-              </button>
-            </div>
-            <p style={styles.modalSubtitle}>
-              Share a few quick details and our technical lead will prepare a customized proposal for your software.
-            </p>
-
-            {quoteSubmitted ? (
-              <div style={styles.modalSuccess}>
-                <div style={styles.checkBig}>✓</div>
-                <h4>Thank you!</h4>
-                <p>We will contact you shortly with an initial estimate.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleQuoteSubmit} style={styles.modalForm}>
-                <div style={styles.formGroup}>
-                  <label style={styles.formLabel}>Your Name *</label>
-                  <input
-                    type="text"
-                    value={quoteData.name}
-                    onChange={(e) => setQuoteData({ ...quoteData, name: e.target.value })}
-                    placeholder="e.g. Priya Reddy"
-                    required
-                    style={styles.formInput}
-                  />
-                </div>
-                <div style={styles.formGroup}>
-                  <label style={styles.formLabel}>Email or Phone Number *</label>
-                  <input
-                    type="text"
-                    value={quoteData.contact}
-                    onChange={(e) => setQuoteData({ ...quoteData, contact: e.target.value })}
-                    placeholder="priya@example.com or +91..."
-                    required
-                    style={styles.formInput}
-                  />
-                </div>
-                <div style={styles.formGroup}>
-                  <label style={styles.formLabel}>Project Type</label>
-                  <select
-                    value={quoteData.projectScope}
-                    onChange={(e) => setQuoteData({ ...quoteData, projectScope: e.target.value })}
-                    style={styles.formSelect}
-                  >
-                    <option value="Custom Web Application">Custom Web Application</option>
-                    <option value="Mobile App (iOS/Android)">Mobile App (iOS/Android)</option>
-                    <option value="Backend / Cloud Architecture">Backend / Cloud Architecture</option>
-                    <option value="UI/UX Prototype">UI/UX Prototype</option>
-                    <option value="Other / Complete System">Other / Complete System</option>
-                  </select>
-                </div>
-                <div style={styles.formGroup}>
-                  <label style={styles.formLabel}>Brief Description / Notes</label>
-                  <textarea
-                    rows={3}
-                    value={quoteData.note}
-                    onChange={(e) => setQuoteData({ ...quoteData, note: e.target.value })}
-                    placeholder="Key features, desired launch date, or questions..."
-                    style={styles.formTextarea}
-                  />
-                </div>
-                <button type="submit" style={styles.modalSubmitBtn}>
-                  Submit Quote Request &rarr;
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* --- FOOTER --- */}
       <footer style={styles.footer}>
@@ -970,80 +2002,60 @@ export default function App() {
           <div className="footer-grid" style={styles.footerGrid}>
             {/* Brand Col */}
             <div style={styles.footerBrandCol}>
-              <div style={styles.brandLogo}>
-                <div style={styles.brandIconBox}>
-                  <span style={styles.brandIconText}>AT</span>
-                </div>
-                <div style={styles.brandTextWrapper}>
-                  <span style={styles.brandTitle}>Abhimanyu Technologies</span>
-                  <span style={styles.brandSubtitle}>Software Engineering Studio</span>
-                </div>
-              </div>
+              <a href="#top" onClick={(e) => scrollTo(e, 'top')} style={styles.footerBrandLink}>
+                <span style={styles.brandMainFooter}>Abhimanyu</span>
+                <span style={styles.brandSubFooter}>TECHNOLOGIES</span>
+              </a>
               <p style={styles.footerBio}>
-                We design and engineer modern web applications, mobile apps, and scalable digital solutions for growing startups and ambitious businesses worldwide.
+                Applications, maintenance, IT services and 3D animation for growing businesses.
               </p>
-              <div style={styles.footerBadge}>
-                📍 Based in Telangana, India • Available for Global Clients
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div style={styles.footerCol}>
-              <h4 style={styles.footerHeading}>Navigation</h4>
-              <ul style={styles.footerList}>
-                <li><a href="#services" onClick={(e) => scrollToSection(e, 'services')} style={styles.footerLink}>Services</a></li>
-                <li><a href="#why-us" onClick={(e) => scrollToSection(e, 'why-us')} style={styles.footerLink}>Why Choose Us</a></li>
-                <li><a href="#process" onClick={(e) => scrollToSection(e, 'process')} style={styles.footerLink}>How We Work</a></li>
-                <li><a href="#tech-stack" onClick={(e) => scrollToSection(e, 'tech-stack')} style={styles.footerLink}>Tech Stack</a></li>
-                <li><a href="#about" onClick={(e) => scrollToSection(e, 'about')} style={styles.footerLink}>About Us</a></li>
-                <li><a href="#faq" onClick={(e) => scrollToSection(e, 'faq')} style={styles.footerLink}>FAQ</a></li>
-              </ul>
+              <span style={styles.footerLocationBadge}>
+                📍 Based in Telangana, India • Global Support
+              </span>
             </div>
 
             {/* Services Links */}
             <div style={styles.footerCol}>
-              <h4 style={styles.footerHeading}>Core Capabilities</h4>
-              <ul style={styles.footerList}>
-                <li><span style={styles.footerTextItem}>Custom Web Development</span></li>
-                <li><span style={styles.footerTextItem}>iOS & Android Mobile Apps</span></li>
-                <li><span style={styles.footerTextItem}>Scalable Backend APIs</span></li>
-                <li><span style={styles.footerTextItem}>Cloud & DevOps (AWS/Docker)</span></li>
-                <li><span style={styles.footerTextItem}>UI/UX Design Systems</span></li>
-                <li><span style={styles.footerTextItem}>Code Modernization & SLA</span></li>
+              <h4 style={styles.footerTitle}>Services</h4>
+              <ul style={styles.footerLinksList}>
+                <li><a href="#services" onClick={(e) => scrollTo(e, 'services')} style={styles.fLink}>App development</a></li>
+                <li><a href="#support" onClick={(e) => scrollTo(e, 'support')} style={styles.fLink}>Maintenance</a></li>
+                <li><a href="#services" onClick={(e) => scrollTo(e, 'services')} style={styles.fLink}>IT services</a></li>
+                <li><a href="#studio" onClick={(e) => scrollTo(e, 'studio')} style={styles.fLink}>3D animation</a></li>
               </ul>
             </div>
 
-            {/* Contact Col */}
+            {/* Explore Links */}
             <div style={styles.footerCol}>
-              <h4 style={styles.footerHeading}>Get in Touch</h4>
-              <p style={styles.footerContactText}>
-                Email: <a href="mailto:contact@abhimanu-technologies.app" style={styles.footerLink}>contact@abhimanu-technologies.app</a>
-              </p>
-              <p style={styles.footerContactText}>
-                Location: Telangana, India
-              </p>
-              <p style={styles.footerContactText}>
-                SLA: Guaranteed 24hr response
-              </p>
-              <button
-                onClick={() => setQuoteModalOpen(true)}
-                style={styles.footerCtaBtn}
-              >
-                Schedule Consultation
-              </button>
+              <h4 style={styles.footerTitle}>Explore</h4>
+              <ul style={styles.footerLinksList}>
+                <li><a href="#industries" onClick={(e) => scrollTo(e, 'industries')} style={styles.fLink}>Industries</a></li>
+                <li><a href="#work" onClick={(e) => scrollTo(e, 'work')} style={styles.fLink}>Selected work</a></li>
+                <li><a href="#process" onClick={(e) => scrollTo(e, 'process')} style={styles.fLink}>How we work</a></li>
+                <li><a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.fLink}>Estimator</a></li>
+                <li><a href="#faq" onClick={(e) => scrollTo(e, 'faq')} style={styles.fLink}>FAQ</a></li>
+              </ul>
+            </div>
+
+            {/* Company Links */}
+            <div style={styles.footerCol}>
+              <h4 style={styles.footerTitle}>Company</h4>
+              <ul style={styles.footerLinksList}>
+                <li><a href="#contact" onClick={(e) => scrollTo(e, 'contact')} style={styles.fLink}>Contact</a></li>
+                <li><a href="#support" onClick={(e) => scrollTo(e, 'support')} style={styles.fLink}>Support plans</a></li>
+                <li><a href="#top" onClick={(e) => scrollTo(e, 'top')} style={styles.fLink}>Back to top &uarr;</a></li>
+              </ul>
             </div>
           </div>
 
-          <div style={styles.footerBottom}>
-            <div style={styles.copyrightText}>
-              &copy; {new Date().getFullYear()} Abhimanyu Technologies. All rights reserved. 100% intellectual property ownership guaranteed.
+          <div style={styles.footerBottomBar}>
+            <div>
+              &copy; {new Date().getFullYear()} Abhimanyu Technologies. All rights reserved.
             </div>
-            <div style={styles.footerBottomLinks}>
-              <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} style={styles.footerSubLink}>Privacy & NDA</a>
-              <span style={styles.dotSeparator}>•</span>
-              <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} style={styles.footerSubLink}>Terms of Engagement</a>
-              <span style={styles.dotSeparator}>•</span>
-              <a href="#top" onClick={(e) => scrollToSection(e, 'top')} style={styles.footerSubLink}>Back to Top &uarr;</a>
+            <div style={styles.footerLegalLinks}>
+              <span>Privacy</span>
+              <span>·</span>
+              <span>Terms</span>
             </div>
           </div>
         </div>
@@ -1054,10 +2066,10 @@ export default function App() {
 
 // --- CSS-IN-JS INLINE DESIGN SYSTEM ---
 const styles = {
-  pageWrapper: {
+  page: {
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
     color: '#0F172A',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FFFFFF',
     minHeight: '100vh',
     lineHeight: '1.6',
     boxSizing: 'border-box'
@@ -1067,29 +2079,30 @@ const styles = {
     margin: '0 auto',
     padding: '0 24px'
   },
-  // Top Banner
-  topBanner: {
-    backgroundColor: '#1E293B',
-    color: '#F8FAFC',
-    fontSize: '13px',
-    padding: '10px 0',
-    borderBottom: '1px solid #334155'
+
+  // Utility Bar
+  utilityBar: {
+    backgroundColor: '#0F172A',
+    color: '#94A3B8',
+    fontSize: '12px',
+    fontWeight: '600',
+    letterSpacing: '0.8px',
+    padding: '8px 0',
+    borderBottom: '1px solid #1E293B'
   },
-  topBannerContent: {
+  utilityContent: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'wrap',
     gap: '8px'
   },
-  topBannerLink: {
-    color: '#38BDF8',
-    fontWeight: '600',
-    textDecoration: 'none',
-    fontSize: '13px'
+  utilityRight: {
+    color: '#38BDF8'
   },
+
   // Header
-  header: {
+  navHeader: {
     backgroundColor: 'rgba(255, 255, 255, 0.96)',
     backdropFilter: 'blur(10px)',
     borderBottom: '1px solid #E2E8F0',
@@ -1105,76 +2118,51 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-between'
   },
-  brandLogo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
+  brandLink: {
     textDecoration: 'none',
-    color: 'inherit'
-  },
-  brandIconBox: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '10px',
-    backgroundColor: '#2563EB',
-    background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#FFFFFF',
-    fontWeight: '800',
-    fontSize: '18px',
-    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)'
+    alignItems: 'baseline',
+    gap: '4px'
   },
-  brandIconText: {
+  brandMain: {
+    fontSize: '20px',
+    fontWeight: '800',
+    color: '#0F172A',
     letterSpacing: '-0.5px'
   },
-  brandTextWrapper: {
+  brandSub: {
+    fontSize: '11px',
+    fontWeight: '800',
+    color: '#2563EB',
+    letterSpacing: '1px'
+  },
+  navLinks: {
     display: 'flex',
-    flexDirection: 'column'
-  },
-  brandTitle: {
-    fontSize: '17px',
-    fontWeight: '700',
-    color: '#0F172A',
-    letterSpacing: '-0.3px',
-    lineHeight: '1.2'
-  },
-  brandSubtitle: {
-    fontSize: '12px',
-    color: '#64748B',
-    fontWeight: '500'
-  },
-  desktopNav: {
-    display: 'flex',
-    alignItems: 'center',
     gap: '24px'
   },
-  navLink: {
+  navItem: {
     textDecoration: 'none',
     color: '#475569',
-    fontSize: '14.5px',
+    fontSize: '14px',
     fontWeight: '500',
     transition: 'color 0.15s ease'
   },
-  headerCtaWrapper: {
+  headerActions: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px'
   },
-  primaryBtnSmall: {
+  quoteBtn: {
     backgroundColor: '#2563EB',
     color: '#FFFFFF',
-    border: 'none',
+    textDecoration: 'none',
     padding: '9px 18px',
     borderRadius: '8px',
     fontSize: '14px',
     fontWeight: '600',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s ease',
     boxShadow: '0 1px 3px rgba(37, 99, 235, 0.2)'
   },
-  mobileMenuToggle: {
+  mobileHamburger: {
     display: 'none',
     background: 'none',
     border: '1px solid #CBD5E1',
@@ -1183,7 +2171,7 @@ const styles = {
     cursor: 'pointer',
     color: '#0F172A'
   },
-  mobileNavDrawer: {
+  mobileMenu: {
     backgroundColor: '#FFFFFF',
     borderTop: '1px solid #E2E8F0',
     padding: '16px 24px',
@@ -1191,53 +2179,47 @@ const styles = {
     flexDirection: 'column',
     gap: '14px'
   },
-  mobileNavLink: {
+  mobileMenuItem: {
     textDecoration: 'none',
-    color: '#1E293B',
+    color: '#0F172A',
     fontSize: '16px',
     fontWeight: '500',
-    padding: '6px 0'
+    padding: '4px 0'
   },
-  mobileCtaBtn: {
+  mobileQuoteBtn: {
     backgroundColor: '#2563EB',
     color: '#FFFFFF',
-    border: 'none',
+    textDecoration: 'none',
+    textAlign: 'center',
     padding: '12px',
     borderRadius: '8px',
-    fontSize: '15px',
     fontWeight: '600',
-    cursor: 'pointer',
-    marginTop: '8px'
+    marginTop: '6px'
   },
+
   // Hero
   heroSection: {
-    padding: '80px 0 60px 0',
-    background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
-    borderBottom: '1px solid #E2E8F0'
+    padding: '70px 0 60px 0',
+    backgroundColor: '#F8FAFC',
+    borderBottom: '1px solid #E2E8F0',
+    overflow: 'hidden'
   },
-  heroContent: {
-    maxWidth: '860px',
-    margin: '0 auto',
-    textAlign: 'center'
+  heroGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1.2fr 1fr',
+    gap: '40px',
+    alignItems: 'center'
   },
-  heroBadge: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '8px',
-    backgroundColor: '#EFF6FF',
-    border: '1px solid #BFDBFE',
-    color: '#1D4ED8',
-    padding: '6px 14px',
-    borderRadius: '9999px',
-    fontSize: '13px',
-    fontWeight: '600',
-    marginBottom: '24px'
+  heroTextCol: {
+    display: 'flex',
+    flexDirection: 'column'
   },
-  heroBadgeDot: {
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    backgroundColor: '#2563EB'
+  heroOverline: {
+    color: '#2563EB',
+    fontSize: '12.5px',
+    fontWeight: '700',
+    letterSpacing: '1.5px',
+    marginBottom: '16px'
   },
   heroTitle: {
     fontSize: '44px',
@@ -1248,85 +2230,97 @@ const styles = {
     marginBottom: '20px'
   },
   heroSubtitle: {
-    fontSize: '18px',
+    fontSize: '17px',
     lineHeight: '1.65',
     color: '#475569',
-    marginBottom: '36px',
-    maxWidth: '740px',
-    margin: '0 auto 36px auto'
+    marginBottom: '32px'
   },
-  heroActions: {
+  heroCtaRow: {
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
     gap: '14px',
     flexWrap: 'wrap',
-    marginBottom: '60px'
+    marginBottom: '32px'
   },
-  primaryBtnLarge: {
+  primaryCta: {
     backgroundColor: '#2563EB',
     color: '#FFFFFF',
     textDecoration: 'none',
-    padding: '14px 28px',
-    borderRadius: '10px',
-    fontSize: '16px',
-    fontWeight: '600',
-    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
-    display: 'inline-block',
-    transition: 'transform 0.15s ease'
-  },
-  secondaryBtnLarge: {
-    backgroundColor: '#FFFFFF',
-    color: '#334155',
-    border: '1px solid #CBD5E1',
-    textDecoration: 'none',
-    padding: '14px 26px',
-    borderRadius: '10px',
-    fontSize: '16px',
-    fontWeight: '600',
-    display: 'inline-block'
-  },
-  whatsappBtn: {
-    backgroundColor: '#22C55E',
-    color: '#FFFFFF',
-    textDecoration: 'none',
-    padding: '14px 22px',
-    borderRadius: '10px',
+    padding: '13px 26px',
+    borderRadius: '8px',
     fontSize: '15px',
     fontWeight: '600',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '8px',
-    boxShadow: '0 4px 12px rgba(34, 197, 94, 0.25)'
+    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
   },
-  trustGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '16px',
-    textAlign: 'left'
+  secondaryCta: {
+    backgroundColor: '#FFFFFF',
+    color: '#0F172A',
+    border: '1px solid #CBD5E1',
+    textDecoration: 'none',
+    padding: '13px 24px',
+    borderRadius: '8px',
+    fontSize: '15px',
+    fontWeight: '600'
   },
-  trustCard: {
+  heroPillRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px'
+  },
+  heroPill: {
     backgroundColor: '#FFFFFF',
     border: '1px solid #E2E8F0',
-    borderRadius: '12px',
-    padding: '16px',
+    color: '#475569',
+    fontSize: '12.5px',
+    fontWeight: '600',
+    padding: '5px 12px',
+    borderRadius: '6px'
+  },
+  hero3DCol: {
     display: 'flex',
-    alignItems: 'flex-start',
-    gap: '12px',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  trustIcon: {
-    fontSize: '24px',
-    lineHeight: '1'
-  },
-  trustText: {
+  chakraContainer: {
+    width: '100%',
+    maxWidth: '420px',
+    height: '420px',
+    backgroundColor: '#0F172A',
+    borderRadius: '24px',
+    padding: '20px',
     display: 'flex',
     flexDirection: 'column',
-    fontSize: '13px',
-    color: '#64748B',
-    lineHeight: '1.4'
+    position: 'relative',
+    boxShadow: '0 20px 30px -10px rgba(15, 23, 42, 0.3)'
   },
-  // Section Headers
+  chakraHeaderBadge: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    fontSize: '11px',
+    fontWeight: '700',
+    letterSpacing: '1px',
+    color: '#94A3B8',
+    marginBottom: '10px'
+  },
+  steerPill: {
+    backgroundColor: 'rgba(56, 189, 248, 0.15)',
+    color: '#38BDF8',
+    padding: '4px 8px',
+    borderRadius: '4px',
+    fontSize: '10px'
+  },
+  canvasMount: {
+    width: '100%',
+    height: '100%',
+    cursor: 'grab'
+  },
+  canvasMountTall: {
+    width: '100%',
+    height: '460px',
+    cursor: 'grab'
+  },
+
+  // Sections
   section: {
     padding: '80px 0',
     borderBottom: '1px solid #E2E8F0',
@@ -1337,14 +2331,34 @@ const styles = {
     borderBottom: '1px solid #E2E8F0',
     backgroundColor: '#F8FAFC'
   },
-  sectionHeader: {
-    textAlign: 'center',
-    maxWidth: '700px',
-    margin: '0 auto 50px auto'
+  sectionDark: {
+    padding: '80px 0',
+    backgroundColor: '#0A0F1D',
+    color: '#F8FAFC',
+    borderBottom: '1px solid #1E293B'
   },
-  sectionTag: {
+  sectionHeader: {
+    maxWidth: '740px',
+    margin: '0 auto 50px auto',
+    textAlign: 'center'
+  },
+  sectionHeaderDark: {
+    maxWidth: '740px',
+    margin: '0 auto 50px auto',
+    textAlign: 'center'
+  },
+  sectionEyebrow: {
     color: '#2563EB',
-    fontSize: '12.5px',
+    fontSize: '13px',
+    fontWeight: '700',
+    letterSpacing: '1px',
+    textTransform: 'uppercase',
+    display: 'block',
+    marginBottom: '8px'
+  },
+  sectionEyebrowCyan: {
+    color: '#38BDF8',
+    fontSize: '13px',
     fontWeight: '700',
     letterSpacing: '1px',
     textTransform: 'uppercase',
@@ -1359,102 +2373,1161 @@ const styles = {
     lineHeight: '1.25',
     marginBottom: '14px'
   },
+  sectionTitleDark: {
+    fontSize: '34px',
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: '-0.5px',
+    lineHeight: '1.25',
+    marginBottom: '14px'
+  },
   sectionSubtitle: {
     fontSize: '16.5px',
-    color: '#64748B',
+    color: '#475569',
     lineHeight: '1.6'
   },
+  sectionSubtitleDark: {
+    fontSize: '16.5px',
+    color: '#94A3B8',
+    lineHeight: '1.6'
+  },
+
   // Services
   servicesGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
     gap: '24px'
   },
   serviceCard: {
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E2E8F0',
+    borderRadius: '14px',
+    padding: '24px',
+    display: 'flex',
+    flexDirection: 'column',
+    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.03)'
+  },
+  serviceCardTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '10px'
+  },
+  serviceName: {
+    fontSize: '19px',
+    fontWeight: '700',
+    color: '#0F172A'
+  },
+  newBadge: {
+    backgroundColor: '#EFF6FF',
+    color: '#2563EB',
+    fontSize: '11px',
+    fontWeight: '700',
+    padding: '3px 8px',
+    borderRadius: '4px'
+  },
+  serviceDesc: {
+    fontSize: '14px',
+    color: '#475569',
+    lineHeight: '1.6',
+    marginBottom: '18px'
+  },
+  serviceBullets: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 'auto 0 0 0',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px'
+  },
+  bulletItem: {
+    display: 'flex',
+    gap: '8px',
+    fontSize: '13px',
+    color: '#334155'
+  },
+  bulletDot: {
+    color: '#2563EB',
+    fontWeight: '700'
+  },
+
+  // 3D Studio Layout
+  studioLayout: {
+    display: 'grid',
+    gridTemplateColumns: '1.2fr 1fr',
+    gap: '32px',
+    marginBottom: '48px',
+    alignItems: 'center'
+  },
+  studioCanvasCol: {
+    display: 'flex'
+  },
+  studioCanvasBox: {
+    width: '100%',
+    height: '420px',
+    backgroundColor: '#030712',
+    border: '1px solid #1E293B',
+    borderRadius: '20px',
+    padding: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative'
+  },
+  studioCanvasBadgeRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '8px',
+    fontSize: '11px',
+    fontWeight: '700'
+  },
+  webglTag: {
+    color: '#38BDF8',
+    letterSpacing: '1px'
+  },
+  dragTag: {
+    color: '#94A3B8'
+  },
+  studioControlsCol: {
+    backgroundColor: '#111827',
+    border: '1px solid #1F2937',
+    borderRadius: '20px',
+    padding: '28px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '18px'
+  },
+  controlGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px'
+  },
+  controlLabel: {
+    fontSize: '13px',
+    fontWeight: '700',
+    color: '#E2E8F0',
+    letterSpacing: '0.3px'
+  },
+  btnSelectorGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '8px'
+  },
+  selectBtn: {
+    backgroundColor: '#1F2937',
+    color: '#94A3B8',
+    border: '1px solid #374151',
+    padding: '8px',
+    borderRadius: '6px',
+    fontSize: '13px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  activeSelectBtn: {
+    backgroundColor: '#2563EB',
+    color: '#FFFFFF',
+    border: '1px solid #2563EB',
+    padding: '8px',
+    borderRadius: '6px',
+    fontSize: '13px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  colorPaletteRow: {
+    display: 'flex',
+    gap: '12px'
+  },
+  colorCircle: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'transform 0.1s ease'
+  },
+  sliderLabelRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  sliderValue: {
+    color: '#38BDF8',
+    fontSize: '13px',
+    fontWeight: '600'
+  },
+  rangeInput: {
+    width: '100%',
+    cursor: 'pointer'
+  },
+  checkboxRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  },
+  checkbox: {
+    width: '16px',
+    height: '16px',
+    cursor: 'pointer'
+  },
+  checkboxLabel: {
+    fontSize: '14px',
+    color: '#CBD5E1',
+    cursor: 'pointer'
+  },
+  studioPillarsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: '20px',
+    marginBottom: '60px'
+  },
+  studioPillarCard: {
+    backgroundColor: '#111827',
+    border: '1px solid #1F2937',
+    borderRadius: '12px',
+    padding: '20px'
+  },
+  pillarTitle: {
+    fontSize: '16px',
+    fontWeight: '700',
+    color: '#38BDF8',
+    marginBottom: '6px'
+  },
+  pillarText: {
+    fontSize: '13.5px',
+    color: '#94A3B8',
+    lineHeight: '1.5'
+  },
+
+  // 6 Animated CSS 3D Flip Cards
+  flipCardsWrapper: {
+    marginBottom: '60px'
+  },
+  flipCardsHeader: {
+    textAlign: 'center',
+    marginBottom: '32px'
+  },
+  flipCardsTitle: {
+    fontSize: '24px',
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: '6px'
+  },
+  flipCardsSubtitle: {
+    fontSize: '14.5px',
+    color: '#94A3B8'
+  },
+  flipCardsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gap: '24px'
+  },
+  flipCardContainer: {
+    backgroundColor: 'transparent',
+    height: '220px',
+    perspective: '1000px'
+  },
+  flipCardInner: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    textAlign: 'left',
+    transition: 'transform 0.6s',
+    transformStyle: 'preserve-3d'
+  },
+  flipCardFront: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backfaceVisibility: 'hidden',
+    backgroundColor: '#111827',
+    border: '1px solid #1F2937',
+    borderRadius: '16px',
+    padding: '24px',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box'
+  },
+  cardIndexBadge: {
+    fontSize: '12px',
+    fontWeight: '800',
+    color: '#38BDF8',
+    letterSpacing: '1px',
+    marginBottom: '8px'
+  },
+  cardFrontTitle: {
+    fontSize: '18px',
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: '8px'
+  },
+  cardFrontDesc: {
+    fontSize: '13.5px',
+    color: '#94A3B8',
+    lineHeight: '1.5'
+  },
+  flipHint: {
+    marginTop: 'auto',
+    fontSize: '12px',
+    fontWeight: '600',
+    color: '#38BDF8'
+  },
+  flipCardBack: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backfaceVisibility: 'hidden',
+    backgroundColor: '#1E293B',
+    border: '1px solid #38BDF8',
+    borderRadius: '16px',
+    padding: '24px',
+    display: 'flex',
+    flexDirection: 'column',
+    transform: 'rotateY(180deg)',
+    boxSizing: 'border-box'
+  },
+  cardBackTitle: {
+    fontSize: '17px',
+    fontWeight: '700',
+    color: '#38BDF8',
+    marginBottom: '8px'
+  },
+  cardBackDesc: {
+    fontSize: '13.5px',
+    color: '#E2E8F0',
+    lineHeight: '1.55'
+  },
+  cardBackCta: {
+    marginTop: 'auto',
+    color: '#FFFFFF',
+    backgroundColor: '#2563EB',
+    textDecoration: 'none',
+    alignSelf: 'flex-start',
+    padding: '6px 14px',
+    borderRadius: '6px',
+    fontSize: '12.5px',
+    fontWeight: '600'
+  },
+
+  // 3D Pipeline
+  pipelineWrapper: {
+    marginBottom: '48px',
+    borderTop: '1px solid #1E293B',
+    paddingTop: '40px'
+  },
+  pipelineHeaderTitle: {
+    fontSize: '22px',
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: '24px',
+    textAlign: 'center'
+  },
+  pipelineGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+    gap: '16px'
+  },
+  pipelineStepCard: {
+    backgroundColor: '#111827',
+    border: '1px solid #1F2937',
+    borderRadius: '12px',
+    padding: '18px'
+  },
+  pipelineStepNum: {
+    fontSize: '24px',
+    fontWeight: '800',
+    color: '#38BDF8',
+    lineHeight: '1',
+    marginBottom: '10px'
+  },
+  pipelineStepTitle: {
+    fontSize: '15px',
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: '6px'
+  },
+  pipelineStepDesc: {
+    fontSize: '12.5px',
+    color: '#94A3B8',
+    lineHeight: '1.5'
+  },
+
+  // Formats Chips
+  formatsWrapper: {
+    backgroundColor: '#111827',
+    border: '1px solid #1F2937',
+    borderRadius: '14px',
+    padding: '24px',
+    textAlign: 'center'
+  },
+  formatsHeading: {
+    fontSize: '15px',
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: '14px'
+  },
+  formatsChipList: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: '10px'
+  },
+  formatChipItem: {
+    backgroundColor: '#1E293B',
+    color: '#38BDF8',
+    fontSize: '12.5px',
+    fontWeight: '600',
+    padding: '6px 14px',
+    borderRadius: '9999px',
+    border: '1px solid rgba(56, 189, 248, 0.2)'
+  },
+
+  // Applications Mockup Section
+  appCategoryTabs: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: '10px',
+    marginBottom: '40px'
+  },
+  appTab: {
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #CBD5E1',
+    color: '#475569',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  activeAppTab: {
+    backgroundColor: '#2563EB',
+    border: '1px solid #2563EB',
+    color: '#FFFFFF',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  phoneShowcaseWrapper: {
+    display: 'grid',
+    gridTemplateColumns: '380px 1fr',
+    gap: '48px',
+    alignItems: 'center',
+    maxWidth: '960px',
+    margin: '0 auto'
+  },
+  phoneDeviceCard: {
+    width: '100%',
+    backgroundColor: '#0F172A',
+    borderRadius: '36px',
+    padding: '16px',
+    boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
+    border: '4px solid #334155'
+  },
+  phoneSpeakerNotch: {
+    width: '80px',
+    height: '6px',
+    backgroundColor: '#1E293B',
+    borderRadius: '3px',
+    margin: '0 auto 12px auto'
+  },
+  phoneScreenContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: '26px',
+    padding: '18px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '14px'
+  },
+  phoneStatusBar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    fontSize: '11px',
+    fontWeight: '700',
+    color: '#64748B'
+  },
+  appHeaderRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  appGreeting: {
+    fontSize: '11px',
+    color: '#64748B',
+    fontWeight: '600'
+  },
+  appCategoryActiveTitle: {
+    fontSize: '16px',
+    fontWeight: '700',
+    color: '#0F172A',
+    margin: 0
+  },
+  livePulse: {
+    fontSize: '10px',
+    fontWeight: '800',
+    color: '#10B981',
+    backgroundColor: '#DCFCE7',
+    padding: '2px 6px',
+    borderRadius: '4px'
+  },
+  statsWidgetRow: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '8px'
+  },
+  statWidget: {
+    backgroundColor: '#F8FAFC',
+    border: '1px solid #E2E8F0',
+    borderRadius: '8px',
+    padding: '8px',
+    textAlign: 'center'
+  },
+  statValue: {
+    fontSize: '16px',
+    fontWeight: '800',
+    color: '#0F172A'
+  },
+  statLabel: {
+    fontSize: '9.5px',
+    color: '#64748B',
+    fontWeight: '600'
+  },
+  ordersSection: {
+    backgroundColor: '#F8FAFC',
+    border: '1px solid #E2E8F0',
+    borderRadius: '10px',
+    padding: '10px'
+  },
+  ordersHeadingRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '8px'
+  },
+  ordersHeading: {
+    fontSize: '12px',
+    fontWeight: '700',
+    color: '#0F172A'
+  },
+  ordersFilter: {
+    fontSize: '11px',
+    color: '#2563EB',
+    fontWeight: '600'
+  },
+  orderItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    fontSize: '11px',
+    padding: '4px 0',
+    borderBottom: '1px solid #F1F5F9'
+  },
+  statusReady: {
+    backgroundColor: '#EFF6FF',
+    color: '#2563EB',
+    padding: '1px 5px',
+    borderRadius: '3px',
+    fontWeight: '600'
+  },
+  statusTransit: {
+    backgroundColor: '#FEF3C7',
+    color: '#B45309',
+    padding: '1px 5px',
+    borderRadius: '3px',
+    fontWeight: '600'
+  },
+  statusDone: {
+    backgroundColor: '#DCFCE7',
+    color: '#15803D',
+    padding: '1px 5px',
+    borderRadius: '3px',
+    fontWeight: '600'
+  },
+  statusPending: {
+    backgroundColor: '#FEE2E2',
+    color: '#B91C1C',
+    padding: '1px 5px',
+    borderRadius: '3px',
+    fontWeight: '600'
+  },
+  supportChatContainer: {
+    border: '1px solid #E2E8F0',
+    borderRadius: '10px',
+    padding: '10px'
+  },
+  chatHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    fontSize: '11px',
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: '8px'
+  },
+  chatOnline: {
+    color: '#10B981',
+    fontWeight: '600'
+  },
+  chatMessagesArea: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    maxHeight: '120px',
+    overflowY: 'auto',
+    marginBottom: '8px'
+  },
+  chatMsgUser: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#2563EB',
+    color: '#FFFFFF',
+    fontSize: '11px',
+    padding: '5px 9px',
+    borderRadius: '8px',
+    maxWidth: '85%'
+  },
+  chatMsgBot: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#F1F5F9',
+    color: '#0F172A',
+    fontSize: '11px',
+    padding: '5px 9px',
+    borderRadius: '8px',
+    maxWidth: '85%'
+  },
+  chatInputForm: {
+    display: 'flex',
+    gap: '4px'
+  },
+  chatInput: {
+    flex: 1,
+    padding: '6px 8px',
+    fontSize: '11px',
+    border: '1px solid #CBD5E1',
+    borderRadius: '6px'
+  },
+  chatSendBtn: {
+    backgroundColor: '#0F172A',
+    color: '#FFFFFF',
+    border: 'none',
+    padding: '0 8px',
+    borderRadius: '6px',
+    fontSize: '11px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  floatingAlerts: {
+    display: 'flex',
+    gap: '8px',
+    justifyContent: 'center'
+  },
+  floatingAlert: {
+    backgroundColor: '#F1F5F9',
+    color: '#334155',
+    fontSize: '10px',
+    fontWeight: '600',
+    padding: '3px 8px',
+    borderRadius: '4px'
+  },
+  phoneSideCta: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
+  },
+  sideCtaTitle: {
+    fontSize: '28px',
+    fontWeight: '800',
+    color: '#0F172A',
+    lineHeight: '1.25'
+  },
+  sideCtaDesc: {
+    fontSize: '16px',
+    color: '#475569',
+    lineHeight: '1.6'
+  },
+  planAppBtn: {
+    backgroundColor: '#2563EB',
+    color: '#FFFFFF',
+    textDecoration: 'none',
+    alignSelf: 'flex-start',
+    padding: '12px 24px',
+    borderRadius: '8px',
+    fontSize: '15px',
+    fontWeight: '600'
+  },
+
+  // Industries We Serve
+  industriesViewerLayout: {
+    display: 'grid',
+    gridTemplateColumns: '1.3fr 1fr',
+    gap: '32px',
+    marginBottom: '50px',
+    alignItems: 'center'
+  },
+  buildingViewerCol: {
+    display: 'flex'
+  },
+  buildingViewerBox: {
+    width: '100%',
+    height: '490px',
+    backgroundColor: '#0F172A',
+    borderRadius: '20px',
+    padding: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative'
+  },
+  buildingControlsCol: {
     backgroundColor: '#FFFFFF',
     border: '1px solid #E2E8F0',
     borderRadius: '16px',
     padding: '28px',
     display: 'flex',
     flexDirection: 'column',
-    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
-    transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+    gap: '20px'
   },
-  serviceCardHeader: {
-    marginBottom: '12px'
-  },
-  serviceBadge: {
-    display: 'inline-block',
-    fontSize: '11.5px',
+  controlsHeading: {
+    fontSize: '16px',
     fontWeight: '700',
-    textTransform: 'uppercase',
-    padding: '4px 10px',
-    borderRadius: '6px',
-    backgroundColor: '#EFF6FF',
-    color: '#1D4ED8',
-    marginBottom: '12px'
+    color: '#0F172A'
   },
-  serviceTitle: {
-    fontSize: '21px',
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: '6px'
+  buildingCheckboxGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px'
   },
-  serviceTagline: {
-    fontSize: '14px',
-    color: '#2563EB',
-    fontWeight: '500',
-    marginBottom: '12px'
-  },
-  serviceDesc: {
-    fontSize: '14.5px',
-    color: '#475569',
-    lineHeight: '1.6',
-    marginBottom: '20px'
-  },
-  deliverablesList: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: '10px',
-    padding: '14px 16px',
-    marginBottom: '20px'
-  },
-  deliverableHeading: {
-    display: 'block',
-    fontSize: '12.5px',
-    fontWeight: '700',
-    color: '#334155',
-    marginBottom: '8px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
-  },
-  deliverableItem: {
+  checkLabel: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    fontSize: '13.5px',
+    fontSize: '14px',
     color: '#334155',
-    marginBottom: '6px'
+    cursor: 'pointer'
   },
-  checkIcon: {
-    color: '#10B981',
-    fontWeight: '700',
-    fontSize: '14px'
-  },
-  techPillWrapper: {
+  sliderControl: {
     display: 'flex',
-    flexWrap: 'wrap',
-    gap: '6px',
+    flexDirection: 'column',
+    gap: '6px'
+  },
+  industrySolutionGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+    gap: '24px',
+    marginBottom: '40px'
+  },
+  solutionCard: {
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E2E8F0',
+    borderRadius: '14px',
+    padding: '24px'
+  },
+  solutionTitle: {
+    fontSize: '18px',
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: '8px'
+  },
+  solutionDesc: {
+    fontSize: '14px',
+    color: '#475569',
+    lineHeight: '1.55',
+    marginBottom: '16px'
+  },
+  solutionBullets: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px'
+  },
+  chipsSection: {
     marginBottom: '24px'
   },
-  techPill: {
-    backgroundColor: '#F1F5F9',
-    color: '#475569',
-    fontSize: '12px',
+  chipsHeading: {
+    fontSize: '14px',
+    fontWeight: '700',
+    color: '#64748B',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    marginBottom: '10px'
+  },
+  chipsRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px'
+  },
+  chipItem: {
+    backgroundColor: '#EFF6FF',
+    border: '1px solid #BFDBFE',
+    color: '#1D4ED8',
+    fontSize: '13px',
     fontWeight: '600',
-    padding: '4px 10px',
+    padding: '5px 12px',
     borderRadius: '6px'
   },
-  serviceInquireBtn: {
+  chipTool: {
+    backgroundColor: '#F1F5F9',
+    border: '1px solid #CBD5E1',
+    color: '#334155',
+    fontSize: '13px',
+    fontWeight: '600',
+    padding: '5px 12px',
+    borderRadius: '6px'
+  },
+  firmCtaRow: {
+    textAlign: 'center',
+    marginTop: '32px'
+  },
+
+  // Selected Work Ring
+  ringCarouselBox: {
+    maxWidth: '700px',
+    margin: '0 auto',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E2E8F0',
+    borderRadius: '20px',
+    padding: '36px',
+    textAlign: 'center',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+  },
+  ringControlsRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '24px'
+  },
+  ringArrowBtn: {
+    backgroundColor: '#F8FAFC',
+    border: '1px solid #CBD5E1',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  ringIndicator: {
+    fontSize: '13px',
+    fontWeight: '700',
+    color: '#64748B'
+  },
+  ringCardDisplay: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '20px 0'
+  },
+  conceptTag: {
+    backgroundColor: '#EFF6FF',
+    color: '#2563EB',
+    fontSize: '12px',
+    fontWeight: '700',
+    padding: '4px 10px',
+    borderRadius: '4px'
+  },
+  conceptTitle: {
+    fontSize: '26px',
+    fontWeight: '800',
+    color: '#0F172A',
+    margin: 0
+  },
+  conceptDesc: {
+    fontSize: '16px',
+    color: '#475569',
+    maxWidth: '540px',
+    lineHeight: '1.6'
+  },
+  conceptInquireBtn: {
+    marginTop: '12px',
+    backgroundColor: '#2563EB',
+    color: '#FFFFFF',
+    border: 'none',
+    padding: '10px 20px',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  sampleDisclaimer: {
+    fontSize: '12px',
+    color: '#94A3B8',
+    marginTop: '20px',
+    fontStyle: 'italic'
+  },
+
+  // Process
+  processGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    gap: '24px'
+  },
+  processCard: {
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E2E8F0',
+    borderRadius: '16px',
+    padding: '28px',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  stepBadge: {
+    fontSize: '12px',
+    fontWeight: '800',
+    color: '#2563EB',
+    letterSpacing: '1px',
+    marginBottom: '12px'
+  },
+  processStepTitle: {
+    fontSize: '20px',
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: '8px'
+  },
+  processStepDesc: {
+    fontSize: '14px',
+    color: '#475569',
+    lineHeight: '1.6'
+  },
+
+  // Estimator
+  estimatorGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1.3fr 1fr',
+    gap: '32px'
+  },
+  estimatorOptions: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '28px'
+  },
+  estimatorGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px'
+  },
+  estLabel: {
+    fontSize: '16px',
+    fontWeight: '700',
+    color: '#0F172A'
+  },
+  estTypeSelectGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gap: '10px'
+  },
+  estTypeBtn: {
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #CBD5E1',
+    color: '#475569',
+    padding: '10px 14px',
+    borderRadius: '8px',
+    fontSize: '13px',
+    fontWeight: '600',
+    textAlign: 'left',
+    cursor: 'pointer'
+  },
+  estTypeBtnActive: {
+    backgroundColor: '#EFF6FF',
+    border: '1px solid #2563EB',
+    color: '#1D4ED8',
+    padding: '10px 14px',
+    borderRadius: '8px',
+    fontSize: '13px',
+    fontWeight: '700',
+    textAlign: 'left',
+    cursor: 'pointer'
+  },
+  estFeaturesGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr',
+    gap: '8px'
+  },
+  featureCheckboxLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontSize: '14px',
+    color: '#334155',
+    cursor: 'pointer'
+  },
+  complexityBtnRow: {
+    display: 'flex',
+    gap: '10px'
+  },
+  compBtn: {
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #CBD5E1',
+    color: '#475569',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontSize: '13.5px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  compBtnActive: {
+    backgroundColor: '#2563EB',
+    border: '1px solid #2563EB',
+    color: '#FFFFFF',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontSize: '13.5px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  estimatorResultBox: {
+    display: 'flex'
+  },
+  estResultCard: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E2E8F0',
+    borderRadius: '18px',
+    padding: '28px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+  },
+  resultItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px'
+  },
+  resultLabel: {
+    fontSize: '12px',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    color: '#64748B',
+    letterSpacing: '0.5px'
+  },
+  timelineBigNumber: {
+    fontSize: '32px',
+    fontWeight: '900',
+    color: '#2563EB'
+  },
+  teamDescription: {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#0F172A',
+    lineHeight: '1.5'
+  },
+  phaseBar: {
+    display: 'flex',
+    height: '22px',
+    borderRadius: '6px',
+    overflow: 'hidden',
+    marginTop: '6px'
+  },
+  phaseSegment: {
+    color: '#FFFFFF',
+    fontSize: '10px',
+    fontWeight: '700',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  phaseLabels: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    fontSize: '11px',
+    color: '#64748B',
+    marginTop: '4px'
+  },
+  estNotice: {
+    fontSize: '12px',
+    color: '#94A3B8',
+    lineHeight: '1.4',
+    fontStyle: 'italic',
+    margin: 0
+  },
+  sendEstimateBtn: {
+    backgroundColor: '#2563EB',
+    color: '#FFFFFF',
+    border: 'none',
+    padding: '12px',
+    borderRadius: '8px',
+    fontSize: '15px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+
+  // Support Plans
+  supportGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '24px'
+  },
+  supportCard: {
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E2E8F0',
+    borderRadius: '16px',
+    padding: '32px',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  supportCardPopular: {
+    backgroundColor: '#FFFFFF',
+    border: '2px solid #2563EB',
+    borderRadius: '16px',
+    padding: '32px',
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
+    boxShadow: '0 8px 20px rgba(37, 99, 235, 0.1)'
+  },
+  mostChosenBadge: {
+    position: 'absolute',
+    top: '-12px',
+    right: '24px',
+    backgroundColor: '#2563EB',
+    color: '#FFFFFF',
+    fontSize: '11px',
+    fontWeight: '700',
+    padding: '4px 10px',
+    borderRadius: '9999px'
+  },
+  planName: {
+    fontSize: '24px',
+    fontWeight: '800',
+    color: '#0F172A',
+    marginBottom: '12px'
+  },
+  responseBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: '8px',
+    padding: '12px',
+    marginBottom: '20px'
+  },
+  responseSpeed: {
+    fontSize: '17px',
+    fontWeight: '800',
+    color: '#0F172A',
+    display: 'block'
+  },
+  responseLabel: {
+    fontSize: '11px',
+    fontWeight: '700',
+    color: '#64748B',
+    letterSpacing: '0.5px'
+  },
+  planFeaturesList: {
+    listStyle: 'none',
+    padding: 0,
+    margin: '0 0 28px 0',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px'
+  },
+  planFeatureItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontSize: '14px',
+    color: '#334155'
+  },
+  bulletCheck: {
+    color: '#10B981',
+    fontWeight: '700'
+  },
+  planBtn: {
     marginTop: 'auto',
     backgroundColor: '#F8FAFC',
     color: '#2563EB',
@@ -1463,197 +3536,29 @@ const styles = {
     borderRadius: '8px',
     fontSize: '14px',
     fontWeight: '600',
-    cursor: 'pointer',
-    textAlign: 'center',
-    transition: 'all 0.15s ease'
+    cursor: 'pointer'
   },
-  // Features / Why Us
-  featuresGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-    gap: '24px'
-  },
-  featureCard: {
-    backgroundColor: '#FFFFFF',
-    border: '1px solid #E2E8F0',
-    borderRadius: '14px',
-    padding: '28px',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.03)'
-  },
-  featureIconBox: {
-    fontSize: '28px',
-    marginBottom: '16px'
-  },
-  featureTitle: {
-    fontSize: '18px',
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: '10px'
-  },
-  featureText: {
-    fontSize: '14.5px',
-    color: '#475569',
-    lineHeight: '1.6'
-  },
-  // Process
-  processGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '24px'
-  },
-  processCard: {
-    backgroundColor: '#FFFFFF',
-    border: '1px solid #E2E8F0',
-    borderRadius: '16px',
-    padding: '28px',
-    position: 'relative',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)'
-  },
-  processStepNumber: {
-    fontSize: '36px',
-    fontWeight: '900',
-    color: '#DBEAFE',
-    lineHeight: '1',
-    marginBottom: '12px'
-  },
-  processDurationBadge: {
-    display: 'inline-block',
-    backgroundColor: '#EFF6FF',
-    color: '#1D4ED8',
-    fontSize: '12px',
-    fontWeight: '700',
-    padding: '3px 8px',
-    borderRadius: '4px',
-    marginBottom: '12px'
-  },
-  processTitle: {
-    fontSize: '18px',
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: '10px'
-  },
-  processDesc: {
-    fontSize: '14px',
-    color: '#64748B',
-    lineHeight: '1.6'
-  },
-  // Tech Stack
-  techCategoryGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-    gap: '24px'
-  },
-  techCategoryCard: {
-    backgroundColor: '#FFFFFF',
-    border: '1px solid #E2E8F0',
-    borderRadius: '14px',
-    padding: '24px'
-  },
-  techCategoryTitle: {
-    fontSize: '17px',
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: '16px',
-    borderBottom: '2px solid #EFF6FF',
-    paddingBottom: '8px'
-  },
-  techTagList: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '8px'
-  },
-  techBadgeItem: {
-    backgroundColor: '#F8FAFC',
-    border: '1px solid #E2E8F0',
-    color: '#334155',
-    fontSize: '13px',
-    fontWeight: '600',
-    padding: '6px 12px',
-    borderRadius: '8px'
-  },
-  // About
-  aboutWrapper: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-    gap: '40px',
-    alignItems: 'center'
-  },
-  aboutTextCol: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  aboutParagraph: {
-    fontSize: '16px',
-    color: '#475569',
-    lineHeight: '1.7',
-    marginBottom: '16px'
-  },
-  aboutValuesRow: {
-    display: 'flex',
-    gap: '24px',
-    marginTop: '20px',
-    flexWrap: 'wrap'
-  },
-  valueItem: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  valueNumber: {
-    fontSize: '28px',
-    fontWeight: '800',
-    color: '#2563EB',
-    lineHeight: '1.1'
-  },
-  valueLabel: {
-    fontSize: '13px',
-    color: '#64748B',
-    fontWeight: '500'
-  },
-  aboutCardCol: {
-    display: 'flex'
-  },
-  missionCard: {
-    backgroundColor: '#F8FAFC',
-    border: '1px solid #E2E8F0',
-    borderRadius: '16px',
-    padding: '32px',
-    width: '100%'
-  },
-  missionCardTitle: {
-    fontSize: '20px',
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: '18px'
-  },
-  missionList: {
-    listStyleType: 'none',
-    padding: 0,
-    margin: '0 0 24px 0',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '14px',
-    fontSize: '14.5px',
-    color: '#334155',
-    lineHeight: '1.55'
-  },
-  locationTag: {
-    fontSize: '13.5px',
-    fontWeight: '600',
-    color: '#2563EB',
-    backgroundColor: '#EFF6FF',
-    padding: '10px 14px',
+  planBtnPopular: {
+    marginTop: 'auto',
+    backgroundColor: '#2563EB',
+    color: '#FFFFFF',
+    border: 'none',
+    padding: '12px',
     borderRadius: '8px',
-    textAlign: 'center'
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer'
   },
+
   // FAQ
-  faqList: {
+  faqWrapper: {
     maxWidth: '800px',
     margin: '0 auto',
     display: 'flex',
     flexDirection: 'column',
     gap: '12px'
   },
-  faqItem: {
+  faqAccordionItem: {
     backgroundColor: '#FFFFFF',
     border: '1px solid #E2E8F0',
     borderRadius: '12px',
@@ -1667,232 +3572,67 @@ const styles = {
     alignItems: 'center',
     background: 'none',
     border: 'none',
-    textAlign: 'left',
     cursor: 'pointer',
+    textAlign: 'left'
+  },
+  faqQText: {
     fontSize: '16px',
     fontWeight: '600',
-    color: '#0F172A'
-  },
-  faqQuestionText: {
+    color: '#0F172A',
     paddingRight: '16px'
   },
-  faqToggleIcon: {
+  faqToggleChar: {
     fontSize: '20px',
     fontWeight: '700',
     color: '#2563EB'
   },
-  faqAnswerContent: {
+  faqAnswerBox: {
     padding: '0 22px 20px 22px',
     borderTop: '1px solid #F1F5F9'
   },
-  faqAnswerText: {
+  faqAText: {
     fontSize: '14.5px',
     color: '#475569',
     lineHeight: '1.65',
     margin: '12px 0 0 0'
   },
+
   // Contact
   contactWrapper: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-    gap: '32px'
+    gridTemplateColumns: '1fr 1.3fr',
+    gap: '40px'
   },
-  contactFormCard: {
-    backgroundColor: '#FFFFFF',
-    border: '1px solid #E2E8F0',
-    borderRadius: '16px',
-    padding: '36px',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
-  },
-  formTitle: {
-    fontSize: '22px',
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: '24px'
-  },
-  contactForm: {
+  contactInfoSide: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px'
+    gap: '24px'
   },
-  formRow: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '16px'
-  },
-  formGroup: {
+  contactInfoRow: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px'
+    gap: '4px',
+    fontSize: '14px'
   },
-  formLabel: {
-    fontSize: '13.5px',
-    fontWeight: '600',
-    color: '#334155'
-  },
-  formInput: {
-    padding: '11px 14px',
-    borderRadius: '8px',
-    border: '1px solid #CBD5E1',
-    fontSize: '14.5px',
-    color: '#0F172A',
-    outline: 'none',
-    backgroundColor: '#FFFFFF'
-  },
-  formSelect: {
-    padding: '11px 14px',
-    borderRadius: '8px',
-    border: '1px solid #CBD5E1',
-    fontSize: '14.5px',
-    color: '#0F172A',
-    backgroundColor: '#FFFFFF',
-    outline: 'none'
-  },
-  formTextarea: {
-    padding: '12px 14px',
-    borderRadius: '8px',
-    border: '1px solid #CBD5E1',
-    fontSize: '14.5px',
-    color: '#0F172A',
-    outline: 'none',
-    fontFamily: 'inherit',
-    resize: 'vertical'
-  },
-  formSubmitBtn: {
-    backgroundColor: '#2563EB',
-    color: '#FFFFFF',
-    border: 'none',
-    padding: '14px',
-    borderRadius: '8px',
-    fontSize: '16px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    marginTop: '8px',
-    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)'
-  },
-  formPrivacyNote: {
-    fontSize: '12px',
-    color: '#64748B',
-    textAlign: 'center',
-    margin: '4px 0 0 0'
-  },
-  successCard: {
-    textAlign: 'center',
-    padding: '30px 10px'
-  },
-  successIcon: {
-    width: '56px',
-    height: '56px',
-    borderRadius: '50%',
-    backgroundColor: '#DCFCE7',
-    color: '#15803D',
-    fontSize: '28px',
-    fontWeight: 'bold',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: '0 auto 16px auto'
-  },
-  successTitle: {
-    fontSize: '24px',
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: '10px'
-  },
-  successText: {
-    fontSize: '15px',
-    color: '#475569',
-    lineHeight: '1.6',
-    marginBottom: '24px'
-  },
-  successActions: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '12px',
-    flexWrap: 'wrap'
-  },
-  secondaryBtnSmall: {
-    backgroundColor: '#F1F5F9',
-    color: '#334155',
-    border: '1px solid #CBD5E1',
-    padding: '10px 18px',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontWeight: '600',
-    cursor: 'pointer'
-  },
-  emailDirectBtn: {
-    backgroundColor: '#2563EB',
-    color: '#FFFFFF',
+  contactInfoLink: {
+    color: '#2563EB',
     textDecoration: 'none',
-    padding: '10px 18px',
-    borderRadius: '8px',
-    fontSize: '14px',
+    fontSize: '16px',
     fontWeight: '600'
   },
-  contactInfoCard: {
-    backgroundColor: '#F8FAFC',
-    border: '1px solid #E2E8F0',
-    borderRadius: '16px',
-    padding: '36px'
-  },
-  contactInfoTitle: {
-    fontSize: '22px',
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: '8px'
-  },
-  contactInfoDesc: {
-    fontSize: '14.5px',
-    color: '#64748B',
-    marginBottom: '24px'
-  },
-  infoBlock: {
-    marginBottom: '18px'
-  },
-  infoLabel: {
-    fontSize: '12px',
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    color: '#64748B',
-    letterSpacing: '0.5px',
-    marginBottom: '4px'
-  },
-  infoValue: {
+  contactAddress: {
     fontSize: '15px',
-    fontWeight: '600',
     color: '#0F172A'
   },
-  infoValueLink: {
-    fontSize: '15px',
-    fontWeight: '600',
-    color: '#2563EB',
-    textDecoration: 'none'
-  },
-  divider: {
-    border: 'none',
-    borderTop: '1px solid #E2E8F0',
-    margin: '24px 0'
-  },
-  directChatBox: {
-    backgroundColor: '#FFFFFF',
+  instantWhatsappBox: {
+    backgroundColor: '#F8FAFC',
     border: '1px solid #E2E8F0',
-    borderRadius: '12px',
-    padding: '20px'
+    borderRadius: '14px',
+    padding: '20px',
+    marginTop: '12px'
   },
-  chatBoxTitle: {
-    fontSize: '16px',
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: '6px'
-  },
-  chatBoxDesc: {
-    fontSize: '13.5px',
-    color: '#475569',
-    marginBottom: '14px',
-    lineHeight: '1.5'
-  },
-  directWhatsAppBtn: {
+  whatsappActionBtn: {
+    display: 'inline-block',
     backgroundColor: '#16A34A',
     color: '#FFFFFF',
     textDecoration: 'none',
@@ -1900,182 +3640,166 @@ const styles = {
     borderRadius: '8px',
     fontSize: '14px',
     fontWeight: '600',
-    display: 'inline-block'
+    marginTop: '8px'
   },
-  // Modal
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(15, 23, 42, 0.6)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000,
-    padding: '20px'
-  },
-  modalCard: {
+  contactFormSide: {
     backgroundColor: '#FFFFFF',
-    borderRadius: '16px',
-    width: '100%',
-    maxWidth: '520px',
+    border: '1px solid #E2E8F0',
+    borderRadius: '18px',
     padding: '32px',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-    position: 'relative'
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
   },
-  modalHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '6px'
-  },
-  modalTitle: {
-    fontSize: '20px',
-    fontWeight: '700',
-    color: '#0F172A'
-  },
-  modalCloseBtn: {
-    background: 'none',
-    border: 'none',
-    fontSize: '24px',
-    color: '#64748B',
-    cursor: 'pointer',
-    padding: '0 4px'
-  },
-  modalSubtitle: {
-    fontSize: '14px',
-    color: '#64748B',
-    marginBottom: '20px'
-  },
-  modalForm: {
+  contactForm: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '14px'
+    gap: '16px'
   },
-  modalSubmitBtn: {
+  formGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px'
+  },
+  fieldLabel: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: '#334155'
+  },
+  fieldInput: {
+    padding: '11px 14px',
+    borderRadius: '8px',
+    border: '1px solid #CBD5E1',
+    fontSize: '14.5px',
+    color: '#0F172A'
+  },
+  fieldSelect: {
+    padding: '11px 14px',
+    borderRadius: '8px',
+    border: '1px solid #CBD5E1',
+    fontSize: '14.5px',
+    color: '#0F172A'
+  },
+  fieldTextarea: {
+    padding: '12px 14px',
+    borderRadius: '8px',
+    border: '1px solid #CBD5E1',
+    fontSize: '14.5px',
+    color: '#0F172A',
+    fontFamily: 'inherit',
+    resize: 'vertical'
+  },
+  submitBtn: {
     backgroundColor: '#2563EB',
     color: '#FFFFFF',
     border: 'none',
-    padding: '12px',
+    padding: '13px',
     borderRadius: '8px',
     fontSize: '15px',
     fontWeight: '600',
     cursor: 'pointer',
     marginTop: '6px'
   },
-  modalSuccess: {
+  submittedBox: {
     textAlign: 'center',
-    padding: '20px 0'
+    padding: '30px 10px'
   },
-  checkBig: {
-    fontSize: '40px',
+  checkIconBig: {
+    fontSize: '36px',
     color: '#16A34A',
-    marginBottom: '8px'
+    marginBottom: '12px'
   },
+  sendAnotherBtn: {
+    backgroundColor: '#F1F5F9',
+    color: '#0F172A',
+    border: '1px solid #CBD5E1',
+    padding: '9px 18px',
+    borderRadius: '8px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    marginTop: '16px'
+  },
+
   // Footer
   footer: {
     backgroundColor: '#0F172A',
     color: '#F8FAFC',
-    padding: '70px 0 30px 0'
+    padding: '60px 0 30px 0'
   },
   footerGrid: {
     display: 'grid',
-    gridTemplateColumns: '2fr 1fr 1.2fr 1.5fr',
-    gap: '40px',
-    marginBottom: '50px'
+    gridTemplateColumns: '2fr 1fr 1fr 1fr',
+    gap: '36px',
+    marginBottom: '40px'
   },
   footerBrandCol: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    gap: '12px'
+  },
+  footerBrandLink: {
+    textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '4px'
+  },
+  brandMainFooter: {
+    fontSize: '20px',
+    fontWeight: '800',
+    color: '#FFFFFF'
+  },
+  brandSubFooter: {
+    fontSize: '11px',
+    fontWeight: '800',
+    color: '#38BDF8',
+    letterSpacing: '1px'
   },
   footerBio: {
     fontSize: '14px',
     color: '#94A3B8',
-    lineHeight: '1.65',
-    margin: '16px 0 16px 0',
-    maxWidth: '340px'
+    lineHeight: '1.6',
+    maxWidth: '320px'
   },
-  footerBadge: {
-    fontSize: '12.5px',
-    color: '#38BDF8',
-    backgroundColor: 'rgba(56, 189, 248, 0.1)',
-    padding: '6px 12px',
-    borderRadius: '6px',
-    display: 'inline-block'
+  footerLocationBadge: {
+    fontSize: '12px',
+    color: '#38BDF8'
   },
   footerCol: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    gap: '12px'
   },
-  footerHeading: {
-    fontSize: '15px',
+  footerTitle: {
+    fontSize: '14px',
     fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: '16px',
-    letterSpacing: '0.3px'
+    letterSpacing: '0.5px'
   },
-  footerList: {
-    listStyleType: 'none',
+  footerLinksList: {
+    listStyle: 'none',
     padding: 0,
     margin: 0,
     display: 'flex',
     flexDirection: 'column',
-    gap: '10px'
+    gap: '8px'
   },
-  footerLink: {
+  fLink: {
     color: '#94A3B8',
     textDecoration: 'none',
-    fontSize: '14px',
+    fontSize: '13.5px',
     transition: 'color 0.15s ease'
   },
-  footerTextItem: {
-    color: '#94A3B8',
-    fontSize: '14px'
-  },
-  footerContactText: {
-    fontSize: '14px',
-    color: '#94A3B8',
-    margin: '0 0 10px 0',
-    lineHeight: '1.5'
-  },
-  footerCtaBtn: {
-    backgroundColor: '#2563EB',
-    color: '#FFFFFF',
-    border: 'none',
-    padding: '10px 16px',
-    borderRadius: '8px',
-    fontSize: '13.5px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    marginTop: '10px',
-    alignSelf: 'flex-start'
-  },
-  footerBottom: {
+  footerBottomBar: {
     borderTop: '1px solid #1E293B',
-    paddingTop: '24px',
+    paddingTop: '20px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'wrap',
-    gap: '16px',
+    gap: '12px',
     fontSize: '13px',
     color: '#64748B'
   },
-  copyrightText: {
-    color: '#94A3B8'
-  },
-  footerBottomLinks: {
+  footerLegalLinks: {
     display: 'flex',
-    alignItems: 'center',
-    gap: '12px'
-  },
-  footerSubLink: {
-    color: '#94A3B8',
-    textDecoration: 'none'
-  },
-  dotSeparator: {
-    color: '#475569'
+    gap: '8px'
   }
 };

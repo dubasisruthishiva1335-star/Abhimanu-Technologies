@@ -158,6 +158,10 @@
         color: var(--text);
       }
 
+      .flip-card-container:hover .flip-card-inner {
+        transform: rotateY(180deg);
+      }
+
       @media (max-width: 868px) {
         .desktop-nav {
           display: none !important;
@@ -166,23 +170,32 @@
           display: flex !important;
         }
         .hero-title {
-          font-size: 30px !important;
+          font-size: 32px !important;
         }
         .hero-subtitle {
           font-size: 15px !important;
         }
-        .form-row {
+        .hero-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .studio-layout {
+          grid-template-columns: 1fr !important;
+        }
+        .phone-showcase {
+          grid-template-columns: 1fr !important;
+        }
+        .building-layout {
+          grid-template-columns: 1fr !important;
+        }
+        .estimator-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .contact-wrapper {
           grid-template-columns: 1fr !important;
         }
         .footer-grid {
           grid-template-columns: 1fr !important;
           gap: 32px !important;
-        }
-        .about-wrapper {
-          grid-template-columns: 1fr !important;
-        }
-        .contact-wrapper {
-          grid-template-columns: 1fr !important;
         }
       }
     </style>
