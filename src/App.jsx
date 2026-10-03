@@ -183,32 +183,56 @@ const SAMPLE_CONCEPTS = [
   {
     title: 'BIM Cloud Collaborator',
     tag: 'AEC & Construction',
-    desc: 'Browser-based 3D architectural viewer with live clash detection and multi-user issue pinning.'
+    desc: 'Browser-based 3D architectural viewer with live clash detection and multi-user issue pinning.',
+    stack: ['React', 'Three.js', 'WebSockets', 'IFC.js', 'PostgreSQL'],
+    architecture: 'Microservices with spatial indexing and real-time WebSockets synchronization.',
+    metrics: '90% faster clash reviews for engineering site teams.',
+    modules: ['Spatial 3D Model Slicing', 'BCF Issue Pinning', 'Role-based Access', 'Offline Sync']
   },
   {
     title: 'Fleet & Route Telematics',
     tag: 'Logistics',
-    desc: 'Real-time GPS tracking dashboard with geofencing, driver fatigue alerts, and automated trip logs.'
+    desc: 'Real-time GPS tracking dashboard with geofencing, driver fatigue alerts, and automated trip logs.',
+    stack: ['Next.js', 'Node.js', 'Redis', 'Mapbox GL', 'TimescaleDB'],
+    architecture: 'High-throughput event streaming via Kafka & TimescaleDB time-series ingestion.',
+    metrics: 'Sub-second GPS telemetry across 5,000+ active fleet vehicles.',
+    modules: ['Geofencing Engine', 'Fuel & Idle Analytics', 'Automated Dispatch', 'Driver Safety Score']
   },
   {
     title: 'FieldOps Snag Inspection',
     tag: 'Site Engineering',
-    desc: 'Offline-first tablet app for civil site engineers with voice memos, photo markup, and automated BOQ sync.'
+    desc: 'Offline-first tablet app for civil site engineers with voice memos, photo markup, and automated BOQ sync.',
+    stack: ['Flutter', 'SQLite', 'Node.js', 'AWS S3', 'FastAPI'],
+    architecture: 'CRDT-based conflict-free offline synchronization with AWS S3 media pipeline.',
+    metrics: 'Zero data loss in low-connectivity underground and tunnel sites.',
+    modules: ['Photo AR Markup', 'Voice-to-Text Punchlists', 'Instant BOQ Variance', 'PDF Sign-off Export']
   },
   {
     title: '3D Product Customizer',
     tag: 'E-Commerce',
-    desc: 'Photorealistic WebGL configurator allowing shoppers to personalize colors, finishes, and order in AR.'
+    desc: 'Photorealistic WebGL configurator allowing shoppers to personalize colors, finishes, and order in AR.',
+    stack: ['Three.js', 'React', 'WebGL Shaders', 'Shopify API', 'Draco'],
+    architecture: 'Draco-compressed GLTF assets with progressive level-of-detail (LOD) streaming.',
+    metrics: '3.4x higher conversion rate on personalized product orders.',
+    modules: ['PBR Material Swapper', 'Direct Shopify Cart Hook', 'QuickLook USDZ AR Export', 'Snapshot Generator']
   },
   {
     title: 'Tele-Health Clinic Portal',
     tag: 'Healthcare',
-    desc: 'HIPAA-compliant web platform for encrypted video consults, prescription routing, and patient records.'
+    desc: 'HIPAA-compliant web platform for encrypted video consults, prescription routing, and patient records.',
+    stack: ['React', 'WebRTC', 'FastAPI', 'PostgreSQL', 'Docker'],
+    architecture: 'End-to-end encrypted WebRTC mesh media pipeline with audit-logged EHR storage.',
+    metrics: '99.98% uptime across 50,000+ tele-consultations.',
+    modules: ['Encrypted HD Video', 'Digital Prescription Engine', 'FHIR/HL7 Integration', 'Automated Reminders']
   },
   {
     title: 'FinTech Micro-Lending Hub',
     tag: 'Finance',
-    desc: 'Instant KYC verification, credit scoring algorithms, and automated disbursal rails via UPI and netbanking.'
+    desc: 'Instant KYC verification, credit scoring algorithms, and automated disbursal rails via UPI and netbanking.',
+    stack: ['React', 'Python', 'Go', 'PostgreSQL', 'AWS KMS'],
+    architecture: 'Zero-trust banking gateway with tokenized HSM cryptographic signatures.',
+    metrics: 'Under 90 seconds from application to instant UPI disbursal.',
+    modules: ['DigiLocker e-KYC', 'Rule-based Credit Underwriter', 'UPI Autopay Mandates', 'Fraud Detection']
   }
 ];
 
@@ -1012,6 +1036,8 @@ export default function App() {
     ai: false
   });
   const [estComplexity, setEstComplexity] = useState('Standard');
+  const [estCurrency, setEstCurrency] = useState('INR');
+  const [conceptModalData, setConceptModalData] = useState(null);
 
   // Contact Form State
   const [contactData, setContactData] = useState({
@@ -1058,6 +1084,29 @@ export default function App() {
     return `${minW} to ${maxW} weeks`;
   };
 
+  const calcEstimatedBudget = () => {
+    let baseINR = 150000;
+    if (estBuildingType.includes('3D') || estBuildingType.includes('visuals')) baseINR += 80000;
+    if (estBuildingType.includes('Mobile')) baseINR += 60000;
+    if (estBuildingType.includes('Enterprise')) baseINR += 120000;
+
+    const featureCount = Object.values(estFeatures).filter(Boolean).length;
+    baseINR += featureCount * 28000;
+
+    if (estComplexity === 'Complex') baseINR *= 1.35;
+    if (estComplexity === 'High Performance') baseINR *= 1.65;
+
+    if (estCurrency === 'INR') {
+      const minL = (baseINR / 100000).toFixed(1);
+      const maxL = ((baseINR * 1.35) / 100000).toFixed(1);
+      return `₹${minL}L – ₹${maxL}L`;
+    } else {
+      const minUSD = Math.round((baseINR / 85) / 100) * 100;
+      const maxUSD = Math.round(((baseINR * 1.35) / 85) / 100) * 100;
+      return `$${minUSD.toLocaleString()} – $${maxUSD.toLocaleString()}`;
+    }
+  };
+
   const calcSuggestedTeam = () => {
     let roles = ['1 Lead Architect', '2 Full-Stack Engineers'];
     if (estFeatures.threeD) roles.push('1 3D / WebGL Specialist');
@@ -1067,7 +1116,7 @@ export default function App() {
   };
 
   const handleSendEstimateToContact = () => {
-    const summary = `Selected Building: ${estBuildingType} | Complexity: ${estComplexity} | Features: ${Object.keys(estFeatures).filter((k) => estFeatures[k]).join(', ')} | Timeline: ${calcTimelineWeeks()}`;
+    const summary = `Selected Building: ${estBuildingType} | Complexity: ${estComplexity} | Features: ${Object.keys(estFeatures).filter((k) => estFeatures[k]).join(', ')} | Timeline: ${calcTimelineWeeks()} | Indicative Budget: ${calcEstimatedBudget()}`;
     setContactData((prev) => ({
       ...prev,
       serviceNeed: estBuildingType,
@@ -1203,6 +1252,174 @@ export default function App() {
                   </div>
                 ))
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- ARCHITECTURE & TECH SPECS MODAL --- */}
+      {conceptModalData && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10001,
+            padding: '20px'
+          }}
+          onClick={() => setConceptModalData(null)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '620px',
+              backgroundColor: isDark ? '#111827' : '#FFFFFF',
+              border: isDark ? '1px solid #374151' : '1px solid #E2E8F0',
+              borderRadius: '20px',
+              padding: '32px',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+              position: 'relative',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <div>
+                <span style={{ ...styles.conceptTag, fontSize: '11px' }}>{conceptModalData.tag}</span>
+                <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '8px 0 0 0' }}>
+                  {conceptModalData.title}
+                </h3>
+              </div>
+              <button
+                onClick={() => setConceptModalData(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: isDark ? '#94A3B8' : '#64748B',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  padding: '4px'
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p style={{ fontSize: '15px', color: isDark ? '#CBD5E1' : '#475569', lineHeight: '1.6', marginBottom: '20px' }}>
+              {conceptModalData.desc}
+            </p>
+
+            <div style={{ backgroundColor: isDark ? '#1E293B' : '#F8FAFC', borderRadius: '12px', padding: '16px', marginBottom: '18px' }}>
+              <div style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: '#2563EB', marginBottom: '4px' }}>
+                System Architecture
+              </div>
+              <div style={{ fontSize: '14px', color: isDark ? '#F1F5F9' : '#0F172A', fontWeight: '600' }}>
+                {conceptModalData.architecture}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '18px' }}>
+              <div style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: isDark ? '#94A3B8' : '#64748B', marginBottom: '8px' }}>
+                Technology Stack
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {conceptModalData.stack?.map((tech, i) => (
+                  <span key={i} style={{
+                    backgroundColor: isDark ? '#0F172A' : '#EFF6FF',
+                    color: isDark ? '#93C5FD' : '#2563EB',
+                    border: isDark ? '1px solid #1E293B' : '1px solid #BFDBFE',
+                    fontSize: '12.5px',
+                    fontWeight: '600',
+                    padding: '4px 10px',
+                    borderRadius: '8px'
+                  }}>
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: isDark ? '#94A3B8' : '#64748B', marginBottom: '8px' }}>
+                Core Capabilities & Modules
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+                {conceptModalData.modules?.map((mod, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: isDark ? '#CBD5E1' : '#334155' }}>
+                    <span style={{ color: '#10B981', fontWeight: '700' }}>✓</span>
+                    <span>{mod}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {conceptModalData.metrics && (
+              <div style={{
+                backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : '#ECFDF5',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                borderRadius: '10px',
+                padding: '12px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '24px'
+              }}>
+                <span style={{ fontSize: '18px' }}>📈</span>
+                <span style={{ fontSize: '13px', fontWeight: '600', color: isDark ? '#34D399' : '#065F46' }}>
+                  {conceptModalData.metrics}
+                </span>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setConceptModalData(null)}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: isDark ? '1px solid #374151' : '1px solid #CBD5E1',
+                  color: isDark ? '#94A3B8' : '#64748B',
+                  padding: '10px 18px',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  const sel = conceptModalData;
+                  setConceptModalData(null);
+                  setContactData((prev) => ({
+                    ...prev,
+                    serviceNeed: sel.title,
+                    details: `Inquiring regarding system architecture and development for ${sel.title} (${sel.tag}).`
+                  }));
+                  const elem = document.getElementById('contact');
+                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                }}
+                style={{
+                  backgroundColor: '#2563EB',
+                  border: 'none',
+                  color: '#FFFFFF',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                Discuss Building This &rarr;
+              </button>
             </div>
           </div>
         </div>
@@ -2102,20 +2319,55 @@ export default function App() {
               <span style={styles.conceptTag}>{SAMPLE_CONCEPTS[ringIndex].tag}</span>
               <h3 style={styles.conceptTitle}>{SAMPLE_CONCEPTS[ringIndex].title}</h3>
               <p style={styles.conceptDesc}>{SAMPLE_CONCEPTS[ringIndex].desc}</p>
-              <button
-                onClick={() => {
-                  setContactData((prev) => ({
-                    ...prev,
-                    serviceNeed: SAMPLE_CONCEPTS[ringIndex].title,
-                    details: `Interested in discussing concept: ${SAMPLE_CONCEPTS[ringIndex].title} (${SAMPLE_CONCEPTS[ringIndex].tag})`
-                  }));
-                  const elem = document.getElementById('contact');
-                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                }}
-                style={styles.conceptInquireBtn}
-              >
-                Discuss this concept &rarr;
-              </button>
+
+              {/* Tech Stack Badges */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', margin: '4px 0 16px 0' }}>
+                {SAMPLE_CONCEPTS[ringIndex].stack?.map((stk, sIdx) => (
+                  <span key={sIdx} style={{
+                    backgroundColor: isDark ? '#1E293B' : '#EFF6FF',
+                    color: isDark ? '#93C5FD' : '#2563EB',
+                    border: isDark ? '1px solid #334155' : '1px solid #BFDBFE',
+                    fontSize: '11.5px',
+                    fontWeight: '600',
+                    padding: '3px 9px',
+                    borderRadius: '6px'
+                  }}>
+                    {stk}
+                  </span>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                <button
+                  onClick={() => setConceptModalData(SAMPLE_CONCEPTS[ringIndex])}
+                  style={{
+                    backgroundColor: isDark ? '#1E293B' : '#F1F5F9',
+                    color: isDark ? '#F1F5F9' : '#0F172A',
+                    border: isDark ? '1px solid #334155' : '1px solid #CBD5E1',
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  📐 Architecture Specs
+                </button>
+                <button
+                  onClick={() => {
+                    setContactData((prev) => ({
+                      ...prev,
+                      serviceNeed: SAMPLE_CONCEPTS[ringIndex].title,
+                      details: `Interested in discussing concept: ${SAMPLE_CONCEPTS[ringIndex].title} (${SAMPLE_CONCEPTS[ringIndex].tag})`
+                    }));
+                    const elem = document.getElementById('contact');
+                    if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  style={styles.conceptInquireBtn}
+                >
+                  Discuss this concept &rarr;
+                </button>
+              </div>
             </div>
 
             <p style={styles.sampleDisclaimer}>
@@ -2291,6 +2543,47 @@ export default function App() {
                 <div style={styles.resultItem}>
                   <span style={styles.resultLabel}>Indicative timeline</span>
                   <div style={styles.timelineBigNumber}>{calcTimelineWeeks()}</div>
+                </div>
+
+                <div style={styles.resultItem}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={styles.resultLabel}>Indicative investment</span>
+                    <div style={{ display: 'flex', gap: '4px', backgroundColor: isDark ? '#1E293B' : '#F1F5F9', padding: '2px', borderRadius: '6px' }}>
+                      <button
+                        onClick={() => setEstCurrency('INR')}
+                        style={{
+                          background: estCurrency === 'INR' ? '#2563EB' : 'transparent',
+                          color: estCurrency === 'INR' ? '#FFFFFF' : (isDark ? '#94A3B8' : '#64748B'),
+                          border: 'none',
+                          borderRadius: '4px',
+                          padding: '2px 8px',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        ₹ INR
+                      </button>
+                      <button
+                        onClick={() => setEstCurrency('USD')}
+                        style={{
+                          background: estCurrency === 'USD' ? '#2563EB' : 'transparent',
+                          color: estCurrency === 'USD' ? '#FFFFFF' : (isDark ? '#94A3B8' : '#64748B'),
+                          border: 'none',
+                          borderRadius: '4px',
+                          padding: '2px 8px',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        $ USD
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{ ...styles.timelineBigNumber, color: '#10B981', fontSize: '28px', marginTop: '2px' }}>
+                    {calcEstimatedBudget()}
+                  </div>
                 </div>
 
                 <div style={styles.resultItem}>
