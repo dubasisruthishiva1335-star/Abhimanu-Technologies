@@ -835,6 +835,37 @@ function RevealSection({ children, delay = 0, style = {} }) {
   );
 }
 
+// --- ANIMATED COUNTER ---
+function CountUp({ target, suffix = '', duration = 1800 }) {
+  const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setStarted(true); obs.disconnect(); } },
+      { threshold: 0.6 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!started) return;
+    const steps = 55;
+    const inc = target / steps;
+    const ms = duration / steps;
+    let cur = 0;
+    const timer = setInterval(() => {
+      cur += inc;
+      if (cur >= target) { setCount(target); clearInterval(timer); }
+      else { setCount(Math.floor(cur)); }
+    }, ms);
+    return () => clearInterval(timer);
+  }, [started, target, duration]);
+  return <span ref={ref}>{count}{suffix}</span>;
+}
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -849,6 +880,18 @@ export default function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [commandOpen, setCommandOpen] = useState(false);
   const [commandQuery, setCommandQuery] = useState('');
+
+  // Cookie Consent
+  const [cookieAccepted, setCookieAccepted] = useState(() => {
+    try { return localStorage.getItem('abt_cookies') === 'yes'; } catch { return true; }
+  });
+  const acceptCookies = () => {
+    try { localStorage.setItem('abt_cookies', 'yes'); } catch {}
+    setCookieAccepted(true);
+  };
+
+  // Service card hover state
+  const [hoveredServiceId, setHoveredServiceId] = useState(null);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
@@ -1072,6 +1115,54 @@ export default function App() {
           transition: 'width 0.1s ease-out'
         }}
       />
+
+      {/* --- COOKIE CONSENT BANNER --- */}
+      {!cookieAccepted && (
+        <div style={{
+          position: 'fixed',
+          bottom: 0, left: 0, right: 0,
+          backgroundColor: isDark ? '#111827' : '#0F172A',
+          color: '#F1F5F9',
+          padding: '16px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px',
+          zIndex: 9500,
+          boxShadow: '0 -4px 20px rgba(0,0,0,0.3)',
+          fontSize: '14px'
+        }}>
+          <span style={{ maxWidth: '640px', lineHeight: '1.5', color: '#CBD5E1' }}>
+            🍪 We use cookies to improve your experience and analyse site traffic. By clicking <strong>Accept</strong>, you agree to our{' '}
+            <a href="#faq" onClick={(e) => { scrollTo(e, 'faq'); acceptCookies(); }} style={{ color: '#38BDF8', textDecoration: 'underline' }}>Privacy Policy</a>.
+          </span>
+          <div style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
+            <button
+              onClick={acceptCookies}
+              style={{
+                backgroundColor: '#2563EB', color: '#FFFFFF',
+                border: 'none', padding: '9px 20px',
+                borderRadius: '8px', fontWeight: '700',
+                fontSize: '14px', cursor: 'pointer'
+              }}
+            >
+              Accept all
+            </button>
+            <button
+              onClick={acceptCookies}
+              style={{
+                backgroundColor: 'transparent', color: '#94A3B8',
+                border: '1px solid #334155', padding: '9px 16px',
+                borderRadius: '8px', fontWeight: '500',
+                fontSize: '14px', cursor: 'pointer'
+              }}
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* --- COMMAND PALETTE MODAL (CTRL+K) --- */}
       {commandOpen && (
@@ -1332,10 +1423,10 @@ export default function App() {
             textAlign: 'center'
           }} className="stats-grid">
             {[
-              { value: '120+', label: 'Projects delivered', icon: '🚀' },
-              { value: '98%', label: 'Client satisfaction', icon: '⭐' },
-              { value: '< 4h', label: 'Avg. first response', icon: '⚡' },
-              { value: '5+', label: 'Years of engineering', icon: '🏗️' }
+              { target: 120, suffix: '+', label: 'Projects delivered', icon: '🚀', static: null },
+              { target: 98, suffix: '%', label: 'Client satisfaction', icon: '⭐', static: null },
+              { target: null, suffix: '', label: 'Avg. first response', icon: '⚡', static: '< 4h' },
+              { target: 5, suffix: '+', label: 'Years of engineering', icon: '🏗️', static: null }
             ].map((stat, i) => (
               <div key={i} style={{
                 display: 'flex',
@@ -1350,7 +1441,9 @@ export default function App() {
                   fontWeight: '900',
                   color: '#2563EB',
                   lineHeight: '1'
-                }}>{stat.value}</span>
+                }}>
+                  {stat.static ? stat.static : <CountUp target={stat.target} suffix={stat.suffix} />}
+                </span>
                 <span style={{
                   fontSize: '13px',
                   color: isDark ? '#94A3B8' : '#64748B',
@@ -1414,23 +1507,38 @@ export default function App() {
           </RevealSection>
 
           <div style={styles.servicesGrid}>
-            {SERVICES.map((s) => (
-              <div key={s.id} style={styles.serviceCard}>
-                <div style={styles.serviceCardTop}>
-                  <h3 style={styles.serviceName}>{s.title}</h3>
-                  {s.badge && <span style={styles.newBadge}>{s.badge}</span>}
+            {SERVICES.map((s) => {
+              const isHov = hoveredServiceId === s.id;
+              return (
+                <div
+                  key={s.id}
+                  onMouseEnter={() => setHoveredServiceId(s.id)}
+                  onMouseLeave={() => setHoveredServiceId(null)}
+                  style={{
+                    ...styles.serviceCard,
+                    borderLeft: isHov ? '3px solid #2563EB' : (isDark ? '1px solid #1F2937' : '1px solid #E2E8F0'),
+                    transform: isHov ? 'translateY(-4px)' : 'translateY(0)',
+                    boxShadow: isHov ? '0 12px 32px rgba(37,99,235,0.12)' : 'none',
+                    transition: 'transform 0.22s ease, box-shadow 0.22s ease, border 0.15s ease',
+                    backgroundColor: isHov ? (isDark ? '#141E33' : '#F0F6FF') : (isDark ? styles.serviceCard.backgroundColor : styles.serviceCard.backgroundColor)
+                  }}
+                >
+                  <div style={styles.serviceCardTop}>
+                    <h3 style={styles.serviceName}>{s.title}</h3>
+                    {s.badge && <span style={styles.newBadge}>{s.badge}</span>}
+                  </div>
+                  <p style={styles.serviceDesc}>{s.subtitle}</p>
+                  <ul style={styles.serviceBullets}>
+                    {s.bullets.map((b, bIdx) => (
+                      <li key={bIdx} style={styles.bulletItem}>
+                        <span style={styles.bulletDot}>•</span>
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <p style={styles.serviceDesc}>{s.subtitle}</p>
-                <ul style={styles.serviceBullets}>
-                  {s.bullets.map((b, bIdx) => (
-                    <li key={bIdx} style={styles.bulletItem}>
-                      <span style={styles.bulletDot}>•</span>
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
