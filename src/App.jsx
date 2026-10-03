@@ -1623,6 +1623,68 @@ export default function App() {
     if (contactElem) contactElem.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleDownloadRFP = () => {
+    playClickSound('success');
+    const activeFeats = Object.keys(estFeatures).filter((k) => estFeatures[k]).map((f) => `- ${f}`).join('\n') || '- Standard architecture';
+    const content = `# PROJECT REQUIREMENTS & SCOPE BRIEF (RFP)
+Generated via Abhimanyu Technologies Interactive Estimator
+Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+Website: https://abhimanu-technologies.vercel.app/
+
+--------------------------------------------------------------------------------
+1. PROJECT SPECIFICATIONS
+--------------------------------------------------------------------------------
+• Project Category: ${estBuildingType}
+• Complexity Level: ${estComplexity}
+• Active Features:
+${activeFeats}
+
+--------------------------------------------------------------------------------
+2. INDICATIVE TIMELINE & ALLOCATION
+--------------------------------------------------------------------------------
+• Estimated Delivery Window: ${calcTimelineWeeks()}
+• Suggested Team Composition: ${calcSuggestedTeam()}
+• Phase Allocation Breakdown:
+  - 15% Discovery & Technical Scoping
+  - 20% UI/UX Prototypes & Architecture Blueprint
+  - 50% Core Agile Sprints & Automated Testing
+  - 15% QA, OWASP Hardening & Production Launch
+
+--------------------------------------------------------------------------------
+3. COMMERCIAL ESTIMATE
+--------------------------------------------------------------------------------
+• Currency: ${estCurrency}
+• Estimated Budget Bracket: ${calcEstimatedBudget()}
+(Subject to final discovery review and milestone agreement)
+
+--------------------------------------------------------------------------------
+4. INTELLECTUAL PROPERTY & COMPLIANCE GUARANTEE
+--------------------------------------------------------------------------------
+• 100% Client Ownership of all source code, git repositories, and Figma files.
+• Zero vendor lock-in or proprietary runtime fees.
+• Pre-launch OWASP Top 10 vulnerability check.
+• Bilateral Mutual Non-Disclosure Agreement (NDA) executed prior to Sprint Zero.
+
+--------------------------------------------------------------------------------
+5. NEXT STEPS
+--------------------------------------------------------------------------------
+To convert this brief into an active proposal or book an engineering scoping session:
+• Email: hello@abhimanyutech.example
+• Direct WhatsApp: wa.me/919999999999
+• Office: Telangana, India • Available for Global Engagements
+`;
+
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Abhimanyu-Technologies-Scope-RFP-${estBuildingType.toLowerCase().replace(/[^a-z0-9]/g, '-')}.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleChatSend = (e) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
@@ -4385,7 +4447,31 @@ export default function App() {
                     }}
                     title="Print or Save Project Estimate as PDF"
                   >
-                    🖨️ PDF / Print
+                    🖨️ Print
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDownloadRFP}
+                    style={{
+                      flex: 1,
+                      backgroundColor: isDark ? '#1E293B' : '#F8FAFC',
+                      color: isDark ? '#93C5FD' : '#2563EB',
+                      border: isDark ? '1px solid #334155' : '1px solid #BFDBFE',
+                      borderRadius: '8px',
+                      padding: '12px 14px',
+                      fontWeight: '700',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                      transition: 'all 0.15s ease'
+                    }}
+                    title="Download complete Project Scope RFP Brief (.md)"
+                  >
+                    📥 RFP Brief
                   </button>
                 </div>
               </div>
