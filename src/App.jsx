@@ -4556,6 +4556,97 @@ ENGAGEMENT COORDINATION
                 }}
               />
 
+              {/* 4 Floating Glassmorphic HUD Cards (Matching Brand Showcase) */}
+              <div
+                style={{
+                  position: 'fixed',
+                  top: '60px',
+                  left: '40px',
+                  background: 'rgba(10, 20, 38, 0.45)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(56, 189, 248, 0.45)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(56,189,248,0.22)',
+                  borderRadius: '16px',
+                  padding: '16px 22px',
+                  color: '#FFFFFF',
+                  zIndex: 10011,
+                  pointerEvents: 'none'
+                }}
+                className="desktop-only-btn"
+              >
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#F8FAFC' }}>Abhimanyu Technologies</div>
+                <div style={{ fontSize: '0.82rem', color: '#94A3B8', marginTop: '4px' }}>Software Engineering Studio</div>
+              </div>
+
+              <div
+                style={{
+                  position: 'fixed',
+                  top: '60px',
+                  right: '40px',
+                  background: 'rgba(10, 20, 38, 0.45)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(56, 189, 248, 0.45)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(56,189,248,0.22)',
+                  borderRadius: '16px',
+                  padding: '16px 22px',
+                  color: '#FFFFFF',
+                  textAlign: 'right',
+                  zIndex: 10011,
+                  pointerEvents: 'none'
+                }}
+                className="desktop-only-btn"
+              >
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#F8FAFC' }}>Software Engineering &amp; 3D WebGL Studio</div>
+                <div style={{ fontSize: '0.82rem', color: '#38BDF8', marginTop: '4px' }}>Sacred Brahmanda Universe</div>
+              </div>
+
+              <div
+                style={{
+                  position: 'fixed',
+                  bottom: '90px',
+                  left: '40px',
+                  background: 'rgba(10, 20, 38, 0.45)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(56, 189, 248, 0.45)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(56,189,248,0.22)',
+                  borderRadius: '16px',
+                  padding: '16px 22px',
+                  color: '#FFFFFF',
+                  zIndex: 10011,
+                  pointerEvents: 'none'
+                }}
+                className="desktop-only-btn"
+              >
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#F8FAFC' }}>Software Engineering &amp; 3D WebGL Studio</div>
+                <div style={{ fontSize: '0.82rem', color: '#94A3B8', marginTop: '4px' }}>Enterprise Distributed Systems</div>
+              </div>
+
+              <div
+                style={{
+                  position: 'fixed',
+                  bottom: '90px',
+                  right: '40px',
+                  background: 'rgba(10, 20, 38, 0.45)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(56, 189, 248, 0.45)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 24px rgba(56,189,248,0.22)',
+                  borderRadius: '16px',
+                  padding: '16px 24px',
+                  color: '#FFFFFF',
+                  textAlign: 'right',
+                  zIndex: 10011,
+                  pointerEvents: 'none'
+                }}
+                className="desktop-only-btn"
+              >
+                <div style={{ fontSize: '1.6rem', fontWeight: '800', color: '#38BDF8', lineHeight: '1' }}>60 FPS</div>
+                <div style={{ fontSize: '0.82rem', color: '#F8FAFC', fontWeight: '700', marginTop: '4px' }}>Brahmanda Engine</div>
+              </div>
+
               {/* Center Floating Om & Title */}
               <div
                 style={{
@@ -4993,9 +5084,81 @@ ENGAGEMENT COORDINATION
               </div>
             </div>
 
-            {/* Hero 3D Chakra Interactive */}
-            <div style={styles.hero3DCol}>
-              <ChakraCanvas themeKey={chakraThemeKey} />
+            {/* Hero 3D Chakra Interactive with 4 Floating HUD Cards */}
+            <div style={{ ...styles.hero3DCol, position: 'relative' }}>
+              <div style={{ position: 'relative', width: '100%', maxWidth: '440px' }}>
+                <ChakraCanvas themeKey={chakraThemeKey} />
+
+                {/* Top-Left HUD Card */}
+                <div
+                  className="hud-hero-card"
+                  style={{
+                    top: '-16px',
+                    left: '-20px',
+                    animation: 'floatSlow 5s ease-in-out infinite alternate'
+                  }}
+                >
+                  <div style={{ fontSize: '13px', fontWeight: '800', color: '#F8FAFC', letterSpacing: '0.2px' }}>
+                    Abhimanyu Technologies
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#94A3B8', marginTop: '2px' }}>
+                    Software Engineering Studio
+                  </div>
+                </div>
+
+                {/* Top-Right HUD Card */}
+                <div
+                  className="hud-hero-card"
+                  style={{
+                    top: '-16px',
+                    right: '-20px',
+                    textAlign: 'right',
+                    animation: 'floatSlow 5s ease-in-out infinite alternate 1s'
+                  }}
+                >
+                  <div style={{ fontSize: '12px', fontWeight: '800', color: '#F8FAFC', letterSpacing: '0.2px' }}>
+                    Software Engineering &amp; 3D WebGL
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#38BDF8', marginTop: '2px' }}>
+                    Sacred Brahmanda Universe
+                  </div>
+                </div>
+
+                {/* Bottom-Left HUD Card */}
+                <div
+                  className="hud-hero-card"
+                  style={{
+                    bottom: '12px',
+                    left: '-20px',
+                    animation: 'floatSlow 5s ease-in-out infinite alternate 2s'
+                  }}
+                >
+                  <div style={{ fontSize: '12px', fontWeight: '800', color: '#F8FAFC', letterSpacing: '0.2px' }}>
+                    Software Engineering &amp; 3D Studio
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#94A3B8', marginTop: '2px' }}>
+                    Enterprise Distributed Systems
+                  </div>
+                </div>
+
+                {/* Bottom-Right HUD Card */}
+                <div
+                  className="hud-hero-card"
+                  style={{
+                    bottom: '12px',
+                    right: '-20px',
+                    textAlign: 'right',
+                    animation: 'floatSlow 5s ease-in-out infinite alternate 3s'
+                  }}
+                >
+                  <div style={{ fontSize: '17px', fontWeight: '900', color: '#38BDF8', letterSpacing: '0.5px', lineHeight: '1' }}>
+                    60 FPS
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#F8FAFC', fontWeight: '700', marginTop: '3px' }}>
+                    Brahmanda Engine
+                  </div>
+                </div>
+              </div>
               {/* Interactive Shader Mode Switcher */}
               <div style={{
                 display: 'flex',

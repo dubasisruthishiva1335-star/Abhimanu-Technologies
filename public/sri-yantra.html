@@ -187,6 +187,117 @@
     color: #000;
     box-shadow: 0 0 45px rgba(255,215,0,0.8);
     transform: scale(1.04);
+  /* Floating Glassmorphic HUD Cards */
+  .hud-card {
+    position: fixed;
+    z-index: 15;
+    background: rgba(10, 20, 38, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(56, 189, 248, 0.22);
+    border-radius: 16px;
+    padding: 18px 24px;
+    color: #FFFFFF;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+  }
+  .hud-card:hover {
+    transform: translateY(-2px);
+    border-color: #38BDF8;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 32px rgba(56, 189, 248, 0.4);
+    background: rgba(15, 28, 50, 0.6);
+  }
+  .hud-card-title {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #F8FAFC;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+  }
+  .hud-card-big {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #F8FAFC;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+  }
+  .hud-card-sub {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.85rem;
+    color: #94A3B8;
+    margin-top: 4px;
+    letter-spacing: 0.2px;
+  }
+
+  .hud-top-left {
+    top: 70px;
+    left: 48px;
+    max-width: 280px;
+    animation: floatSlow 6s ease-in-out infinite alternate;
+  }
+  .hud-top-right {
+    top: 70px;
+    right: 48px;
+    max-width: 320px;
+    text-align: right;
+    animation: floatSlow 6s ease-in-out infinite alternate 1s;
+  }
+  .hud-bottom-left {
+    bottom: 95px;
+    left: 48px;
+    max-width: 300px;
+    animation: floatSlow 6s ease-in-out infinite alternate 2s;
+  }
+  .hud-bottom-right {
+    bottom: 95px;
+    right: 48px;
+    max-width: 260px;
+    text-align: right;
+    animation: floatSlow 6s ease-in-out infinite alternate 3s;
+  }
+
+  @keyframes floatSlow {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-6px); }
+  }
+
+  @media (max-width: 900px) {
+    .hud-card {
+      padding: 10px 14px;
+      border-radius: 12px;
+    }
+    .hud-card-title {
+      font-size: 0.9rem;
+    }
+    .hud-card-big {
+      font-size: 1.15rem;
+    }
+    .hud-card-sub {
+      font-size: 0.72rem;
+    }
+    .hud-top-left {
+      top: 20px;
+      left: 14px;
+      max-width: 170px;
+    }
+    .hud-top-right {
+      top: 20px;
+      right: 14px;
+      max-width: 180px;
+    }
+    .hud-bottom-left {
+      bottom: 80px;
+      left: 14px;
+      max-width: 170px;
+    }
+    .hud-bottom-right {
+      bottom: 80px;
+      right: 14px;
+      max-width: 170px;
+    }
   }
 </style>
 </head>
@@ -212,6 +323,27 @@
 
 <!-- GOLDEN OVERLAY -->
 <div class="overlay"></div>
+
+<!-- 4 FLOATING GLASSMORHPIC HUD CARDS (Matching User Showcase Image) -->
+<div class="hud-card hud-top-left">
+  <div class="hud-card-title">Abhimanyu Technologies</div>
+  <div class="hud-card-sub">Software Engineering Studio</div>
+</div>
+
+<div class="hud-card hud-top-right">
+  <div class="hud-card-title">Software Engineering &amp; 3D WebGL Studio</div>
+  <div class="hud-card-sub">Sacred Brahmanda Universe</div>
+</div>
+
+<div class="hud-card hud-bottom-left">
+  <div class="hud-card-title">Software Engineering &amp; 3D WebGL Studio</div>
+  <div class="hud-card-sub">Enterprise Distributed Systems</div>
+</div>
+
+<div class="hud-card hud-bottom-right">
+  <div class="hud-card-big">60 FPS</div>
+  <div class="hud-card-sub">Brahmanda Engine</div>
+</div>
 
 <!-- CENTER CONTENT -->
 <div class="center">
