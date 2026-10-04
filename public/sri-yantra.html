@@ -227,6 +227,7 @@
     <span class="audio-indicator" id="audio-ind"></span>
     <span id="audio-text">🔊 432Hz SOUND</span>
   </button>
+  <button class="btn" onclick="cycleSpeed()" id="speed-btn" title="Toggle Playback Speed">⚡ 1.0x</button>
   <button class="btn" onclick="toggleReelsMode()" id="reels-btn" title="Toggle 9:16 Vertical Reels Viewport">📱 9:16 REELS</button>
   <button class="btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ IMAX FULL</button>
 </div>
@@ -270,16 +271,21 @@ const clips = [
 let clipIdx = 0;
 
 video.addEventListener('ended', () => {
-  clipIdx = (clipIdx + 1) % clips.length;
-  video.src = clips[clipIdx];
-  video.play().catch(() => {});
+  const currentSrc = video.currentSrc || video.src || '';
+  if (currentSrc.includes('sri-yantra-loop') || currentSrc.includes('generated_video')) {
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  } else {
+    clipIdx = (clipIdx + 1) % clips.length;
+    video.src = clips[clipIdx];
+    video.play().catch(() => {});
+  }
 });
 
 video.addEventListener('playing', () => {
   videoWorking = true;
 });
 video.addEventListener('error', () => {
-  // If part1.mp4 isn't found, try single sri-yantra-loop or fallback to procedural WebGL/Canvas
   videoWorking = false;
 });
 
@@ -474,6 +480,16 @@ function toggleAudio() {
     document.getElementById('audio-ind').classList.remove('active');
     document.getElementById('audio-text').textContent = '🔇 SOUND MUTED';
   }
+}
+
+const speeds = [1.0, 1.5, 2.0, 0.5];
+let speedIdx = 0;
+function cycleSpeed() {
+  speedIdx = (speedIdx + 1) % speeds.length;
+  const spd = speeds[speedIdx];
+  video.playbackRate = spd;
+  const btn = document.getElementById('speed-btn');
+  if (btn) btn.textContent = `⚡ ${spd.toFixed(1)}x`;
 }
 
 function toggleFullscreen() {
