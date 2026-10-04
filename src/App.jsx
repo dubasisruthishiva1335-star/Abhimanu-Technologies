@@ -3093,13 +3093,15 @@ function FuturisticCommandSidebar({
                   </div>
                 )}
 
-                {/* Frequency Presets */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', marginTop: '8px' }}>
+                {/* Frequency Presets Library (6 Sacred Frequencies) */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', marginTop: '8px' }}>
                   {[
-                    { freq: 432, label: '432Hz Equil' },
-                    { freq: 528, label: '528Hz Miracle' },
-                    { freq: 639, label: '639Hz Heart' },
-                    { freq: 108, label: '108Hz Root' }
+                    { freq: 432, label: '432Hz Equil', desc: 'Cosmic Phi' },
+                    { freq: 528, label: '528Hz Miracle', desc: 'Solfeggio' },
+                    { freq: 639, label: '639Hz Heart', desc: 'Coherence' },
+                    { freq: 741, label: '741Hz Awaken', desc: 'Intuition' },
+                    { freq: 963, label: '963Hz Crown', desc: 'Transcend' },
+                    { freq: 108, label: '108Hz Vedic', desc: 'Vedic Om' }
                   ].map((p) => {
                     const active = audioFrequencyPreset === p.freq;
                     return (
@@ -3110,19 +3112,18 @@ function FuturisticCommandSidebar({
                           if (playClickSound) playClickSound('crystal');
                         }}
                         style={{
-                          flex: 1,
                           background: active ? '#2563EB' : 'rgba(30, 41, 59, 0.6)',
                           border: active ? '1px solid #38BDF8' : '1px solid #334155',
                           color: active ? '#FFFFFF' : '#94A3B8',
                           padding: '4px 2px',
                           borderRadius: '6px',
-                          fontSize: '9px',
+                          fontSize: '8.5px',
                           fontWeight: active ? '800' : '600',
                           cursor: 'pointer',
                           textAlign: 'center',
                           transition: 'all 0.15s ease'
                         }}
-                        title={`Tune sacred root frequency to ${p.freq}Hz`}
+                        title={`Tune sacred resonance to ${p.freq}Hz (${p.desc})`}
                       >
                         {p.label}
                       </button>
@@ -3924,6 +3925,35 @@ export default function App() {
     }
   };
 
+  // Real-time Engine Performance Telemetry (FPS, Memory & Latency Gauge)
+  const [telemetryFps, setTelemetryFps] = useState(60);
+  const [telemetryPing, setTelemetryPing] = useState(14);
+
+  useEffect(() => {
+    let frameCount = 0;
+    let lastTime = performance.now();
+    let animId;
+
+    const loop = (now) => {
+      frameCount++;
+      if (now - lastTime >= 1000) {
+        setTelemetryFps(Math.min(120, Math.round((frameCount * 1000) / (now - lastTime))));
+        frameCount = 0;
+        lastTime = now;
+        if (window.performance && performance.getEntriesByType) {
+          const navEntries = performance.getEntriesByType('navigation');
+          if (navEntries && navEntries[0] && navEntries[0].responseEnd) {
+            const lat = Math.round(navEntries[0].responseEnd - navEntries[0].requestStart);
+            if (lat > 0 && lat < 500) setTelemetryPing(lat);
+          }
+        }
+      }
+      animId = requestAnimationFrame(loop);
+    };
+    animId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
   // Scroll Progress & Command Palette (Ctrl+K)
   const [scrollProgress, setScrollProgress] = useState(0);
   const [commandOpen, setCommandOpen] = useState(false);
@@ -4717,10 +4747,22 @@ ENGAGEMENT COORDINATION
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
-    if (!contactData.name || !contactData.email || !contactData.details) {
+    const name = contactData.name?.trim();
+    const email = contactData.email?.trim();
+    const details = contactData.details?.trim();
+
+    if (!name || !email || !details) {
       alert('Please fill out your name, email, and project details.');
       return;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please provide a valid email address (e.g. name@company.com).');
+      return;
+    }
+
+    playClickSound('success');
     setContactSubmitted(true);
   };
 
@@ -6037,7 +6079,30 @@ ENGAGEMENT COORDINATION
           </nav>
 
           {/* High-Tech Controls Action Group */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Live Performance & Edge Latency Telemetry Gauge */}
+            <div
+              className="desktop-only-btn"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '4px 9px',
+                borderRadius: '14px',
+                border: '1px solid rgba(56, 189, 248, 0.28)',
+                background: 'rgba(15, 23, 42, 0.75)',
+                fontSize: '10.5px',
+                fontFamily: 'monospace',
+                letterSpacing: '0.2px'
+              }}
+              title="Real-time WebGL Engine FPS & Edge Network Latency"
+            >
+              <span style={{ color: telemetryFps >= 50 ? '#10B981' : '#F59E0B', fontSize: '9px' }}>●</span>
+              <span style={{ color: '#F8FAFC', fontWeight: '800' }}>{telemetryFps} FPS</span>
+              <span style={{ color: 'rgba(56, 189, 248, 0.4)' }}>|</span>
+              <span style={{ color: '#38BDF8', fontWeight: '700' }}>{telemetryPing}ms</span>
+            </div>
+
             {/* Multilingual Selector Pill */}
             <button
               onClick={() => {
@@ -9460,6 +9525,28 @@ ENGAGEMENT COORDINATION
                       }}
                     >
                       ✉️ Open in Email Client
+                    </a>
+
+                    <a
+                      href={`https://wa.me/919999999999?text=${encodeURIComponent(
+                        `Hi Abhimanyu Technologies Team,\n\nName: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService: ${contactData.serviceNeed}\n\nProject Scope:\n${contactData.details}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        backgroundColor: '#16A34A',
+                        color: '#FFFFFF',
+                        textDecoration: 'none',
+                        padding: '10px 18px',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        fontSize: '13.5px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      💬 WhatsApp Instant Chat
                     </a>
                   </div>
 
