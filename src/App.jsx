@@ -809,7 +809,7 @@ const CHAKRA_THEMES = {
 };
 
 // --- AMBIENT SRI YANTRA & BRAHMANDA LIVING 3D WEBGL BACKGROUND COMPONENT ---
-function AmbientSriYantraBackground({ isDark }) {
+function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSpeed = 1.0 }) {
   const mountRef = useRef(null);
 
   useEffect(() => {
@@ -1172,6 +1172,67 @@ function AmbientSriYantraBackground({ isDark }) {
     bhupuraGroup.add(createBhupuraLayer(5.8, 0.5, 0.0, goldLineMat));
     bhupuraGroup.add(createBhupuraLayer(6.1, 0.55, 0.1, cyanLineMat));
 
+    // 8. 3D SACRED ENERGY FLOW STREAMS (480 dynamic energy particles)
+    const flowCount = 480;
+    const flowGeo = new THREE.BufferGeometry();
+    const flowPositions = new Float32Array(flowCount * 3);
+    const flowColors = new Float32Array(flowCount * 3);
+    const flowData = [];
+
+    for (let i = 0; i < flowCount; i++) {
+      const arm = i % 8;
+      const phase = Math.random();
+      const speed = 0.003 + Math.random() * 0.004;
+      flowData.push({ arm, phase, speed });
+
+      const t = phase;
+      const r = (1 - t) * 1.0 + t * 0.22;
+      const g = (1 - t) * 0.84 + t * 0.74;
+      const b = (1 - t) * 0.0 + t * 0.97;
+      flowColors[i * 3] = r;
+      flowColors[i * 3 + 1] = g;
+      flowColors[i * 3 + 2] = b;
+    }
+
+    flowGeo.setAttribute('position', new THREE.BufferAttribute(flowPositions, 3));
+    flowGeo.setAttribute('color', new THREE.BufferAttribute(flowColors, 3));
+
+    const flowMat = new THREE.PointsMaterial({
+      size: 0.16,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.88,
+      blending: THREE.AdditiveBlending
+    });
+    const flowParticles = new THREE.Points(flowGeo, flowMat);
+    sriChakraMaster.add(flowParticles);
+
+    // Toroidal / Helical Flowing Energy Streamlines
+    const streamCurvesGroup = new THREE.Group();
+    sriChakraMaster.add(streamCurvesGroup);
+
+    const streamLineCount = 8;
+    for (let s = 0; s < streamLineCount; s++) {
+      const armAngle = (s / streamLineCount) * Math.PI * 2;
+      const pts = [];
+      const steps = 36;
+      for (let st = 0; st <= steps; st++) {
+        const u = st / steps;
+        const rad = 0.4 + u * 6.2;
+        const theta = armAngle + u * 2.8;
+        const z = Math.sin(u * Math.PI) * (s % 2 === 0 ? 0.9 : -0.9);
+        pts.push(new THREE.Vector3(Math.cos(theta) * rad, Math.sin(theta) * rad, z));
+      }
+      const curveGeo = new THREE.BufferGeometry().setFromPoints(pts);
+      const curveMat = new THREE.LineBasicMaterial({
+        color: s % 2 === 0 ? 0xffd700 : 0x38bdf8,
+        transparent: true,
+        opacity: 0.25,
+        blending: THREE.AdditiveBlending
+      });
+      streamCurvesGroup.add(new THREE.Line(curveGeo, curveMat));
+    }
+
     // Dynamic Parallax Mouse Interaction
     let mouseX = 0;
     let mouseY = 0;
@@ -1246,6 +1307,58 @@ function AmbientSriYantraBackground({ isDark }) {
         }
       }
       starGeo.attributes.position.needsUpdate = true;
+
+      // 3D Flow Energy Update (Reacts to flowMode & flowSpeed)
+      const flowPos = flowGeo.attributes.position.array;
+      const currentSpeedMult = (flowSpeed || 1.0) * (flowMode === 'warp' ? 2.8 : flowMode === 'vortex' ? 1.4 : 1.0);
+
+      for (let i = 0; i < flowCount; i++) {
+        const d = flowData[i];
+        d.phase = (d.phase + d.speed * currentSpeedMult) % 1.0;
+        const u = d.phase;
+
+        let x, y, z;
+        if (flowMode === 'vortex') {
+          // Kundalini dual-helix vortex flow
+          const direction = d.arm % 2 === 0 ? 1 : -1;
+          const theta = (d.arm * Math.PI / 4) + u * Math.PI * 4 * direction + clock * 0.8 * direction;
+          const rad = 0.5 + Math.sin(u * Math.PI) * 4.2;
+          z = (u - 0.5) * 6.0 * direction;
+          x = Math.cos(theta) * rad;
+          y = Math.sin(theta) * rad;
+        } else if (flowMode === 'warp') {
+          // Relativistic warp stream
+          const theta = (d.arm * Math.PI / 4);
+          const rad = 0.3 + Math.pow(u, 1.8) * 7.5;
+          z = -15 + u * 22;
+          x = Math.cos(theta + clock * 0.4) * rad;
+          y = Math.sin(theta + clock * 0.4) * rad;
+        } else {
+          // Cosmic Torus Spiral Flow (Default)
+          const armAngle = (d.arm / 8) * Math.PI * 2;
+          const rad = 0.4 + u * 6.2;
+          const theta = armAngle + u * 2.8 + clock * 0.25;
+          z = Math.sin(u * Math.PI) * (d.arm % 2 === 0 ? 1.0 : -1.0) + Math.cos(clock * 0.5 + u * 3) * 0.2;
+          x = Math.cos(theta) * rad;
+          y = Math.sin(theta) * rad;
+        }
+
+        // Magnetic mouse fluid vortex deflection
+        const dx = mouseX * 2.5 - x;
+        const dy = mouseY * 1.8 - y;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < 16) {
+          const force = (1 - distSq / 16) * 0.4;
+          x += dx * force;
+          y += dy * force;
+        }
+
+        flowPos[i * 3] = x;
+        flowPos[i * 3 + 1] = y;
+        flowPos[i * 3 + 2] = z;
+      }
+      flowGeo.attributes.position.needsUpdate = true;
+      streamCurvesGroup.rotation.z += 0.001 * currentSpeedMult;
 
       // Master Breathing Scale
       const breathe = 1 + 0.03 * Math.sin(clock * 0.8);
@@ -1331,8 +1444,10 @@ function AmbientSriYantraBackground({ isDark }) {
       renderer.dispose();
       starGeo.dispose();
       starMat.dispose();
+      flowGeo.dispose();
+      flowMat.dispose();
     };
-  }, [isDark]);
+  }, [isDark, flowMode, flowSpeed]);
 
   return (
     <div
@@ -2029,15 +2144,341 @@ function CountUp({ target, suffix = '', duration = 1800 }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
+// --- FUTURISTIC HIGH-TECH COMMAND SIDEBAR (HUD DOCK) ---
+function FuturisticCommandSidebar({
+  isOpen,
+  onClose,
+  activeSection,
+  scrollTo,
+  flowMode,
+  setFlowMode,
+  flowSpeed,
+  setFlowSpeed,
+  soundEnabled,
+  setSoundEnabled,
+  playClickSound
+}) {
+  const [currentTimeIST, setCurrentTimeIST] = useState('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const istStr = now.toLocaleTimeString('en-US', {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+      setCurrentTimeIST(istStr);
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      {/* Backdrop Blur Overlay */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(5, 8, 16, 0.75)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 10000,
+          transition: 'opacity 0.3s ease'
+        }}
+      />
+
+      {/* Slide-out High-Tech Drawer */}
+      <aside
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          width: '390px',
+          maxWidth: '92vw',
+          height: '100vh',
+          backgroundColor: 'rgba(10, 15, 29, 0.95)',
+          backdropFilter: 'blur(24px)',
+          borderLeft: '1px solid rgba(56, 189, 248, 0.28)',
+          boxShadow: '-12px 0 45px rgba(0, 0, 0, 0.85), -2px 0 25px rgba(56, 189, 248, 0.15)',
+          zIndex: 10001,
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+          padding: '24px',
+          color: '#F8FAFC'
+        }}
+      >
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '16px', borderBottom: '1px solid rgba(56, 189, 248, 0.18)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '22px', color: '#FFD700', filter: 'drop-shadow(0 0 10px rgba(255,215,0,0.65))' }}>🔱</span>
+            <div>
+              <div style={{ fontSize: '14.5px', fontWeight: '800', letterSpacing: '1px', color: '#FFFFFF' }}>COMMAND HUD</div>
+              <div style={{ fontSize: '10px', color: '#38BDF8', letterSpacing: '1.2px', fontWeight: '700' }}>3D BRAHMANDA ENGINE DOCK</div>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'rgba(30, 41, 59, 0.6)',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              color: '#94A3B8',
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              transition: 'all 0.2s ease'
+            }}
+            title="Close Sidebar (Esc)"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* 3D Flow Visuals Controller */}
+        <div style={{ margin: '18px 0', padding: '16px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(56, 189, 248, 0.22)', borderRadius: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '1px', color: '#38BDF8', textTransform: 'uppercase' }}>
+              🌊 3D Energy Flow Dynamics
+            </span>
+            <span style={{ fontSize: '10px', color: '#10B981', background: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
+              60 FPS
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
+            {[
+              { id: 'cosmic', label: '🌌 Cosmic Torus Flow', desc: 'Golden-cyan logarithmic spiral streams' },
+              { id: 'vortex', label: '🌀 Kundalini Vortex', desc: 'Dual-helix Shiva/Shakti energy currents' },
+              { id: 'warp', label: '⚡ Hyper-Warp Stream', desc: 'Relativistic deep space cosmic dive' }
+            ].map((f) => {
+              const active = flowMode === f.id;
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => {
+                    setFlowMode(f.id);
+                    if (playClickSound) playClickSound('soft');
+                  }}
+                  style={{
+                    background: active ? 'rgba(37, 99, 235, 0.35)' : 'rgba(30, 41, 59, 0.45)',
+                    border: active ? '1px solid #38BDF8' : '1px solid rgba(51, 65, 85, 0.6)',
+                    boxShadow: active ? '0 0 16px rgba(56, 189, 248, 0.28)' : 'none',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div style={{ fontSize: '12.5px', fontWeight: '700', color: active ? '#FFD700' : '#E2E8F0' }}>{f.label}</div>
+                  <div style={{ fontSize: '10.5px', color: '#94A3B8', marginTop: '2px' }}>{f.desc}</div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Flow Speed Multiplier */}
+          <div style={{ marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '600' }}>Speed Multiplier:</span>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              {[0.5, 1.0, 2.0].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => {
+                    setFlowSpeed(s);
+                    if (playClickSound) playClickSound('soft');
+                  }}
+                  style={{
+                    background: flowSpeed === s ? '#2563EB' : 'rgba(30, 41, 59, 0.5)',
+                    border: flowSpeed === s ? '1px solid #38BDF8' : '1px solid #334155',
+                    color: '#FFFFFF',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    padding: '3px 9px',
+                    borderRadius: '6px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {s}x
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* IMAX 432Hz Portal Shortcut */}
+        <a
+          href="/sri-yantra.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '12px 16px',
+            background: 'linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(56, 189, 248, 0.15) 100%)',
+            border: '1px solid rgba(255, 215, 0, 0.35)',
+            borderRadius: '10px',
+            color: '#FFD700',
+            textDecoration: 'none',
+            fontSize: '12px',
+            fontWeight: '700',
+            letterSpacing: '0.8px',
+            boxShadow: '0 0 16px rgba(255, 215, 0, 0.15)',
+            marginBottom: '18px'
+          }}
+        >
+          <span>🔱 Launch Fullscreen IMAX 432Hz Portal</span>
+          <span>↗</span>
+        </a>
+
+        {/* Platform Quick Navigation */}
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '1.2px', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>
+            Platform Navigation
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '5px' }}>
+            {[
+              { id: 'top', label: 'Hero Overview & 3D Core', icon: '🏛️' },
+              { id: 'services', label: 'Engineering Services', icon: '⚡' },
+              { id: 'studio', label: '3D WebGL Studio', icon: '🌐' },
+              { id: 'tech-stack', label: 'Architecture Matcher', icon: '🧭' },
+              { id: 'industries', label: 'Enterprise Industries', icon: '🏢' },
+              { id: 'work', label: 'Client Case Studies', icon: '🏆' },
+              { id: 'insights', label: 'Security & Deep Tech', icon: '🛡️' },
+              { id: 'estimate', label: 'Interactive Scope Estimator', icon: '🧮' },
+              { id: 'support', label: 'Support SLAs & Maintenance', icon: '📋' },
+              { id: 'faq', label: 'Enterprise FAQ', icon: '❓' },
+              { id: 'contact', label: 'Direct Inquiry & Scoping', icon: '✉️' }
+            ].map((n) => {
+              const active = activeSection === n.id;
+              return (
+                <a
+                  key={n.id}
+                  href={`#${n.id}`}
+                  onClick={(e) => {
+                    scrollTo(e, n.id);
+                    onClose();
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    background: active ? 'rgba(37, 99, 235, 0.25)' : 'transparent',
+                    color: active ? '#38BDF8' : '#CBD5E1',
+                    border: active ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
+                    fontSize: '13px',
+                    fontWeight: active ? '700' : '500',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <span style={{ fontSize: '15px' }}>{n.icon}</span>
+                  <span>{n.label}</span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Live Global Office Widget */}
+        <div style={{ marginTop: '16px', padding: '14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(30, 41, 59, 0.8)', borderRadius: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+            <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '700' }}>TELANGANA HQ (IST)</span>
+            <span style={{ fontSize: '10px', color: '#10B981', fontWeight: '700' }}>● ONLINE</span>
+          </div>
+          <div style={{ fontSize: '16px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '1px', fontFamily: 'monospace' }}>
+            {currentTimeIST || 'IST • UTC+5:30'}
+          </div>
+          <div style={{ fontSize: '11px', color: '#38BDF8', marginTop: '4px' }}>
+            Active Desk Overlap: US (3.5h), UK (4.5h), UAE (6.5h), SG (7h)
+          </div>
+        </div>
+
+        {/* Direct Action Contact */}
+        <div style={{ marginTop: '14px', display: 'flex', gap: '8px' }}>
+          <a
+            href="https://wa.me/919999999999"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              flex: 1,
+              backgroundColor: '#16A34A',
+              color: '#FFFFFF',
+              textAlign: 'center',
+              padding: '10px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: '700',
+              textDecoration: 'none'
+            }}
+          >
+            💬 WhatsApp
+          </a>
+          <a
+            href="#contact"
+            onClick={(e) => {
+              scrollTo(e, 'contact');
+              onClose();
+            }}
+            style={{
+              flex: 1,
+              backgroundColor: '#2563EB',
+              color: '#FFFFFF',
+              textAlign: 'center',
+              padding: '10px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: '700',
+              textDecoration: 'none'
+            }}
+          >
+            ⚡ Quick Consult
+          </a>
+        </div>
+      </aside>
+    </>
+  );
+}
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
-  // Theme State (Light / Dark)
-  const [theme, setTheme] = useState('light');
-  const isDark = theme === 'dark';
-  const styles = getStyles(isDark);
+  // Pure Dark Mode Only (Permanently locked as per user specification)
+  const isDark = true;
+  const theme = 'dark';
+  const styles = getStyles(true);
+
+  // 3D Flow Animation State (Cosmic Torus / Kundalini Vortex / Hyper-Warp)
+  const [flowMode, setFlowMode] = useState('cosmic');
+  const [flowSpeed, setFlowSpeed] = useState(1.0);
+
+  // High-Tech Futuristic Command Sidebar State
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Scroll Progress & Command Palette (Ctrl+K)
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -2223,14 +2664,10 @@ export default function App() {
     return () => observers.forEach((obs) => obs.disconnect());
   }, []);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
-
   useEffect(() => {
-    document.body.style.backgroundColor = isDark ? '#0A0F1D' : '#FFFFFF';
-    document.documentElement.style.backgroundColor = isDark ? '#0A0F1D' : '#FFFFFF';
-  }, [isDark]);
+    document.body.style.backgroundColor = '#0A0F1D';
+    document.documentElement.style.backgroundColor = '#0A0F1D';
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -2790,7 +3227,22 @@ ENGAGEMENT COORDINATION
   return (
     <div style={styles.page}>
       {/* --- GLOBAL SEAMLESS SRI YANTRA / BRAHMANDA LIVING BACKGROUND --- */}
-      <AmbientSriYantraBackground isDark={isDark} />
+      <AmbientSriYantraBackground isDark={true} flowMode={flowMode} flowSpeed={flowSpeed} />
+
+      {/* --- FUTURISTIC HIGH-TECH COMMAND SIDEBAR (HUD DOCK) --- */}
+      <FuturisticCommandSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        activeSection={activeSection}
+        scrollTo={scrollTo}
+        flowMode={flowMode}
+        setFlowMode={setFlowMode}
+        flowSpeed={flowSpeed}
+        setFlowSpeed={setFlowSpeed}
+        soundEnabled={soundEnabled}
+        setSoundEnabled={setSoundEnabled}
+        playClickSound={playClickSound}
+      />
 
       {/* --- SCROLL PROGRESS BAR --- */}
       <div
@@ -3882,24 +4334,48 @@ ENGAGEMENT COORDINATION
         </div>
       </div>
 
-      {/* --- HEADER NAVIGATION --- */}
-      <header style={styles.navHeader}>
-        <div style={styles.headerContainer}>
+      {/* --- FUTURISTIC FLOATING HUD NAVIGATION BAR --- */}
+      <header
+        style={{
+          position: 'sticky',
+          top: '12px',
+          zIndex: 1000,
+          margin: '0 auto',
+          maxWidth: '1280px',
+          padding: '0 16px'
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '10px 22px',
+            backgroundColor: 'rgba(10, 15, 29, 0.88)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '24px',
+            border: '1px solid rgba(56, 189, 248, 0.28)',
+            boxShadow: '0 14px 40px rgba(0, 0, 0, 0.75), 0 0 25px rgba(56, 189, 248, 0.12)'
+          }}
+        >
+          {/* Brand Link with Sacred Emblem */}
           <a href="#top" onClick={(e) => scrollTo(e, 'top')} style={styles.brandLink}>
-            <span style={styles.brandMain}>Abhimanyu</span>
-            <span style={styles.brandSub}>TECHNOLOGIES</span>
+            <span style={{ fontSize: '20px', marginRight: '6px', color: '#FFD700', filter: 'drop-shadow(0 0 8px rgba(255,215,0,0.65))' }}>🔱</span>
+            <span style={{ fontSize: '19px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '-0.5px' }}>Abhimanyu</span>
+            <span style={{ fontSize: '10px', fontWeight: '700', color: '#38BDF8', letterSpacing: '1.2px', marginLeft: '5px' }}>TECHNOLOGIES</span>
           </a>
 
-          <nav className="desktop-nav" style={styles.navLinks}>
+          {/* Desktop Navigation Links */}
+          <nav className="desktop-nav" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             {[
               { id: 'services', label: 'Services' },
               { id: 'studio', label: '3D Studio' },
+              { id: 'tech-stack', label: 'Architecture' },
               { id: 'industries', label: 'Industries' },
               { id: 'work', label: 'Work' },
               { id: 'insights', label: 'Insights' },
               { id: 'estimate', label: 'Estimator' },
-              { id: 'support', label: 'Support' },
-              { id: 'faq', label: 'FAQ' }
+              { id: 'contact', label: 'Contact' }
             ].map((nav) => {
               const isActive = activeSection === nav.id;
               return (
@@ -3908,10 +4384,13 @@ ENGAGEMENT COORDINATION
                   href={`#${nav.id}`}
                   onClick={(e) => scrollTo(e, nav.id)}
                   style={{
-                    ...styles.navItem,
-                    color: isActive ? '#2563EB' : styles.navItem.color,
-                    fontWeight: isActive ? '700' : styles.navItem.fontWeight,
-                    position: 'relative'
+                    color: isActive ? '#38BDF8' : '#CBD5E1',
+                    fontSize: '13.5px',
+                    fontWeight: isActive ? '700' : '500',
+                    textDecoration: 'none',
+                    position: 'relative',
+                    transition: 'color 0.2s ease',
+                    padding: '4px 0'
                   }}
                 >
                   {nav.label}
@@ -3919,12 +4398,13 @@ ENGAGEMENT COORDINATION
                     <span
                       style={{
                         position: 'absolute',
-                        bottom: '-4px',
+                        bottom: '-3px',
                         left: 0,
                         right: 0,
                         height: '2px',
-                        backgroundColor: '#2563EB',
-                        borderRadius: '2px'
+                        backgroundColor: '#38BDF8',
+                        borderRadius: '2px',
+                        boxShadow: '0 0 8px #38BDF8'
                       }}
                     />
                   )}
@@ -3933,7 +4413,37 @@ ENGAGEMENT COORDINATION
             })}
           </nav>
 
-          <div style={styles.headerActions}>
+          {/* High-Tech Controls Action Group */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* 3D Flow Mode Switcher Pill */}
+            <button
+              onClick={() => {
+                const modes = ['cosmic', 'vortex', 'warp'];
+                const next = modes[(modes.indexOf(flowMode) + 1) % modes.length];
+                setFlowMode(next);
+                playClickSound('soft');
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                borderRadius: '16px',
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                background: 'rgba(15, 23, 42, 0.75)',
+                color: '#38BDF8',
+                fontSize: '11px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                letterSpacing: '0.5px',
+                transition: 'all 0.2s ease'
+              }}
+              title="Cycle 3D Sacred Energy Flow Dynamics"
+            >
+              <span>🌊</span>
+              <span>FLOW: {flowMode.toUpperCase()}</span>
+            </button>
+
             {/* Quick Search Ctrl+K Button */}
             <button
               onClick={() => setCommandOpen(true)}
@@ -3941,11 +4451,10 @@ ENGAGEMENT COORDINATION
               title="Quick Search and Command Menu (Ctrl+K)"
             >
               <span>🔍</span>
-              <span className="search-text-label">Search</span>
               <kbd style={styles.kbdShortcut}>⌘K</kbd>
             </button>
 
-            {/* Sound Effects Toggle */}
+            {/* Audio SFX Toggle */}
             <button
               onClick={() => {
                 const next = !soundEnabled;
@@ -3954,99 +4463,67 @@ ENGAGEMENT COORDINATION
               }}
               style={styles.themeToggleBtn}
               title={soundEnabled ? 'Mute Interface Sound Effects' : 'Enable Subtle Interface Sound Effects'}
-              aria-label="Toggle interface sound effects"
             >
               {soundEnabled ? '🔊' : '🔇'}
             </button>
 
-            {/* Light / Dark Mode Toggle */}
+            {/* Futuristic Sidebar HUD Trigger */}
             <button
-              onClick={toggleTheme}
-              style={styles.themeToggleBtn}
-              title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-              aria-label="Toggle light or dark theme"
+              onClick={() => {
+                setSidebarOpen(true);
+                playClickSound('soft');
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '7px 14px',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 215, 0, 0.4)',
+                background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(56, 189, 248, 0.12) 100%)',
+                color: '#FFD700',
+                fontSize: '12px',
+                fontWeight: '800',
+                cursor: 'pointer',
+                boxShadow: '0 0 14px rgba(255, 215, 0, 0.2)'
+              }}
+              title="Open Futuristic Command HUD & 3D Visual Dock"
             >
-              {isDark ? '☀️' : '🌙'}
+              <span>❖</span>
+              <span>HUD HUB</span>
             </button>
 
-            <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} style={styles.quoteBtn}>
-              Get a quote
+            {/* Direct Project CTA */}
+            <a
+              href="#contact"
+              onClick={(e) => scrollTo(e, 'contact')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '18px',
+                background: 'linear-gradient(90deg, #2563EB, #0284C7)',
+                color: '#FFFFFF',
+                fontSize: '12px',
+                fontWeight: '700',
+                textDecoration: 'none',
+                boxShadow: '0 0 16px rgba(37, 99, 235, 0.4)'
+              }}
+            >
+              Let's Talk →
             </a>
+
+            {/* Mobile Hamburger Toggle */}
             <button
               className="mobile-toggle"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => setSidebarOpen(true)}
               style={styles.mobileHamburger}
-              aria-label="Toggle menu"
+              aria-label="Open Command Dock"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                {mobileMenuOpen ? <path d="M18 6L6 18M6 6l12 12" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
+                <path d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
           </div>
         </div>
-
-        {mobileMenuOpen && (
-          <div style={styles.mobileMenu}>
-            <div style={{ display: 'flex', gap: '8px', paddingBottom: '10px', borderBottom: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0' }}>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setCommandOpen(true);
-                }}
-                style={{ ...styles.searchCommandBtn, flex: 1, justifyContent: 'center' }}
-              >
-                <span>🔍 Search (Ctrl+K)</span>
-              </button>
-              <button
-                onClick={() => {
-                  const next = !soundEnabled;
-                  setSoundEnabled(next);
-                  if (next) playClickSound('success');
-                }}
-                style={styles.themeToggleBtn}
-                title="Toggle Audio SFX"
-              >
-                {soundEnabled ? '🔊' : '🔇'}
-              </button>
-              <button
-                onClick={toggleTheme}
-                style={styles.themeToggleBtn}
-              >
-                {isDark ? '☀️ Light' : '🌙 Dark'}
-              </button>
-            </div>
-            {[
-              { id: 'services', label: 'Services' },
-              { id: 'studio', label: '3D Studio' },
-              { id: 'industries', label: 'Industries' },
-              { id: 'work', label: 'Work' },
-              { id: 'insights', label: 'Insights' },
-              { id: 'estimate', label: 'Estimator' },
-              { id: 'support', label: 'Support' },
-              { id: 'faq', label: 'FAQ' }
-            ].map((nav) => {
-              const isActive = activeSection === nav.id;
-              return (
-                <a
-                  key={nav.id}
-                  href={`#${nav.id}`}
-                  onClick={(e) => scrollTo(e, nav.id)}
-                  style={{
-                    ...styles.mobileMenuItem,
-                    color: isActive ? '#2563EB' : styles.mobileMenuItem.color,
-                    fontWeight: isActive ? '700' : '500',
-                    backgroundColor: isActive ? (isDark ? 'rgba(37,99,235,0.12)' : '#EFF6FF') : 'transparent',
-                    borderRadius: '8px',
-                    padding: '8px 12px'
-                  }}
-                >
-                  {nav.label}
-                </a>
-              );
-            })}
-            <a href="#contact" onClick={(e) => scrollTo(e, 'contact')} style={styles.mobileQuoteBtn}>Get a quote</a>
-          </div>
-        )}
       </header>
 
       {/* --- HERO SECTION --- */}
