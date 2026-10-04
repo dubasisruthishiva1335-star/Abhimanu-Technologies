@@ -27,7 +27,8 @@ const COMMAND_ITEMS = [
   { title: 'Technology Architecture Matrix', category: 'Navigation', anchor: 'tech-stack', desc: 'Full-stack engineering layers, SLAs, and production tools' },
   { title: 'Global Delivery Footprint & Cloud Regions', category: 'Navigation', anchor: 'global-presence', desc: 'India HQ, North America, UK/Europe, GCC, and APAC hubs' },
   { title: 'Codebase & Cloud Health Audit', category: 'Tool', anchor: 'support', desc: 'Free 60-second architecture, testing & security self-assessment' },
-  { title: 'Sri Chakra Universe (IMAX)', category: '3D Experience', anchor: 'top', desc: 'Fullscreen 432Hz sacred geometry Brahmanda loop experience' }
+  { title: 'Sri Chakra Universe (IMAX)', category: '3D Experience', anchor: 'top', desc: 'Fullscreen 432Hz sacred geometry Brahmanda loop experience' },
+  { title: 'Solution Architecture Matcher', category: 'Tool', anchor: 'tech-stack', desc: 'Generate customized frontend, backend, database and cloud blueprint' }
 ];
 
 const TECH_MATRIX = [
@@ -53,6 +54,53 @@ const TECH_MATRIX = [
   { name: 'TimescaleDB', category: 'Databases & Ingestion', badge: 'Time-Series', icon: '⏱️', desc: 'Continuous telemetry aggregation for IoT and fleet streams.' },
   { name: 'Redis Cache', category: 'Databases & Ingestion', badge: 'Sub-Millisecond', icon: '⚡', desc: 'In-memory caching, rate limiting, and pub/sub message brokers.' }
 ];
+
+const BLUEPRINT_PRESETS = {
+  web: {
+    id: 'web',
+    title: 'Enterprise Web Application Platform',
+    icon: '🌐',
+    badge: 'SSR · Streaming · High Concurrency',
+    frontend: 'React 18 / Next.js 14 App Router, TypeScript, Tailwind CSS, TanStack Query',
+    backend: 'Node.js TypeScript API (Fastify) + Go Async Queue Workers',
+    database: 'PostgreSQL (AWS Aurora) with Read Pooling + Redis ElastiCache',
+    infra: 'AWS ECS Fargate Cluster, CloudFront CDN Edge, Terraform IaC, GitHub Actions CI/CD',
+    rationale: 'Engineered for sub-80ms First Contentful Paint globally, strict type-safety across API boundaries, and horizontal elasticity to absorb viral traffic surges without container restarts.'
+  },
+  mobile: {
+    id: 'mobile',
+    title: 'Offline-First Cross-Platform Mobile Suite',
+    icon: '📱',
+    badge: '60/120 FPS · Zero Conflict Sync',
+    frontend: 'Flutter 3.x / Dart (or React Native Fabric architecture) with local SQLite engine',
+    backend: 'Node.js NestJS Modular Monolith + GraphQL Apollo Gateway',
+    database: 'Client-side SQLite + Conflict-Free Replicated Data (CRDT) sync to PostgreSQL',
+    infra: 'AWS App Runner, Firebase Auth / Apple Sign-In, Fastlane Automated Store Deployment',
+    rationale: 'Guarantees field operators complete uninterrupted access in zero-connectivity environments with mathematical, deterministic conflict resolution upon network reconnect.'
+  },
+  '3d': {
+    id: '3d',
+    title: 'Real-Time 3D WebGL & Digital Twin Pipeline',
+    icon: '🏗️',
+    badge: 'Zero Plugins · 14:1 CAD Compression',
+    frontend: 'Three.js, React Three Fiber, Custom GLSL Shaders, Draco/Meshopt Geometry Decoders',
+    backend: 'Python FastAPI geometry parser (IFC / STEP / OBJ ingestion worker pool)',
+    database: 'Cloudflare R2 / AWS S3 Geometry Blob Store + TimescaleDB sensor mapping',
+    infra: 'Cloudflare Edge CDN, WebSockets telemetry sync, WebGL GPU acceleration pipelines',
+    rationale: 'Renders massive multimillion-polygon architectural and mechanical models directly in standard web browsers at steady 60 FPS without requiring external CAD plugins or software installs.'
+  },
+  iot: {
+    id: 'iot',
+    title: 'High-Throughput IoT & Real-Time Telematics Engine',
+    icon: '⚡',
+    badge: '50K+ Events/sec · <2s Ping Latency',
+    frontend: 'React 18, Mapbox GL Vector Maps, Deck.gl GPU Data Layers, WebSockets client',
+    backend: 'Go / Rust high-concurrency ingestion service + EMQX / MQTT broker cluster',
+    database: 'TimescaleDB (Hypertable Time-Series partitions) + Redis Geospatial spatial indexing',
+    infra: 'AWS Kinesis Stream, ECS Spot Worker auto-scaling, Prometheus & Grafana distributed APM',
+    rationale: 'Engineered for continuous telemetry ingestion from thousands of moving vehicles and sensor nodes with automatic sub-sampling, geo-fencing triggers, and instant alerting.'
+  }
+};
 
 const BLOG_POSTS = [
   {
@@ -1960,6 +2008,12 @@ export default function App() {
   const [auditAnswers, setAuditAnswers] = useState({ arch: 0, ci: 1, sec: 1, perf: 0 });
   const [auditCopied, setAuditCopied] = useState(false);
 
+  // Solution Architecture Matcher State
+  const [matcherTarget, setMatcherTarget] = useState('web');
+  const [matcherPriority, setMatcherPriority] = useState('perf');
+  const [matcherScale, setMatcherScale] = useState('growth');
+  const [blueprintCopied, setBlueprintCopied] = useState(false);
+
   // Smooth scroll
   const scrollTo = (e, id) => {
     e.preventDefault();
@@ -2202,6 +2256,128 @@ Email: hello@abhimanyutech.example | Office: Telangana, India • Available Glob
     navigator.clipboard?.writeText(report);
     setAuditCopied(true);
     setTimeout(() => setAuditCopied(false), 2500);
+  };
+
+  const handleCopyBlueprint = () => {
+    playClickSound('success');
+    const p = BLUEPRINT_PRESETS[matcherTarget];
+    const priorityLabels = {
+      perf: 'High Performance (<85ms P95 API Latency)',
+      offline: 'Offline-First & Conflict-Free CRDT Sync',
+      security: 'Strict SOC-2 Type II & KMS Secrets Hardening',
+      mvp: 'Rapid 14-Day MVP Staging Velocity'
+    };
+    const scaleLabels = {
+      startup: 'Early Stage (<20K Active Users)',
+      growth: 'Growth Scale (20K–500K Active Users)',
+      enterprise: 'Global Enterprise Scale (1M+ Active Users)'
+    };
+    const text = `# ARCHITECTURE BLUEPRINT & STACK SPECIFICATION
+Abhimanyu Technologies — Enterprise Solutions Group
+Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+Website: https://abhimanu-technologies.vercel.app/
+
+--------------------------------------------------------------------------------
+SYSTEM SPECIFICATION: ${p.title.toUpperCase()}
+--------------------------------------------------------------------------------
+• Platform Target: ${p.title} (${p.badge})
+• Engineering Priority: ${priorityLabels[matcherPriority]}
+• Projected Scale: ${scaleLabels[matcherScale]}
+
+--------------------------------------------------------------------------------
+RECOMMENDED TECHNOLOGY LAYERS
+--------------------------------------------------------------------------------
+1. Frontend Architecture:
+   ${p.frontend}
+
+2. Backend & Microservices:
+   ${p.backend}
+
+3. Persistence & Caching:
+   ${p.database}
+
+4. Cloud Infrastructure & DevOps:
+   ${p.infra}
+
+--------------------------------------------------------------------------------
+PRODUCTION RATIONALE & BOTTLENECK MITIGATION
+--------------------------------------------------------------------------------
+${p.rationale}
+
+--------------------------------------------------------------------------------
+ENGAGEMENT COORDINATION
+--------------------------------------------------------------------------------
+• Office: Telangana, India • Available for Global Engagements
+• Contact: hello@abhimanyutech.example
+• WhatsApp: wa.me/919999999999
+`;
+    navigator.clipboard?.writeText(text);
+    setBlueprintCopied(true);
+    setTimeout(() => setBlueprintCopied(false), 2500);
+  };
+
+  const handleDownloadBlueprint = () => {
+    playClickSound('success');
+    const p = BLUEPRINT_PRESETS[matcherTarget];
+    const priorityLabels = {
+      perf: 'High Performance (<85ms P95 API Latency)',
+      offline: 'Offline-First & Conflict-Free CRDT Sync',
+      security: 'Strict SOC-2 Type II & KMS Secrets Hardening',
+      mvp: 'Rapid 14-Day MVP Staging Velocity'
+    };
+    const scaleLabels = {
+      startup: 'Early Stage (<20K Active Users)',
+      growth: 'Growth Scale (20K–500K Active Users)',
+      enterprise: 'Global Enterprise Scale (1M+ Active Users)'
+    };
+    const text = `# ARCHITECTURE BLUEPRINT & STACK SPECIFICATION
+Abhimanyu Technologies — Enterprise Solutions Group
+Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+Website: https://abhimanu-technologies.vercel.app/
+
+--------------------------------------------------------------------------------
+SYSTEM SPECIFICATION: ${p.title.toUpperCase()}
+--------------------------------------------------------------------------------
+• Platform Target: ${p.title} (${p.badge})
+• Engineering Priority: ${priorityLabels[matcherPriority]}
+• Projected Scale: ${scaleLabels[matcherScale]}
+
+--------------------------------------------------------------------------------
+RECOMMENDED TECHNOLOGY LAYERS
+--------------------------------------------------------------------------------
+1. Frontend Architecture:
+   ${p.frontend}
+
+2. Backend & Microservices:
+   ${p.backend}
+
+3. Persistence & Caching:
+   ${p.database}
+
+4. Cloud Infrastructure & DevOps:
+   ${p.infra}
+
+--------------------------------------------------------------------------------
+PRODUCTION RATIONALE & BOTTLENECK MITIGATION
+--------------------------------------------------------------------------------
+${p.rationale}
+
+--------------------------------------------------------------------------------
+ENGAGEMENT COORDINATION
+--------------------------------------------------------------------------------
+• Office: Telangana, India • Available for Global Engagements
+• Contact: hello@abhimanyutech.example
+• WhatsApp: wa.me/919999999999
+`;
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Abhimanyu-Architecture-Blueprint-${p.id}.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleChatSend = (e) => {
@@ -3765,6 +3941,317 @@ Email: hello@abhimanyutech.example | Office: Telangana, India • Available Glob
                 </p>
               </div>
             ))}
+          </div>
+
+          {/* Interactive Solution Architecture Blueprint Matcher */}
+          <div style={{
+            marginTop: '44px',
+            backgroundColor: isDark ? '#111827' : '#FFFFFF',
+            border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+            borderRadius: '20px',
+            padding: '36px',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.06)'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                Architecture Advisory Wizard
+              </span>
+              <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
+                Find Your Optimal Technology Stack & Architecture
+              </h3>
+              <p style={{ fontSize: '14px', color: isDark ? '#94A3B8' : '#64748B', maxWidth: '640px', margin: '8px auto 0 auto' }}>
+                Select your platform goals, engineering constraints, and projected scale to generate a tailored production architecture specification.
+              </p>
+            </div>
+
+            {/* 3 Step Interactive Configurator */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px', marginBottom: '32px' }}>
+              {/* Step 1: Platform Target */}
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A', display: 'block', marginBottom: '10px' }}>
+                  1. Select Target Platform:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '10px' }}>
+                  {[
+                    { id: 'web', label: 'Web SaaS Platform', icon: '🌐', desc: 'Next.js 14 SSR, Streaming, Tailwind' },
+                    { id: 'mobile', label: 'Mobile App Suite', icon: '📱', desc: 'Flutter / React Native, Offline CRDT' },
+                    { id: '3d', label: '3D WebGL Digital Twin', icon: '🏗️', desc: 'Three.js, 14:1 CAD Draco, Shaders' },
+                    { id: 'iot', label: 'IoT & Telematics Stream', icon: '⚡', desc: 'Go / Rust, TimescaleDB, WebSockets' }
+                  ].map((t) => {
+                    const sel = matcherTarget === t.id;
+                    return (
+                      <div
+                        key={t.id}
+                        onClick={() => {
+                          playClickSound('click');
+                          setMatcherTarget(t.id);
+                        }}
+                        style={{
+                          padding: '14px',
+                          borderRadius: '12px',
+                          backgroundColor: sel ? (isDark ? 'rgba(37,99,235,0.2)' : '#EFF6FF') : (isDark ? '#0F172A' : '#F8FAFC'),
+                          border: sel ? '1.5px solid #2563EB' : (isDark ? '1px solid #1E293B' : '1px solid #E2E8F0'),
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <span style={{ fontSize: '18px' }}>{t.icon}</span>
+                          <strong style={{ fontSize: '13.5px', color: sel ? '#2563EB' : (isDark ? '#F1F5F9' : '#0F172A') }}>{t.label}</strong>
+                        </div>
+                        <span style={{ fontSize: '11.5px', color: isDark ? '#94A3B8' : '#64748B' }}>{t.desc}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Step 2: Architecture Priority */}
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A', display: 'block', marginBottom: '10px' }}>
+                  2. Core Non-Functional Priority:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '10px' }}>
+                  {[
+                    { id: 'perf', label: 'High Performance', icon: '⚡', desc: '<85ms P95 API Latency, Edge Caching' },
+                    { id: 'offline', label: 'Offline-First Sync', icon: '🔄', desc: 'Zero-Conflict CRDTs, Local SQLite' },
+                    { id: 'security', label: 'Strict SOC-2 / KMS', icon: '🔒', desc: 'Vault KMS, AES-256, Audit Logs' },
+                    { id: 'mvp', label: 'Rapid 14-Day MVP', icon: '🚀', desc: 'Sprint Zero, Staging Automation' }
+                  ].map((p) => {
+                    const sel = matcherPriority === p.id;
+                    return (
+                      <div
+                        key={p.id}
+                        onClick={() => {
+                          playClickSound('click');
+                          setMatcherPriority(p.id);
+                        }}
+                        style={{
+                          padding: '12px 14px',
+                          borderRadius: '12px',
+                          backgroundColor: sel ? (isDark ? 'rgba(37,99,235,0.2)' : '#EFF6FF') : (isDark ? '#0F172A' : '#F8FAFC'),
+                          border: sel ? '1.5px solid #2563EB' : (isDark ? '1px solid #1E293B' : '1px solid #E2E8F0'),
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '16px' }}>{p.icon}</span>
+                          <strong style={{ fontSize: '13px', color: sel ? '#2563EB' : (isDark ? '#F1F5F9' : '#0F172A') }}>{p.label}</strong>
+                        </div>
+                        <span style={{ fontSize: '11px', color: isDark ? '#94A3B8' : '#64748B', display: 'block', marginTop: '2px' }}>{p.desc}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Step 3: Projected Scale */}
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A', display: 'block', marginBottom: '10px' }}>
+                  3. Projected Scale & Load:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '10px' }}>
+                  {[
+                    { id: 'startup', label: 'Early Stage (<20K Users)', icon: '🌱', desc: 'Cost-optimized lean AWS/GCP setup' },
+                    { id: 'growth', label: 'Growth Scale (20K–500K)', icon: '📈', desc: 'Auto-scaling containers + read pooling' },
+                    { id: 'enterprise', label: 'Global Scale (1M+ Users)', icon: '🏢', desc: 'Multi-region edge + 99.98% uptime SLA' }
+                  ].map((s) => {
+                    const sel = matcherScale === s.id;
+                    return (
+                      <div
+                        key={s.id}
+                        onClick={() => {
+                          playClickSound('click');
+                          setMatcherScale(s.id);
+                        }}
+                        style={{
+                          padding: '12px 14px',
+                          borderRadius: '12px',
+                          backgroundColor: sel ? (isDark ? 'rgba(37,99,235,0.2)' : '#EFF6FF') : (isDark ? '#0F172A' : '#F8FAFC'),
+                          border: sel ? '1.5px solid #2563EB' : (isDark ? '1px solid #1E293B' : '1px solid #E2E8F0'),
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '16px' }}>{s.icon}</span>
+                          <strong style={{ fontSize: '13px', color: sel ? '#2563EB' : (isDark ? '#F1F5F9' : '#0F172A') }}>{s.label}</strong>
+                        </div>
+                        <span style={{ fontSize: '11px', color: isDark ? '#94A3B8' : '#64748B', display: 'block', marginTop: '2px' }}>{s.desc}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Generated Architecture Blueprint Card */}
+            {(() => {
+              const bp = BLUEPRINT_PRESETS[matcherTarget];
+              return (
+                <div style={{
+                  backgroundColor: isDark ? '#0B1120' : '#F8FAFC',
+                  border: isDark ? '1px solid #1E293B' : '1px solid #CBD5E1',
+                  borderRadius: '16px',
+                  padding: '28px',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.04)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '28px' }}>{bp.icon}</span>
+                      <div>
+                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+                          Generated Architecture Specification
+                        </span>
+                        <h4 style={{ fontSize: '18px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '2px 0 0 0' }}>
+                          {bp.title}
+                        </h4>
+                      </div>
+                    </div>
+                    <span style={{
+                      backgroundColor: isDark ? 'rgba(37,99,235,0.2)' : '#EFF6FF',
+                      color: isDark ? '#93C5FD' : '#2563EB',
+                      border: isDark ? '1px solid rgba(59,130,246,0.3)' : '1px solid #BFDBFE',
+                      fontSize: '11.5px',
+                      fontWeight: '700',
+                      padding: '4px 12px',
+                      borderRadius: '20px'
+                    }}>
+                      {bp.badge}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+                    <div style={{ backgroundColor: isDark ? '#111827' : '#FFFFFF', padding: '16px', borderRadius: '12px', border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', marginBottom: '4px' }}>
+                        1. Frontend Layer
+                      </div>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: isDark ? '#F1F5F9' : '#0F172A', lineHeight: '1.4' }}>
+                        {bp.frontend}
+                      </div>
+                    </div>
+
+                    <div style={{ backgroundColor: isDark ? '#111827' : '#FFFFFF', padding: '16px', borderRadius: '12px', border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '800', color: '#10B981', textTransform: 'uppercase', marginBottom: '4px' }}>
+                        2. Backend & Compute
+                      </div>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: isDark ? '#F1F5F9' : '#0F172A', lineHeight: '1.4' }}>
+                        {bp.backend}
+                      </div>
+                    </div>
+
+                    <div style={{ backgroundColor: isDark ? '#111827' : '#FFFFFF', padding: '16px', borderRadius: '12px', border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '800', color: '#F59E0B', textTransform: 'uppercase', marginBottom: '4px' }}>
+                        3. Persistence & Caching
+                      </div>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: isDark ? '#F1F5F9' : '#0F172A', lineHeight: '1.4' }}>
+                        {bp.database}
+                      </div>
+                    </div>
+
+                    <div style={{ backgroundColor: isDark ? '#111827' : '#FFFFFF', padding: '16px', borderRadius: '12px', border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '800', color: '#8B5CF6', textTransform: 'uppercase', marginBottom: '4px' }}>
+                        4. Cloud & DevOps
+                      </div>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: isDark ? '#F1F5F9' : '#0F172A', lineHeight: '1.4' }}>
+                        {bp.infra}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Production Rationale */}
+                  <div style={{
+                    backgroundColor: isDark ? 'rgba(37,99,235,0.1)' : '#EFF6FF',
+                    border: isDark ? '1px solid rgba(59,130,246,0.25)' : '1px solid #BFDBFE',
+                    borderRadius: '12px',
+                    padding: '14px 18px',
+                    marginBottom: '22px'
+                  }}>
+                    <strong style={{ fontSize: '12px', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'block', marginBottom: '4px' }}>
+                      Production Bottleneck & Scaling Rationale
+                    </strong>
+                    <p style={{ margin: 0, fontSize: '13px', color: isDark ? '#CBD5E1' : '#334155', lineHeight: '1.5' }}>
+                      {bp.rationale}
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <button
+                      onClick={handleCopyBlueprint}
+                      style={{
+                        backgroundColor: blueprintCopied ? '#10B981' : (isDark ? '#1E293B' : '#FFFFFF'),
+                        color: blueprintCopied ? '#FFFFFF' : (isDark ? '#F1F5F9' : '#0F172A'),
+                        border: isDark ? '1px solid #334155' : '1px solid #CBD5E1',
+                        padding: '10px 18px',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span>{blueprintCopied ? '✓ Blueprint Copied!' : '📋 Copy Architecture Spec'}</span>
+                    </button>
+
+                    <button
+                      onClick={handleDownloadBlueprint}
+                      style={{
+                        backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
+                        color: isDark ? '#93C5FD' : '#2563EB',
+                        border: isDark ? '1px solid #334155' : '1px solid #BFDBFE',
+                        padding: '10px 18px',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        transition: 'all 0.15s ease'
+                      }}
+                      title="Download Architecture Blueprint as Markdown"
+                    >
+                      <span>📥 Export Blueprint (.md)</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        playClickSound('click');
+                        setContactData((prev) => ({
+                          ...prev,
+                          serviceNeed: bp.title,
+                          details: `Inquiring about ${bp.title} architecture.\nFrontend: ${bp.frontend}\nBackend: ${bp.backend}\nDatabase: ${bp.database}\nInfra: ${bp.infra}\nPriority: ${matcherPriority}\nScale: ${matcherScale}`
+                        }));
+                        const elem = document.getElementById('contact');
+                        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      style={{
+                        backgroundColor: '#2563EB',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        padding: '10px 20px',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        boxShadow: '0 2px 8px rgba(37,99,235,0.3)',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span>Discuss Architecture with an Engineer &rarr;</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </section>
