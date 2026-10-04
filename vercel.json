@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/sri-yantra", "destination": "/sri-yantra.html" },
+    { "source": "/sri-yantra.html", "destination": "/sri-yantra.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

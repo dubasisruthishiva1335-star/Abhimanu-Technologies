@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 // --- DATA DEFINITIONS ---
 
@@ -1782,6 +1783,55 @@ function parseOBJGeometry(text) {
   return geom;
 }
 
+// --- CLIENT-SIDE GLTF / GLB GEOMETRY EXTRACTOR ---
+function extractGeometryFromGLTF(gltf) {
+  const geometries = [];
+
+  gltf.scene.updateMatrixWorld(true);
+  gltf.scene.traverse((child) => {
+    if (child.isMesh && child.geometry) {
+      const g = child.geometry.clone();
+      g.applyMatrix4(child.matrixWorld);
+      geometries.push(g);
+    }
+  });
+
+  if (geometries.length === 0) {
+    throw new Error('No 3D mesh geometry found in GLTF/GLB asset.');
+  }
+
+  let finalGeom;
+  if (geometries.length === 1) {
+    finalGeom = geometries[0];
+  } else {
+    let totalVerts = 0;
+    geometries.forEach((g) => {
+      const p = g.getAttribute('position');
+      if (p) totalVerts += p.count;
+    });
+    const posArray = new Float32Array(totalVerts * 3);
+    let offset = 0;
+    geometries.forEach((g) => {
+      const p = g.getAttribute('position');
+      if (p) {
+        posArray.set(p.array, offset);
+        offset += p.array.length;
+      }
+    });
+    finalGeom = new THREE.BufferGeometry();
+    finalGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+  }
+
+  finalGeom.computeVertexNormals();
+  finalGeom.center();
+  finalGeom.computeBoundingSphere();
+  if (finalGeom.boundingSphere && finalGeom.boundingSphere.radius > 0) {
+    const scale = 2.4 / finalGeom.boundingSphere.radius;
+    finalGeom.scale(scale, scale, scale);
+  }
+  return finalGeom;
+}
+
 // --- THREE.JS 3D STUDIO CANVAS (SHAPES, MATERIALS, LIGHTS & MODEL UPLOAD) ---
 function StudioCanvas({
   shape,
@@ -1805,20 +1855,54 @@ function StudioCanvas({
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const text = event.target.result;
-        const geom = parseOBJGeometry(text);
-        const vertexCount = geom.getAttribute('position')?.count || 0;
-        if (onUploadOBJ) {
-          onUploadOBJ(geom, file.name, vertexCount);
+    const ext = file.name.split('.').pop()?.toLowerCase();
+
+    if (ext === 'glb' || ext === 'gltf') {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const buffer = event.target.result;
+          const loader = new GLTFLoader();
+          loader.parse(
+            buffer,
+            '',
+            (gltf) => {
+              try {
+                const geom = extractGeometryFromGLTF(gltf);
+                const vertexCount = geom.getAttribute('position')?.count || 0;
+                if (onUploadOBJ) {
+                  onUploadOBJ(geom, file.name, vertexCount, ext.toUpperCase());
+                }
+              } catch (err) {
+                alert('Could not extract geometry from 3D file: ' + err.message);
+              }
+            },
+            (err) => {
+              alert('Failed to parse 3D GLB/GLTF model: ' + (err?.message || 'Invalid format'));
+            }
+          );
+        } catch {
+          alert('Could not read the uploaded 3D model.');
         }
-      } catch (err) {
-        alert('Could not parse the .OBJ file. Please verify it is a valid Wavefront .OBJ asset.');
-      }
-    };
-    reader.readAsText(file);
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      // Standard Wavefront OBJ
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const text = event.target.result;
+          const geom = parseOBJGeometry(text);
+          const vertexCount = geom.getAttribute('position')?.count || 0;
+          if (onUploadOBJ) {
+            onUploadOBJ(geom, file.name, vertexCount, 'OBJ');
+          }
+        } catch {
+          alert('Could not parse the .OBJ file. Please verify it is a valid Wavefront .OBJ asset.');
+        }
+      };
+      reader.readAsText(file);
+    }
   };
 
   const handleDownloadSnapshot = () => {
@@ -2040,7 +2124,7 @@ function StudioCanvas({
           <input
             type="file"
             ref={fileInputRef}
-            accept=".obj"
+            accept=".obj,.glb,.gltf"
             onChange={handleFileUpload}
             style={{ display: 'none' }}
           />
@@ -2062,9 +2146,9 @@ function StudioCanvas({
               boxShadow: '0 0 10px rgba(245, 158, 11, 0.3)',
               transition: 'all 0.15s ease'
             }}
-            title="Upload and inspect your own 3D model (.OBJ) in real-time WebGL"
+            title="Upload and inspect your own 3D model (.OBJ, .GLB, .GLTF) in real-time WebGL"
           >
-            📁 Upload OBJ
+            📁 Upload 3D (.OBJ / .GLB)
           </button>
           <button
             onClick={handleDownloadSnapshot}
@@ -2624,6 +2708,7 @@ function FuturisticCommandSidebar({
 }) {
   const [activeTabDot, setActiveTabDot] = useState(0);
   const [currentTimeIST, setCurrentTimeIST] = useState('');
+  const [visualizerMode, setVisualizerMode] = useState('bars');
 
   const HUD_TABS = [
     { id: 'flow', name: '3D Flow', icon: '🌊', subtitle: 'Dynamic Shaders & 432Hz Audio' },
@@ -2899,20 +2984,112 @@ function FuturisticCommandSidebar({
                   </button>
                 </div>
                 {sriYantraAudioPlaying && (
-                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '14px', marginTop: '6px' }}>
-                    {[...Array(14)].map((_, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          flex: 1,
-                          background: 'linear-gradient(to top, #FFD700, #38BDF8)',
-                          borderRadius: '2px',
-                          height: '100%',
-                          transformOrigin: 'bottom',
-                          animation: `eqPulse 0.75s ease-in-out infinite alternate ${i * 0.06}s`
-                        }}
-                      />
-                    ))}
+                  <div style={{ marginTop: '6px' }}>
+                    {/* Visualizer Mode Switcher */}
+                    <div style={{ display: 'flex', gap: '3px', marginBottom: '6px' }}>
+                      {[
+                        { id: 'bars', label: '📊 Spectrum' },
+                        { id: 'radar', label: '🎯 Radar FFT' },
+                        { id: 'oscilloscope', label: '〰️ Scope' }
+                      ].map((m) => (
+                        <button
+                          key={m.id}
+                          onClick={() => {
+                            setVisualizerMode(m.id);
+                            if (playClickSound) playClickSound('soft');
+                          }}
+                          style={{
+                            flex: 1,
+                            background: visualizerMode === m.id ? 'rgba(56, 189, 248, 0.28)' : 'rgba(30, 41, 59, 0.45)',
+                            border: visualizerMode === m.id ? '1px solid #38BDF8' : '1px solid rgba(51, 65, 85, 0.4)',
+                            color: visualizerMode === m.id ? '#FFD700' : '#94A3B8',
+                            fontSize: '8.5px',
+                            fontWeight: '700',
+                            padding: '2px 2px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s ease'
+                          }}
+                        >
+                          {m.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Mode 1: Spectrum Bars */}
+                    {visualizerMode === 'bars' && (
+                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '16px' }}>
+                        {[...Array(14)].map((_, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              flex: 1,
+                              background: 'linear-gradient(to top, #FFD700, #38BDF8)',
+                              borderRadius: '2px',
+                              height: '100%',
+                              transformOrigin: 'bottom',
+                              animation: `eqPulse 0.75s ease-in-out infinite alternate ${i * 0.06}s`
+                            }}
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Mode 2: Circular Radar FFT */}
+                    {visualizerMode === 'radar' && (
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '36px' }}>
+                        <svg width="34" height="34" viewBox="0 0 100 100" style={{ overflow: 'visible' }}>
+                          <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(56, 189, 248, 0.3)" strokeWidth="1" strokeDasharray="3 3" />
+                          <circle cx="50" cy="50" r="28" fill="rgba(37, 99, 235, 0.2)" stroke="rgba(56, 189, 248, 0.5)" strokeWidth="1.5" />
+                          <circle cx="50" cy="50" r="10" fill="#FFD700" />
+                          {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, idx) => {
+                            const rad = (angle * Math.PI) / 180;
+                            const len = 32 + (idx % 3) * 10;
+                            const x2 = 50 + Math.cos(rad) * len;
+                            const y2 = 50 + Math.sin(rad) * len;
+                            return (
+                              <g key={angle}>
+                                <line x1="50" y1="50" x2={x2} y2={y2} stroke="#38BDF8" strokeWidth="1.5" strokeOpacity="0.8" />
+                                <circle cx={x2} cy={y2} r="3" fill="#10B981" />
+                              </g>
+                            );
+                          })}
+                          <line
+                            x1="50"
+                            y1="50"
+                            x2="50"
+                            y2="4"
+                            stroke="#FFD700"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            style={{ transformOrigin: '50px 50px', animation: 'radarSweep 2s linear infinite' }}
+                          />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* Mode 3: Oscilloscope Wave */}
+                    {visualizerMode === 'oscilloscope' && (
+                      <div style={{ height: '22px', background: 'rgba(5, 10, 20, 0.65)', borderRadius: '4px', border: '1px solid rgba(56, 189, 248, 0.2)', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
+                        <svg width="100%" height="20" viewBox="0 0 300 20" preserveAspectRatio="none">
+                          <path
+                            d="M 0 10 Q 37.5 2, 75 10 T 150 10 T 225 10 T 300 10"
+                            fill="none"
+                            stroke="#38BDF8"
+                            strokeWidth="2"
+                            style={{ animation: 'oscWave 1.4s ease-in-out infinite alternate' }}
+                          />
+                          <path
+                            d="M 0 10 Q 37.5 18, 75 10 T 150 10 T 225 10 T 300 10"
+                            fill="none"
+                            stroke="#FFD700"
+                            strokeWidth="1.5"
+                            strokeOpacity="0.8"
+                            style={{ animation: 'oscWave 1.9s ease-in-out infinite alternate-reverse' }}
+                          />
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -4054,9 +4231,9 @@ export default function App() {
   const [customGeom, setCustomGeom] = useState(null);
   const [customModelInfo, setCustomModelInfo] = useState(null);
 
-  const handleUploadOBJ = (geometry, fileName, vertexCount) => {
+  const handleUploadOBJ = (geometry, fileName, vertexCount, format = '3D') => {
     setCustomGeom(geometry);
-    setCustomModelInfo({ name: fileName, vertices: vertexCount });
+    setCustomModelInfo({ name: fileName, vertices: vertexCount, format: format || '3D' });
     setStudioShape('custom');
     playClickSound('success');
   };
