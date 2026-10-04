@@ -2547,8 +2547,11 @@ function CountUp({ target, suffix = '', duration = 1800 }) {
 // --- VERTICAL FLOATING HUD DOTS SCROLL SIDEBAR (ON-PAGE SCROLLING DOTS FEATURE) ---
 function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, playClickSound }) {
   const [hoveredDot, setHoveredDot] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [hoverPct, setHoverPct] = useState(null);
 
   const trackRef = useRef(null);
+  const isDraggingRef = useRef(false);
 
   const dots = [
     { id: 'top', label: 'Hero & 3D Core', icon: '🔱' },
@@ -2564,14 +2567,44 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
     { id: 'contact', label: 'Direct Scoping', icon: '✉️' }
   ];
 
-  const handleTrackClick = (e) => {
+  const scrollWithPointer = (clientY, smooth = false) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
-    const clickY = e.clientY - rect.top;
+    const clickY = clientY - rect.top;
     const pct = Math.max(0, Math.min(1, clickY / rect.height));
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    window.scrollTo({ top: pct * maxScroll, behavior: 'smooth' });
+    window.scrollTo({ top: pct * maxScroll, behavior: smooth ? 'smooth' : 'auto' });
+  };
+
+  const handlePointerDown = (e) => {
+    if (e.target.closest('.dot-btn')) return;
+    isDraggingRef.current = true;
+    setIsDragging(true);
+    scrollWithPointer(e.clientY, false);
     if (playClickSound) playClickSound('click');
+
+    const handlePointerMove = (moveEvt) => {
+      if (!isDraggingRef.current) return;
+      scrollWithPointer(moveEvt.clientY, false);
+    };
+
+    const handlePointerUp = () => {
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+  };
+
+  const handlePointerMoveTrack = (e) => {
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const curY = e.clientY - rect.top;
+    const pct = Math.max(0, Math.min(100, (curY / rect.height) * 100));
+    setHoverPct(pct);
   };
 
   return (
@@ -2590,13 +2623,14 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: 'rgba(10, 15, 29, 0.45)',
+        background: isDragging ? 'rgba(10, 15, 29, 0.75)' : 'rgba(10, 15, 29, 0.45)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         borderLeft: '1px solid rgba(56, 189, 248, 0.2)',
         boxShadow: '-2px 0 20px rgba(0, 0, 0, 0.7), -1px 0 8px rgba(56, 189, 248, 0.1)',
         userSelect: 'none',
-        padding: '8px 0'
+        padding: '8px 0',
+        transition: 'background 0.2s ease'
       }}
     >
       {/* Top Gauge / Jump to Top */}
@@ -2630,7 +2664,9 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
       {/* Full-Height Vertical Rail Track with Dots */}
       <div
         ref={trackRef}
-        onClick={handleTrackClick}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMoveTrack}
+        onPointerLeave={() => setHoverPct(null)}
         style={{
           position: 'relative',
           flex: 1,
@@ -2640,9 +2676,10 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '12px 0',
-          cursor: 'pointer'
+          cursor: isDragging ? 'grabbing' : 'pointer',
+          touchAction: 'none'
         }}
-        title="Click anywhere to jump scroll"
+        title="Click or drag anywhere to scroll"
       >
         {/* Background track line */}
         <div
@@ -2651,10 +2688,29 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
             top: '8px',
             bottom: '8px',
             width: '2px',
-            backgroundColor: 'rgba(56, 189, 248, 0.18)',
-            zIndex: 0
+            backgroundColor: isDragging ? 'rgba(56, 189, 248, 0.35)' : 'rgba(56, 189, 248, 0.18)',
+            zIndex: 0,
+            transition: 'background-color 0.2s'
           }}
         />
+
+        {/* Hover preview marker */}
+        {hoverPct !== null && !isDragging && (
+          <div
+            style={{
+              position: 'absolute',
+              top: `${hoverPct}%`,
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(56, 189, 248, 0.5)',
+              transform: 'translateY(-50%)',
+              pointerEvents: 'none',
+              zIndex: 2,
+              boxShadow: '0 0 8px rgba(56, 189, 248, 0.6)'
+            }}
+          />
+        )}
 
         {/* Liquid progress beam */}
         <div
@@ -2662,12 +2718,12 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
             position: 'absolute',
             top: '8px',
             height: `${Math.min(96, Math.max(0, scrollProgress * 0.96))}%`,
-            width: '2px',
+            width: isDragging ? '3px' : '2px',
             background: 'linear-gradient(to bottom, #FFD700, #38BDF8)',
-            boxShadow: '0 0 10px #38BDF8, 0 0 4px #FFD700',
+            boxShadow: isDragging ? '0 0 14px #38BDF8, 0 0 6px #FFD700' : '0 0 10px #38BDF8, 0 0 4px #FFD700',
             zIndex: 1,
             pointerEvents: 'none',
-            transition: 'height 0.1s ease-out'
+            transition: isDragging ? 'none' : 'height 0.1s ease-out'
           }}
         />
 
@@ -2676,15 +2732,15 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
           style={{
             position: 'absolute',
             top: `calc(${Math.min(94, Math.max(0, scrollProgress * 0.94))}% + 4px)`,
-            width: '8px',
-            height: '8px',
+            width: isDragging ? '11px' : '8px',
+            height: isDragging ? '11px' : '8px',
             borderRadius: '50%',
             backgroundColor: '#FFD700',
-            boxShadow: '0 0 12px #FFD700, 0 0 6px #38BDF8',
+            boxShadow: isDragging ? '0 0 18px #FFD700, 0 0 10px #38BDF8' : '0 0 12px #FFD700, 0 0 6px #38BDF8',
             zIndex: 3,
             pointerEvents: 'none',
             transform: 'translateX(0)',
-            transition: 'top 0.08s ease-out'
+            transition: isDragging ? 'none' : 'top 0.08s ease-out, width 0.15s, height 0.15s'
           }}
         />
 
