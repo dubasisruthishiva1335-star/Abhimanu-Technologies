@@ -227,6 +227,7 @@
     <span class="audio-indicator" id="audio-ind"></span>
     <span id="audio-text">🔊 432Hz SOUND</span>
   </button>
+  <button class="btn" onclick="toggleReelsMode()" id="reels-btn" title="Toggle 9:16 Vertical Reels Viewport">📱 9:16 REELS</button>
   <button class="btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ IMAX FULL</button>
 </div>
 
@@ -481,6 +482,44 @@ function toggleFullscreen() {
   } else {
     document.exitFullscreen().catch(()=>{});
   }
+}
+
+let isReels = false;
+function toggleReelsMode() {
+  isReels = !isReels;
+  const canvas = document.getElementById('fallback-canvas');
+  const video = document.getElementById('bg-video');
+  const overlay = document.querySelector('.overlay');
+  const btn = document.getElementById('reels-btn');
+
+  if (isReels) {
+    btn.style.borderColor = '#38BDF8';
+    btn.style.color = '#38BDF8';
+    btn.style.boxShadow = '0 0 16px rgba(56,189,248,0.5)';
+    canvas.style.width = 'min(100vw, 56.25vh)';
+    canvas.style.left = '50%';
+    canvas.style.transform = 'translateX(-50%)';
+    video.style.width = 'min(100vw, 56.25vh)';
+    video.style.left = '50%';
+    video.style.transform = 'translate(-50%, -50%)';
+    overlay.style.width = 'min(100vw, 56.25vh)';
+    overlay.style.left = '50%';
+    overlay.style.transform = 'translateX(-50%)';
+  } else {
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    btn.style.boxShadow = '';
+    canvas.style.width = '100vw';
+    canvas.style.left = '0';
+    canvas.style.transform = 'none';
+    video.style.width = 'auto';
+    video.style.left = '50%';
+    video.style.transform = 'translate(-50%, -50%)';
+    overlay.style.width = '100vw';
+    overlay.style.left = '0';
+    overlay.style.transform = 'none';
+  }
+  resize();
 }
 
 // Mobile visibility listener

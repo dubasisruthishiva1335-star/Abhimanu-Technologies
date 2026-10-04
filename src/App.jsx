@@ -822,7 +822,8 @@ function AmbientSriYantraBackground({ isDark }) {
     // Scene, Perspective Camera, High-Performance WebGL Renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 18);
+    const initialAspect = width / height;
+    camera.position.set(0, 0, initialAspect < 1 ? 18 * (1 / initialAspect) * 0.72 : 18);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setSize(width, height);
@@ -1183,17 +1184,28 @@ function AmbientSriYantraBackground({ isDark }) {
     };
     window.addEventListener('mousemove', onMouseMove, { passive: true });
 
-    // Responsive Resize Handler
+    // Responsive Resize Handler (Supports 16:9 Desktop & 9:16 Mobile Viewports)
     const onResize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      camera.aspect = width / height;
+      const aspect = width / height;
+      camera.aspect = aspect;
+
+      if (aspect < 1) {
+        // Vertical 9:16 mobile portrait mode: adjust distance and center
+        camera.position.z = 18 * (1 / aspect) * 0.72;
+        sriChakraMaster.position.x = 0;
+        sriChakraMaster.position.y = 0.2;
+      } else {
+        // Widescreen desktop mode: offset to side to balance page content
+        camera.position.z = 18;
+        sriChakraMaster.position.x = width > 900 ? 1.8 : 0;
+        sriChakraMaster.position.y = width > 900 ? 0.3 : 0;
+      }
+
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-
-      sriChakraMaster.position.x = width > 900 ? 1.8 : 0;
-      sriChakraMaster.position.y = width > 900 ? 0.3 : 0;
     };
     window.addEventListener('resize', onResize);
 
