@@ -201,9 +201,10 @@
 </div>
 
 <!-- BACKGROUND VIDEO -->
-<video id="bg-video" autoplay muted loop playsinline>
+<video id="bg-video" autoplay muted playsinline>
   <source src="sri-yantra-loop.mp4" type="video/mp4">
   <source src="generated_video_059bfe58.mp4" type="video/mp4">
+  <source src="part1.mp4" type="video/mp4">
 </video>
 
 <!-- PROCEDURAL SACRED GEOMETRY CANVAS FALLBACK (Always works even without video file) -->
@@ -260,10 +261,24 @@ let angle = 0;
 let videoWorking = false;
 const video = document.getElementById('bg-video');
 
+// 60-second 6-clip chain support
+const clips = [
+  "part1.mp4", "part2.mp4", "part3.mp4",
+  "part4.mp4", "part5.mp4", "part6.mp4"
+];
+let clipIdx = 0;
+
+video.addEventListener('ended', () => {
+  clipIdx = (clipIdx + 1) % clips.length;
+  video.src = clips[clipIdx];
+  video.play().catch(() => {});
+});
+
 video.addEventListener('playing', () => {
   videoWorking = true;
 });
 video.addEventListener('error', () => {
+  // If part1.mp4 isn't found, try single sri-yantra-loop or fallback to procedural WebGL/Canvas
   videoWorking = false;
 });
 

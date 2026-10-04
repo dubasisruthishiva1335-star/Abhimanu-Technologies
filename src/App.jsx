@@ -1281,12 +1281,26 @@ function AmbientSriYantraBackground({ isDark }) {
 
     render();
 
+    // 6-Part 60-Second Seamless Loop Auto-Chaining Support
+    const bgVid = document.getElementById('bg-video');
+    const clips60s = ['part1.mp4', 'part2.mp4', 'part3.mp4', 'part4.mp4', 'part5.mp4', 'part6.mp4'];
+    let clipIdx = 0;
+    const onClipEnded = () => {
+      clipIdx = (clipIdx + 1) % clips60s.length;
+      if (bgVid) {
+        bgVid.src = clips60s[clipIdx];
+        bgVid.play().catch(() => {});
+      }
+    };
+    if (bgVid) bgVid.addEventListener('ended', onClipEnded);
+
     // Comprehensive Resource Disposal on Unmount
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', onResize);
       document.removeEventListener('visibilitychange', onVisChange);
+      if (bgVid) bgVid.removeEventListener('ended', onClipEnded);
 
       if (renderer.domElement && container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
@@ -1311,12 +1325,12 @@ function AmbientSriYantraBackground({ isDark }) {
         overflow: 'hidden'
       }}
     >
-      {/* Video Loop Layer (seamlessly blends on top when file exists) */}
+      {/* Video Loop Layer (supports single 60s loop or 6x10s auto-chain) */}
       <video
         id="bg-video"
         autoPlay
         muted
-        loop
+        loop={false}
         playsInline
         style={{
           position: 'absolute',
@@ -1337,6 +1351,8 @@ function AmbientSriYantraBackground({ isDark }) {
         <source src="/sri-yantra-loop.mp4" type="video/mp4" />
         <source src="generated_video_059bfe58.mp4" type="video/mp4" />
         <source src="/generated_video_059bfe58.mp4" type="video/mp4" />
+        <source src="part1.mp4" type="video/mp4" />
+        <source src="/part1.mp4" type="video/mp4" />
       </video>
 
       {/* Golden breathing radial overlay for deep cosmic contrast across all screens */}
