@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sri Chakra • Infinite Brahmanda Universe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #000;
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+    color: #FFD700;
+    user-select: none;
+  }
+
+  /* Background Video - 3-in-1 Combined */
+  #bg-video {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    object-fit: cover;
+    z-index: -2;
+    background: #000;
+  }
+
+  /* Procedural Canvas Fallback when video isn't downloaded yet */
+  #fallback-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -3;
+    pointer-events: none;
+  }
+
+  /* Golden overlay for intense blast & depth */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.65) 85%, rgba(0,0,0,0.92) 100%),
+                radial-gradient(circle at center, rgba(255,215,0,0.12) 0%, transparent 60%),
+                linear-gradient(0deg, rgba(75,0,130,0.18), rgba(255,215,0,0.08));
+    z-index: -1;
+    transition: opacity 0.5s ease;
+  }
+
+  /* Center Content */
+  .center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #FFD700;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .om {
+    font-size: clamp(4.5rem, 10vw, 7.5rem);
+    text-shadow: 0 0 30px #FFD700, 0 0 60px #FF8C00, 0 0 100px rgba(255, 69, 0, 0.6);
+    animation: pulse 4s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.85; transform: scale(1); filter: drop-shadow(0 0 25px rgba(255,215,0,0.8)); }
+    50% { opacity: 1; transform: scale(1.06); filter: drop-shadow(0 0 50px rgba(255,140,0,1)); }
+  }
+
+  .title {
+    margin-top: 1rem;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    letter-spacing: 0.55rem;
+    font-weight: 700;
+    color: #FFF2CC;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8), 0 0 20px rgba(255,215,0,0.5);
+  }
+
+  .shloka {
+    margin-top: 0.6rem;
+    font-family: 'Marcellus', serif;
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+    letter-spacing: 0.2rem;
+    color: #E6D5B8;
+    opacity: 0.85;
+    text-shadow: 0 0 12px rgba(255,215,0,0.3);
+  }
+
+  /* Controls UI */
+  .controls-bar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 20;
+    background: rgba(10, 10, 15, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    padding: 8px 18px;
+    borderRadius: 30px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(255,215,0,0.15);
+  }
+
+  .btn {
+    background: transparent;
+    color: #FFD700;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .btn:hover {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: #FFD700;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+    transform: translateY(-1px);
+  }
+
+  /* Sound State Indicator */
+  .audio-indicator {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #555;
+    transition: background 0.3s ease;
+  }
+  .audio-indicator.active {
+    background: #10B981;
+    box-shadow: 0 0 8px #10B981;
+  }
+
+  /* Click To Enter / Audio Unlock Banner */
+  #enter-modal {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #0F0B18 0%, #000000 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    cursor: pointer;
+    transition: opacity 1.2s ease, visibility 1.2s ease;
+  }
+  #enter-modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .enter-om {
+    font-size: 6rem;
+    color: #FFD700;
+    text-shadow: 0 0 50px #FFD700;
+    animation: pulse 3s infinite;
+  }
+  .enter-btn {
+    margin-top: 2rem;
+    padding: 12px 36px;
+    border: 1px solid #FFD700;
+    background: rgba(255, 215, 0, 0.08);
+    color: #FFD700;
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 0.35rem;
+    font-weight: 700;
+    border-radius: 30px;
+    box-shadow: 0 0 25px rgba(255,215,0,0.3);
+    transition: all 0.3s;
+  }
+  .enter-btn:hover {
+    background: #FFD700;
+    color: #000;
+    box-shadow: 0 0 45px rgba(255,215,0,0.8);
+    transform: scale(1.04);
+  }
+</style>
+</head>
+<body>
+
+<!-- CLICK TO ENTER KALKI-STYLE INTRO MODAL -->
+<div id="enter-modal" onclick="startExperience()">
+  <div class="enter-om">ॐ</div>
+  <div style="font-size: 1.1rem; letter-spacing: 0.4rem; color: #E6D5B8; margin-top: 1rem;">SRI CHAKRA • BRAHMANDA</div>
+  <div style="font-size: 0.85rem; letter-spacing: 0.2rem; color: #94A3B8; margin-top: 0.5rem;">432Hz SACRED RESONANCE</div>
+  <button class="enter-btn">CLICK TO ENTER</button>
+</div>
+
+<!-- BACKGROUND VIDEO -->
+<video id="bg-video" autoplay muted loop playsinline>
+  <source src="sri-yantra-loop.mp4" type="video/mp4">
+  <source src="generated_video_059bfe58.mp4" type="video/mp4">
+</video>
+
+<!-- PROCEDURAL SACRED GEOMETRY CANVAS FALLBACK (Always works even without video file) -->
+<canvas id="fallback-canvas"></canvas>
+
+<!-- GOLDEN OVERLAY -->
+<div class="overlay"></div>
+
+<!-- CENTER CONTENT -->
+<div class="center">
+  <div class="om">ॐ</div>
+  <div class="title">SRI YANTRA • BRAHMANDA</div>
+  <div class="shloka">ॐ पूर्णमदः पूर्णमिदं पूर्णात् पूर्णमुदच्यते</div>
+</div>
+
+<!-- BOTTOM CONTROLS -->
+<div class="controls-bar">
+  <a href="/" class="btn" title="Back to Abhimanyu Technologies Platform">← HOME</a>
+  <button class="btn" onclick="toggleAudio()" id="audio-btn">
+    <span class="audio-indicator" id="audio-ind"></span>
+    <span id="audio-text">🔊 432Hz SOUND</span>
+  </button>
+  <button class="btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ IMAX FULL</button>
+</div>
+
+<script>
+// --- PROCEDURAL 3D SACRED GEOMETRY FALLBACK (Runs on Canvas) ---
+const canvas = document.getElementById('fallback-canvas');
+const ctx = canvas.getContext('2d');
+let w, h, cx, cy;
+
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+  cx = w / 2;
+  cy = h / 2;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// Starfield particles
+const stars = [];
+for (let i = 0; i < 220; i++) {
+  stars.push({
+    x: (Math.random() - 0.5) * 2000,
+    y: (Math.random() - 0.5) * 2000,
+    z: Math.random() * 1000 + 1,
+    size: Math.random() * 2 + 0.8,
+    color: Math.random() > 0.4 ? '#FFD700' : '#E6D5B8'
+  });
+}
+
+let angle = 0;
+let videoWorking = false;
+const video = document.getElementById('bg-video');
+
+video.addEventListener('playing', () => {
+  videoWorking = true;
+});
+video.addEventListener('error', () => {
+  videoWorking = false;
+});
+
+function drawSriYantra() {
+  ctx.clearRect(0, 0, w, h);
+
+  // Background deep cosmic void
+  const bgGrad = ctx.createRadialGradient(cx, cy, 20, cx, cy, Math.max(w, h) * 0.7);
+  bgGrad.addColorStop(0, '#1a0b2e');
+  bgGrad.addColorStop(0.4, '#0d041a');
+  bgGrad.addColorStop(1, '#000000');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Animate Cosmic Particle Starfield
+  for (let s of stars) {
+    s.z -= 1.8;
+    if (s.z <= 0) s.z = 1000;
+    const k = 400 / s.z;
+    const px = cx + s.x * k;
+    const py = cy + s.y * k;
+    if (px >= 0 && px <= w && py >= 0 && py <= h) {
+      const alpha = (1 - s.z / 1000) * 0.9;
+      ctx.fillStyle = s.color;
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(px, py, s.size * (1 - s.z / 1000) * 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Draw Sacred Geometry Sri Chakra Rings
+  const baseR = Math.min(w, h) * 0.32;
+  angle += 0.004;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  // Outer Lotus Petals (Concentric Circles)
+  for (let ring = 1; ring <= 4; ring++) {
+    ctx.strokeStyle = `rgba(255, 215, 0, ${0.15 + ring * 0.08})`;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(0, 0, baseR * (0.4 + ring * 0.15), 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // 16 Petals Rotating
+  const petals = 16;
+  ctx.save();
+  ctx.rotate(-angle * 0.8);
+  for (let i = 0; i < petals; i++) {
+    const a = (i * Math.PI * 2) / petals;
+    const r1 = baseR * 0.85;
+    const r2 = baseR * 0.98;
+    ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1);
+    ctx.lineTo(Math.cos(a + 0.1) * r2, Math.sin(a + 0.1) * r2);
+    ctx.lineTo(Math.cos(a + 0.2) * r1, Math.sin(a + 0.2) * r1);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Interlocking 9 Sacred Triangles (Shiva & Shakti)
+  ctx.save();
+  ctx.rotate(angle);
+  const triLayers = [
+    { scale: 0.72, down: true },
+    { scale: 0.64, down: false },
+    { scale: 0.56, down: true },
+    { scale: 0.48, down: false },
+    { scale: 0.40, down: true },
+    { scale: 0.32, down: false },
+    { scale: 0.24, down: true }
+  ];
+
+  triLayers.forEach((tri, idx) => {
+    const rad = baseR * tri.scale;
+    const rot = tri.down ? Math.PI : 0;
+    ctx.strokeStyle = idx % 2 === 0 ? 'rgba(255, 215, 0, 0.85)' : 'rgba(255, 140, 0, 0.75)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let pt = 0; pt < 3; pt++) {
+      const a = rot + (pt * Math.PI * 2) / 3 - Math.PI / 2;
+      const x = Math.cos(a) * rad;
+      const y = Math.sin(a) * rad;
+      if (pt === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  });
+  ctx.restore();
+
+  // Central Bindu Glow
+  const binduGlow = ctx.createRadialGradient(0, 0, 2, 0, 0, 28);
+  binduGlow.addColorStop(0, 'rgba(255, 255, 255, 1)');
+  binduGlow.addColorStop(0.3, 'rgba(255, 215, 0, 0.9)');
+  binduGlow.addColorStop(1, 'rgba(255, 140, 0, 0)');
+  ctx.fillStyle = binduGlow;
+  ctx.beginPath();
+  ctx.arc(0, 0, 28, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+  ctx.globalAlpha = 1.0;
+
+  requestAnimationFrame(drawSriYantra);
+}
+drawSriYantra();
+
+// Subtle breathing overlay
+let rotation = 0;
+setInterval(() => {
+  rotation += 0.05;
+  const overlay = document.querySelector('.overlay');
+  if (overlay) {
+    overlay.style.opacity = 0.8 + Math.sin(rotation / 10) * 0.18;
+  }
+}, 50);
+
+// --- NATIVE 432Hz SACRED WEB AUDIO SYNTHESIS ---
+let audioCtx = null;
+let soundPlaying = false;
+let masterGain = null;
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+  masterGain.connect(audioCtx.destination);
+
+  // 432Hz Fundamental Drone
+  const osc1 = audioCtx.createOscillator();
+  osc1.type = 'sine';
+  osc1.frequency.setValueAtTime(432, audioCtx.currentTime);
+
+  // 216Hz Sub-harmonic Octave
+  const osc2 = audioCtx.createOscillator();
+  osc2.type = 'triangle';
+  osc2.frequency.setValueAtTime(216, audioCtx.currentTime);
+
+  // 108Hz Deep Brahmanda Root
+  const osc3 = audioCtx.createOscillator();
+  osc3.type = 'sine';
+  osc3.frequency.setValueAtTime(108, audioCtx.currentTime);
+
+  // 436Hz Binaural Beat (4Hz Theta Wave Meditation)
+  const oscBinaural = audioCtx.createOscillator();
+  oscBinaural.type = 'sine';
+  oscBinaural.frequency.setValueAtTime(436, audioCtx.currentTime);
+
+  const gain1 = audioCtx.createGain(); gain1.gain.value = 0.08;
+  const gain2 = audioCtx.createGain(); gain2.gain.value = 0.05;
+  const gain3 = audioCtx.createGain(); gain3.gain.value = 0.07;
+  const gainB = audioCtx.createGain(); gainB.gain.value = 0.04;
+
+  osc1.connect(gain1); gain1.connect(masterGain);
+  osc2.connect(gain2); gain2.connect(masterGain);
+  osc3.connect(gain3); gain3.connect(masterGain);
+  oscBinaural.connect(gainB); gainB.connect(masterGain);
+
+  osc1.start(); osc2.start(); osc3.start(); oscBinaural.start();
+}
+
+function startExperience() {
+  document.getElementById('enter-modal').classList.add('hidden');
+  initAudio();
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  masterGain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 2.5);
+  soundPlaying = true;
+  document.getElementById('audio-ind').classList.add('active');
+  document.getElementById('audio-text').textContent = '🔊 432Hz PLAYING';
+  video.play().catch(()=>{});
+}
+
+function toggleAudio() {
+  initAudio();
+  if (!soundPlaying) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    masterGain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 0.8);
+    soundPlaying = true;
+    document.getElementById('audio-ind').classList.add('active');
+    document.getElementById('audio-text').textContent = '🔊 432Hz PLAYING';
+  } else {
+    masterGain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+    soundPlaying = false;
+    document.getElementById('audio-ind').classList.remove('active');
+    document.getElementById('audio-text').textContent = '🔇 SOUND MUTED';
+  }
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(()=>{});
+  } else {
+    document.exitFullscreen().catch(()=>{});
+  }
+}
+
+// Mobile visibility listener
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') video.play().catch(()=>{});
+});
+</script>
+
+</body>
+</html>

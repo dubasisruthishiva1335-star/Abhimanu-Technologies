@@ -26,7 +26,8 @@ const COMMAND_ITEMS = [
   { title: 'Security & Compliance Blueprint', category: 'Enterprise', anchor: 'support', desc: 'OWASP, encryption, mutual NDA, SOC-2 ready practices' },
   { title: 'Technology Architecture Matrix', category: 'Navigation', anchor: 'tech-stack', desc: 'Full-stack engineering layers, SLAs, and production tools' },
   { title: 'Global Delivery Footprint & Cloud Regions', category: 'Navigation', anchor: 'global-presence', desc: 'India HQ, North America, UK/Europe, GCC, and APAC hubs' },
-  { title: 'Codebase & Cloud Health Audit', category: 'Tool', anchor: 'support', desc: 'Free 60-second architecture, testing & security self-assessment' }
+  { title: 'Codebase & Cloud Health Audit', category: 'Tool', anchor: 'support', desc: 'Free 60-second architecture, testing & security self-assessment' },
+  { title: 'Sri Chakra Universe (IMAX)', category: '3D Experience', anchor: 'top', desc: 'Fullscreen 432Hz sacred geometry Brahmanda loop experience' }
 ];
 
 const TECH_MATRIX = [
@@ -1458,6 +1459,83 @@ export default function App() {
   // Enterprise Security Blueprint Modal State
   const [securityModalOpen, setSecurityModalOpen] = useState(false);
 
+  // Sri Yantra IMAX Experience State & 432Hz Audio
+  const [sriYantraModalOpen, setSriYantraModalOpen] = useState(false);
+  const [sriYantraEntered, setSriYantraEntered] = useState(false);
+  const [sriYantraAudioPlaying, setSriYantraAudioPlaying] = useState(false);
+  const sriYantraAudioCtxRef = useRef(null);
+  const sriYantraGainRef = useRef(null);
+
+  const startSriYantraAudio = () => {
+    try {
+      if (!sriYantraAudioCtxRef.current) {
+        sriYantraAudioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = sriYantraAudioCtxRef.current;
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(0.01, ctx.currentTime);
+        master.connect(ctx.destination);
+        sriYantraGainRef.current = master;
+
+        const osc1 = ctx.createOscillator();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(432, ctx.currentTime);
+
+        const osc2 = ctx.createOscillator();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(216, ctx.currentTime);
+
+        const osc3 = ctx.createOscillator();
+        osc3.type = 'sine';
+        osc3.frequency.setValueAtTime(108, ctx.currentTime);
+
+        const oscBinaural = ctx.createOscillator();
+        oscBinaural.type = 'sine';
+        oscBinaural.frequency.setValueAtTime(436, ctx.currentTime);
+
+        const g1 = ctx.createGain(); g1.gain.value = 0.08;
+        const g2 = ctx.createGain(); g2.gain.value = 0.05;
+        const g3 = ctx.createGain(); g3.gain.value = 0.07;
+        const gB = ctx.createGain(); gB.gain.value = 0.04;
+
+        osc1.connect(g1); g1.connect(master);
+        osc2.connect(g2); g2.connect(master);
+        osc3.connect(g3); g3.connect(master);
+        oscBinaural.connect(gB); gB.connect(master);
+
+        osc1.start(); osc2.start(); osc3.start(); oscBinaural.start();
+      }
+      const ctx = sriYantraAudioCtxRef.current;
+      if (ctx.state === 'suspended') ctx.resume();
+      sriYantraGainRef.current.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 2.0);
+      setSriYantraAudioPlaying(true);
+    } catch {}
+  };
+
+  const toggleSriYantraAudio = () => {
+    if (!sriYantraAudioCtxRef.current) {
+      startSriYantraAudio();
+      return;
+    }
+    const ctx = sriYantraAudioCtxRef.current;
+    if (sriYantraAudioPlaying) {
+      sriYantraGainRef.current.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      setSriYantraAudioPlaying(false);
+    } else {
+      if (ctx.state === 'suspended') ctx.resume();
+      sriYantraGainRef.current.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.6);
+      setSriYantraAudioPlaying(true);
+    }
+  };
+
+  const closeSriYantraModal = () => {
+    if (sriYantraAudioCtxRef.current && sriYantraGainRef.current) {
+      sriYantraGainRef.current.gain.linearRampToValueAtTime(0.001, sriYantraAudioCtxRef.current.currentTime + 0.3);
+      setSriYantraAudioPlaying(false);
+    }
+    setSriYantraModalOpen(false);
+    setSriYantraEntered(false);
+  };
+
   // Procedural Web Audio Haptic Sound State
   const [soundEnabled, setSoundEnabled] = useState(false);
   const audioCtxRef = useRef(null);
@@ -2009,6 +2087,10 @@ Email: hello@abhimanyutech.example | Office: Telangana, India • Available Glob
                     onClick={() => {
                       setCommandOpen(false);
                       setCommandQuery('');
+                      if (item.title === 'Sri Chakra Universe (IMAX)') {
+                        setSriYantraModalOpen(true);
+                        return;
+                      }
                       const elem = document.getElementById(item.anchor);
                       if (elem) elem.scrollIntoView({ behavior: 'smooth' });
                     }}
@@ -2662,6 +2744,284 @@ Email: hello@abhimanyutech.example | Office: Telangana, India • Available Glob
         </div>
       )}
 
+      {/* --- SRI YANTRA BRAHMANDA UNIVERSE (IMAX MODAL) --- */}
+      {sriYantraModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: '#000000',
+            zIndex: 10008,
+            overflow: 'hidden',
+            fontFamily: "'Cinzel', Georgia, serif",
+            color: '#FFD700'
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={closeSriYantraModal}
+            style={{
+              position: 'fixed',
+              top: '20px',
+              right: '24px',
+              zIndex: 10015,
+              background: 'rgba(15, 15, 25, 0.85)',
+              border: '1px solid rgba(255, 215, 0, 0.4)',
+              color: '#FFD700',
+              width: '42px',
+              height: '42px',
+              borderRadius: '50%',
+              fontSize: '18px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 0 15px rgba(255, 215, 0, 0.3)',
+              transition: 'all 0.2s ease'
+            }}
+            title="Exit Sri Chakra Universe"
+          >
+            ✕
+          </button>
+
+          {!sriYantraEntered ? (
+            /* Kalki Title Sequence Click To Enter Screen */
+            <div
+              onClick={() => {
+                startSriYantraAudio();
+                setSriYantraEntered(true);
+              }}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'radial-gradient(circle at center, #130924 0%, #000000 100%)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                textAlign: 'center',
+                padding: '24px'
+              }}
+            >
+              <div style={{
+                fontSize: 'clamp(5rem, 12vw, 8rem)',
+                color: '#FFD700',
+                textShadow: '0 0 40px #FFD700, 0 0 80px #FF8C00, 0 0 120px rgba(255,69,0,0.7)',
+                animation: 'pulse 3.5s ease-in-out infinite'
+              }}>
+                ॐ
+              </div>
+              <div style={{
+                fontSize: 'clamp(1.2rem, 3vw, 1.8rem)',
+                letterSpacing: '0.55rem',
+                color: '#FFF2CC',
+                fontWeight: '800',
+                marginTop: '1.2rem',
+                textShadow: '0 0 20px rgba(255,215,0,0.6)'
+              }}>
+                SRI CHAKRA • BRAHMANDA
+              </div>
+              <div style={{
+                fontSize: 'clamp(0.8rem, 1.8vw, 1rem)',
+                letterSpacing: '0.25rem',
+                color: '#E6D5B8',
+                marginTop: '0.6rem',
+                opacity: 0.85
+              }}>
+                ॐ पूर्णमदः पूर्णमिदं पूर्णात् पूर्णमुदच्यते
+              </div>
+              <div style={{
+                fontSize: '11px',
+                letterSpacing: '0.2rem',
+                color: '#94A3B8',
+                marginTop: '0.5rem',
+                textTransform: 'uppercase'
+              }}>
+                432Hz Sacred Harmonic Resonance · IMAX Loop
+              </div>
+
+              <button
+                style={{
+                  marginTop: '2.5rem',
+                  padding: '14px 42px',
+                  border: '1px solid #FFD700',
+                  background: 'rgba(255, 215, 0, 0.1)',
+                  color: '#FFD700',
+                  fontFamily: "'Cinzel', Georgia, serif",
+                  fontSize: '14px',
+                  letterSpacing: '0.35rem',
+                  fontWeight: '800',
+                  borderRadius: '30px',
+                  boxShadow: '0 0 30px rgba(255,215,0,0.4)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                CLICK TO ENTER
+              </button>
+            </div>
+          ) : (
+            /* Fullscreen Infinite Loop Playing View */
+            <>
+              {/* Background Video Element */}
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100vw',
+                  height: '100vh',
+                  objectFit: 'cover',
+                  zIndex: 10009
+                }}
+              >
+                <source src="sri-yantra-loop.mp4" type="video/mp4" />
+                <source src="generated_video_059bfe58.mp4" type="video/mp4" />
+              </video>
+
+              {/* Golden Overlay */}
+              <div
+                style={{
+                  position: 'fixed',
+                  inset: 0,
+                  background: 'radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.65) 85%, rgba(0,0,0,0.92) 100%), linear-gradient(0deg, rgba(75,0,130,0.18), rgba(255,215,0,0.08))',
+                  zIndex: 10010,
+                  pointerEvents: 'none'
+                }}
+              />
+
+              {/* Center Floating Om & Title */}
+              <div
+                style={{
+                  position: 'fixed',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  textAlign: 'center',
+                  color: '#FFD700',
+                  pointerEvents: 'none',
+                  zIndex: 10011
+                }}
+              >
+                <div style={{
+                  fontSize: 'clamp(4.5rem, 10vw, 7.5rem)',
+                  textShadow: '0 0 35px #FFD700, 0 0 70px #FF8C00',
+                  animation: 'pulse 4s ease-in-out infinite'
+                }}>
+                  ॐ
+                </div>
+                <div style={{
+                  marginTop: '0.8rem',
+                  fontSize: 'clamp(0.95rem, 2.5vw, 1.3rem)',
+                  letterSpacing: '0.5rem',
+                  fontWeight: '700',
+                  color: '#FFF2CC',
+                  textShadow: '0 0 15px rgba(255,215,0,0.6)'
+                }}>
+                  SRI YANTRA • BRAHMANDA
+                </div>
+              </div>
+
+              {/* Bottom Control Bar */}
+              <div
+                style={{
+                  position: 'fixed',
+                  bottom: '24px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  zIndex: 10014,
+                  background: 'rgba(10, 10, 18, 0.85)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 215, 0, 0.3)',
+                  padding: '8px 20px',
+                  borderRadius: '30px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(255,215,0,0.15)'
+                }}
+              >
+                <button
+                  onClick={toggleSriYantraAudio}
+                  style={{
+                    background: 'transparent',
+                    color: sriYantraAudioPlaying ? '#34D399' : '#CBD5E1',
+                    border: sriYantraAudioPlaying ? '1px solid rgba(52,211,153,0.4)' : '1px solid #475569',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    fontFamily: "'Cinzel', Georgia, serif",
+                    fontSize: '11.5px',
+                    fontWeight: '700',
+                    letterSpacing: '1px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <span style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: sriYantraAudioPlaying ? '#10B981' : '#64748B',
+                    boxShadow: sriYantraAudioPlaying ? '0 0 8px #10B981' : 'none'
+                  }} />
+                  <span>{sriYantraAudioPlaying ? '🔊 432Hz PLAYING' : '🔇 SOUND MUTED'}</span>
+                </button>
+
+                <a
+                  href="/sri-yantra.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    background: 'transparent',
+                    color: '#FFD700',
+                    border: '1px solid rgba(255, 215, 0, 0.4)',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    fontFamily: "'Cinzel', Georgia, serif",
+                    fontSize: '11.5px',
+                    fontWeight: '700',
+                    letterSpacing: '1px',
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                  title="Open Standalone Page in New Window"
+                >
+                  ↗ STANDALONE URL
+                </a>
+
+                <button
+                  onClick={closeSriYantraModal}
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.15)',
+                    color: '#FFD700',
+                    border: '1px solid rgba(255, 215, 0, 0.5)',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    fontFamily: "'Cinzel', Georgia, serif",
+                    fontSize: '11.5px',
+                    fontWeight: '700',
+                    letterSpacing: '1px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ✕ EXIT
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
       {/* --- FLOATING ACTION BUTTONS (WhatsApp + Back to Top) --- */}
       {scrollProgress > 8 && (
         <div style={{
@@ -2971,6 +3331,30 @@ Email: hello@abhimanyutech.example | Office: Telangana, India • Available Glob
                     {CHAKRA_THEMES[k].name}
                   </button>
                 ))}
+                <button
+                  onClick={() => {
+                    playClickSound('click');
+                    setSriYantraModalOpen(true);
+                  }}
+                  style={{
+                    backgroundColor: isDark ? 'rgba(255,215,0,0.12)' : '#FFFBEB',
+                    color: '#D97706',
+                    border: '1px solid rgba(245,158,11,0.4)',
+                    padding: '3px 10px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: '800',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    boxShadow: '0 0 12px rgba(245,158,11,0.2)',
+                    transition: 'all 0.15s ease'
+                  }}
+                  title="Open Fullscreen IMAX Sri Chakra Universe Experience"
+                >
+                  <span>🔱 Sri Chakra (IMAX)</span>
+                </button>
               </div>
             </div>
           </div>
