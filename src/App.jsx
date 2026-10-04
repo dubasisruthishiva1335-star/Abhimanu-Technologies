@@ -760,6 +760,209 @@ const CHAKRA_THEMES = {
   }
 };
 
+// --- AMBIENT SRI YANTRA & BRAHMANDA LIVING BACKGROUND COMPONENT ---
+function AmbientSriYantraBackground({ isDark }) {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animId;
+    let w = (canvas.width = window.innerWidth);
+    let h = (canvas.height = window.innerHeight);
+
+    const onResize = () => {
+      if (!canvas) return;
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', onResize);
+
+    const stars = [];
+    for (let i = 0; i < 90; i++) {
+      stars.push({
+        x: (Math.random() - 0.5) * 2000,
+        y: (Math.random() - 0.5) * 2000,
+        z: Math.random() * 1000 + 1,
+        size: Math.random() * 1.8 + 0.6
+      });
+    }
+
+    let angle = 0;
+    let isVisible = true;
+
+    const onVis = () => {
+      isVisible = document.visibilityState === 'visible';
+    };
+    document.addEventListener('visibilitychange', onVis);
+
+    const render = () => {
+      animId = requestAnimationFrame(render);
+      if (!isVisible) return;
+
+      ctx.clearRect(0, 0, w, h);
+      const cx = w * 0.72;
+      const cy = h * 0.38;
+
+      // Animate starfield
+      for (let s of stars) {
+        s.z -= 0.8;
+        if (s.z <= 0) s.z = 1000;
+        const k = 350 / s.z;
+        const px = cx + s.x * k;
+        const py = cy + s.y * k;
+        if (px >= 0 && px <= w && py >= 0 && py <= h) {
+          const alpha = (1 - s.z / 1000) * (isDark ? 0.35 : 0.15);
+          ctx.fillStyle = isDark ? '#FDE68A' : '#D97706';
+          ctx.globalAlpha = alpha;
+          ctx.beginPath();
+          ctx.arc(px, py, s.size * (1 - s.z / 1000) * 1.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Delicate counter-rotating sacred geometry
+      angle += 0.003;
+      const baseR = Math.min(w, h) * 0.28;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      // Concentric rings
+      ctx.lineWidth = 1;
+      for (let r = 1; r <= 3; r++) {
+        ctx.strokeStyle = isDark ? `rgba(245, 158, 11, ${0.08 + r * 0.04})` : `rgba(217, 119, 6, ${0.05 + r * 0.03})`;
+        ctx.beginPath();
+        ctx.arc(0, 0, baseR * (0.3 + r * 0.2), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Counter-rotating 8-petal lotus
+      ctx.save();
+      ctx.rotate(-angle * 0.6);
+      const petals = 8;
+      for (let i = 0; i < petals; i++) {
+        const a = (i * Math.PI * 2) / petals;
+        const r1 = baseR * 0.65;
+        const r2 = baseR * 0.85;
+        ctx.strokeStyle = isDark ? 'rgba(251, 191, 36, 0.12)' : 'rgba(217, 119, 6, 0.08)';
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1);
+        ctx.lineTo(Math.cos(a + 0.18) * r2, Math.sin(a + 0.18) * r2);
+        ctx.lineTo(Math.cos(a + 0.36) * r1, Math.sin(a + 0.36) * r1);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Interlocking triangles
+      ctx.save();
+      ctx.rotate(angle);
+      const triLayers = [
+        { scale: 0.55, down: false },
+        { scale: 0.44, down: true },
+        { scale: 0.33, down: false },
+        { scale: 0.22, down: true }
+      ];
+      triLayers.forEach((tri, idx) => {
+        const rad = baseR * tri.scale;
+        const rot = tri.down ? Math.PI : 0;
+        ctx.strokeStyle = idx % 2 === 0
+          ? (isDark ? 'rgba(245, 158, 11, 0.22)' : 'rgba(217, 119, 6, 0.14)')
+          : (isDark ? 'rgba(56, 189, 248, 0.18)' : 'rgba(37, 99, 235, 0.12)');
+        ctx.beginPath();
+        for (let pt = 0; pt < 3; pt++) {
+          const a = rot + (pt * Math.PI * 2) / 3 - Math.PI / 2;
+          const x = Math.cos(a) * rad;
+          const y = Math.sin(a) * rad;
+          if (pt === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      });
+      ctx.restore();
+
+      ctx.restore();
+      ctx.globalAlpha = 1.0;
+    };
+
+    render();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', onResize);
+      document.removeEventListener('visibilitychange', onVis);
+    };
+  }, [isDark]);
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 0,
+        pointerEvents: 'none',
+        overflow: 'hidden'
+      }}
+    >
+      {/* Procedural Canvas Layer */}
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none'
+        }}
+      />
+      {/* Video Loop Layer (plays on top when available) */}
+      <video
+        id="bg-video"
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          minWidth: '100vw',
+          minHeight: '100vh',
+          width: 'auto',
+          height: 'auto',
+          objectFit: 'cover',
+          opacity: isDark ? 0.35 : 0.16,
+          transition: 'opacity 0.8s ease'
+        }}
+      >
+        <source src="sri-yantra-loop.mp4" type="video/mp4" />
+        <source src="/sri-yantra-loop.mp4" type="video/mp4" />
+        <source src="generated_video_059bfe58.mp4" type="video/mp4" />
+        <source src="/generated_video_059bfe58.mp4" type="video/mp4" />
+      </video>
+      {/* Golden breathing radial overlay */}
+      <div
+        id="sri-yantra-bg-overlay"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: isDark
+            ? 'radial-gradient(circle at 65% 25%, rgba(255,215,0,0.08) 0%, transparent 60%), radial-gradient(circle at center, transparent 35%, rgba(10,15,29,0.78) 100%)'
+            : 'radial-gradient(circle at 65% 25%, rgba(255,215,0,0.05) 0%, transparent 60%), radial-gradient(circle at center, transparent 35%, rgba(255,255,255,0.82) 100%)',
+          transition: 'background 0.5s ease'
+        }}
+      />
+    </div>
+  );
+}
+
 // --- THREE.JS 3D HERO CANVAS (CHAKRA - 6 RINGS) ---
 function ChakraCanvas({ themeKey = 'cyan' }) {
   const mountRef = useRef(null);
@@ -2026,57 +2229,8 @@ Email: hello@abhimanyutech.example | Office: Telangana, India • Available Glob
 
   return (
     <div style={styles.page}>
-      {/* --- GLOBAL SEAMLESS SRI YANTRA / BRAHMANDA AMBIENT BACKGROUND VIDEO --- */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: 0,
-          pointerEvents: 'none',
-          overflow: 'hidden'
-        }}
-      >
-        <video
-          id="bg-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            minWidth: '100vw',
-            minHeight: '100vh',
-            width: 'auto',
-            height: 'auto',
-            objectFit: 'cover',
-            opacity: isDark ? 0.35 : 0.16,
-            transition: 'opacity 0.8s ease'
-          }}
-        >
-          <source src="sri-yantra-loop.mp4" type="video/mp4" />
-          <source src="/sri-yantra-loop.mp4" type="video/mp4" />
-          <source src="generated_video_059bfe58.mp4" type="video/mp4" />
-          <source src="/generated_video_059bfe58.mp4" type="video/mp4" />
-        </video>
-        {/* Subtle breathing golden overlay matching purple/gold lotus */}
-        <div
-          id="sri-yantra-bg-overlay"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: isDark
-              ? 'radial-gradient(circle at 65% 25%, rgba(255,215,0,0.08) 0%, transparent 60%), radial-gradient(circle at center, transparent 35%, rgba(10,15,29,0.78) 100%)'
-              : 'radial-gradient(circle at 65% 25%, rgba(255,215,0,0.05) 0%, transparent 60%), radial-gradient(circle at center, transparent 35%, rgba(255,255,255,0.82) 100%)',
-            transition: 'background 0.5s ease'
-          }}
-        />
-      </div>
+      {/* --- GLOBAL SEAMLESS SRI YANTRA / BRAHMANDA LIVING BACKGROUND --- */}
+      <AmbientSriYantraBackground isDark={isDark} />
 
       {/* --- SCROLL PROGRESS BAR --- */}
       <div
