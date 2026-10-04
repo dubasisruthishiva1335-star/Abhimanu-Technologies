@@ -2313,7 +2313,10 @@ function FuturisticCommandSidebar({
   sriYantraAudioPlaying,
   toggleSriYantraAudio,
   onInstallPWA,
-  pwaInstalled
+  pwaInstalled,
+  currentLang = 'en',
+  setCurrentLang,
+  onOpenCaseStudies
 }) {
   const [currentTimeIST, setCurrentTimeIST] = useState('');
 
@@ -2562,6 +2565,76 @@ function FuturisticCommandSidebar({
           <span>🔱 Launch Fullscreen IMAX 432Hz Portal</span>
           <span>↗</span>
         </a>
+
+        {/* Multilingual Localization Selector */}
+        <div style={{ margin: '0 0 16px 0', padding: '14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(56, 189, 248, 0.22)', borderRadius: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.8px', color: '#38BDF8', textTransform: 'uppercase' }}>
+              🌐 Language / భాష / भाषा
+            </span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
+            {[
+              { code: 'en', label: 'English' },
+              { code: 'te', label: 'తెలుగు' },
+              { code: 'hi', label: 'हिन्दी' }
+            ].map((l) => (
+              <button
+                key={l.code}
+                onClick={() => {
+                  if (setCurrentLang) setCurrentLang(l.code);
+                  if (playClickSound) playClickSound('chime');
+                }}
+                style={{
+                  background: currentLang === l.code ? '#2563EB' : 'rgba(30, 41, 59, 0.5)',
+                  border: currentLang === l.code ? '1px solid #38BDF8' : '1px solid #334155',
+                  color: '#FFFFFF',
+                  padding: '6px 4px',
+                  borderRadius: '6px',
+                  fontSize: '11.5px',
+                  fontWeight: currentLang === l.code ? '800' : '600',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Case Studies Modal Trigger */}
+        <button
+          onClick={() => {
+            if (onOpenCaseStudies) onOpenCaseStudies();
+            if (playClickSound) playClickSound('chime');
+            onClose();
+          }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            padding: '11px 14px',
+            background: 'linear-gradient(90deg, rgba(37, 99, 235, 0.2) 0%, rgba(56, 189, 248, 0.15) 100%)',
+            border: '1px solid rgba(56, 189, 248, 0.35)',
+            borderRadius: '10px',
+            color: '#38BDF8',
+            fontSize: '12px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            marginBottom: '16px',
+            boxShadow: '0 0 14px rgba(56, 189, 248, 0.15)',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>🏆</span>
+            <span>Proven Client Case Studies Reel</span>
+          </span>
+          <span>→</span>
+        </button>
 
         {/* Platform Quick Navigation */}
         <div style={{ flex: 1 }}>
@@ -2829,10 +2902,253 @@ function LiveCRDTSimulator() {
   );
 }
 
+// --- MULTILINGUAL LOCALIZATION DICTIONARY ---
+const LANG_DICT = {
+  en: {
+    heroOverline: 'APPS · MAINTENANCE · IT SERVICES · 3D',
+    heroBuild: 'We build',
+    heroTagline: '— apps, maintenance, IT services and 3D.',
+    estimateBtn: 'Estimate your project',
+    tryStudioBtn: 'Try the 3D Studio',
+    navServices: 'Services',
+    navStudio: '3D Studio',
+    navTech: 'Tech Stack',
+    navWork: 'Work',
+    navInsights: 'Insights',
+    navEstimate: 'Estimator',
+    navContact: 'Contact',
+    talkBtn: "Let's Talk →",
+    caseStudiesBtn: '🏆 Case Studies Reel'
+  },
+  te: {
+    heroOverline: 'యాప్స్ · మెయింటెనెన్స్ · ఐటి సర్వీసెస్ · 3D',
+    heroBuild: 'మేము నిర్మిస్తాము',
+    heroTagline: '— యాప్‌లు, నిర్వహణ, ఐటీ సేవలు మరియు 3D.',
+    estimateBtn: 'ప్రాజెక్ట్ అంచనా వేయండి',
+    tryStudioBtn: '3D స్టూడియోను ప్రయత్నించండి',
+    navServices: 'సేవలు',
+    navStudio: '3D స్టూడియో',
+    navTech: 'టెక్నాలజీ',
+    navWork: 'ప్రాజెక్ట్‌లు',
+    navInsights: 'అంతర్దృష్టులు',
+    navEstimate: 'అంచనా',
+    navContact: 'సంప్రదించండి',
+    talkBtn: 'మనం మాట్లాడుకుందాం →',
+    caseStudiesBtn: '🏆 కేస్ స్టడీస్ రీల్'
+  },
+  hi: {
+    heroOverline: 'ऐप्स · रखरखाव · आईटी सेवाएं · 3D',
+    heroBuild: 'हम निर्माण करते हैं',
+    heroTagline: '— ऐप्स, रखरखाव, आईटी सेवाएं और 3D।',
+    estimateBtn: 'अपने प्रोजेक्ट का अनुमान लगाएं',
+    tryStudioBtn: '3D स्टूडियो आज़माएं',
+    navServices: 'सेवाएं',
+    navStudio: '3D स्टूडियो',
+    navTech: 'तकनीक',
+    navWork: 'कार्य',
+    navInsights: 'इनसाइट्स',
+    navEstimate: 'अनुमानक',
+    navContact: 'संपर्क',
+    talkBtn: 'बातचीत शुरू करें →',
+    caseStudiesBtn: '🏆 केस स्टडीज रील'
+  }
+};
+
+// --- CLIENT TESTIMONIALS & CASE STUDY REEL MODAL ---
+function ClientTestimonialsModal({ isOpen, onClose, playClickSound }) {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const caseStudies = [
+    {
+      client: 'Logistics Fleet India (Telangana HQ)',
+      sector: 'Telematics & Real-Time IoT',
+      metric: '50,000 pings/sec',
+      submetric: '<400ms end-to-end geospatial index latency across 5,000 trucks',
+      quote: 'Abhimanyu Technologies transformed our fleet infrastructure. Their TimescaleDB & Redis stream architecture cut latency by 90% while giving operators an unprecedented 3D real-time dispatch interface.',
+      author: 'Vikramaditya Rao',
+      role: 'VP Engineering, Fleet Logistics Group',
+      stack: ['Node.js', 'TimescaleDB', 'Redis Pub/Sub', 'Three.js WebGL']
+    },
+    {
+      client: 'EPC Subterranean Infrastructure Ltd.',
+      sector: 'Civil Construction & BIM Inspections',
+      metric: '84,000 Offline Snags',
+      submetric: '0 lost records across deep zero-cell underground tunnels via CRDTs',
+      quote: 'Our site engineers work underground with zero cellular reception. The offline-first SQLite + Lamport CRDT architecture delivered by Abhimanyu Technologies synced every inspection without a single merge conflict.',
+      author: 'Dr. Sunita Kulkarni',
+      role: 'Chief Project Director, Underground Metro Corridor',
+      stack: ['Flutter', 'Local SQLite', 'Lamport CRDTs', 'PostgreSQL']
+    },
+    {
+      client: 'PayKwik NeoBank Solutions',
+      sector: 'Fintech & Micro-Disbursals',
+      metric: '99.999% SLA Uptime',
+      submetric: '₹14.2M settled daily with sub-60ms KMS-encrypted ledger transactions',
+      quote: 'Their attention to distributed systems and SOC-2 KMS secret hardening allowed us to pass our central banking audit on the first review cycle.',
+      author: 'Arjun Mehta',
+      role: 'Head of Architecture, Digital Banking',
+      stack: ['Go', 'Kafka', 'AWS KMS', 'PostgreSQL', 'Docker']
+    }
+  ];
+
+  if (!isOpen) return null;
+
+  const current = caseStudies[activeTab];
+
+  return (
+    <>
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(5, 8, 16, 0.85)',
+          backdropFilter: 'blur(12px)',
+          zIndex: 10020
+        }}
+      />
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '92vw',
+          maxWidth: '720px',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          backgroundColor: '#0F172A',
+          border: '1px solid rgba(56, 189, 248, 0.35)',
+          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(56, 189, 248, 0.2)',
+          borderRadius: '20px',
+          padding: '28px',
+          zIndex: 10021,
+          color: '#FFFFFF'
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: '800', color: '#38BDF8', letterSpacing: '1px', textTransform: 'uppercase' }}>
+              PROVEN ENTERPRISE IMPACT
+            </div>
+            <h3 style={{ margin: '4px 0 0 0', fontSize: '20px', fontWeight: '800', color: '#FFFFFF' }}>
+              Client Case Studies & Verified Results
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'rgba(30, 41, 59, 0.6)',
+              border: '1px solid #334155',
+              color: '#94A3B8',
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Case Study Tabs */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '4px' }}>
+          {caseStudies.map((cs, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                setActiveTab(idx);
+                if (playClickSound) playClickSound('click');
+              }}
+              style={{
+                background: activeTab === idx ? '#2563EB' : 'rgba(30, 41, 59, 0.6)',
+                border: activeTab === idx ? '1px solid #38BDF8' : '1px solid #334155',
+                color: activeTab === idx ? '#FFFFFF' : '#94A3B8',
+                padding: '8px 14px',
+                borderRadius: '8px',
+                fontSize: '12px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              {cs.sector}
+            </button>
+          ))}
+        </div>
+
+        {/* Featured Case Study Card */}
+        <div style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(56, 189, 248, 0.25)', borderRadius: '14px', padding: '22px', marginBottom: '18px' }}>
+          <div style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '600', marginBottom: '4px' }}>
+            CLIENT ENGAGEMENT
+          </div>
+          <div style={{ fontSize: '17px', fontWeight: '800', color: '#FFFFFF', marginBottom: '16px' }}>
+            {current.client}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '20px' }}>
+            <div style={{ background: 'rgba(37, 99, 235, 0.12)', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: '10px', padding: '12px' }}>
+              <div style={{ fontSize: '24px', fontWeight: '900', color: '#38BDF8' }}>{current.metric}</div>
+              <div style={{ fontSize: '11.5px', color: '#CBD5E1', marginTop: '4px' }}>{current.submetric}</div>
+            </div>
+          </div>
+
+          {/* Quote */}
+          <blockquote style={{ margin: '0 0 16px 0', borderLeft: '3px solid #FFD700', paddingLeft: '14px', fontStyle: 'italic', color: '#E2E8F0', fontSize: '13.5px', lineHeight: '1.6' }}>
+            "{current.quote}"
+          </blockquote>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', borderTop: '1px solid rgba(51, 65, 85, 0.6)', paddingTop: '14px' }}>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: '700', color: '#FFFFFF' }}>{current.author}</div>
+              <div style={{ fontSize: '11px', color: '#94A3B8' }}>{current.role}</div>
+            </div>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {current.stack.map((st, i) => (
+                <span key={i} style={{ background: 'rgba(30, 41, 59, 0.8)', border: '1px solid #334155', borderRadius: '4px', padding: '3px 8px', fontSize: '10.5px', color: '#38BDF8', fontWeight: '600' }}>
+                  {st}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={onClose}
+          style={{
+            width: '100%',
+            background: 'linear-gradient(90deg, #2563EB, #0284C7)',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '10px',
+            padding: '12px',
+            fontSize: '13px',
+            fontWeight: '700',
+            cursor: 'pointer'
+          }}
+        >
+          Close Case Studies
+        </button>
+      </div>
+    </>
+  );
+}
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
+
+  // Multilingual Localization State ('en', 'te', 'hi')
+  const [currentLang, setCurrentLang] = useState('en');
+
+  // Client Testimonials & Case Study Reel Modal State
+  const [testimonialsModalOpen, setTestimonialsModalOpen] = useState(false);
 
   // Pure Dark Mode Only (Permanently locked as per user specification)
   const isDark = true;
@@ -3050,6 +3366,14 @@ export default function App() {
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + 0.2);
+      } else if (type === 'chime' || type === 'crystal') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1080, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1440, ctx.currentTime + 0.06);
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.35);
       }
     } catch {}
   };
@@ -3243,7 +3567,7 @@ export default function App() {
 
   // Smooth scroll
   const scrollTo = (e, id) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setMobileMenuOpen(false);
     const elem = document.getElementById(id);
     if (elem) elem.scrollIntoView({ behavior: 'smooth' });
@@ -3658,6 +3982,9 @@ ENGAGEMENT COORDINATION
         toggleSriYantraAudio={toggleSriYantraAudio}
         onInstallPWA={handleInstallPWA}
         pwaInstalled={pwaInstalled}
+        currentLang={currentLang}
+        setCurrentLang={setCurrentLang}
+        onOpenCaseStudies={() => setTestimonialsModalOpen(true)}
       />
 
       {/* --- SCROLL PROGRESS BAR --- */}
@@ -4774,6 +5101,13 @@ ENGAGEMENT COORDINATION
         </div>
       )}
 
+      {/* --- CLIENT TESTIMONIALS & CASE STUDY REEL MODAL --- */}
+      <ClientTestimonialsModal
+        isOpen={testimonialsModalOpen}
+        onClose={() => setTestimonialsModalOpen(false)}
+        playClickSound={playClickSound}
+      />
+
       {/* --- FLOATING ACTION BUTTONS (WhatsApp + Back to Top) --- */}
       {scrollProgress > 8 && (
         <div style={{
@@ -4875,14 +5209,14 @@ ENGAGEMENT COORDINATION
           {/* Desktop Navigation Links */}
           <nav className="desktop-nav" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             {[
-              { id: 'services', label: 'Services' },
-              { id: 'studio', label: '3D Studio' },
-              { id: 'tech-stack', label: 'Architecture' },
+              { id: 'services', label: LANG_DICT[currentLang]?.navServices || 'Services' },
+              { id: 'studio', label: LANG_DICT[currentLang]?.navStudio || '3D Studio' },
+              { id: 'tech-stack', label: LANG_DICT[currentLang]?.navTech || 'Architecture' },
               { id: 'industries', label: 'Industries' },
-              { id: 'work', label: 'Work' },
-              { id: 'insights', label: 'Insights' },
-              { id: 'estimate', label: 'Estimator' },
-              { id: 'contact', label: 'Contact' }
+              { id: 'work', label: LANG_DICT[currentLang]?.navWork || 'Work' },
+              { id: 'insights', label: LANG_DICT[currentLang]?.navInsights || 'Insights' },
+              { id: 'estimate', label: LANG_DICT[currentLang]?.navEstimate || 'Estimator' },
+              { id: 'contact', label: LANG_DICT[currentLang]?.navContact || 'Contact' }
             ].map((nav) => {
               const isActive = activeSection === nav.id;
               return (
@@ -4922,6 +5256,35 @@ ENGAGEMENT COORDINATION
 
           {/* High-Tech Controls Action Group */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Multilingual Selector Pill */}
+            <button
+              onClick={() => {
+                const nextLang = currentLang === 'en' ? 'te' : currentLang === 'te' ? 'hi' : 'en';
+                setCurrentLang(nextLang);
+                playClickSound('chime');
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '6px 12px',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 215, 0, 0.45)',
+                background: 'rgba(15, 23, 42, 0.85)',
+                color: '#FFD700',
+                fontSize: '11px',
+                fontWeight: '800',
+                cursor: 'pointer',
+                letterSpacing: '0.4px',
+                boxShadow: '0 0 12px rgba(255, 215, 0, 0.18)',
+                transition: 'all 0.2s ease'
+              }}
+              title="Switch Language: English / Telugu / Hindi"
+            >
+              <span>🌐</span>
+              <span>{currentLang === 'en' ? 'EN' : currentLang === 'te' ? 'తెలుగు' : 'हिन्दी'}</span>
+            </button>
+
             {/* 3D Flow Mode Switcher Pill */}
             <button
               onClick={() => {
@@ -5028,7 +5391,7 @@ ENGAGEMENT COORDINATION
                 boxShadow: '0 0 16px rgba(37, 99, 235, 0.4)'
               }}
             >
-              Let's Talk →
+              {LANG_DICT[currentLang]?.talkBtn || "Let's Talk →"}
             </a>
 
             {/* Mobile Hamburger Toggle */}
@@ -5052,16 +5415,16 @@ ENGAGEMENT COORDINATION
           <div className="hero-grid" style={styles.heroGrid}>
             <div style={styles.heroTextCol}>
               <div style={styles.heroOverline}>
-                APPS · MAINTENANCE · IT SERVICES · 3D
+                {LANG_DICT[currentLang]?.heroOverline || 'APPS · MAINTENANCE · IT SERVICES · 3D'}
               </div>
 
               <h1 className="hero-title" style={styles.heroTitle}>
-                We <em>build</em>{' '}
+                {LANG_DICT[currentLang]?.heroBuild || 'We build'}{' '}
                 <span style={{ color: '#2563EB', display: 'inline' }}>
                   {typingPhrase}
                   <span className="typing-cursor">|</span>
                 </span>
-                {' '}— apps, maintenance, IT services and 3D.
+                {' '}{LANG_DICT[currentLang]?.heroTagline || '— apps, maintenance, IT services and 3D.'}
               </h1>
 
               <p className="hero-subtitle" style={styles.heroSubtitle}>
@@ -5070,10 +5433,10 @@ ENGAGEMENT COORDINATION
 
               <div style={styles.heroCtaRow}>
                 <a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.primaryCta}>
-                  Estimate your project
+                  {LANG_DICT[currentLang]?.estimateBtn || 'Estimate your project'}
                 </a>
                 <a href="#studio" onClick={(e) => scrollTo(e, 'studio')} style={styles.secondaryCta}>
-                  Try the 3D Studio
+                  {LANG_DICT[currentLang]?.tryStudioBtn || 'Try the 3D Studio'}
                 </a>
               </div>
 
@@ -5092,70 +5455,102 @@ ENGAGEMENT COORDINATION
                 {/* Top-Left HUD Card */}
                 <div
                   className="hud-hero-card"
+                  onClick={(e) => {
+                    playClickSound('chime');
+                    scrollTo(e, 'top');
+                  }}
+                  onMouseEnter={() => playClickSound('crystal')}
                   style={{
                     top: '-16px',
                     left: '-20px',
-                    animation: 'floatSlow 5s ease-in-out infinite alternate'
+                    cursor: 'pointer',
+                    animation: 'floatSlow 5s ease-in-out infinite alternate',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease'
                   }}
+                  title="Abhimanyu Technologies - Return to Top"
                 >
                   <div style={{ fontSize: '13px', fontWeight: '800', color: '#F8FAFC', letterSpacing: '0.2px' }}>
                     Abhimanyu Technologies
                   </div>
                   <div style={{ fontSize: '10px', color: '#94A3B8', marginTop: '2px' }}>
-                    Software Engineering Studio
+                    Software Engineering Studio ↗
                   </div>
                 </div>
 
                 {/* Top-Right HUD Card */}
                 <div
                   className="hud-hero-card"
+                  onClick={() => {
+                    playClickSound('chime');
+                    setSriYantraModalOpen(true);
+                  }}
+                  onMouseEnter={() => playClickSound('crystal')}
                   style={{
                     top: '-16px',
                     right: '-20px',
                     textAlign: 'right',
-                    animation: 'floatSlow 5s ease-in-out infinite alternate 1s'
+                    cursor: 'pointer',
+                    animation: 'floatSlow 5s ease-in-out infinite alternate 1s',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease'
                   }}
+                  title="Enter Fullscreen IMAX 432Hz Sacred Sri Yantra Universe"
                 >
                   <div style={{ fontSize: '12px', fontWeight: '800', color: '#F8FAFC', letterSpacing: '0.2px' }}>
                     Software Engineering &amp; 3D WebGL
                   </div>
                   <div style={{ fontSize: '10px', color: '#38BDF8', marginTop: '2px' }}>
-                    Sacred Brahmanda Universe
+                    Sacred Brahmanda Universe ↗
                   </div>
                 </div>
 
                 {/* Bottom-Left HUD Card */}
                 <div
                   className="hud-hero-card"
+                  onClick={() => {
+                    playClickSound('chime');
+                    setTestimonialsModalOpen(true);
+                  }}
+                  onMouseEnter={() => playClickSound('crystal')}
                   style={{
                     bottom: '12px',
                     left: '-20px',
-                    animation: 'floatSlow 5s ease-in-out infinite alternate 2s'
+                    cursor: 'pointer',
+                    animation: 'floatSlow 5s ease-in-out infinite alternate 2s',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease'
                   }}
+                  title="View Verified Enterprise Case Studies Reel"
                 >
                   <div style={{ fontSize: '12px', fontWeight: '800', color: '#F8FAFC', letterSpacing: '0.2px' }}>
                     Software Engineering &amp; 3D Studio
                   </div>
-                  <div style={{ fontSize: '10px', color: '#94A3B8', marginTop: '2px' }}>
-                    Enterprise Distributed Systems
+                  <div style={{ fontSize: '10px', color: '#FFD700', marginTop: '2px' }}>
+                    Enterprise Case Studies 🏆
                   </div>
                 </div>
 
                 {/* Bottom-Right HUD Card */}
                 <div
                   className="hud-hero-card"
+                  onClick={(e) => {
+                    playClickSound('chime');
+                    scrollTo(e, 'insights');
+                  }}
+                  onMouseEnter={() => playClickSound('crystal')}
                   style={{
                     bottom: '12px',
                     right: '-20px',
                     textAlign: 'right',
-                    animation: 'floatSlow 5s ease-in-out infinite alternate 3s'
+                    cursor: 'pointer',
+                    animation: 'floatSlow 5s ease-in-out infinite alternate 3s',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease'
                   }}
+                  title="Inspect 60 FPS Brahmanda Engine & Distributed Sync"
                 >
                   <div style={{ fontSize: '17px', fontWeight: '900', color: '#38BDF8', letterSpacing: '0.5px', lineHeight: '1' }}>
                     60 FPS
                   </div>
                   <div style={{ fontSize: '10px', color: '#F8FAFC', fontWeight: '700', marginTop: '3px' }}>
-                    Brahmanda Engine
+                    Brahmanda Engine ⚡
                   </div>
                 </div>
               </div>
@@ -6341,8 +6736,34 @@ ENGAGEMENT COORDINATION
           </div>
 
           <div style={styles.ringCarouselBox}>
-            {/* Concept Category Filter Pills */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '24px' }}>
+            {/* Concept Category Filter Pills & Case Studies Reel */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', marginBottom: '24px' }}>
+              <button
+                onClick={() => {
+                  playClickSound('chime');
+                  setTestimonialsModalOpen(true);
+                }}
+                style={{
+                  backgroundColor: 'rgba(255, 215, 0, 0.15)',
+                  color: '#FFD700',
+                  border: '1px solid rgba(255, 215, 0, 0.55)',
+                  padding: '6px 16px',
+                  borderRadius: '20px',
+                  fontSize: '12.5px',
+                  fontWeight: '800',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 14px rgba(255, 215, 0, 0.25)',
+                  transition: 'all 0.2s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+                title="Open Verified Client Case Studies & Production Telemetry Reel"
+              >
+                <span>🏆</span>
+                <span>{LANG_DICT[currentLang]?.caseStudiesBtn || '🏆 Case Studies Reel'}</span>
+              </button>
+
               {['All', '3D & WebGL', 'Mobile & Offline', 'Backend & IoT', 'Web Platforms'].map((cat) => {
                 const active = conceptFilter === cat;
                 return (
