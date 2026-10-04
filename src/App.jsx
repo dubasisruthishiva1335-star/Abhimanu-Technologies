@@ -2757,7 +2757,9 @@ function FuturisticCommandSidebar({
   audioVolume = 0.35,
   changeAudioVolume,
   audioFrequencyPreset = 432,
-  changeAudioFrequencyPreset
+  changeAudioFrequencyPreset,
+  audioEchoEnabled = false,
+  toggleAudioEcho
 }) {
   const [activeTabDot, setActiveTabDot] = useState(0);
   const [currentTimeIST, setCurrentTimeIST] = useState('');
@@ -3184,22 +3186,46 @@ function FuturisticCommandSidebar({
                   })}
                 </div>
 
-                {/* Volume Slider */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                  <span style={{ fontSize: '10px', color: '#94A3B8', whiteSpace: 'nowrap' }}>
-                    🔊 {Math.round(audioVolume * 100)}%
-                  </span>
-                  <input
-                    type="range"
-                    min="0.05"
-                    max="1.0"
-                    step="0.05"
-                    value={audioVolume}
-                    onChange={(e) => {
-                      if (changeAudioVolume) changeAudioVolume(parseFloat(e.target.value));
+                {/* Volume Slider & Spatial Echo Toggle */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginTop: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1 }}>
+                    <span style={{ fontSize: '10px', color: '#94A3B8', whiteSpace: 'nowrap' }}>
+                      🔊 {Math.round(audioVolume * 100)}%
+                    </span>
+                    <input
+                      type="range"
+                      min="0.05"
+                      max="1.0"
+                      step="0.05"
+                      value={audioVolume}
+                      onChange={(e) => {
+                        if (changeAudioVolume) changeAudioVolume(parseFloat(e.target.value));
+                      }}
+                      style={{ flex: 1, height: '4px', accentColor: '#38BDF8', cursor: 'pointer' }}
+                    />
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      if (toggleAudioEcho) toggleAudioEcho();
+                      if (playClickSound) playClickSound('toggle');
                     }}
-                    style={{ flex: 1, height: '4px', accentColor: '#38BDF8', cursor: 'pointer' }}
-                  />
+                    style={{
+                      background: audioEchoEnabled ? 'rgba(56, 189, 248, 0.25)' : 'rgba(30, 41, 59, 0.5)',
+                      border: audioEchoEnabled ? '1px solid #38BDF8' : '1px solid #334155',
+                      color: audioEchoEnabled ? '#FFD700' : '#94A3B8',
+                      fontSize: '9px',
+                      fontWeight: '700',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      transition: 'all 0.15s ease'
+                    }}
+                    title="Toggle 3D spatial delay reverb filter"
+                  >
+                    🌌 {audioEchoEnabled ? 'Echo ON' : 'Echo OFF'}
+                  </button>
                 </div>
               </div>
 
@@ -4068,10 +4094,12 @@ export default function App() {
   const [sriYantraAudioPlaying, setSriYantraAudioPlaying] = useState(false);
   const [audioVolume, setAudioVolume] = useState(0.35);
   const [audioFrequencyPreset, setAudioFrequencyPreset] = useState(432);
+  const [audioEchoEnabled, setAudioEchoEnabled] = useState(false);
   const sriYantraAudioCtxRef = useRef(null);
   const sriYantraGainRef = useRef(null);
   const sriYantraAnalyserRef = useRef(null);
   const sriYantraOscsRef = useRef([]);
+  const sriYantraDelayRef = useRef(null);
 
   const startSriYantraAudio = (initialFreq = audioFrequencyPreset) => {
     try {
@@ -4086,6 +4114,21 @@ export default function App() {
         master.connect(analyser);
         master.connect(ctx.destination);
 
+        // Spatial Feedback Delay Filter (Echo Reverb)
+        const delay = ctx.createDelay(1.0);
+        delay.delayTime.setValueAtTime(0.32, ctx.currentTime);
+        const feedback = ctx.createGain();
+        feedback.gain.setValueAtTime(0.35, ctx.currentTime);
+        const delayWet = ctx.createGain();
+        delayWet.gain.setValueAtTime(audioEchoEnabled ? 0.35 : 0.0, ctx.currentTime);
+
+        master.connect(delay);
+        delay.connect(feedback);
+        feedback.connect(delay);
+        delay.connect(delayWet);
+        delayWet.connect(ctx.destination);
+
+        sriYantraDelayRef.current = delayWet;
         sriYantraGainRef.current = master;
         sriYantraAnalyserRef.current = analyser;
 
@@ -4125,6 +4168,15 @@ export default function App() {
       sriYantraGainRef.current.gain.linearRampToValueAtTime(audioVolume, ctx.currentTime + 1.2);
       setSriYantraAudioPlaying(true);
     } catch {}
+  };
+
+  const toggleAudioEcho = () => {
+    const next = !audioEchoEnabled;
+    setAudioEchoEnabled(next);
+    if (sriYantraAudioCtxRef.current && sriYantraDelayRef.current) {
+      const ctx = sriYantraAudioCtxRef.current;
+      sriYantraDelayRef.current.gain.linearRampToValueAtTime(next ? 0.35 : 0.0, ctx.currentTime + 0.1);
+    }
   };
 
   const changeAudioVolume = (vol) => {
@@ -4784,6 +4836,65 @@ ENGAGEMENT COORDINATION
     URL.revokeObjectURL(url);
   };
 
+  const handlePrintPDFBlueprint = () => {
+    playClickSound('chime');
+    const p = BLUEPRINT_PRESETS[matcherTarget];
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Architecture Blueprint — ${p.title} | Abhimanyu Technologies</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; color: #0F172A; max-width: 800px; margin: 0 auto; line-height: 1.6; }
+            h1 { color: #1E3A8A; border-bottom: 2px solid #3B82F6; padding-bottom: 8px; font-size: 22px; }
+            h2 { color: #2563EB; font-size: 14.5px; margin-top: 22px; text-transform: uppercase; letter-spacing: 0.5px; }
+            .badge { display: inline-block; background: #DBEAFE; color: #1E40AF; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; }
+            .box { background: #F8FAFC; border: 1px solid #E2E8F0; padding: 12px 16px; border-radius: 8px; margin: 8px 0; font-size: 13.5px; }
+            .footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #E2E8F0; font-size: 12px; color: #64748B; display: flex; justify-content: space-between; }
+            @media print { body { padding: 0; } }
+          </style>
+        </head>
+        <body>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 20px; font-weight: 800; color: #0A0F1D;">🔱 ABHIMANYU TECHNOLOGIES</div>
+            <div class="badge">CONFIDENTIAL SPECIFICATION</div>
+          </div>
+          <h1>${p.title.toUpperCase()} ARCHITECTURE SPECIFICATION</h1>
+          <p><strong>Platform:</strong> ${p.title} (${p.badge}) | <strong>Generated:</strong> ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+          
+          <h2>1. Frontend Architecture</h2>
+          <div class="box">${p.frontend}</div>
+
+          <h2>2. Backend & Microservices</h2>
+          <div class="box">${p.backend}</div>
+
+          <h2>3. Persistence & Data Pipeline</h2>
+          <div class="box">${p.database}</div>
+
+          <h2>4. Cloud Infrastructure & DevOps</h2>
+          <div class="box">${p.infra}</div>
+
+          <h2>5. Production Rationale & Bottleneck Mitigation</h2>
+          <div class="box">${p.rationale}</div>
+
+          <div class="footer">
+            <div>Office: Telangana, India • hello@abhimanyutech.example</div>
+            <div>https://abhimanu-technologies.vercel.app/</div>
+          </div>
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   const handleChatSend = (e) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
@@ -4849,6 +4960,8 @@ ENGAGEMENT COORDINATION
         changeAudioVolume={changeAudioVolume}
         audioFrequencyPreset={audioFrequencyPreset}
         changeAudioFrequencyPreset={changeAudioFrequencyPreset}
+        audioEchoEnabled={audioEchoEnabled}
+        toggleAudioEcho={toggleAudioEcho}
         onInstallPWA={handleInstallPWA}
         pwaInstalled={pwaInstalled}
         currentLang={currentLang}
@@ -6968,6 +7081,27 @@ ENGAGEMENT COORDINATION
                     </button>
 
                     <button
+                      onClick={handlePrintPDFBlueprint}
+                      style={{
+                        backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
+                        color: isDark ? '#38BDF8' : '#0284C7',
+                        border: isDark ? '1px solid #38BDF8' : '1px solid #38BDF8',
+                        padding: '10px 18px',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        transition: 'all 0.15s ease'
+                      }}
+                      title="Print or Save Architecture Blueprint as PDF"
+                    >
+                      <span>📄 Print / Save PDF</span>
+                    </button>
+
+                    <button
                       onClick={() => {
                         playClickSound('click');
                         setContactData((prev) => ({
@@ -8708,6 +8842,15 @@ ENGAGEMENT COORDINATION
                   </div>
                   <div style={{ ...styles.timelineBigNumber, color: '#10B981', fontSize: '28px', marginTop: '2px' }}>
                     {calcEstimatedBudget()}
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#94A3B8', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ color: '#10B981', fontSize: '9px' }}>●</span>
+                    <span>
+                      {estCurrency === 'INR' && 'Domestic Telangana & India billing · GST invoice compliant'}
+                      {estCurrency === 'USD' && 'Global US/Canada billing · Wire / Stripe / ACH (1 USD ≈ ₹85.4)'}
+                      {estCurrency === 'EUR' && 'European Union billing · SEPA / Stripe (1 EUR ≈ ₹92.8)'}
+                      {estCurrency === 'GBP' && 'UK & British billing · BACS / Stripe (1 GBP ≈ ₹110.2)'}
+                    </span>
                   </div>
                 </div>
 
