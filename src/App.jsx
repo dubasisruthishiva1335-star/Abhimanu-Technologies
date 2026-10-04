@@ -1281,17 +1281,28 @@ function AmbientSriYantraBackground({ isDark }) {
 
     render();
 
-    // 6-Part 60-Second Seamless Loop Auto-Chaining Support
+    // 1+2 Living Background Support: Option 1 (6-clip chain) + Option 2 (single 60s loop)
     const bgVid = document.getElementById('bg-video');
     const clips60s = ['part1.mp4', 'part2.mp4', 'part3.mp4', 'part4.mp4', 'part5.mp4', 'part6.mp4'];
     let clipIdx = 0;
+
     const onClipEnded = () => {
-      clipIdx = (clipIdx + 1) % clips60s.length;
-      if (bgVid) {
-        bgVid.src = clips60s[clipIdx];
+      if (!bgVid) return;
+      const currentSrc = bgVid.currentSrc || bgVid.src || '';
+
+      // Option 2: If playing single merged 60s loop
+      if (currentSrc.includes('sri-yantra-loop') || currentSrc.includes('generated_video')) {
+        bgVid.currentTime = 0;
         bgVid.play().catch(() => {});
+        return;
       }
+
+      // Option 1: If playing 6-clip chain (part 1 through 6)
+      clipIdx = (clipIdx + 1) % clips60s.length;
+      bgVid.src = clips60s[clipIdx];
+      bgVid.play().catch(() => {});
     };
+
     if (bgVid) bgVid.addEventListener('ended', onClipEnded);
 
     // Comprehensive Resource Disposal on Unmount
@@ -7821,19 +7832,22 @@ const styles = {
   // Sections
   section: {
     padding: '80px 0',
-    borderBottom: '1px solid #E2E8F0',
-    backgroundColor: '#FFFFFF'
+    borderBottom: '1px solid rgba(226, 232, 240, 0.7)',
+    backgroundColor: 'rgba(255, 255, 255, 0.78)',
+    backdropFilter: 'blur(10px)'
   },
   sectionLight: {
     padding: '80px 0',
-    borderBottom: '1px solid #E2E8F0',
-    backgroundColor: '#F8FAFC'
+    borderBottom: '1px solid rgba(226, 232, 240, 0.7)',
+    backgroundColor: 'rgba(248, 250, 252, 0.70)',
+    backdropFilter: 'blur(10px)'
   },
   sectionDark: {
     padding: '80px 0',
-    backgroundColor: '#0A0F1D',
+    backgroundColor: 'rgba(10, 15, 29, 0.65)',
     color: '#F8FAFC',
-    borderBottom: '1px solid #1E293B'
+    borderBottom: '1px solid rgba(30, 41, 59, 0.7)',
+    backdropFilter: 'blur(10px)'
   },
   sectionHeader: {
     maxWidth: '740px',
@@ -9258,7 +9272,9 @@ const styles = {
 
   // Footer
   footer: {
-    backgroundColor: '#0F172A',
+    backgroundColor: 'rgba(15, 23, 42, 0.76)',
+    backdropFilter: 'blur(10px)',
+    borderTop: '1px solid rgba(30, 41, 59, 0.6)',
     color: '#F8FAFC',
     padding: '60px 0 30px 0'
   },
@@ -9529,13 +9545,15 @@ function getStyles(isDark) {
     },
     section: {
       ...base.section,
-      backgroundColor: '#0A0F1D',
-      borderBottom: '1px solid #1E293B'
+      backgroundColor: 'rgba(10, 15, 29, 0.58)',
+      backdropFilter: 'blur(10px)',
+      borderBottom: '1px solid rgba(30, 41, 59, 0.6)'
     },
     sectionLight: {
       ...base.sectionLight,
-      backgroundColor: '#0F172A',
-      borderBottom: '1px solid #1E293B'
+      backgroundColor: 'rgba(15, 23, 42, 0.52)',
+      backdropFilter: 'blur(10px)',
+      borderBottom: '1px solid rgba(30, 41, 59, 0.6)'
     },
     sectionTitle: {
       ...base.sectionTitle,
@@ -9547,8 +9565,9 @@ function getStyles(isDark) {
     },
     serviceCard: {
       ...base.serviceCard,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.68)',
+      backdropFilter: 'blur(8px)',
+      border: '1px solid rgba(31, 41, 55, 0.8)'
     },
     serviceName: {
       ...base.serviceName,
