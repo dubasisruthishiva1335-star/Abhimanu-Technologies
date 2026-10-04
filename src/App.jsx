@@ -2548,6 +2548,8 @@ function CountUp({ target, suffix = '', duration = 1800 }) {
 function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, playClickSound }) {
   const [hoveredDot, setHoveredDot] = useState(null);
 
+  const trackRef = useRef(null);
+
   const dots = [
     { id: 'top', label: 'Hero & 3D Core', icon: '🔱' },
     { id: 'services', label: 'Engineering Services', icon: '⚡' },
@@ -2562,74 +2564,131 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
     { id: 'contact', label: 'Direct Scoping', icon: '✉️' }
   ];
 
+  const handleTrackClick = (e) => {
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const clickY = e.clientY - rect.top;
+    const pct = Math.max(0, Math.min(1, clickY / rect.height));
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: pct * maxScroll, behavior: 'smooth' });
+    if (playClickSound) playClickSound('click');
+  };
+
   return (
     <aside
       className="floating-dots-rail"
-      aria-label="Scroll Navigation Dots"
+      aria-label="Interactive Dots Scrollbar"
       style={{
         position: 'fixed',
-        right: '18px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        zIndex: 9500,
+        right: '0px',
+        top: 0,
+        bottom: 0,
+        width: '26px',
+        height: '100vh',
+        zIndex: 99999,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        background: 'rgba(10, 15, 29, 0.76)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        border: '1px solid rgba(56, 189, 248, 0.35)',
-        borderRadius: '32px',
-        padding: '14px 8px',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(56, 189, 248, 0.18)',
-        userSelect: 'none'
+        justifyContent: 'space-between',
+        background: 'rgba(10, 15, 29, 0.45)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        borderLeft: '1px solid rgba(56, 189, 248, 0.2)',
+        boxShadow: '-2px 0 20px rgba(0, 0, 0, 0.7), -1px 0 8px rgba(56, 189, 248, 0.1)',
+        userSelect: 'none',
+        padding: '8px 0'
       }}
     >
-      {/* Top Scroll Percentage Gauge */}
-      <div
-        style={{
-          fontSize: '9px',
-          fontWeight: '800',
-          color: '#FFD700',
-          marginBottom: '10px',
-          fontFamily: 'monospace',
-          letterSpacing: '0.5px',
-          textShadow: '0 0 6px rgba(255, 215, 0, 0.5)'
+      {/* Top Gauge / Jump to Top */}
+      <button
+        onClick={(e) => {
+          if (playClickSound) playClickSound('click');
+          scrollTo(e, 'top');
         }}
-        title={`Current Page Scroll: ${Math.round(scrollProgress)}%`}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: scrollProgress < 10 ? '#FFD700' : '#38BDF8',
+          fontSize: '11px',
+          fontWeight: '800',
+          cursor: 'pointer',
+          padding: '4px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '2px',
+          transition: 'all 0.2s ease'
+        }}
+        title="Scroll to Top"
       >
-        {Math.round(scrollProgress)}%
-      </div>
+        <span>▲</span>
+        <span style={{ fontSize: '8px', fontFamily: 'monospace', color: '#FFD700' }}>
+          {Math.round(scrollProgress)}%
+        </span>
+      </button>
 
-      {/* Vertical Dots Track with Liquid Progress Line */}
-      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '11px', alignItems: 'center' }}>
-        {/* Background track rail */}
+      {/* Full-Height Vertical Rail Track with Dots */}
+      <div
+        ref={trackRef}
+        onClick={handleTrackClick}
+        style={{
+          position: 'relative',
+          flex: 1,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px 0',
+          cursor: 'pointer'
+        }}
+        title="Click anywhere to jump scroll"
+      >
+        {/* Background track line */}
         <div
           style={{
             position: 'absolute',
-            top: '4px',
-            bottom: '4px',
+            top: '8px',
+            bottom: '8px',
             width: '2px',
-            backgroundColor: 'rgba(56, 189, 248, 0.2)',
+            backgroundColor: 'rgba(56, 189, 248, 0.18)',
             zIndex: 0
           }}
         />
 
-        {/* Liquid filled progress beam */}
+        {/* Liquid progress beam */}
         <div
           style={{
             position: 'absolute',
-            top: '4px',
-            height: `${Math.min(100, Math.max(0, scrollProgress))}%`,
+            top: '8px',
+            height: `${Math.min(96, Math.max(0, scrollProgress * 0.96))}%`,
             width: '2px',
             background: 'linear-gradient(to bottom, #FFD700, #38BDF8)',
-            boxShadow: '0 0 10px #38BDF8',
+            boxShadow: '0 0 10px #38BDF8, 0 0 4px #FFD700',
             zIndex: 1,
+            pointerEvents: 'none',
             transition: 'height 0.1s ease-out'
           }}
         />
 
-        {/* Section Dots */}
+        {/* Live Scroll Thumb Indicator following position */}
+        <div
+          style={{
+            position: 'absolute',
+            top: `calc(${Math.min(94, Math.max(0, scrollProgress * 0.94))}% + 4px)`,
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            backgroundColor: '#FFD700',
+            boxShadow: '0 0 12px #FFD700, 0 0 6px #38BDF8',
+            zIndex: 3,
+            pointerEvents: 'none',
+            transform: 'translateX(0)',
+            transition: 'top 0.08s ease-out'
+          }}
+        />
+
+        {/* 11 Section Dots */}
         {dots.map((dot) => {
           const isActive = activeSection === dot.id;
           const isHovered = hoveredDot === dot.id;
@@ -2637,52 +2696,60 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
           return (
             <div
               key={dot.id}
-              style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center' }}
+              style={{ position: 'relative', zIndex: 4, display: 'flex', alignItems: 'center' }}
               onMouseEnter={() => {
                 setHoveredDot(dot.id);
                 if (playClickSound) playClickSound('crystal');
               }}
               onMouseLeave={() => setHoveredDot(null)}
             >
-              {/* Tooltip on left */}
+              {/* Tooltip popping to the left */}
               {isHovered && (
                 <div
+                  className="dot-tooltip"
                   style={{
                     position: 'absolute',
-                    right: '28px',
+                    right: '32px',
                     whiteSpace: 'nowrap',
-                    background: 'rgba(15, 23, 42, 0.95)',
+                    background: 'rgba(10, 15, 29, 0.96)',
                     border: '1px solid rgba(56, 189, 248, 0.45)',
-                    boxShadow: '0 6px 24px rgba(0, 0, 0, 0.85), 0 0 16px rgba(56, 189, 248, 0.25)',
+                    boxShadow: '0 6px 24px rgba(0, 0, 0, 0.9), 0 0 16px rgba(56, 189, 248, 0.3)',
                     color: '#F8FAFC',
-                    padding: '5px 12px',
+                    padding: '6px 14px',
                     borderRadius: '8px',
-                    fontSize: '11.5px',
+                    fontSize: '12px',
                     fontWeight: '700',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '7px',
+                    gap: '8px',
                     pointerEvents: 'none',
-                    animation: 'fadeInLeft 0.15s ease'
+                    animation: 'fadeInLeft 0.15s ease',
+                    zIndex: 100000
                   }}
                 >
-                  <span>{dot.icon}</span>
+                  <span style={{ fontSize: '14px' }}>{dot.icon}</span>
                   <span>{dot.label}</span>
-                  {isActive && <span style={{ color: '#10B981', fontSize: '10px', fontWeight: '800' }}>● ACTIVE</span>}
+                  {isActive && (
+                    <span style={{ color: '#10B981', fontSize: '10px', fontWeight: '800', marginLeft: '4px' }}>
+                      ● ACTIVE
+                    </span>
+                  )}
                 </div>
               )}
 
-              {/* The Dot Button */}
+              {/* Dot Button */}
               <button
+                className="dot-btn"
                 onClick={(e) => {
+                  e.stopPropagation();
                   if (playClickSound) playClickSound('chime');
                   scrollTo(e, dot.id);
                 }}
                 style={{
-                  width: isActive ? '14px' : '9px',
-                  height: isActive ? '14px' : '9px',
+                  width: isActive ? '13px' : isHovered ? '11px' : '7.5px',
+                  height: isActive ? '13px' : isHovered ? '11px' : '7.5px',
                   borderRadius: '50%',
-                  backgroundColor: isActive ? '#38BDF8' : isHovered ? '#FFD700' : 'rgba(148, 163, 184, 0.45)',
+                  backgroundColor: isActive ? '#38BDF8' : isHovered ? '#FFD700' : 'rgba(148, 163, 184, 0.5)',
                   border: isActive
                     ? '2px solid #FFD700'
                     : isHovered
@@ -2695,9 +2762,8 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
                     : 'none',
                   cursor: 'pointer',
                   padding: 0,
-                  transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                  transform: isHovered || isActive ? 'scale(1.2)' : 'scale(1)',
-                  position: 'relative'
+                  transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transform: isHovered || isActive ? 'scale(1.25)' : 'scale(1)'
                 }}
                 aria-label={`Jump to ${dot.label}`}
                 title={dot.label}
@@ -2707,28 +2773,28 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
         })}
       </div>
 
-      {/* Quick Jump to Top / Bottom */}
+      {/* Bottom Jump Arrow */}
       <button
         onClick={(e) => {
           if (playClickSound) playClickSound('click');
-          scrollTo(e, scrollProgress > 80 ? 'top' : 'contact');
+          scrollTo(e, scrollProgress > 85 ? 'top' : 'contact');
         }}
         style={{
-          marginTop: '10px',
           background: 'transparent',
           border: 'none',
-          color: '#38BDF8',
+          color: scrollProgress > 85 ? '#FFD700' : '#38BDF8',
           fontSize: '11px',
+          fontWeight: '800',
           cursor: 'pointer',
-          padding: '2px',
+          padding: '4px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           transition: 'transform 0.2s ease'
         }}
-        title={scrollProgress > 80 ? 'Jump to Top (Hero)' : 'Jump to Scoping (Contact)'}
+        title={scrollProgress > 85 ? 'Jump to Top' : 'Jump to Scoping Form'}
       >
-        {scrollProgress > 80 ? '▲' : '▼'}
+        {scrollProgress > 85 ? '▲' : '▼'}
       </button>
     </aside>
   );

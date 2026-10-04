@@ -157,6 +157,26 @@
         100% { transform: scaleY(1); }
       }
 
+      /* Completely remove native default browser vertical scrollbar */
+      html,
+      body {
+        scrollbar-width: none !important; /* Firefox */
+        -ms-overflow-style: none !important; /* IE and Edge */
+        overflow-y: scroll;
+      }
+
+      ::-webkit-scrollbar {
+        width: 0px !important;
+        height: 0px !important;
+        display: none !important;
+        background: transparent !important;
+      }
+
+      * {
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+      }
+
       html {
         scroll-behavior: smooth;
         background-color: var(--bg) !important;
@@ -261,6 +281,16 @@
 
       @media (max-width: 868px) {
         .floating-dots-rail {
+          right: 2px !important;
+          width: 14px !important;
+          padding: 6px 1px !important;
+          background: rgba(10, 15, 29, 0.6) !important;
+        }
+        .floating-dots-rail .dot-btn {
+          width: 6px !important;
+          height: 6px !important;
+        }
+        .floating-dots-rail .dot-tooltip {
           display: none !important;
         }
         .hud-hero-card {
