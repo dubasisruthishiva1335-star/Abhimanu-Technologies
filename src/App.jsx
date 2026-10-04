@@ -1743,14 +1743,83 @@ function ChakraCanvas({ themeKey = 'cyan' }) {
   );
 }
 
-// --- THREE.JS 3D STUDIO CANVAS (SHAPES, MATERIALS, LIGHTS) ---
-function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle, autoRotate }) {
+// --- SIMPLE FAST CLIENT-SIDE OBJ PARSER ---
+function parseOBJGeometry(text) {
+  const lines = text.split('\n');
+  const positions = [];
+  const rawPositions = [];
+
+  for (let line of lines) {
+    line = line.trim();
+    if (!line || line.startsWith('#')) continue;
+    const parts = line.split(/\s+/);
+    const type = parts[0];
+
+    if (type === 'v') {
+      rawPositions.push([parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3])]);
+    } else if (type === 'f') {
+      const faceVertices = parts.slice(1);
+      for (let i = 1; i < faceVertices.length - 1; i++) {
+        [faceVertices[0], faceVertices[i], faceVertices[i + 1]].forEach((vStr) => {
+          const vIdx = parseInt(vStr.split('/')[0], 10) - 1;
+          if (rawPositions[vIdx]) {
+            positions.push(...rawPositions[vIdx]);
+          }
+        });
+      }
+    }
+  }
+
+  const geom = new THREE.BufferGeometry();
+  geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geom.computeVertexNormals();
+  geom.center();
+  geom.computeBoundingSphere();
+  if (geom.boundingSphere && geom.boundingSphere.radius > 0) {
+    const scale = 2.4 / geom.boundingSphere.radius;
+    geom.scale(scale, scale, scale);
+  }
+  return geom;
+}
+
+// --- THREE.JS 3D STUDIO CANVAS (SHAPES, MATERIALS, LIGHTS & MODEL UPLOAD) ---
+function StudioCanvas({
+  shape,
+  materialType,
+  colorHex,
+  rotationSpeed,
+  lightAngle,
+  autoRotate,
+  customGeom = null,
+  onUploadOBJ = null,
+  customModelInfo = null
+}) {
   const mountRef = useRef(null);
   const meshRef = useRef(null);
   const dirLightRef = useRef(null);
   const rendererRef = useRef(null);
+  const fileInputRef = useRef(null);
   const isDraggingRef = useRef(false);
   const prevMousePos = useRef({ x: 0, y: 0 });
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target.result;
+        const geom = parseOBJGeometry(text);
+        const vertexCount = geom.getAttribute('position')?.count || 0;
+        if (onUploadOBJ) {
+          onUploadOBJ(geom, file.name, vertexCount);
+        }
+      } catch (err) {
+        alert('Could not parse the .OBJ file. Please verify it is a valid Wavefront .OBJ asset.');
+      }
+    };
+    reader.readAsText(file);
+  };
 
   const handleDownloadSnapshot = () => {
     if (!rendererRef.current) return;
@@ -1822,7 +1891,9 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
 
     // Create Geometry based on selected shape
     let geom;
-    if (shape === 'flowField') {
+    if (shape === 'custom' && customGeom) {
+      geom = customGeom.clone();
+    } else if (shape === 'flowField') {
       geom = new THREE.IcosahedronGeometry(1.3, 2);
     } else if (shape === 'torus') {
       geom = new THREE.TorusGeometry(1.2, 0.45, 32, 64);
@@ -1956,16 +2027,45 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
       geom.dispose();
       mat.dispose();
     };
-  }, [shape, materialType, colorHex, rotationSpeed, lightAngle, autoRotate]);
+  }, [shape, materialType, colorHex, rotationSpeed, lightAngle, autoRotate, customGeom]);
 
   return (
-    <div style={styles.studioCanvasBox}>
-      <div style={{ ...styles.studioCanvasBadgeRow, justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', gap: '6px' }}>
+    <div style={{ ...styles.studioCanvasBox, position: 'relative' }}>
+      <div style={{ ...styles.studioCanvasBadgeRow, justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
           <span style={styles.webglTag}>REAL-TIME WEBGL</span>
           <span style={styles.dragTag}>DRAG TO ROTATE</span>
         </div>
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept=".obj"
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              backgroundColor: 'rgba(245, 158, 11, 0.88)',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '4px 10px',
+              fontSize: '11px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              backdropFilter: 'blur(4px)',
+              boxShadow: '0 0 10px rgba(245, 158, 11, 0.3)',
+              transition: 'all 0.15s ease'
+            }}
+            title="Upload and inspect your own 3D model (.OBJ) in real-time WebGL"
+          >
+            📁 Upload OBJ
+          </button>
           <button
             onClick={handleDownloadSnapshot}
             style={{
@@ -2010,6 +2110,12 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
           </button>
         </div>
       </div>
+      {customModelInfo && (
+        <div style={{ position: 'absolute', bottom: '12px', left: '14px', zIndex: 10, background: 'rgba(15, 23, 42, 0.9)', border: '1px solid #38BDF8', padding: '4px 10px', borderRadius: '6px', fontSize: '10.5px', color: '#38BDF8', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span>📁 {customModelInfo.name}</span>
+          <span style={{ color: '#FFD700' }}>({customModelInfo.vertexCount.toLocaleString()} vertices)</span>
+        </div>
+      )}
       <div ref={mountRef} style={styles.canvasMount} />
     </div>
   );
@@ -2510,7 +2616,11 @@ function FuturisticCommandSidebar({
   pwaInstalled,
   currentLang = 'en',
   setCurrentLang,
-  onOpenCaseStudies
+  onOpenCaseStudies,
+  audioVolume = 0.35,
+  changeAudioVolume,
+  audioFrequencyPreset = 432,
+  changeAudioFrequencyPreset
 }) {
   const [activeTabDot, setActiveTabDot] = useState(0);
   const [currentTimeIST, setCurrentTimeIST] = useState('');
@@ -2805,6 +2915,61 @@ function FuturisticCommandSidebar({
                     ))}
                   </div>
                 )}
+
+                {/* Frequency Presets */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', marginTop: '8px' }}>
+                  {[
+                    { freq: 432, label: '432Hz Equil' },
+                    { freq: 528, label: '528Hz Miracle' },
+                    { freq: 639, label: '639Hz Heart' },
+                    { freq: 108, label: '108Hz Root' }
+                  ].map((p) => {
+                    const active = audioFrequencyPreset === p.freq;
+                    return (
+                      <button
+                        key={p.freq}
+                        onClick={() => {
+                          if (changeAudioFrequencyPreset) changeAudioFrequencyPreset(p.freq);
+                          if (playClickSound) playClickSound('crystal');
+                        }}
+                        style={{
+                          flex: 1,
+                          background: active ? '#2563EB' : 'rgba(30, 41, 59, 0.6)',
+                          border: active ? '1px solid #38BDF8' : '1px solid #334155',
+                          color: active ? '#FFFFFF' : '#94A3B8',
+                          padding: '4px 2px',
+                          borderRadius: '6px',
+                          fontSize: '9px',
+                          fontWeight: active ? '800' : '600',
+                          cursor: 'pointer',
+                          textAlign: 'center',
+                          transition: 'all 0.15s ease'
+                        }}
+                        title={`Tune sacred root frequency to ${p.freq}Hz`}
+                      >
+                        {p.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Volume Slider */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                  <span style={{ fontSize: '10px', color: '#94A3B8', whiteSpace: 'nowrap' }}>
+                    🔊 {Math.round(audioVolume * 100)}%
+                  </span>
+                  <input
+                    type="range"
+                    min="0.05"
+                    max="1.0"
+                    step="0.05"
+                    value={audioVolume}
+                    onChange={(e) => {
+                      if (changeAudioVolume) changeAudioVolume(parseFloat(e.target.value));
+                    }}
+                    style={{ flex: 1, height: '4px', accentColor: '#38BDF8', cursor: 'pointer' }}
+                  />
+                </div>
               </div>
 
               {/* Fullscreen IMAX Shortcut */}
@@ -3641,11 +3806,14 @@ export default function App() {
   const [sriYantraModalOpen, setSriYantraModalOpen] = useState(false);
   const [sriYantraEntered, setSriYantraEntered] = useState(false);
   const [sriYantraAudioPlaying, setSriYantraAudioPlaying] = useState(false);
+  const [audioVolume, setAudioVolume] = useState(0.35);
+  const [audioFrequencyPreset, setAudioFrequencyPreset] = useState(432);
   const sriYantraAudioCtxRef = useRef(null);
   const sriYantraGainRef = useRef(null);
   const sriYantraAnalyserRef = useRef(null);
+  const sriYantraOscsRef = useRef([]);
 
-  const startSriYantraAudio = () => {
+  const startSriYantraAudio = (initialFreq = audioFrequencyPreset) => {
     try {
       if (!sriYantraAudioCtxRef.current) {
         sriYantraAudioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
@@ -3661,21 +3829,22 @@ export default function App() {
         sriYantraGainRef.current = master;
         sriYantraAnalyserRef.current = analyser;
 
+        const baseF = initialFreq || 432;
         const osc1 = ctx.createOscillator();
         osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(432, ctx.currentTime);
+        osc1.frequency.setValueAtTime(baseF, ctx.currentTime);
 
         const osc2 = ctx.createOscillator();
         osc2.type = 'triangle';
-        osc2.frequency.setValueAtTime(216, ctx.currentTime);
+        osc2.frequency.setValueAtTime(baseF / 2, ctx.currentTime);
 
         const osc3 = ctx.createOscillator();
         osc3.type = 'sine';
-        osc3.frequency.setValueAtTime(108, ctx.currentTime);
+        osc3.frequency.setValueAtTime(baseF / 4, ctx.currentTime);
 
         const oscBinaural = ctx.createOscillator();
         oscBinaural.type = 'sine';
-        oscBinaural.frequency.setValueAtTime(436, ctx.currentTime);
+        oscBinaural.frequency.setValueAtTime(baseF + 4, ctx.currentTime);
 
         const g1 = ctx.createGain(); g1.gain.value = 0.08;
         const g2 = ctx.createGain(); g2.gain.value = 0.05;
@@ -3687,13 +3856,41 @@ export default function App() {
         osc3.connect(g3); g3.connect(master);
         oscBinaural.connect(gB); gB.connect(master);
 
+        sriYantraOscsRef.current = [osc1, osc2, osc3, oscBinaural];
+
         osc1.start(); osc2.start(); osc3.start(); oscBinaural.start();
       }
       const ctx = sriYantraAudioCtxRef.current;
       if (ctx.state === 'suspended') ctx.resume();
-      sriYantraGainRef.current.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 2.0);
+      sriYantraGainRef.current.gain.linearRampToValueAtTime(audioVolume, ctx.currentTime + 1.2);
       setSriYantraAudioPlaying(true);
     } catch {}
+  };
+
+  const changeAudioVolume = (vol) => {
+    setAudioVolume(vol);
+    if (sriYantraAudioCtxRef.current && sriYantraGainRef.current && sriYantraAudioPlaying) {
+      const ctx = sriYantraAudioCtxRef.current;
+      sriYantraGainRef.current.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.1);
+    }
+  };
+
+  const changeAudioFrequencyPreset = (freq) => {
+    setAudioFrequencyPreset(freq);
+    if (sriYantraAudioCtxRef.current && sriYantraOscsRef.current.length >= 4) {
+      const ctx = sriYantraAudioCtxRef.current;
+      const [osc1, osc2, osc3, oscBinaural] = sriYantraOscsRef.current;
+      try {
+        const t = ctx.currentTime + 0.15;
+        osc1.frequency.linearRampToValueAtTime(freq, t);
+        osc2.frequency.linearRampToValueAtTime(freq / 2, t);
+        osc3.frequency.linearRampToValueAtTime(freq / 4, t);
+        oscBinaural.frequency.linearRampToValueAtTime(freq + 4, t);
+      } catch {}
+    }
+    if (!sriYantraAudioPlaying) {
+      startSriYantraAudio(freq);
+    }
   };
 
   const toggleSriYantraAudio = () => {
@@ -3707,7 +3904,7 @@ export default function App() {
       setSriYantraAudioPlaying(false);
     } else {
       if (ctx.state === 'suspended') ctx.resume();
-      sriYantraGainRef.current.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.6);
+      sriYantraGainRef.current.gain.linearRampToValueAtTime(audioVolume, ctx.currentTime + 0.6);
       setSriYantraAudioPlaying(true);
     }
   };
@@ -3854,6 +4051,15 @@ export default function App() {
   const [studioRotationSpeed, setStudioRotationSpeed] = useState(1.0);
   const [studioLightAngle, setStudioLightAngle] = useState(40);
   const [studioAutoRotate, setStudioAutoRotate] = useState(true);
+  const [customGeom, setCustomGeom] = useState(null);
+  const [customModelInfo, setCustomModelInfo] = useState(null);
+
+  const handleUploadOBJ = (geometry, fileName, vertexCount) => {
+    setCustomGeom(geometry);
+    setCustomModelInfo({ name: fileName, vertices: vertexCount });
+    setStudioShape('custom');
+    playClickSound('success');
+  };
 
   // Building Viewer State
   const [buildingStoreys, setBuildingStoreys] = useState(10);
@@ -4367,6 +4573,10 @@ ENGAGEMENT COORDINATION
         playClickSound={playClickSound}
         sriYantraAudioPlaying={sriYantraAudioPlaying}
         toggleSriYantraAudio={toggleSriYantraAudio}
+        audioVolume={audioVolume}
+        changeAudioVolume={changeAudioVolume}
+        audioFrequencyPreset={audioFrequencyPreset}
+        changeAudioFrequencyPreset={changeAudioFrequencyPreset}
         onInstallPWA={handleInstallPWA}
         pwaInstalled={pwaInstalled}
         currentLang={currentLang}
@@ -6630,6 +6840,9 @@ ENGAGEMENT COORDINATION
                 rotationSpeed={studioRotationSpeed}
                 lightAngle={studioLightAngle}
                 autoRotate={studioAutoRotate}
+                customGeom={customGeom}
+                onUploadOBJ={handleUploadOBJ}
+                customModelInfo={customModelInfo}
               />
             </div>
 
@@ -6639,6 +6852,7 @@ ENGAGEMENT COORDINATION
                 <label style={styles.controlLabel}>Shape</label>
                 <div style={styles.btnSelectorGrid}>
                   {[
+                    ...(customGeom ? [{ id: 'custom', label: `📁 ${customModelInfo?.name ? (customModelInfo.name.length > 12 ? customModelInfo.name.substring(0, 10) + '...' : customModelInfo.name) : 'Custom OBJ'}` }] : []),
                     { id: 'flowField', label: '🌊 Flow Vortex' },
                     { id: 'torus', label: 'Torus' },
                     { id: 'knot', label: 'Knot' },
