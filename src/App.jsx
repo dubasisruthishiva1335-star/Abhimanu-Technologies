@@ -4468,6 +4468,52 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Mobile swipe gesture: swipe up/down to advance/retreat sections
+  useEffect(() => {
+    const SECTION_ORDER = ['top', 'services', 'studio', 'tech-stack', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
+    let touchStartY = null;
+    let touchStartX = null;
+    const SWIPE_THRESHOLD = 52;
+
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e) => {
+      if (touchStartY === null) return;
+      const dy = touchStartY - e.changedTouches[0].clientY;
+      const dx = Math.abs(touchStartX - e.changedTouches[0].clientX);
+      touchStartY = null;
+      touchStartX = null;
+      // Only trigger on vertical-dominant swipes
+      if (Math.abs(dy) < SWIPE_THRESHOLD || dx > Math.abs(dy) * 0.7) return;
+      // Don't trigger if swiping inside a scrollable card/container
+      const target = e.target;
+      if (target.closest('.no-swipe') || target.closest('input') || target.closest('textarea')) return;
+
+      const currentIdx = SECTION_ORDER.indexOf(activeSection);
+      if (dy > 0) {
+        // Swipe UP → next section
+        const nextId = SECTION_ORDER[Math.min(SECTION_ORDER.length - 1, currentIdx + 1)];
+        const el = document.getElementById(nextId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Swipe DOWN → previous section
+        const prevId = SECTION_ORDER[Math.max(0, currentIdx - 1)];
+        const el = document.getElementById(prevId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [activeSection]);
+
   // Global Sri Yantra Background breathing overlay & visibility keeper
   useEffect(() => {
     let rotation = 0;
@@ -4559,6 +4605,9 @@ export default function App() {
 
   // Client Onboarding Sprint Roadmap State
   const [activeRoadmapWeek, setActiveRoadmapWeek] = useState(0);
+
+  // Cloud Sandbox topology explorer state
+  const cloudSandboxNode = useState(null);
 
   // Hero Typing Animation State
   const TYPING_PHRASES = ['web applications', 'mobile apps', '3D experiences', 'IT systems'];
@@ -7284,6 +7333,196 @@ ENGAGEMENT COORDINATION
               );
             })()}
           </div>
+        </div>
+      </section>
+
+      {/* --- 3D SYSTEM TOPOLOGY & LIVE CLOUD SANDBOX --- */}
+      <section id="cloud-sandbox" style={{
+        backgroundColor: isDark ? '#050A14' : '#F0F7FF',
+        borderBottom: isDark ? '1px solid #1E293B' : '1px solid #DBEAFE',
+        padding: '56px 0',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Animated mesh grid bg */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: isDark
+            ? 'linear-gradient(rgba(37,99,235,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.06) 1px, transparent 1px)'
+            : 'linear-gradient(rgba(37,99,235,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.05) 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }} />
+        <div style={styles.container}>
+          <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+            <span style={styles.sectionEyebrow}>Interactive Cloud Sandbox</span>
+            <h2 style={{ ...styles.sectionTitle, margin: '6px 0 8px 0', fontSize: '26px' }}>
+              Live System Topology Explorer
+            </h2>
+            <p style={{ ...styles.sectionSubtitle, maxWidth: '560px', margin: '0 auto' }}>
+              Click nodes to inspect real deployment tiers — from edge CDN to core database replication clusters.
+            </p>
+          </div>
+
+          {(() => {
+            const nodes = [
+              { id: 'cdn',       label: 'Global CDN',          icon: '🌍', x: '50%',  y: '5%',  color: '#10B981', detail: 'Cloudflare Workers · 300+ PoPs · <10ms TTFB globally' },
+              { id: 'lb',        label: 'Load Balancer',       icon: '⚖️', x: '50%',  y: '20%', color: '#38BDF8', detail: 'NGINX + HAProxy · Round-robin + health checks · TLS termination' },
+              { id: 'api-a',     label: 'API Node A',          icon: '⚙️', x: '25%',  y: '38%', color: '#6366F1', detail: 'Node.js 20 LTS · Express · 512MB RAM · Auto-scale to 12 replicas' },
+              { id: 'api-b',     label: 'API Node B',          icon: '⚙️', x: '75%',  y: '38%', color: '#6366F1', detail: 'Node.js 20 LTS · Express · 512MB RAM · Blue-green deployment' },
+              { id: 'ws',        label: 'WebSocket Hub',       icon: '📡', x: '50%',  y: '38%', color: '#F59E0B', detail: 'Socket.io · Redis Pub/Sub adapter · 50K concurrent connections' },
+              { id: 'cache',     label: 'Redis Cache',         icon: '⚡', x: '15%',  y: '58%', color: '#EF4444', detail: 'Redis 7 Cluster · 99.99% availability · LRU eviction · AOF persistence' },
+              { id: 'queue',     label: 'Task Queue',          icon: '📥', x: '38%',  y: '60%', color: '#8B5CF6', detail: 'BullMQ + Redis · Retry policies · Dead-letter queue · Priority lanes' },
+              { id: 'db-pri',    label: 'DB Primary',          icon: '🗄️', x: '63%',  y: '60%', color: '#2563EB', detail: 'PostgreSQL 16 · WAL streaming · PITR backups · <5ms write latency' },
+              { id: 'db-rep',    label: 'DB Replica',          icon: '🗄️', x: '85%',  y: '58%', color: '#1D4ED8', detail: 'PostgreSQL 16 Read Replica · Async replication · Handles 80% of reads' },
+              { id: 'storage',   label: 'Object Storage',      icon: '🪣', x: '28%',  y: '80%', color: '#0284C7', detail: 'S3-compatible · Lifecycle policies · Server-side encryption · CDN-linked' },
+              { id: 'monitor',   label: 'Observability',       icon: '📊', x: '72%',  y: '80%', color: '#059669', detail: 'Prometheus + Grafana · OpenTelemetry traces · PagerDuty alerting' },
+            ];
+
+            const edges = [
+              ['cdn','lb'], ['lb','api-a'], ['lb','api-b'], ['lb','ws'],
+              ['api-a','cache'], ['api-a','queue'], ['api-b','db-pri'],
+              ['api-b','queue'], ['ws','cache'], ['db-pri','db-rep'],
+              ['queue','storage'], ['api-a','monitor'], ['api-b','monitor'],
+              ['db-pri','monitor'],
+            ];
+
+            return (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', alignItems: 'start' }}>
+                {/* Topology Graph Canvas */}
+                <div style={{ position: 'relative', height: '420px', background: isDark ? 'rgba(15,23,42,0.7)' : '#FFFFFF', borderRadius: '16px', border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0', overflow: 'hidden' }}>
+                  <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
+                    <defs>
+                      <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L6,3 z" fill="rgba(56,189,248,0.5)" />
+                      </marker>
+                    </defs>
+                    {edges.map(([fromId, toId], i) => {
+                      const from = nodes.find(n => n.id === fromId);
+                      const to = nodes.find(n => n.id === toId);
+                      if (!from || !to) return null;
+                      const x1 = parseFloat(from.x);
+                      const y1 = parseFloat(from.y) + 3;
+                      const x2 = parseFloat(to.x);
+                      const y2 = parseFloat(to.y) + 3;
+                      return (
+                        <line
+                          key={i}
+                          x1={`${x1}%`} y1={`${y1}%`}
+                          x2={`${x2}%`} y2={`${y2}%`}
+                          stroke={isDark ? 'rgba(56,189,248,0.25)' : 'rgba(37,99,235,0.2)'}
+                          strokeWidth="1.5"
+                          strokeDasharray="4 4"
+                          markerEnd="url(#arrow)"
+                        />
+                      );
+                    })}
+                  </svg>
+                  {nodes.map((node) => {
+                    const [selNode, setSelNode] = cloudSandboxNode;
+                    const isSelected = selNode === node.id;
+                    return (
+                      <button
+                        key={node.id}
+                        onClick={() => {
+                          setSelNode(isSelected ? null : node.id);
+                          playClickSound('chime');
+                        }}
+                        style={{
+                          position: 'absolute',
+                          left: node.x,
+                          top: node.y,
+                          transform: isSelected ? 'translate(-50%,-50%) scale(1.12)' : 'translate(-50%,-50%) scale(1)',
+                          background: isSelected
+                            ? `${node.color}22`
+                            : isDark ? 'rgba(15,23,42,0.9)' : '#FFFFFF',
+                          border: `2px solid ${isSelected ? node.color : isDark ? '#334155' : '#E2E8F0'}`,
+                          borderRadius: '10px',
+                          padding: '6px 10px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '2px',
+                          boxShadow: isSelected ? `0 0 16px ${node.color}55` : '0 2px 8px rgba(0,0,0,0.15)',
+                          transition: 'all 0.2s cubic-bezier(0.34,1.56,0.64,1)',
+                          zIndex: isSelected ? 5 : 2,
+                          minWidth: '72px'
+                        }}
+                        title={node.detail}
+                      >
+                        <span style={{ fontSize: '16px' }}>{node.icon}</span>
+                        <span style={{ fontSize: '9.5px', fontWeight: '700', color: isSelected ? node.color : isDark ? '#94A3B8' : '#64748B', whiteSpace: 'nowrap', letterSpacing: '0.2px' }}>
+                          {node.label}
+                        </span>
+                        {isSelected && (
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: node.color, boxShadow: `0 0 8px ${node.color}`, marginTop: '2px', display: 'block' }} />
+                        )}
+                      </button>
+                    );
+                  })}
+                  {/* Legend */}
+                  <div style={{ position: 'absolute', bottom: '10px', left: '12px', display: 'flex', gap: '12px', fontSize: '10px', color: isDark ? '#64748B' : '#94A3B8' }}>
+                    <span>-- Data flow</span>
+                    <span>Click node to inspect</span>
+                  </div>
+                </div>
+
+                {/* Inspector Panel */}
+                <div style={{ background: isDark ? 'rgba(15,23,42,0.8)' : '#FFFFFF', borderRadius: '16px', border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0', padding: '20px', minHeight: '420px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#38BDF8', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    Node Inspector
+                  </div>
+                  {(() => {
+                    const [selNode] = cloudSandboxNode;
+                    const found = nodes.find(n => n.id === selNode);
+                    if (!found) return (
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', color: isDark ? '#475569' : '#94A3B8', textAlign: 'center' }}>
+                        <span style={{ fontSize: '32px' }}>🔍</span>
+                        <p style={{ fontSize: '13px', fontWeight: '600' }}>Select a topology node to inspect its configuration, performance specs, and deployment role.</p>
+                      </div>
+                    );
+                    const connectedIds = edges.filter(([a,b]) => a === found.id || b === found.id).map(([a,b]) => a === found.id ? b : a);
+                    const connectedNodes = nodes.filter(n => connectedIds.includes(n.id));
+                    return (
+                      <>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <span style={{ fontSize: '28px' }}>{found.icon}</span>
+                          <div>
+                            <div style={{ fontSize: '16px', fontWeight: '800', color: found.color }}>{found.label}</div>
+                            <div style={{ fontSize: '11px', color: isDark ? '#64748B' : '#94A3B8' }}>{found.id.toUpperCase()} tier</div>
+                          </div>
+                        </div>
+                        <div style={{ background: isDark ? 'rgba(37,99,235,0.08)' : '#EFF6FF', border: `1px solid ${found.color}44`, borderRadius: '10px', padding: '12px', fontSize: '12.5px', color: isDark ? '#CBD5E1' : '#334155', lineHeight: '1.6', fontWeight: '500' }}>
+                          {found.detail}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '11px', fontWeight: '700', color: isDark ? '#94A3B8' : '#64748B', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Connected Nodes ({connectedNodes.length})
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                            {connectedNodes.map(cn => (
+                              <span key={cn.id} style={{ fontSize: '11px', padding: '3px 10px', borderRadius: '20px', background: isDark ? 'rgba(51,65,85,0.5)' : '#F1F5F9', border: isDark ? '1px solid #334155' : '1px solid #E2E8F0', color: cn.color, fontWeight: '700' }}>
+                                {cn.icon} {cn.label}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            scrollTo(null, 'contact');
+                            playClickSound('chime');
+                          }}
+                          style={{ marginTop: 'auto', background: '#2563EB', color: '#FFFFFF', border: 'none', borderRadius: '8px', padding: '10px 16px', fontSize: '13px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s' }}
+                        >
+                          Discuss this Architecture →
+                        </button>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
