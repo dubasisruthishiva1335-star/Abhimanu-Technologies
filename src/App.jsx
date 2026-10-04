@@ -1621,6 +1621,33 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Global Sri Yantra Background breathing overlay & visibility keeper
+  useEffect(() => {
+    let rotation = 0;
+    const interval = setInterval(() => {
+      rotation += 0.05;
+      const overlayEl = document.getElementById('sri-yantra-bg-overlay');
+      if (overlayEl) {
+        overlayEl.style.opacity = isDark
+          ? `${0.82 + Math.sin(rotation / 10) * 0.12}`
+          : `${0.88 + Math.sin(rotation / 10) * 0.08}`;
+      }
+    }, 50);
+
+    const handleVis = () => {
+      const v = document.getElementById('bg-video');
+      if (v && document.visibilityState === 'visible') {
+        v.play().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', handleVis);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVis);
+    };
+  }, [isDark]);
+
   const filteredCommands = COMMAND_ITEMS.filter((item) => {
     if (!commandQuery.trim()) return true;
     const q = commandQuery.toLowerCase();
@@ -1999,6 +2026,58 @@ Email: hello@abhimanyutech.example | Office: Telangana, India • Available Glob
 
   return (
     <div style={styles.page}>
+      {/* --- GLOBAL SEAMLESS SRI YANTRA / BRAHMANDA AMBIENT BACKGROUND VIDEO --- */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+          pointerEvents: 'none',
+          overflow: 'hidden'
+        }}
+      >
+        <video
+          id="bg-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            minWidth: '100vw',
+            minHeight: '100vh',
+            width: 'auto',
+            height: 'auto',
+            objectFit: 'cover',
+            opacity: isDark ? 0.35 : 0.16,
+            transition: 'opacity 0.8s ease'
+          }}
+        >
+          <source src="sri-yantra-loop.mp4" type="video/mp4" />
+          <source src="/sri-yantra-loop.mp4" type="video/mp4" />
+          <source src="generated_video_059bfe58.mp4" type="video/mp4" />
+          <source src="/generated_video_059bfe58.mp4" type="video/mp4" />
+        </video>
+        {/* Subtle breathing golden overlay matching purple/gold lotus */}
+        <div
+          id="sri-yantra-bg-overlay"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: isDark
+              ? 'radial-gradient(circle at 65% 25%, rgba(255,215,0,0.08) 0%, transparent 60%), radial-gradient(circle at center, transparent 35%, rgba(10,15,29,0.78) 100%)'
+              : 'radial-gradient(circle at 65% 25%, rgba(255,215,0,0.05) 0%, transparent 60%), radial-gradient(circle at center, transparent 35%, rgba(255,255,255,0.82) 100%)',
+            transition: 'background 0.5s ease'
+          }}
+        />
+      </div>
+
       {/* --- SCROLL PROGRESS BAR --- */}
       <div
         style={{
@@ -6483,10 +6562,12 @@ const styles = {
   page: {
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
     color: '#0F172A',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
     minHeight: '100vh',
     lineHeight: '1.6',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    position: 'relative',
+    zIndex: 1
   },
   container: {
     maxWidth: '1200px',
@@ -6614,7 +6695,8 @@ const styles = {
   // Hero
   heroSection: {
     padding: '70px 0 60px 0',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: 'rgba(248, 250, 252, 0.72)',
+    backdropFilter: 'blur(8px)',
     borderBottom: '1px solid #E2E8F0',
     overflow: 'hidden'
   },
@@ -8391,12 +8473,13 @@ function getStyles(isDark) {
     ...base,
     page: {
       ...base.page,
-      backgroundColor: '#0A0F1D',
+      backgroundColor: 'transparent',
       color: '#F8FAFC'
     },
     navHeader: {
       ...base.navHeader,
-      backgroundColor: 'rgba(10, 15, 29, 0.96)',
+      backgroundColor: 'rgba(10, 15, 29, 0.94)',
+      backdropFilter: 'blur(10px)',
       borderBottom: '1px solid #1E293B'
     },
     brandMain: {
@@ -8418,7 +8501,8 @@ function getStyles(isDark) {
     },
     heroSection: {
       ...base.heroSection,
-      backgroundColor: '#0B1120',
+      backgroundColor: 'rgba(11, 17, 32, 0.55)',
+      backdropFilter: 'blur(8px)',
       borderBottom: '1px solid #1E293B'
     },
     heroTitle: {
