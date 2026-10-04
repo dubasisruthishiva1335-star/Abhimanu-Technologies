@@ -1333,6 +1333,15 @@ function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSp
           z = -15 + u * 22;
           x = Math.cos(theta + clock * 0.4) * rad;
           y = Math.sin(theta + clock * 0.4) * rad;
+        } else if (flowMode === 'plasma') {
+          // Sacred Shiva-Shakti Plasma Breath & Inward/Outward Kundalini Pulsation
+          const cycle = (clock * 0.45 + (d.arm / 8) * Math.PI * 2);
+          const breath = 0.4 + 0.6 * Math.sin(cycle);
+          const rad = 0.35 + Math.pow(u, 1.2) * 6.5 * breath;
+          const theta = (d.arm * Math.PI / 4) + u * Math.PI * 3 + clock * 0.4;
+          z = Math.sin(clock * 0.6 + u * Math.PI * 2) * (d.arm % 2 === 0 ? 1.6 : -1.6);
+          x = Math.cos(theta) * rad;
+          y = Math.sin(theta) * rad;
         } else {
           // Cosmic Torus Spiral Flow (Default)
           const armAngle = (d.arm / 8) * Math.PI * 2;
@@ -1343,14 +1352,14 @@ function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSp
           y = Math.sin(theta) * rad;
         }
 
-        // Magnetic mouse fluid vortex deflection
+        // Magnetic mouse fluid vortex deflection with tangential swirl
         const dx = mouseX * 2.5 - x;
         const dy = mouseY * 1.8 - y;
         const distSq = dx * dx + dy * dy;
-        if (distSq < 16) {
-          const force = (1 - distSq / 16) * 0.4;
-          x += dx * force;
-          y += dy * force;
+        if (distSq < 20) {
+          const force = (1 - distSq / 20) * 0.55;
+          x += (dx * 0.6 - dy * 0.8) * force;
+          y += (dy * 0.6 + dx * 0.8) * force;
         }
 
         flowPos[i * 3] = x;
@@ -2158,7 +2167,9 @@ function FuturisticCommandSidebar({
   setFlowSpeed,
   soundEnabled,
   setSoundEnabled,
-  playClickSound
+  playClickSound,
+  sriYantraAudioPlaying,
+  toggleSriYantraAudio
 }) {
   const [currentTimeIST, setCurrentTimeIST] = useState('');
 
@@ -2271,7 +2282,8 @@ function FuturisticCommandSidebar({
             {[
               { id: 'cosmic', label: '🌌 Cosmic Torus Flow', desc: 'Golden-cyan logarithmic spiral streams' },
               { id: 'vortex', label: '🌀 Kundalini Vortex', desc: 'Dual-helix Shiva/Shakti energy currents' },
-              { id: 'warp', label: '⚡ Hyper-Warp Stream', desc: 'Relativistic deep space cosmic dive' }
+              { id: 'warp', label: '⚡ Hyper-Warp Stream', desc: 'Relativistic deep space cosmic dive' },
+              { id: 'plasma', label: '🔥 Sacred Plasma Breath', desc: 'Cosmic involution & expansion towards Bindu' }
             ].map((f) => {
               const active = flowMode === f.id;
               return (
@@ -2326,6 +2338,59 @@ function FuturisticCommandSidebar({
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Ambient 432Hz Sacred Resonance Drone Toggle */}
+        <div style={{ margin: '0 0 16px 0', padding: '14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 215, 0, 0.25)', borderRadius: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '16px', color: '#FFD700' }}>🕉️</span>
+              <span style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.8px', color: '#FFD700', textTransform: 'uppercase' }}>
+                432Hz Ambient Drone
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                if (toggleSriYantraAudio) toggleSriYantraAudio();
+                if (playClickSound) playClickSound('toggle');
+              }}
+              style={{
+                background: sriYantraAudioPlaying ? '#16A34A' : 'rgba(51, 65, 85, 0.6)',
+                color: '#FFFFFF',
+                border: sriYantraAudioPlaying ? '1px solid #4ADE80' : '1px solid #475569',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                fontSize: '10.5px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}
+            >
+              <span>{sriYantraAudioPlaying ? '🔊 ON' : '🔇 OFF'}</span>
+            </button>
+          </div>
+          <p style={{ margin: 0, fontSize: '10.5px', color: '#94A3B8', lineHeight: '1.4' }}>
+            Sacred binaural drone tuned to 432Hz sine with 216Hz sub-harmonic & 436Hz healing wave.
+          </p>
+          {sriYantraAudioPlaying && (
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '16px', marginTop: '10px' }}>
+              {[...Array(14)].map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    flex: 1,
+                    background: 'linear-gradient(to top, #FFD700, #38BDF8)',
+                    borderRadius: '2px',
+                    height: '100%',
+                    transformOrigin: 'bottom',
+                    animation: `eqPulse 0.75s ease-in-out infinite alternate ${i * 0.06}s`
+                  }}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* IMAX 432Hz Portal Shortcut */}
@@ -3244,6 +3309,8 @@ ENGAGEMENT COORDINATION
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
         playClickSound={playClickSound}
+        sriYantraAudioPlaying={sriYantraAudioPlaying}
+        toggleSriYantraAudio={toggleSriYantraAudio}
       />
 
       {/* --- SCROLL PROGRESS BAR --- */}
@@ -4420,7 +4487,7 @@ ENGAGEMENT COORDINATION
             {/* 3D Flow Mode Switcher Pill */}
             <button
               onClick={() => {
-                const modes = ['cosmic', 'vortex', 'warp'];
+                const modes = ['cosmic', 'vortex', 'warp', 'plasma'];
                 const next = modes[(modes.indexOf(flowMode) + 1) % modes.length];
                 setFlowMode(next);
                 playClickSound('soft');
@@ -4431,19 +4498,30 @@ ENGAGEMENT COORDINATION
                 gap: '6px',
                 padding: '6px 12px',
                 borderRadius: '16px',
-                border: '1px solid rgba(56, 189, 248, 0.35)',
-                background: 'rgba(15, 23, 42, 0.75)',
-                color: '#38BDF8',
+                border: '1px solid rgba(56, 189, 248, 0.4)',
+                background: 'rgba(15, 23, 42, 0.8)',
+                color: flowMode === 'plasma' ? '#F43F5E' : flowMode === 'warp' ? '#FBBF24' : '#38BDF8',
                 fontSize: '11px',
                 fontWeight: '700',
                 cursor: 'pointer',
                 letterSpacing: '0.5px',
+                boxShadow: '0 0 12px rgba(56, 189, 248, 0.2)',
                 transition: 'all 0.2s ease'
               }}
-              title="Cycle 3D Sacred Energy Flow Dynamics"
+              title="Cycle 3D Sacred Energy Flow Dynamics (Cosmic / Vortex / Warp / Plasma)"
             >
-              <span>🌊</span>
+              <span>{flowMode === 'plasma' ? '🔥' : flowMode === 'warp' ? '⚡' : flowMode === 'vortex' ? '🌀' : '🌊'}</span>
               <span>FLOW: {flowMode.toUpperCase()}</span>
+              <span
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: '#10B981',
+                  boxShadow: '0 0 8px #10B981',
+                  display: 'inline-block'
+                }}
+              />
             </button>
 
             {/* Quick Search Ctrl+K Button */}
