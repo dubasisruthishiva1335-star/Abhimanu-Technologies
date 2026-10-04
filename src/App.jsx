@@ -1438,6 +1438,10 @@ function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSp
       const breathe = 1 + (0.03 + audioBass * 0.04) * Math.sin(clock * 0.8);
       sriChakraMaster.scale.set(breathe, breathe, breathe);
 
+      // Flow Energy Particles Pulsation with Audio Harmonics
+      flowMat.size = 0.16 + audioBass * 0.14;
+      flowMat.opacity = Math.min(1.0, 0.88 + audioBass * 0.2);
+
       // Master 3D Spatial Tilt & Rotation
       sriChakraMaster.rotation.x = 0.14 + Math.sin(clock * 0.25) * 0.04 + mouseY * 0.15;
       sriChakraMaster.rotation.y = Math.cos(clock * 0.2) * 0.05 + mouseX * 0.2;
