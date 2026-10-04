@@ -2599,6 +2599,33 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
     window.addEventListener('pointerup', handlePointerUp);
   };
 
+  // Keyboard shortcut navigation (J for Next section, K for Prev section)
+  useEffect(() => {
+    const handleKeyNav = (e) => {
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || document.activeElement?.isContentEditable) return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      const dotIds = dots.map((d) => d.id);
+      const currentIndex = dotIds.indexOf(activeSection);
+
+      if (e.key === 'j' || e.key === 'J') {
+        const nextIndex = Math.min(dotIds.length - 1, currentIndex >= 0 ? currentIndex + 1 : 1);
+        const targetId = dotIds[nextIndex];
+        scrollTo(null, targetId);
+        if (playClickSound) playClickSound('chime');
+      } else if (e.key === 'k' || e.key === 'K') {
+        const prevIndex = Math.max(0, currentIndex >= 0 ? currentIndex - 1 : 0);
+        const targetId = dotIds[prevIndex];
+        scrollTo(null, targetId);
+        if (playClickSound) playClickSound('chime');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyNav);
+    return () => window.removeEventListener('keydown', handleKeyNav);
+  }, [activeSection, dots, scrollTo, playClickSound]);
+
   const handlePointerMoveTrack = (e) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
