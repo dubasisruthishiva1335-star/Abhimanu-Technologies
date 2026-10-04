@@ -1233,6 +1233,38 @@ function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSp
       streamCurvesGroup.add(new THREE.Line(curveGeo, curveMat));
     }
 
+    // 9. INTERACTIVE 3D CURSOR STARDUST DUST TRAIL (48 celestial photons following cursor drag)
+    const trailCount = 48;
+    const trailGeo = new THREE.BufferGeometry();
+    const trailPositions = new Float32Array(trailCount * 3);
+    const trailColors = new Float32Array(trailCount * 3);
+    const trailHistory = [];
+
+    for (let i = 0; i < trailCount; i++) {
+      trailPositions[i * 3] = 0;
+      trailPositions[i * 3 + 1] = 0;
+      trailPositions[i * 3 + 2] = -999;
+      trailHistory.push({ x: 0, y: 0, z: 0 });
+
+      const t = i / trailCount;
+      trailColors[i * 3] = (1 - t) * 1.0 + t * 0.22;
+      trailColors[i * 3 + 1] = (1 - t) * 0.84 + t * 0.74;
+      trailColors[i * 3 + 2] = (1 - t) * 0.0 + t * 0.97;
+    }
+
+    trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+    trailGeo.setAttribute('color', new THREE.BufferAttribute(trailColors, 3));
+
+    const trailMat = new THREE.PointsMaterial({
+      size: 0.24,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending
+    });
+    const trailPoints = new THREE.Points(trailGeo, trailMat);
+    scene.add(trailPoints);
+
     // Dynamic Parallax Mouse Interaction
     let mouseX = 0;
     let mouseY = 0;
@@ -1369,6 +1401,27 @@ function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSp
       flowGeo.attributes.position.needsUpdate = true;
       streamCurvesGroup.rotation.z += 0.001 * currentSpeedMult;
 
+      // 3D Cursor Stardust Trail Motion (Interactive Particle Dust Ribbon)
+      const trailPos = trailGeo.attributes.position.array;
+      const targetWorldX = mouseX * (camera.aspect > 1 ? 11 : 6);
+      const targetWorldY = mouseY * 7.5;
+
+      for (let t = trailCount - 1; t > 0; t--) {
+        trailHistory[t].x += (trailHistory[t - 1].x - trailHistory[t].x) * 0.45;
+        trailHistory[t].y += (trailHistory[t - 1].y - trailHistory[t].y) * 0.45;
+        trailHistory[t].z = Math.sin(clock * 3 + t * 0.3) * 0.3 + 2.0;
+
+        trailPos[t * 3] = trailHistory[t].x;
+        trailPos[t * 3 + 1] = trailHistory[t].y;
+        trailPos[t * 3 + 2] = trailHistory[t].z;
+      }
+      trailHistory[0].x += (targetWorldX - trailHistory[0].x) * 0.6;
+      trailHistory[0].y += (targetWorldY - trailHistory[0].y) * 0.6;
+      trailPos[0] = trailHistory[0].x;
+      trailPos[1] = trailHistory[0].y;
+      trailPos[2] = 2.0;
+      trailGeo.attributes.position.needsUpdate = true;
+
       // 3D Audio Visualizer Reactivity (Reacts to 432Hz Sacred Resonance)
       let audioBass = 0;
       let audioMid = 0;
@@ -1468,8 +1521,10 @@ function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSp
       starMat.dispose();
       flowGeo.dispose();
       flowMat.dispose();
+      trailGeo.dispose();
+      trailMat.dispose();
     };
-  }, [isDark, flowMode, flowSpeed]);
+  }, [isDark, flowMode, flowSpeed, audioPlaying]);
 
   return (
     <div
