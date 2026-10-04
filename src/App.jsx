@@ -2301,7 +2301,197 @@ function CountUp({ target, suffix = '', duration = 1800 }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-// --- FUTURISTIC HIGH-TECH COMMAND SIDEBAR (HUD DOCK) ---
+// --- VERTICAL FLOATING HUD DOTS SCROLL SIDEBAR (ON-PAGE SCROLLING DOTS FEATURE) ---
+function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, playClickSound }) {
+  const [hoveredDot, setHoveredDot] = useState(null);
+
+  const dots = [
+    { id: 'top', label: 'Hero & 3D Core', icon: '🔱' },
+    { id: 'services', label: 'Engineering Services', icon: '⚡' },
+    { id: 'studio', label: '3D WebGL Studio', icon: '🌐' },
+    { id: 'tech-stack', label: 'Architecture', icon: '🧭' },
+    { id: 'industries', label: 'Enterprise Industries', icon: '🏢' },
+    { id: 'work', label: 'Selected Work', icon: '🏆' },
+    { id: 'insights', label: 'Security & CRDT', icon: '🛡️' },
+    { id: 'estimate', label: 'Interactive Estimator', icon: '🧮' },
+    { id: 'support', label: 'Support & SLAs', icon: '📋' },
+    { id: 'faq', label: 'Enterprise FAQ', icon: '❓' },
+    { id: 'contact', label: 'Direct Scoping', icon: '✉️' }
+  ];
+
+  return (
+    <aside
+      className="floating-dots-rail"
+      aria-label="Scroll Navigation Dots"
+      style={{
+        position: 'fixed',
+        right: '18px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 9500,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        background: 'rgba(10, 15, 29, 0.76)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1px solid rgba(56, 189, 248, 0.35)',
+        borderRadius: '32px',
+        padding: '14px 8px',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(56, 189, 248, 0.18)',
+        userSelect: 'none'
+      }}
+    >
+      {/* Top Scroll Percentage Gauge */}
+      <div
+        style={{
+          fontSize: '9px',
+          fontWeight: '800',
+          color: '#FFD700',
+          marginBottom: '10px',
+          fontFamily: 'monospace',
+          letterSpacing: '0.5px',
+          textShadow: '0 0 6px rgba(255, 215, 0, 0.5)'
+        }}
+        title={`Current Page Scroll: ${Math.round(scrollProgress)}%`}
+      >
+        {Math.round(scrollProgress)}%
+      </div>
+
+      {/* Vertical Dots Track with Liquid Progress Line */}
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '11px', alignItems: 'center' }}>
+        {/* Background track rail */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '4px',
+            bottom: '4px',
+            width: '2px',
+            backgroundColor: 'rgba(56, 189, 248, 0.2)',
+            zIndex: 0
+          }}
+        />
+
+        {/* Liquid filled progress beam */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '4px',
+            height: `${Math.min(100, Math.max(0, scrollProgress))}%`,
+            width: '2px',
+            background: 'linear-gradient(to bottom, #FFD700, #38BDF8)',
+            boxShadow: '0 0 10px #38BDF8',
+            zIndex: 1,
+            transition: 'height 0.1s ease-out'
+          }}
+        />
+
+        {/* Section Dots */}
+        {dots.map((dot) => {
+          const isActive = activeSection === dot.id;
+          const isHovered = hoveredDot === dot.id;
+
+          return (
+            <div
+              key={dot.id}
+              style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center' }}
+              onMouseEnter={() => {
+                setHoveredDot(dot.id);
+                if (playClickSound) playClickSound('crystal');
+              }}
+              onMouseLeave={() => setHoveredDot(null)}
+            >
+              {/* Tooltip on left */}
+              {isHovered && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: '28px',
+                    whiteSpace: 'nowrap',
+                    background: 'rgba(15, 23, 42, 0.95)',
+                    border: '1px solid rgba(56, 189, 248, 0.45)',
+                    boxShadow: '0 6px 24px rgba(0, 0, 0, 0.85), 0 0 16px rgba(56, 189, 248, 0.25)',
+                    color: '#F8FAFC',
+                    padding: '5px 12px',
+                    borderRadius: '8px',
+                    fontSize: '11.5px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    pointerEvents: 'none',
+                    animation: 'fadeInLeft 0.15s ease'
+                  }}
+                >
+                  <span>{dot.icon}</span>
+                  <span>{dot.label}</span>
+                  {isActive && <span style={{ color: '#10B981', fontSize: '10px', fontWeight: '800' }}>● ACTIVE</span>}
+                </div>
+              )}
+
+              {/* The Dot Button */}
+              <button
+                onClick={(e) => {
+                  if (playClickSound) playClickSound('chime');
+                  scrollTo(e, dot.id);
+                }}
+                style={{
+                  width: isActive ? '14px' : '9px',
+                  height: isActive ? '14px' : '9px',
+                  borderRadius: '50%',
+                  backgroundColor: isActive ? '#38BDF8' : isHovered ? '#FFD700' : 'rgba(148, 163, 184, 0.45)',
+                  border: isActive
+                    ? '2px solid #FFD700'
+                    : isHovered
+                    ? '2px solid #38BDF8'
+                    : '1px solid rgba(51, 65, 85, 0.8)',
+                  boxShadow: isActive
+                    ? '0 0 14px #38BDF8, 0 0 8px #FFD700'
+                    : isHovered
+                    ? '0 0 10px #FFD700'
+                    : 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transform: isHovered || isActive ? 'scale(1.2)' : 'scale(1)',
+                  position: 'relative'
+                }}
+                aria-label={`Jump to ${dot.label}`}
+                title={dot.label}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Quick Jump to Top / Bottom */}
+      <button
+        onClick={(e) => {
+          if (playClickSound) playClickSound('click');
+          scrollTo(e, scrollProgress > 80 ? 'top' : 'contact');
+        }}
+        style={{
+          marginTop: '10px',
+          background: 'transparent',
+          border: 'none',
+          color: '#38BDF8',
+          fontSize: '11px',
+          cursor: 'pointer',
+          padding: '2px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'transform 0.2s ease'
+        }}
+        title={scrollProgress > 80 ? 'Jump to Top (Hero)' : 'Jump to Scoping (Contact)'}
+      >
+        {scrollProgress > 80 ? '▲' : '▼'}
+      </button>
+    </aside>
+  );
+}
+
+// --- REBUILT ZERO-SCROLL COMMAND SIDEBAR WITH DOTS FEATURES ---
 function FuturisticCommandSidebar({
   isOpen,
   onClose,
@@ -2322,7 +2512,15 @@ function FuturisticCommandSidebar({
   setCurrentLang,
   onOpenCaseStudies
 }) {
+  const [activeTabDot, setActiveTabDot] = useState(0);
   const [currentTimeIST, setCurrentTimeIST] = useState('');
+
+  const HUD_TABS = [
+    { id: 'flow', name: '3D Flow', icon: '🌊', subtitle: 'Dynamic Shaders & 432Hz Audio' },
+    { id: 'radar', name: 'Section Radar', icon: '🧭', subtitle: 'Interactive Section Dot Navigator' },
+    { id: 'lang', name: 'Languages & Cases', icon: '🌐', subtitle: 'Localization & Client Showcase' },
+    { id: 'system', name: 'Office & App', icon: '⚡', subtitle: 'Telangana HQ & Native PWA' }
+  ];
 
   useEffect(() => {
     const updateTime = () => {
@@ -2344,10 +2542,19 @@ function FuturisticCommandSidebar({
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isOpen) onClose();
+      if (isOpen) {
+        if (e.key === 'ArrowRight') {
+          setActiveTabDot((prev) => (prev + 1) % HUD_TABS.length);
+          if (playClickSound) playClickSound('click');
+        } else if (e.key === 'ArrowLeft') {
+          setActiveTabDot((prev) => (prev === 0 ? HUD_TABS.length - 1 : prev - 1));
+          if (playClickSound) playClickSound('click');
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, playClickSound]);
 
   if (!isOpen) return null;
 
@@ -2359,418 +2566,594 @@ function FuturisticCommandSidebar({
         style={{
           position: 'fixed',
           inset: 0,
-          backgroundColor: 'rgba(5, 8, 16, 0.75)',
-          backdropFilter: 'blur(8px)',
+          backgroundColor: 'rgba(5, 8, 16, 0.78)',
+          backdropFilter: 'blur(10px)',
           zIndex: 10000,
           transition: 'opacity 0.3s ease'
         }}
       />
 
-      {/* Slide-out High-Tech Drawer */}
+      {/* Slide-out High-Tech Drawer (ZERO SCROLLING · 100% DOTS-DRIVEN) */}
       <aside
         style={{
           position: 'fixed',
           top: 0,
           right: 0,
-          width: '390px',
+          width: '420px',
           maxWidth: '92vw',
           height: '100vh',
-          backgroundColor: 'rgba(10, 15, 29, 0.95)',
-          backdropFilter: 'blur(24px)',
-          borderLeft: '1px solid rgba(56, 189, 248, 0.28)',
-          boxShadow: '-12px 0 45px rgba(0, 0, 0, 0.85), -2px 0 25px rgba(56, 189, 248, 0.15)',
+          maxHeight: '100vh',
+          overflow: 'hidden', // Completely eliminate scrolling
+          backgroundColor: 'rgba(10, 15, 29, 0.96)',
+          backdropFilter: 'blur(28px)',
+          borderLeft: '1px solid rgba(56, 189, 248, 0.3)',
+          boxShadow: '-12px 0 50px rgba(0, 0, 0, 0.9), -2px 0 30px rgba(56, 189, 248, 0.2)',
           zIndex: 10001,
           display: 'flex',
           flexDirection: 'column',
-          overflowY: 'auto',
-          padding: '24px',
-          color: '#F8FAFC'
+          justifyContent: 'space-between',
+          padding: '22px 24px',
+          color: '#F8FAFC',
+          boxSizing: 'border-box'
         }}
       >
-        {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '16px', borderBottom: '1px solid rgba(56, 189, 248, 0.18)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '22px', color: '#FFD700', filter: 'drop-shadow(0 0 10px rgba(255,215,0,0.65))' }}>🔱</span>
-            <div>
-              <div style={{ fontSize: '14.5px', fontWeight: '800', letterSpacing: '1px', color: '#FFFFFF' }}>COMMAND HUD</div>
-              <div style={{ fontSize: '10px', color: '#38BDF8', letterSpacing: '1.2px', fontWeight: '700' }}>3D BRAHMANDA ENGINE DOCK</div>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'rgba(30, 41, 59, 0.6)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: '#94A3B8',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
-              transition: 'all 0.2s ease'
-            }}
-            title="Close Sidebar (Esc)"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* 3D Flow Visuals Controller */}
-        <div style={{ margin: '18px 0', padding: '16px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(56, 189, 248, 0.22)', borderRadius: '14px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <span style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '1px', color: '#38BDF8', textTransform: 'uppercase' }}>
-              🌊 3D Energy Flow Dynamics
-            </span>
-            <span style={{ fontSize: '10px', color: '#10B981', background: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
-              60 FPS
-            </span>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
-            {[
-              { id: 'cosmic', label: '🌌 Cosmic Torus Flow', desc: 'Golden-cyan logarithmic spiral streams' },
-              { id: 'vortex', label: '🌀 Kundalini Vortex', desc: 'Dual-helix Shiva/Shakti energy currents' },
-              { id: 'warp', label: '⚡ Hyper-Warp Stream', desc: 'Relativistic deep space cosmic dive' },
-              { id: 'plasma', label: '🔥 Sacred Plasma Breath', desc: 'Cosmic involution & expansion towards Bindu' }
-            ].map((f) => {
-              const active = flowMode === f.id;
-              return (
-                <button
-                  key={f.id}
-                  onClick={() => {
-                    setFlowMode(f.id);
-                    if (playClickSound) playClickSound('soft');
-                  }}
-                  style={{
-                    background: active ? 'rgba(37, 99, 235, 0.35)' : 'rgba(30, 41, 59, 0.45)',
-                    border: active ? '1px solid #38BDF8' : '1px solid rgba(51, 65, 85, 0.6)',
-                    boxShadow: active ? '0 0 16px rgba(56, 189, 248, 0.28)' : 'none',
-                    borderRadius: '8px',
-                    padding: '8px 12px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <div style={{ fontSize: '12.5px', fontWeight: '700', color: active ? '#FFD700' : '#E2E8F0' }}>{f.label}</div>
-                  <div style={{ fontSize: '10.5px', color: '#94A3B8', marginTop: '2px' }}>{f.desc}</div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Flow Speed Multiplier */}
-          <div style={{ marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '600' }}>Speed Multiplier:</span>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {[0.5, 1.0, 2.0].map((s) => (
-                <button
-                  key={s}
-                  onClick={() => {
-                    setFlowSpeed(s);
-                    if (playClickSound) playClickSound('soft');
-                  }}
-                  style={{
-                    background: flowSpeed === s ? '#2563EB' : 'rgba(30, 41, 59, 0.5)',
-                    border: flowSpeed === s ? '1px solid #38BDF8' : '1px solid #334155',
-                    color: '#FFFFFF',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    padding: '3px 9px',
-                    borderRadius: '6px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {s}x
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Ambient 432Hz Sacred Resonance Drone Toggle */}
-        <div style={{ margin: '0 0 16px 0', padding: '14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 215, 0, 0.25)', borderRadius: '12px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '16px', color: '#FFD700' }}>🕉️</span>
-              <span style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.8px', color: '#FFD700', textTransform: 'uppercase' }}>
-                432Hz Ambient Drone
-              </span>
+        {/* Top Header */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: '1px solid rgba(56, 189, 248, 0.18)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '22px', color: '#FFD700', filter: 'drop-shadow(0 0 10px rgba(255,215,0,0.65))' }}>🔱</span>
+              <div>
+                <div style={{ fontSize: '14.5px', fontWeight: '800', letterSpacing: '1px', color: '#FFFFFF' }}>COMMAND HUD</div>
+                <div style={{ fontSize: '10px', color: '#38BDF8', letterSpacing: '1.2px', fontWeight: '700' }}>ZERO-SCROLL DOT INTERFACE</div>
+              </div>
             </div>
             <button
-              onClick={() => {
-                if (toggleSriYantraAudio) toggleSriYantraAudio();
-                if (playClickSound) playClickSound('toggle');
-              }}
+              onClick={onClose}
               style={{
-                background: sriYantraAudioPlaying ? '#16A34A' : 'rgba(51, 65, 85, 0.6)',
-                color: '#FFFFFF',
-                border: sriYantraAudioPlaying ? '1px solid #4ADE80' : '1px solid #475569',
-                padding: '4px 10px',
-                borderRadius: '6px',
-                fontSize: '10.5px',
-                fontWeight: '700',
+                background: 'rgba(30, 41, 59, 0.6)',
+                border: '1px solid rgba(56, 189, 248, 0.3)',
+                color: '#94A3B8',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '5px'
+                justifyContent: 'center',
+                fontSize: '14px',
+                transition: 'all 0.2s ease'
               }}
+              title="Close Sidebar (Esc)"
             >
-              <span>{sriYantraAudioPlaying ? '🔊 ON' : '🔇 OFF'}</span>
+              ✕
             </button>
           </div>
-          <p style={{ margin: 0, fontSize: '10.5px', color: '#94A3B8', lineHeight: '1.4' }}>
-            Sacred binaural drone tuned to 432Hz sine with 216Hz sub-harmonic & 436Hz healing wave.
-          </p>
-          {sriYantraAudioPlaying && (
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '16px', marginTop: '10px' }}>
-              {[...Array(14)].map((_, i) => (
-                <div
-                  key={i}
+
+          {/* DOTS FEATURE: Top Interactive Dot Tabs Stepper */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              margin: '14px 0 12px 0',
+              padding: '10px 14px',
+              background: 'rgba(15, 23, 42, 0.85)',
+              borderRadius: '12px',
+              border: '1px solid rgba(56, 189, 248, 0.22)'
+            }}
+          >
+            <div>
+              <div style={{ fontSize: '11px', color: '#38BDF8', fontWeight: '800', letterSpacing: '0.5px' }}>
+                {HUD_TABS[activeTabDot].icon} {HUD_TABS[activeTabDot].name.toUpperCase()}
+              </div>
+              <div style={{ fontSize: '9.5px', color: '#94A3B8', marginTop: '1px' }}>
+                {HUD_TABS[activeTabDot].subtitle}
+              </div>
+            </div>
+
+            {/* 4 Interactive Dot Indicators */}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {HUD_TABS.map((tab, idx) => {
+                const isActive = activeTabDot === idx;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTabDot(idx);
+                      if (playClickSound) playClickSound('crystal');
+                    }}
+                    style={{
+                      width: isActive ? '24px' : '9px',
+                      height: '9px',
+                      borderRadius: '5px',
+                      backgroundColor: isActive ? '#38BDF8' : 'rgba(71, 85, 105, 0.65)',
+                      border: isActive ? '1px solid #FFD700' : '1px solid rgba(56, 189, 248, 0.25)',
+                      boxShadow: isActive ? '0 0 10px #38BDF8, 0 0 6px #FFD700' : 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      transition: 'all 0.25s ease'
+                    }}
+                    title={`Switch to ${tab.name}`}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Dynamic Panel Content (Zero Scrolling — 100% fits within view) */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0, overflow: 'hidden' }}>
+          {/* TAB 0: 3D FLOW & SOUND */}
+          {activeTabDot === 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', animation: 'fadeInLeft 0.2s ease' }}>
+              {/* 3D Flow Visuals Controller */}
+              <div style={{ padding: '14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(56, 189, 248, 0.25)', borderRadius: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '1px', color: '#38BDF8', textTransform: 'uppercase' }}>
+                    🌊 3D Flow Dynamics
+                  </span>
+                  <span style={{ fontSize: '10px', color: '#10B981', background: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
+                    ● 60 FPS
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                  {[
+                    { id: 'cosmic', label: '🌌 Cosmic Torus', desc: 'Spiral streams' },
+                    { id: 'vortex', label: '🌀 Kundalini Vortex', desc: 'Dual-helix currents' },
+                    { id: 'warp', label: '⚡ Hyper-Warp', desc: 'Relativistic dive' },
+                    { id: 'plasma', label: '🔥 Plasma Breath', desc: 'Cosmic expansion' }
+                  ].map((f) => {
+                    const active = flowMode === f.id;
+                    return (
+                      <button
+                        key={f.id}
+                        onClick={() => {
+                          setFlowMode(f.id);
+                          if (playClickSound) playClickSound('soft');
+                        }}
+                        style={{
+                          background: active ? 'rgba(37, 99, 235, 0.35)' : 'rgba(30, 41, 59, 0.45)',
+                          border: active ? '1px solid #38BDF8' : '1px solid rgba(51, 65, 85, 0.6)',
+                          boxShadow: active ? '0 0 12px rgba(56, 189, 248, 0.28)' : 'none',
+                          borderRadius: '8px',
+                          padding: '7px 10px',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <div style={{ fontSize: '11.5px', fontWeight: '700', color: active ? '#FFD700' : '#E2E8F0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ fontSize: '8px', color: active ? '#38BDF8' : 'transparent' }}>●</span>
+                          <span>{f.label}</span>
+                        </div>
+                        <div style={{ fontSize: '9.5px', color: '#94A3B8', marginTop: '2px' }}>{f.desc}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Flow Speed Multiplier */}
+                <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '600' }}>Speed Multiplier:</span>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    {[0.5, 1.0, 2.0].map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => {
+                          setFlowSpeed(s);
+                          if (playClickSound) playClickSound('soft');
+                        }}
+                        style={{
+                          background: flowSpeed === s ? '#2563EB' : 'rgba(30, 41, 59, 0.5)',
+                          border: flowSpeed === s ? '1px solid #38BDF8' : '1px solid #334155',
+                          color: '#FFFFFF',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {s}x
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Ambient 432Hz Drone */}
+              <div style={{ padding: '12px 14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 215, 0, 0.25)', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '15px', color: '#FFD700' }}>🕉️</span>
+                    <span style={{ fontSize: '11px', fontWeight: '700', color: '#FFD700' }}>432Hz Sacred Resonance</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (toggleSriYantraAudio) toggleSriYantraAudio();
+                      if (playClickSound) playClickSound('toggle');
+                    }}
+                    style={{
+                      background: sriYantraAudioPlaying ? '#16A34A' : 'rgba(51, 65, 85, 0.6)',
+                      color: '#FFFFFF',
+                      border: sriYantraAudioPlaying ? '1px solid #4ADE80' : '1px solid #475569',
+                      padding: '3px 9px',
+                      borderRadius: '6px',
+                      fontSize: '10px',
+                      fontWeight: '700',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {sriYantraAudioPlaying ? '🔊 ON' : '🔇 OFF'}
+                  </button>
+                </div>
+                {sriYantraAudioPlaying && (
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '14px', marginTop: '6px' }}>
+                    {[...Array(14)].map((_, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          flex: 1,
+                          background: 'linear-gradient(to top, #FFD700, #38BDF8)',
+                          borderRadius: '2px',
+                          height: '100%',
+                          transformOrigin: 'bottom',
+                          animation: `eqPulse 0.75s ease-in-out infinite alternate ${i * 0.06}s`
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Fullscreen IMAX Shortcut */}
+              <a
+                href="/sri-yantra.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px 14px',
+                  background: 'linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(56, 189, 248, 0.15) 100%)',
+                  border: '1px solid rgba(255, 215, 0, 0.35)',
+                  borderRadius: '10px',
+                  color: '#FFD700',
+                  textDecoration: 'none',
+                  fontSize: '11.5px',
+                  fontWeight: '700'
+                }}
+              >
+                <span>🔱 Launch Fullscreen IMAX 432Hz Portal</span>
+                <span>↗</span>
+              </a>
+            </div>
+          )}
+
+          {/* TAB 1: SECTION RADAR (WITH INTERACTIVE SECTION DOTS) */}
+          {activeTabDot === 1 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', animation: 'fadeInLeft 0.2s ease' }}>
+              <div style={{ fontSize: '10.5px', color: '#94A3B8', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '4px' }}>
+                DIRECT JUMP DOT RADAR
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                {[
+                  { id: 'top', label: 'Hero Core', icon: '🏛️' },
+                  { id: 'services', label: 'Services', icon: '⚡' },
+                  { id: 'studio', label: '3D Studio', icon: '🌐' },
+                  { id: 'tech-stack', label: 'Architecture', icon: '🧭' },
+                  { id: 'industries', label: 'Industries', icon: '🏢' },
+                  { id: 'work', label: 'Selected Work', icon: '🏆' },
+                  { id: 'insights', label: 'Security & CRDT', icon: '🛡️' },
+                  { id: 'estimate', label: 'Scope Estimator', icon: '🧮' },
+                  { id: 'support', label: 'Support SLAs', icon: '📋' },
+                  { id: 'faq', label: 'Enterprise FAQ', icon: '❓' },
+                  { id: 'contact', label: 'Direct Scoping', icon: '✉️' }
+                ].map((n) => {
+                  const active = activeSection === n.id;
+                  return (
+                    <button
+                      key={n.id}
+                      onClick={(e) => {
+                        if (playClickSound) playClickSound('chime');
+                        scrollTo(e, n.id);
+                        onClose();
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '7px 10px',
+                        borderRadius: '8px',
+                        background: active ? 'rgba(37, 99, 235, 0.3)' : 'rgba(30, 41, 59, 0.45)',
+                        color: active ? '#38BDF8' : '#CBD5E1',
+                        border: active ? '1px solid #38BDF8' : '1px solid rgba(51, 65, 85, 0.6)',
+                        boxShadow: active ? '0 0 10px rgba(56, 189, 248, 0.25)' : 'none',
+                        fontSize: '11px',
+                        fontWeight: active ? '800' : '600',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: '7px',
+                          height: '7px',
+                          borderRadius: '50%',
+                          backgroundColor: active ? '#10B981' : 'rgba(148, 163, 184, 0.4)',
+                          boxShadow: active ? '0 0 8px #10B981' : 'none',
+                          display: 'inline-block'
+                        }}
+                      />
+                      <span>{n.icon}</span>
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{n.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: LANGUAGE & CASE STUDIES */}
+          {activeTabDot === 2 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', animation: 'fadeInLeft 0.2s ease' }}>
+              {/* Multilingual Localization */}
+              <div style={{ padding: '14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(56, 189, 248, 0.22)', borderRadius: '12px' }}>
+                <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.8px', color: '#38BDF8', textTransform: 'uppercase', marginBottom: '8px' }}>
+                  🌐 Language Localization
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
+                  {[
+                    { code: 'en', label: 'English' },
+                    { code: 'te', label: 'తెలుగు' },
+                    { code: 'hi', label: 'हिन्दी' }
+                  ].map((l) => {
+                    const active = currentLang === l.code;
+                    return (
+                      <button
+                        key={l.code}
+                        onClick={() => {
+                          if (setCurrentLang) setCurrentLang(l.code);
+                          if (playClickSound) playClickSound('chime');
+                        }}
+                        style={{
+                          background: active ? '#2563EB' : 'rgba(30, 41, 59, 0.5)',
+                          border: active ? '1px solid #38BDF8' : '1px solid #334155',
+                          color: '#FFFFFF',
+                          padding: '8px 4px',
+                          borderRadius: '8px',
+                          fontSize: '11.5px',
+                          fontWeight: active ? '800' : '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '3px'
+                        }}
+                      >
+                        <span style={{ fontSize: '7px', color: active ? '#FFD700' : 'transparent' }}>●</span>
+                        <span>{l.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Case Studies Reel Trigger */}
+              <button
+                onClick={() => {
+                  if (onOpenCaseStudies) onOpenCaseStudies();
+                  if (playClickSound) playClickSound('chime');
+                  onClose();
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  padding: '14px',
+                  background: 'linear-gradient(90deg, rgba(37, 99, 235, 0.25) 0%, rgba(56, 189, 248, 0.2) 100%)',
+                  border: '1px solid rgba(56, 189, 248, 0.4)',
+                  borderRadius: '12px',
+                  color: '#38BDF8',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 16px rgba(56, 189, 248, 0.15)'
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>🏆</span>
+                  <span>Proven Client Case Studies Reel</span>
+                </span>
+                <span>→</span>
+              </button>
+
+              {/* CRDT Sync Shortcut */}
+              <button
+                onClick={(e) => {
+                  scrollTo(e, 'insights');
+                  onClose();
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  padding: '12px 14px',
+                  background: 'rgba(30, 41, 59, 0.5)',
+                  border: '1px solid #334155',
+                  borderRadius: '10px',
+                  color: '#CBD5E1',
+                  fontSize: '11.5px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                <span>🛡️ Offline CRDT Sync Simulator</span>
+                <span>↗</span>
+              </button>
+            </div>
+          )}
+
+          {/* TAB 3: OFFICE & SYSTEM */}
+          {activeTabDot === 3 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', animation: 'fadeInLeft 0.2s ease' }}>
+              {/* Live Global Office Widget */}
+              <div style={{ padding: '14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(30, 41, 59, 0.8)', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '700' }}>TELANGANA HQ (IST)</span>
+                  <span style={{ fontSize: '10px', color: '#10B981', fontWeight: '700' }}>● ONLINE</span>
+                </div>
+                <div style={{ fontSize: '18px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '1px', fontFamily: 'monospace' }}>
+                  {currentTimeIST || 'IST • UTC+5:30'}
+                </div>
+                <div style={{ fontSize: '10.5px', color: '#38BDF8', marginTop: '4px' }}>
+                  Active Overlap: US (3.5h), UK (4.5h), UAE (6.5h), SG (7h)
+                </div>
+              </div>
+
+              {/* PWA Native App Install Action */}
+              <button
+                onClick={onInstallPWA}
+                style={{
+                  width: '100%',
+                  background: 'linear-gradient(90deg, rgba(37, 99, 235, 0.25) 0%, rgba(16, 185, 129, 0.25) 100%)',
+                  border: '1px solid rgba(56, 189, 248, 0.4)',
+                  color: '#38BDF8',
+                  padding: '11px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>📲</span>
+                <span>{pwaInstalled ? 'App Installed (Ready Offline)' : 'Install Standalone App (PWA)'}</span>
+              </button>
+
+              {/* Direct WhatsApp Consultation */}
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <a
+                  href="https://wa.me/919999999999"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     flex: 1,
-                    background: 'linear-gradient(to top, #FFD700, #38BDF8)',
-                    borderRadius: '2px',
-                    height: '100%',
-                    transformOrigin: 'bottom',
-                    animation: `eqPulse 0.75s ease-in-out infinite alternate ${i * 0.06}s`
+                    backgroundColor: '#16A34A',
+                    color: '#FFFFFF',
+                    textAlign: 'center',
+                    padding: '11px',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    textDecoration: 'none'
                   }}
-                />
-              ))}
+                >
+                  💬 WhatsApp
+                </a>
+                <a
+                  href="#contact"
+                  onClick={(e) => {
+                    scrollTo(e, 'contact');
+                    onClose();
+                  }}
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#2563EB',
+                    color: '#FFFFFF',
+                    textAlign: 'center',
+                    padding: '11px',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    textDecoration: 'none'
+                  }}
+                >
+                  ⚡ Quick Consult
+                </a>
+              </div>
             </div>
           )}
         </div>
 
-        {/* IMAX 432Hz Portal Shortcut */}
-        <a
-          href="/sri-yantra.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '12px 16px',
-            background: 'linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(56, 189, 248, 0.15) 100%)',
-            border: '1px solid rgba(255, 215, 0, 0.35)',
-            borderRadius: '10px',
-            color: '#FFD700',
-            textDecoration: 'none',
-            fontSize: '12px',
-            fontWeight: '700',
-            letterSpacing: '0.8px',
-            boxShadow: '0 0 16px rgba(255, 215, 0, 0.15)',
-            marginBottom: '18px'
-          }}
-        >
-          <span>🔱 Launch Fullscreen IMAX 432Hz Portal</span>
-          <span>↗</span>
-        </a>
+        {/* DOTS FEATURE: Bottom Interactive Dot Navigator & Prev/Next */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', borderTop: '1px solid rgba(56, 189, 248, 0.18)' }}>
+          <button
+            onClick={() => {
+              setActiveTabDot((prev) => (prev === 0 ? HUD_TABS.length - 1 : prev - 1));
+              if (playClickSound) playClickSound('click');
+            }}
+            style={{
+              background: 'rgba(30, 41, 59, 0.6)',
+              border: '1px solid #334155',
+              color: '#94A3B8',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              fontSize: '11px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
+          >
+            <span>‹</span>
+            <span>PREV</span>
+          </button>
 
-        {/* Multilingual Localization Selector */}
-        <div style={{ margin: '0 0 16px 0', padding: '14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(56, 189, 248, 0.22)', borderRadius: '12px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.8px', color: '#38BDF8', textTransform: 'uppercase' }}>
-              🌐 Language / భాష / भाषा
-            </span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
-            {[
-              { code: 'en', label: 'English' },
-              { code: 'te', label: 'తెలుగు' },
-              { code: 'hi', label: 'हिन्दी' }
-            ].map((l) => (
+          {/* 4 Center Pagination Dots */}
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            {HUD_TABS.map((_, idx) => (
               <button
-                key={l.code}
+                key={idx}
                 onClick={() => {
-                  if (setCurrentLang) setCurrentLang(l.code);
-                  if (playClickSound) playClickSound('chime');
+                  setActiveTabDot(idx);
+                  if (playClickSound) playClickSound('crystal');
                 }}
                 style={{
-                  background: currentLang === l.code ? '#2563EB' : 'rgba(30, 41, 59, 0.5)',
-                  border: currentLang === l.code ? '1px solid #38BDF8' : '1px solid #334155',
-                  color: '#FFFFFF',
-                  padding: '6px 4px',
-                  borderRadius: '6px',
-                  fontSize: '11.5px',
-                  fontWeight: currentLang === l.code ? '800' : '600',
+                  width: activeTabDot === idx ? '16px' : '7px',
+                  height: '7px',
+                  borderRadius: '4px',
+                  backgroundColor: activeTabDot === idx ? '#38BDF8' : 'rgba(71, 85, 105, 0.6)',
+                  border: 'none',
                   cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.15s ease'
+                  padding: 0,
+                  transition: 'all 0.2s ease'
                 }}
-              >
-                {l.label}
-              </button>
+              />
             ))}
           </div>
-        </div>
 
-        {/* Case Studies Modal Trigger */}
-        <button
-          onClick={() => {
-            if (onOpenCaseStudies) onOpenCaseStudies();
-            if (playClickSound) playClickSound('chime');
-            onClose();
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-            padding: '11px 14px',
-            background: 'linear-gradient(90deg, rgba(37, 99, 235, 0.2) 0%, rgba(56, 189, 248, 0.15) 100%)',
-            border: '1px solid rgba(56, 189, 248, 0.35)',
-            borderRadius: '10px',
-            color: '#38BDF8',
-            fontSize: '12px',
-            fontWeight: '700',
-            cursor: 'pointer',
-            marginBottom: '16px',
-            boxShadow: '0 0 14px rgba(56, 189, 248, 0.15)',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span>🏆</span>
-            <span>Proven Client Case Studies Reel</span>
-          </span>
-          <span>→</span>
-        </button>
-
-        {/* Platform Quick Navigation */}
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '1.2px', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>
-            Platform Navigation
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '5px' }}>
-            {[
-              { id: 'top', label: 'Hero Overview & 3D Core', icon: '🏛️' },
-              { id: 'services', label: 'Engineering Services', icon: '⚡' },
-              { id: 'studio', label: '3D WebGL Studio', icon: '🌐' },
-              { id: 'tech-stack', label: 'Architecture Matcher', icon: '🧭' },
-              { id: 'industries', label: 'Enterprise Industries', icon: '🏢' },
-              { id: 'work', label: 'Client Case Studies', icon: '🏆' },
-              { id: 'insights', label: 'Security & Deep Tech', icon: '🛡️' },
-              { id: 'estimate', label: 'Interactive Scope Estimator', icon: '🧮' },
-              { id: 'support', label: 'Support SLAs & Maintenance', icon: '📋' },
-              { id: 'faq', label: 'Enterprise FAQ', icon: '❓' },
-              { id: 'contact', label: 'Direct Inquiry & Scoping', icon: '✉️' }
-            ].map((n) => {
-              const active = activeSection === n.id;
-              return (
-                <a
-                  key={n.id}
-                  href={`#${n.id}`}
-                  onClick={(e) => {
-                    scrollTo(e, n.id);
-                    onClose();
-                  }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    background: active ? 'rgba(37, 99, 235, 0.25)' : 'transparent',
-                    color: active ? '#38BDF8' : '#CBD5E1',
-                    border: active ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
-                    fontSize: '13px',
-                    fontWeight: active ? '700' : '500',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  <span style={{ fontSize: '15px' }}>{n.icon}</span>
-                  <span>{n.label}</span>
-                </a>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Live Global Office Widget */}
-        <div style={{ marginTop: '16px', padding: '14px', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(30, 41, 59, 0.8)', borderRadius: '10px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-            <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '700' }}>TELANGANA HQ (IST)</span>
-            <span style={{ fontSize: '10px', color: '#10B981', fontWeight: '700' }}>● ONLINE</span>
-          </div>
-          <div style={{ fontSize: '16px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '1px', fontFamily: 'monospace' }}>
-            {currentTimeIST || 'IST • UTC+5:30'}
-          </div>
-          <div style={{ fontSize: '11px', color: '#38BDF8', marginTop: '4px' }}>
-            Active Desk Overlap: US (3.5h), UK (4.5h), UAE (6.5h), SG (7h)
-          </div>
-        </div>
-
-        {/* PWA Native App Install Action */}
-        <button
-          onClick={onInstallPWA}
-          style={{
-            marginTop: '14px',
-            width: '100%',
-            background: 'linear-gradient(90deg, rgba(37, 99, 235, 0.25) 0%, rgba(16, 185, 129, 0.25) 100%)',
-            border: '1px solid rgba(56, 189, 248, 0.4)',
-            color: '#38BDF8',
-            padding: '10px',
-            borderRadius: '8px',
-            fontSize: '12px',
-            fontWeight: '700',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            transition: 'all 0.2s ease'
-          }}
-          title="Install Abhimanyu Technologies as a standalone native app"
-        >
-          <span>📲</span>
-          <span>{pwaInstalled ? 'App Installed (Ready Offline)' : 'Install Standalone App (PWA)'}</span>
-        </button>
-
-        {/* Direct Action Contact */}
-        <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
-          <a
-            href="https://wa.me/919999999999"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              flex: 1,
-              backgroundColor: '#16A34A',
-              color: '#FFFFFF',
-              textAlign: 'center',
-              padding: '10px',
-              borderRadius: '8px',
-              fontSize: '12px',
-              fontWeight: '700',
-              textDecoration: 'none'
-            }}
-          >
-            💬 WhatsApp
-          </a>
-          <a
-            href="#contact"
-            onClick={(e) => {
-              scrollTo(e, 'contact');
-              onClose();
+          <button
+            onClick={() => {
+              setActiveTabDot((prev) => (prev === HUD_TABS.length - 1 ? 0 : prev + 1));
+              if (playClickSound) playClickSound('click');
             }}
             style={{
-              flex: 1,
-              backgroundColor: '#2563EB',
-              color: '#FFFFFF',
-              textAlign: 'center',
-              padding: '10px',
+              background: 'rgba(30, 41, 59, 0.6)',
+              border: '1px solid #334155',
+              color: '#38BDF8',
+              padding: '6px 12px',
               borderRadius: '8px',
-              fontSize: '12px',
+              fontSize: '11px',
               fontWeight: '700',
-              textDecoration: 'none'
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
             }}
           >
-            ⚡ Quick Consult
-          </a>
+            <span>NEXT</span>
+            <span>›</span>
+          </button>
         </div>
       </aside>
     </>
@@ -3383,7 +3766,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    const sectionIds = ['top', 'services', 'studio', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
+    const sectionIds = ['top', 'services', 'studio', 'tech-stack', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
     const observers = [];
     sectionIds.forEach((id) => {
       const el = document.getElementById(id);
@@ -3989,6 +4372,14 @@ ENGAGEMENT COORDINATION
         currentLang={currentLang}
         setCurrentLang={setCurrentLang}
         onOpenCaseStudies={() => setTestimonialsModalOpen(true)}
+      />
+
+      {/* --- VERTICAL FLOATING HUD DOTS SCROLL SIDEBAR (ON-PAGE SCROLLING DOTS FEATURE) --- */}
+      <FloatingDotsScrollSidebar
+        activeSection={activeSection}
+        scrollTo={scrollTo}
+        scrollProgress={scrollProgress}
+        playClickSound={playClickSound}
       />
 
       {/* --- SCROLL PROGRESS BAR --- */}
