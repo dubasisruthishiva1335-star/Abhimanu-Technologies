@@ -1699,7 +1699,9 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
 
     // Create Geometry based on selected shape
     let geom;
-    if (shape === 'torus') {
+    if (shape === 'flowField') {
+      geom = new THREE.IcosahedronGeometry(1.3, 2);
+    } else if (shape === 'torus') {
       geom = new THREE.TorusGeometry(1.2, 0.45, 32, 64);
     } else if (shape === 'knot') {
       geom = new THREE.TorusKnotGeometry(0.9, 0.3, 80, 16);
@@ -5257,6 +5259,7 @@ ENGAGEMENT COORDINATION
                 <label style={styles.controlLabel}>Shape</label>
                 <div style={styles.btnSelectorGrid}>
                   {[
+                    { id: 'flowField', label: '🌊 Flow Vortex' },
                     { id: 'torus', label: 'Torus' },
                     { id: 'knot', label: 'Knot' },
                     { id: 'chakra', label: 'Chakra' },
