@@ -201,6 +201,7 @@
     color: #FFFFFF;
     transition: all 0.3s ease;
     pointer-events: auto;
+    cursor: pointer;
   }
   .hud-card:hover {
     transform: translateY(-2px);
@@ -325,24 +326,24 @@
 <div class="overlay"></div>
 
 <!-- 4 FLOATING GLASSMORHPIC HUD CARDS (Matching User Showcase Image) -->
-<div class="hud-card hud-top-left">
+<div class="hud-card hud-top-left" onclick="playChime(1080); window.location.href='/'" onmouseenter="playChime(1080)" title="Return to Abhimanyu Technologies Platform">
   <div class="hud-card-title">Abhimanyu Technologies</div>
-  <div class="hud-card-sub">Software Engineering Studio</div>
+  <div class="hud-card-sub">Software Engineering Studio ↗</div>
 </div>
 
-<div class="hud-card hud-top-right">
+<div class="hud-card hud-top-right" onclick="playChime(1200); cycleSpeed();" onmouseenter="playChime(1200)" title="Cycle Video Playback Speed (0.5x, 1.0x, 1.5x, 2.0x)">
   <div class="hud-card-title">Software Engineering &amp; 3D WebGL Studio</div>
-  <div class="hud-card-sub">Sacred Brahmanda Universe</div>
+  <div class="hud-card-sub">Sacred Brahmanda Universe ⚡</div>
 </div>
 
-<div class="hud-card hud-bottom-left">
+<div class="hud-card hud-bottom-left" onclick="playChime(960); window.location.href='/#work'" onmouseenter="playChime(960)" title="View Enterprise Case Studies & Architecture">
   <div class="hud-card-title">Software Engineering &amp; 3D WebGL Studio</div>
-  <div class="hud-card-sub">Enterprise Distributed Systems</div>
+  <div class="hud-card-sub">Enterprise Distributed Systems 🏆</div>
 </div>
 
-<div class="hud-card hud-bottom-right">
-  <div class="hud-card-big">60 FPS</div>
-  <div class="hud-card-sub">Brahmanda Engine</div>
+<div class="hud-card hud-bottom-right" onclick="playChime(1440); toggleAudio();" onmouseenter="playChime(1440)" title="Toggle 432Hz Sacred Audio">
+  <div class="hud-card-big" style="color: #38BDF8;">60 FPS</div>
+  <div class="hud-card-sub">Brahmanda Engine 🔊</div>
 </div>
 
 <!-- CENTER CONTENT -->
@@ -583,6 +584,24 @@ function initAudio() {
   oscBinaural.connect(gainB); gainB.connect(masterGain);
 
   osc1.start(); osc2.start(); osc3.start(); oscBinaural.start();
+}
+
+function playChime(freq = 1080) {
+  try {
+    if (!audioCtx) initAudio();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.33, audioCtx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.35);
+  } catch(e) {}
 }
 
 function startExperience() {
