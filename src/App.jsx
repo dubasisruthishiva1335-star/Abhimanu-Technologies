@@ -809,7 +809,7 @@ const CHAKRA_THEMES = {
 };
 
 // --- AMBIENT SRI YANTRA & BRAHMANDA LIVING 3D WEBGL BACKGROUND COMPONENT ---
-function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSpeed = 1.0 }) {
+function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSpeed = 1.0, audioAnalyserRef = null, audioPlaying = false }) {
   const mountRef = useRef(null);
 
   useEffect(() => {
@@ -1369,27 +1369,40 @@ function AmbientSriYantraBackground({ isDark = true, flowMode = 'cosmic', flowSp
       flowGeo.attributes.position.needsUpdate = true;
       streamCurvesGroup.rotation.z += 0.001 * currentSpeedMult;
 
-      // Master Breathing Scale
-      const breathe = 1 + 0.03 * Math.sin(clock * 0.8);
+      // 3D Audio Visualizer Reactivity (Reacts to 432Hz Sacred Resonance)
+      let audioBass = 0;
+      let audioMid = 0;
+      if (audioPlaying && audioAnalyserRef && audioAnalyserRef.current) {
+        try {
+          const freqData = new Uint8Array(16);
+          audioAnalyserRef.current.getByteFrequencyData(freqData);
+          audioBass = (freqData[1] || 0) / 255;
+          audioMid = (freqData[4] || 0) / 255;
+        } catch {}
+      }
+
+      // Master Breathing Scale modulated by 432Hz Drone
+      const breathe = 1 + (0.03 + audioBass * 0.04) * Math.sin(clock * 0.8);
       sriChakraMaster.scale.set(breathe, breathe, breathe);
 
       // Master 3D Spatial Tilt & Rotation
       sriChakraMaster.rotation.x = 0.14 + Math.sin(clock * 0.25) * 0.04 + mouseY * 0.15;
       sriChakraMaster.rotation.y = Math.cos(clock * 0.2) * 0.05 + mouseX * 0.2;
 
-      // Bindu Core Pulse
-      const binduPulse = 1 + 0.15 * Math.sin(clock * 2.5);
+      // Bindu Core Pulse reacts dynamically to audio bass/harmonics
+      const binduPulse = 1 + 0.15 * Math.sin(clock * 2.5) + audioBass * 0.35;
       binduMesh.scale.set(binduPulse, binduPulse, binduPulse);
-      binduWire.rotation.x += 0.01;
-      binduWire.rotation.y += 0.015;
+      binduWire.rotation.x += 0.01 + audioMid * 0.02;
+      binduWire.rotation.y += 0.015 + audioMid * 0.02;
+      binduPointLight.intensity = (isDark ? 3.2 : 2.2) + audioBass * 3.5;
 
-      // Harmonic Shockwave Expansions
+      // Harmonic Shockwave Expansions frequency pulse
       shockwaveRings.forEach(ring => {
-        ring.userData.phase = (ring.userData.phase + 0.005) % 1.0;
+        ring.userData.phase = (ring.userData.phase + 0.005 + audioBass * 0.008) % 1.0;
         const p = ring.userData.phase;
         const currentRadius = p * 6.5;
         ring.scale.set(currentRadius, currentRadius, 1);
-        ring.material.opacity = (1 - p) * (isDark ? 0.7 : 0.35);
+        ring.material.opacity = (1 - p) * (isDark ? 0.7 : 0.35) * (1 + audioBass * 0.75);
       });
 
       // Sacred Counter-Rotation
@@ -1689,6 +1702,48 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
     a.click();
   };
 
+  const handleExportOBJ = () => {
+    if (!meshRef.current || !meshRef.current.geometry) return;
+    const geom = meshRef.current.geometry;
+    const posAttr = geom.getAttribute('position');
+    if (!posAttr) return;
+
+    let objData = `# Abhimanyu Technologies 3D Studio Export\n# Geometry: ${shape}\n# Material: ${materialType}\no ${shape}_mesh\n\n`;
+
+    for (let i = 0; i < posAttr.count; i++) {
+      objData += `v ${posAttr.getX(i).toFixed(4)} ${posAttr.getY(i).toFixed(4)} ${posAttr.getZ(i).toFixed(4)}\n`;
+    }
+
+    const normAttr = geom.getAttribute('normal');
+    if (normAttr) {
+      for (let i = 0; i < normAttr.count; i++) {
+        objData += `vn ${normAttr.getX(i).toFixed(4)} ${normAttr.getY(i).toFixed(4)} ${normAttr.getZ(i).toFixed(4)}\n`;
+      }
+    }
+
+    const index = geom.getIndex();
+    if (index) {
+      for (let i = 0; i < index.count; i += 3) {
+        const a = index.getX(i) + 1;
+        const b = index.getX(i + 1) + 1;
+        const c = index.getX(i + 2) + 1;
+        objData += `f ${a} ${b} ${c}\n`;
+      }
+    } else {
+      for (let i = 1; i <= posAttr.count; i += 3) {
+        objData += `f ${i} ${i + 1} ${i + 2}\n`;
+      }
+    }
+
+    const blob = new Blob([objData], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `abhimanyu-${shape}-model.obj`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
@@ -1740,6 +1795,15 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
       mat = new THREE.MeshStandardMaterial({
         color: colorNum,
         roughness: 0.2,
+        metalness: 0.95
+      });
+    } else if (materialType === 'hologram') {
+      mat = new THREE.MeshStandardMaterial({
+        color: colorNum,
+        emissive: colorNum,
+        emissiveIntensity: 0.6,
+        wireframe: true,
+        roughness: 0.1,
         metalness: 0.95
       });
     } else {
@@ -1842,27 +1906,50 @@ function StudioCanvas({ shape, materialType, colorHex, rotationSpeed, lightAngle
           <span style={styles.webglTag}>REAL-TIME WEBGL</span>
           <span style={styles.dragTag}>DRAG TO ROTATE</span>
         </div>
-        <button
-          onClick={handleDownloadSnapshot}
-          style={{
-            backgroundColor: 'rgba(37,99,235,0.85)',
-            color: '#FFFFFF',
-            border: 'none',
-            borderRadius: '6px',
-            padding: '4px 10px',
-            fontSize: '11px',
-            fontWeight: '700',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-            backdropFilter: 'blur(4px)',
-            transition: 'background-color 0.15s ease'
-          }}
-          title="Download PNG snapshot of your customized 3D model"
-        >
-          📷 Snapshot PNG
-        </button>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button
+            onClick={handleDownloadSnapshot}
+            style={{
+              backgroundColor: 'rgba(37,99,235,0.85)',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '4px 10px',
+              fontSize: '11px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              backdropFilter: 'blur(4px)',
+              transition: 'background-color 0.15s ease'
+            }}
+            title="Download PNG snapshot of your customized 3D model"
+          >
+            📷 Snapshot
+          </button>
+          <button
+            onClick={handleExportOBJ}
+            style={{
+              backgroundColor: 'rgba(16,185,129,0.85)',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '4px 10px',
+              fontSize: '11px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              backdropFilter: 'blur(4px)',
+              transition: 'background-color 0.15s ease'
+            }}
+            title="Download 3D Geometry (.OBJ) for Blender, Maya or CAD"
+          >
+            📦 Export OBJ
+          </button>
+        </div>
       </div>
       <div ref={mountRef} style={styles.canvasMount} />
     </div>
@@ -2169,7 +2256,9 @@ function FuturisticCommandSidebar({
   setSoundEnabled,
   playClickSound,
   sriYantraAudioPlaying,
-  toggleSriYantraAudio
+  toggleSriYantraAudio,
+  onInstallPWA,
+  pwaInstalled
 }) {
   const [currentTimeIST, setCurrentTimeIST] = useState('');
 
@@ -2484,8 +2573,34 @@ function FuturisticCommandSidebar({
           </div>
         </div>
 
+        {/* PWA Native App Install Action */}
+        <button
+          onClick={onInstallPWA}
+          style={{
+            marginTop: '14px',
+            width: '100%',
+            background: 'linear-gradient(90deg, rgba(37, 99, 235, 0.25) 0%, rgba(16, 185, 129, 0.25) 100%)',
+            border: '1px solid rgba(56, 189, 248, 0.4)',
+            color: '#38BDF8',
+            padding: '10px',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            transition: 'all 0.2s ease'
+          }}
+          title="Install Abhimanyu Technologies as a standalone native app"
+        >
+          <span>📲</span>
+          <span>{pwaInstalled ? 'App Installed (Ready Offline)' : 'Install Standalone App (PWA)'}</span>
+        </button>
+
         {/* Direct Action Contact */}
-        <div style={{ marginTop: '14px', display: 'flex', gap: '8px' }}>
+        <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
           <a
             href="https://wa.me/919999999999"
             target="_blank"
@@ -2530,6 +2645,135 @@ function FuturisticCommandSidebar({
   );
 }
 
+// --- INTERACTIVE OFFLINE CRDT SIMULATOR ---
+function LiveCRDTSimulator() {
+  const [isOnline, setIsOnline] = useState(true);
+  const [records, setRecords] = useState([
+    { id: 'rec-1', desc: 'Tunnel Section 4A - Concrete moisture inspection', lamport: 1001, status: 'synced' },
+    { id: 'rec-2', desc: 'Sump pump valve pressure nominal (4.2 bar)', lamport: 1002, status: 'synced' }
+  ]);
+  const [newDesc, setNewDesc] = useState('');
+  const [syncMessage, setSyncMessage] = useState('');
+
+  const handleAddRecord = (e) => {
+    e.preventDefault();
+    if (!newDesc.trim()) return;
+    const newLamport = (records.length ? Math.max(...records.map((r) => r.lamport)) : 1000) + 1;
+    const newRec = {
+      id: `rec-${Date.now().toString().slice(-4)}`,
+      desc: newDesc.trim(),
+      lamport: newLamport,
+      status: isOnline ? 'synced' : 'pending'
+    };
+    setRecords((prev) => [...prev, newRec]);
+    setNewDesc('');
+  };
+
+  const toggleNetwork = () => {
+    if (!isOnline) {
+      setIsOnline(true);
+      setSyncMessage('Reconciling offline deltas via Lamport vector clocks...');
+      setTimeout(() => {
+        setRecords((prev) => prev.map((r) => ({ ...r, status: 'synced' })));
+        setSyncMessage('Reconciliation Complete: 0 merge conflicts. Vector clock state consistent.');
+        setTimeout(() => setSyncMessage(''), 4000);
+      }, 800);
+    } else {
+      setIsOnline(false);
+      setSyncMessage('Simulating Dead-Zone (Offline). All writes stored locally in SQLite with Lamport clocks.');
+      setTimeout(() => setSyncMessage(''), 3500);
+    }
+  };
+
+  return (
+    <div style={{ marginTop: '16px', padding: '16px 20px', background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(56, 189, 248, 0.25)', borderRadius: '12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '15px' }}>⚡</span>
+          <span style={{ fontSize: '13px', fontWeight: '800', color: '#F8FAFC', letterSpacing: '0.5px' }}>
+            Interactive CRDT Offline Sync Simulator
+          </span>
+          <span style={{ fontSize: '10px', padding: '2px 8px', borderRadius: '12px', background: isOnline ? 'rgba(16,185,129,0.18)' : 'rgba(239,68,68,0.18)', color: isOnline ? '#10B981' : '#EF4444', fontWeight: '700' }}>
+            {isOnline ? '● 4G LTE ONLINE' : '✈️ DEAD ZONE (OFFLINE)'}
+          </span>
+        </div>
+        <button
+          onClick={toggleNetwork}
+          style={{
+            padding: '6px 14px',
+            borderRadius: '6px',
+            border: isOnline ? '1px solid #EF4444' : '1px solid #10B981',
+            background: isOnline ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
+            color: isOnline ? '#F87171' : '#4ADE80',
+            fontSize: '11px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          {isOnline ? 'Cut Signal (Go Offline)' : 'Restore Signal (Auto-Sync)'}
+        </button>
+      </div>
+
+      {syncMessage && (
+        <div style={{ marginBottom: '12px', padding: '8px 12px', background: 'rgba(37,99,235,0.18)', border: '1px solid #38BDF8', borderRadius: '6px', color: '#38BDF8', fontSize: '11.5px', fontWeight: '600' }}>
+          {syncMessage}
+        </div>
+      )}
+
+      {/* Record Input */}
+      <form onSubmit={handleAddRecord} style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+        <input
+          type="text"
+          value={newDesc}
+          onChange={(e) => setNewDesc(e.target.value)}
+          placeholder="Log field snag or sensor reading (e.g. Tunnel Sump Leak)..."
+          style={{
+            flex: 1,
+            background: 'rgba(30, 41, 59, 0.7)',
+            border: '1px solid #334155',
+            borderRadius: '6px',
+            padding: '8px 12px',
+            color: '#FFFFFF',
+            fontSize: '12px',
+            outline: 'none'
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            background: '#2563EB',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '6px',
+            padding: '8px 16px',
+            fontSize: '12px',
+            fontWeight: '700',
+            cursor: 'pointer'
+          }}
+        >
+          Log Snag
+        </button>
+      </form>
+
+      {/* Local CRDT Log */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {records.map((r) => (
+          <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(51, 65, 85, 0.4)', borderRadius: '6px', fontSize: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#94A3B8', fontFamily: 'monospace', fontSize: '11px' }}>L-{r.lamport}</span>
+              <span style={{ color: '#E2E8F0' }}>{r.desc}</span>
+            </div>
+            <span style={{ fontSize: '10px', fontWeight: '700', color: r.status === 'synced' ? '#10B981' : '#F59E0B' }}>
+              {r.status === 'synced' ? '🟢 Cloud Reconciled' : '🟡 Local Pending'}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -2546,6 +2790,39 @@ export default function App() {
 
   // High-Tech Futuristic Command Sidebar State
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Progressive Web App (PWA) Install Prompt State
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [pwaInstalled, setPwaInstalled] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    const handleAppInstalled = () => {
+      setPwaInstalled(true);
+      setDeferredPrompt(null);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleAppInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallPWA = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choice) => {
+        if (choice.outcome === 'accepted') setPwaInstalled(true);
+        setDeferredPrompt(null);
+      });
+    } else {
+      alert('Install Abhimanyu Technologies App:\n\n• On iOS (Safari): Tap Share → "Add to Home Screen".\n• On Android / Chrome / Edge: Tap browser menu (⋮) → "Install app" or "Add to Home screen".');
+    }
+  };
 
   // Scroll Progress & Command Palette (Ctrl+K)
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -2608,6 +2885,7 @@ export default function App() {
   const [sriYantraAudioPlaying, setSriYantraAudioPlaying] = useState(false);
   const sriYantraAudioCtxRef = useRef(null);
   const sriYantraGainRef = useRef(null);
+  const sriYantraAnalyserRef = useRef(null);
 
   const startSriYantraAudio = () => {
     try {
@@ -2616,8 +2894,14 @@ export default function App() {
         const ctx = sriYantraAudioCtxRef.current;
         const master = ctx.createGain();
         master.gain.setValueAtTime(0.01, ctx.currentTime);
+
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 64;
+        master.connect(analyser);
         master.connect(ctx.destination);
+
         sriYantraGainRef.current = master;
+        sriYantraAnalyserRef.current = analyser;
 
         const osc1 = ctx.createOscillator();
         osc1.type = 'sine';
@@ -3294,7 +3578,13 @@ ENGAGEMENT COORDINATION
   return (
     <div style={styles.page}>
       {/* --- GLOBAL SEAMLESS SRI YANTRA / BRAHMANDA LIVING BACKGROUND --- */}
-      <AmbientSriYantraBackground isDark={true} flowMode={flowMode} flowSpeed={flowSpeed} />
+      <AmbientSriYantraBackground
+        isDark={true}
+        flowMode={flowMode}
+        flowSpeed={flowSpeed}
+        audioAnalyserRef={sriYantraAnalyserRef}
+        audioPlaying={sriYantraAudioPlaying}
+      />
 
       {/* --- FUTURISTIC HIGH-TECH COMMAND SIDEBAR (HUD DOCK) --- */}
       <FuturisticCommandSidebar
@@ -3311,6 +3601,8 @@ ENGAGEMENT COORDINATION
         playClickSound={playClickSound}
         sriYantraAudioPlaying={sriYantraAudioPlaying}
         toggleSriYantraAudio={toggleSriYantraAudio}
+        onInstallPWA={handleInstallPWA}
+        pwaInstalled={pwaInstalled}
       />
 
       {/* --- SCROLL PROGRESS BAR --- */}
@@ -5361,7 +5653,7 @@ ENGAGEMENT COORDINATION
               <div style={styles.controlGroup}>
                 <label style={styles.controlLabel}>Material</label>
                 <div style={styles.btnSelectorGrid}>
-                  {['wireframe', 'glossy', 'metallic', 'glass'].map((mat) => (
+                  {['wireframe', 'glossy', 'metallic', 'glass', 'hologram'].map((mat) => (
                     <button
                       key={mat}
                       onClick={() => setStudioMaterial(mat)}
@@ -6192,6 +6484,9 @@ ENGAGEMENT COORDINATION
               }}>
                 <code>{CODE_SNIPPETS[activeCodeTab].code}</code>
               </pre>
+
+              {/* Interactive CRDT Simulator for Mobile Field Operations */}
+              {activeCodeTab === 'crdt' && <LiveCRDTSimulator />}
             </div>
           </div>
         </div>
