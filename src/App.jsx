@@ -808,144 +808,498 @@ const CHAKRA_THEMES = {
   }
 };
 
-// --- AMBIENT SRI YANTRA & BRAHMANDA LIVING BACKGROUND COMPONENT ---
+// --- AMBIENT SRI YANTRA & BRAHMANDA LIVING 3D WEBGL BACKGROUND COMPONENT ---
 function AmbientSriYantraBackground({ isDark }) {
-  const canvasRef = useRef(null);
+  const mountRef = useRef(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animId;
-    let w = (canvas.width = window.innerWidth);
-    let h = (canvas.height = window.innerHeight);
+    const container = mountRef.current;
+    if (!container) return;
 
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    // Scene, Perspective Camera, High-Performance WebGL Renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.set(0, 0, 18);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = '0';
+    renderer.domElement.style.left = '0';
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.pointerEvents = 'none';
+    container.appendChild(renderer.domElement);
+
+    // Dynamic Cinematic Cosmic Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, isDark ? 0.6 : 0.85);
+    scene.add(ambientLight);
+
+    const binduPointLight = new THREE.PointLight(0xffd700, isDark ? 3.2 : 2.2, 38);
+    binduPointLight.position.set(0, 0, 4);
+    scene.add(binduPointLight);
+
+    // Sacred Materials Palette (Luminous Golden / Amber / Celestial Indigo)
+    const goldLineMat = new THREE.LineBasicMaterial({
+      color: isDark ? 0xffd700 : 0xd97706,
+      transparent: true,
+      opacity: isDark ? 0.78 : 0.45,
+      blending: isDark ? THREE.AdditiveBlending : THREE.NormalBlending
+    });
+
+    const amberLineMat = new THREE.LineBasicMaterial({
+      color: isDark ? 0xf59e0b : 0xb45309,
+      transparent: true,
+      opacity: isDark ? 0.68 : 0.38,
+      blending: isDark ? THREE.AdditiveBlending : THREE.NormalBlending
+    });
+
+    const cyanLineMat = new THREE.LineBasicMaterial({
+      color: isDark ? 0x38bdf8 : 0x0284c7,
+      transparent: true,
+      opacity: isDark ? 0.52 : 0.28,
+      blending: isDark ? THREE.AdditiveBlending : THREE.NormalBlending
+    });
+
+    const purpleLineMat = new THREE.LineBasicMaterial({
+      color: isDark ? 0xc084fc : 0x7c3aed,
+      transparent: true,
+      opacity: isDark ? 0.56 : 0.32,
+      blending: isDark ? THREE.AdditiveBlending : THREE.NormalBlending
+    });
+
+    // Master 3D Sri Chakra Assembly Group
+    const sriChakraMaster = new THREE.Group();
+    sriChakraMaster.position.x = width > 900 ? 1.8 : 0;
+    sriChakraMaster.position.y = width > 900 ? 0.3 : 0;
+    scene.add(sriChakraMaster);
+
+    // 1. BRAHMANDA COSMIC STARFIELD (1,200 particle stars drifting along Z)
+    const starCount = 1200;
+    const starGeo = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(starCount * 3);
+    const starColors = new Float32Array(starCount * 3);
+    const starVelocities = new Float32Array(starCount);
+
+    const palette = isDark
+      ? [
+          [1.0, 0.84, 0.0],   // Golden Solar
+          [0.98, 0.62, 0.1],  // Warm Amber
+          [0.22, 0.74, 0.97], // Celestial Cyan
+          [0.75, 0.52, 0.98], // Royal Amethyst
+          [1.0, 1.0, 1.0]     // Starlight Diamond
+        ]
+      : [
+          [0.85, 0.47, 0.02],
+          [0.92, 0.58, 0.05],
+          [0.01, 0.52, 0.78],
+          [0.48, 0.23, 0.93],
+          [0.55, 0.55, 0.55]
+        ];
+
+    for (let i = 0; i < starCount; i++) {
+      starPositions[i * 3] = (Math.random() - 0.5) * 55;
+      starPositions[i * 3 + 1] = (Math.random() - 0.5) * 40;
+      starPositions[i * 3 + 2] = -60 + Math.random() * 80;
+
+      const col = palette[Math.floor(Math.random() * palette.length)];
+      starColors[i * 3] = col[0];
+      starColors[i * 3 + 1] = col[1];
+      starColors[i * 3 + 2] = col[2];
+
+      starVelocities[i] = 0.04 + Math.random() * 0.08;
+    }
+
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+
+    const starMat = new THREE.PointsMaterial({
+      size: isDark ? 0.12 : 0.09,
+      vertexColors: true,
+      transparent: true,
+      opacity: isDark ? 0.75 : 0.4,
+      blending: isDark ? THREE.AdditiveBlending : THREE.NormalBlending
+    });
+    const starField = new THREE.Points(starGeo, starMat);
+    scene.add(starField);
+
+    // 2. CENTRAL BINDU CORE & RESONANCE SHOCKWAVES
+    const binduGroup = new THREE.Group();
+    sriChakraMaster.add(binduGroup);
+
+    const binduMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.22, 24, 24),
+      new THREE.MeshBasicMaterial({ color: isDark ? 0xfff066 : 0xd97706 })
+    );
+    binduGroup.add(binduMesh);
+
+    const binduWire = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.38, 1),
+      new THREE.MeshBasicMaterial({
+        color: isDark ? 0xffaa00 : 0xb45309,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.65
+      })
+    );
+    binduGroup.add(binduWire);
+
+    // Harmonic radiating shockwave rings
+    const shockwaveRings = [];
+    for (let i = 0; i < 4; i++) {
+      const ringGeo = new THREE.BufferGeometry();
+      const pts = [];
+      const segments = 64;
+      for (let j = 0; j <= segments; j++) {
+        const theta = (j / segments) * Math.PI * 2;
+        pts.push(new THREE.Vector3(Math.cos(theta), Math.sin(theta), 0));
+      }
+      ringGeo.setFromPoints(pts);
+      const ringMat = new THREE.LineBasicMaterial({
+        color: isDark ? 0xffd700 : 0xd97706,
+        transparent: true,
+        opacity: 0
+      });
+      const ring = new THREE.LineLoop(ringGeo, ringMat);
+      ring.userData = { phase: i * 0.25 };
+      binduGroup.add(ring);
+      shockwaveRings.push(ring);
+    }
+
+    // 3. THE 9 SACRED INTERLOCKING 3D TRIANGLES (SHIVA & SHAKTI)
+    const trianglesGroup = new THREE.Group();
+    sriChakraMaster.add(trianglesGroup);
+
+    function createTriangle(p1, p2, p3, zOffset, material) {
+      const geo = new THREE.BufferGeometry();
+      const points = [
+        new THREE.Vector3(p1[0], p1[1], zOffset),
+        new THREE.Vector3(p2[0], p2[1], zOffset),
+        new THREE.Vector3(p3[0], p3[1], zOffset),
+        new THREE.Vector3(p1[0], p1[1], zOffset)
+      ];
+      geo.setFromPoints(points);
+      return new THREE.Line(geo, material);
+    }
+
+    // 4 Shiva Triangles (Consciousness - Apex UP)
+    const shivaTriangles = [
+      { apex: [0, 2.5],  baseL: [-2.15, -1.9], baseR: [2.15, -1.9], z: 0.16, mat: goldLineMat },
+      { apex: [0, 2.05], baseL: [-1.75, -1.4], baseR: [1.75, -1.4], z: 0.08, mat: amberLineMat },
+      { apex: [0, 1.45], baseL: [-1.35, -0.9], baseR: [1.35, -0.9], z: 0.0,  mat: goldLineMat },
+      { apex: [0, 0.78], baseL: [-0.85, -0.45], baseR: [0.85, -0.45], z: -0.08, mat: cyanLineMat }
+    ];
+
+    // 5 Shakti Triangles (Primordial Energy - Apex DOWN)
+    const shaktiTriangles = [
+      { apex: [0, -2.55], baseL: [-2.2, 1.8],  baseR: [2.2, 1.8],  z: -0.16, mat: goldLineMat },
+      { apex: [0, -2.1],  baseL: [-1.85, 1.45], baseR: [1.85, 1.45], z: -0.08, mat: purpleLineMat },
+      { apex: [0, -1.55], baseL: [-1.45, 1.05], baseR: [1.45, 1.05], z: 0.0,   mat: amberLineMat },
+      { apex: [0, -1.05], baseL: [-1.1, 0.65],  baseR: [1.1, 0.65],  z: 0.08,  mat: goldLineMat },
+      { apex: [0, -0.62], baseL: [-0.65, 0.35], baseR: [0.65, 0.35], z: 0.16,  mat: cyanLineMat }
+    ];
+
+    const shivaGroup = new THREE.Group();
+    const shaktiGroup = new THREE.Group();
+
+    shivaTriangles.forEach(t => {
+      shivaGroup.add(createTriangle(t.apex, t.baseL, t.baseR, t.z, t.mat));
+    });
+    shaktiTriangles.forEach(t => {
+      shaktiGroup.add(createTriangle(t.apex, t.baseL, t.baseR, t.z, t.mat));
+    });
+
+    trianglesGroup.add(shivaGroup);
+    trianglesGroup.add(shaktiGroup);
+
+    // 4. INNER LOTUS: 8 PETALS (ASHTA DALA PADMA)
+    const lotus8Group = new THREE.Group();
+    sriChakraMaster.add(lotus8Group);
+
+    const petals8 = 8;
+    const rIn8 = 2.75;
+    const rOut8 = 3.65;
+    const dTheta8 = (Math.PI * 2) / petals8;
+
+    for (let i = 0; i < petals8; i++) {
+      const centerAngle = i * dTheta8;
+      const leftAngle = centerAngle - dTheta8 * 0.45;
+      const rightAngle = centerAngle + dTheta8 * 0.45;
+
+      const pLeft = new THREE.Vector3(Math.cos(leftAngle) * rIn8, Math.sin(leftAngle) * rIn8, 0.05);
+      const pTip = new THREE.Vector3(Math.cos(centerAngle) * rOut8, Math.sin(centerAngle) * rOut8, 0.08);
+      const pRight = new THREE.Vector3(Math.cos(rightAngle) * rIn8, Math.sin(rightAngle) * rIn8, 0.05);
+      const pBase = new THREE.Vector3(Math.cos(centerAngle) * rIn8, Math.sin(centerAngle) * rIn8, 0.02);
+
+      const curveL = new THREE.QuadraticBezierCurve3(
+        pLeft,
+        new THREE.Vector3(Math.cos(centerAngle - dTheta8 * 0.2) * (rOut8 * 0.95), Math.sin(centerAngle - dTheta8 * 0.2) * (rOut8 * 0.95), 0.06),
+        pTip
+      );
+      const curveR = new THREE.QuadraticBezierCurve3(
+        pTip,
+        new THREE.Vector3(Math.cos(centerAngle + dTheta8 * 0.2) * (rOut8 * 0.95), Math.sin(centerAngle + dTheta8 * 0.2) * (rOut8 * 0.95), 0.06),
+        pRight
+      );
+
+      const petalGeo = new THREE.BufferGeometry().setFromPoints(curveL.getPoints(12).concat(curveR.getPoints(12)));
+      lotus8Group.add(new THREE.Line(petalGeo, goldLineMat));
+
+      const ribGeo = new THREE.BufferGeometry().setFromPoints([pBase, pTip]);
+      lotus8Group.add(new THREE.Line(ribGeo, amberLineMat));
+    }
+
+    // 5. OUTER LOTUS: 16 PETALS (SHODASHA DALA PADMA)
+    const lotus16Group = new THREE.Group();
+    sriChakraMaster.add(lotus16Group);
+
+    const petals16 = 16;
+    const rIn16 = 3.65;
+    const rOut16 = 4.65;
+    const dTheta16 = (Math.PI * 2) / petals16;
+
+    for (let i = 0; i < petals16; i++) {
+      const centerAngle = i * dTheta16;
+      const leftAngle = centerAngle - dTheta16 * 0.45;
+      const rightAngle = centerAngle + dTheta16 * 0.45;
+
+      const pLeft = new THREE.Vector3(Math.cos(leftAngle) * rIn16, Math.sin(leftAngle) * rIn16, -0.05);
+      const pTip = new THREE.Vector3(Math.cos(centerAngle) * rOut16, Math.sin(centerAngle) * rOut16, -0.08);
+      const pRight = new THREE.Vector3(Math.cos(rightAngle) * rIn16, Math.sin(rightAngle) * rIn16, -0.05);
+      const pBase = new THREE.Vector3(Math.cos(centerAngle) * rIn16, Math.sin(centerAngle) * rIn16, -0.02);
+
+      const curveL = new THREE.QuadraticBezierCurve3(
+        pLeft,
+        new THREE.Vector3(Math.cos(centerAngle - dTheta16 * 0.2) * (rOut16 * 0.95), Math.sin(centerAngle - dTheta16 * 0.2) * (rOut16 * 0.95), -0.06),
+        pTip
+      );
+      const curveR = new THREE.QuadraticBezierCurve3(
+        pTip,
+        new THREE.Vector3(Math.cos(centerAngle + dTheta16 * 0.2) * (rOut16 * 0.95), Math.sin(centerAngle + dTheta16 * 0.2) * (rOut16 * 0.95), -0.06),
+        pRight
+      );
+
+      const petalGeo = new THREE.BufferGeometry().setFromPoints(curveL.getPoints(10).concat(curveR.getPoints(10)));
+      lotus16Group.add(new THREE.Line(petalGeo, amberLineMat));
+
+      const ribGeo = new THREE.BufferGeometry().setFromPoints([pBase, pTip]);
+      lotus16Group.add(new THREE.Line(ribGeo, purpleLineMat));
+    }
+
+    // 6. THREE CONCENTRIC GIRDLES (VRITTA TRAYA / MEKHALA) & ORBITING CELESTIAL PHOTONS
+    const girdlesGroup = new THREE.Group();
+    sriChakraMaster.add(girdlesGroup);
+
+    const girdleRadii = [4.75, 4.95, 5.15];
+    girdleRadii.forEach((rad, idx) => {
+      const ringGeo = new THREE.BufferGeometry();
+      const pts = [];
+      const segs = 96;
+      for (let j = 0; j <= segs; j++) {
+        const theta = (j / segs) * Math.PI * 2;
+        pts.push(new THREE.Vector3(Math.cos(theta) * rad, Math.sin(theta) * rad, 0));
+      }
+      ringGeo.setFromPoints(pts);
+      girdlesGroup.add(new THREE.LineLoop(ringGeo, idx === 1 ? goldLineMat : amberLineMat));
+    });
+
+    const photonCount = 12;
+    const photons = [];
+    const photonGeo = new THREE.SphereGeometry(0.045, 8, 8);
+    const photonMat = new THREE.MeshBasicMaterial({ color: isDark ? 0xfff066 : 0xd97706 });
+
+    for (let i = 0; i < photonCount; i++) {
+      const pMesh = new THREE.Mesh(photonGeo, photonMat);
+      const trackIdx = i % 3;
+      pMesh.userData = {
+        radius: girdleRadii[trackIdx],
+        speed: (trackIdx % 2 === 0 ? 1 : -1) * (0.008 + (i * 0.002)),
+        angle: (i / photonCount) * Math.PI * 2
+      };
+      girdlesGroup.add(pMesh);
+      photons.push(pMesh);
+    }
+
+    // 7. BHUPURA (EARTH CITADEL WITH 4 CARDINAL GATEWAYS)
+    const bhupuraGroup = new THREE.Group();
+    sriChakraMaster.add(bhupuraGroup);
+
+    function createBhupuraLayer(baseSize, gateIndent, zOffset, mat) {
+      const h = baseSize;
+      const g = gateIndent;
+      const s = h * 0.32;
+      const pts = [];
+
+      // Top edge with North Gate
+      pts.push(new THREE.Vector3(-h, h, zOffset));
+      pts.push(new THREE.Vector3(-s, h, zOffset));
+      pts.push(new THREE.Vector3(-s, h + g, zOffset));
+      pts.push(new THREE.Vector3(s, h + g, zOffset));
+      pts.push(new THREE.Vector3(s, h, zOffset));
+      pts.push(new THREE.Vector3(h, h, zOffset));
+
+      // Right edge with East Gate
+      pts.push(new THREE.Vector3(h, s, zOffset));
+      pts.push(new THREE.Vector3(h + g, s, zOffset));
+      pts.push(new THREE.Vector3(h + g, -s, zOffset));
+      pts.push(new THREE.Vector3(h, -s, zOffset));
+      pts.push(new THREE.Vector3(h, -h, zOffset));
+
+      // Bottom edge with South Gate
+      pts.push(new THREE.Vector3(s, -h, zOffset));
+      pts.push(new THREE.Vector3(s, -h - g, zOffset));
+      pts.push(new THREE.Vector3(-s, -h - g, zOffset));
+      pts.push(new THREE.Vector3(-s, -h, zOffset));
+      pts.push(new THREE.Vector3(-h, -h, zOffset));
+
+      // Left edge with West Gate
+      pts.push(new THREE.Vector3(-h, -s, zOffset));
+      pts.push(new THREE.Vector3(-h - g, -s, zOffset));
+      pts.push(new THREE.Vector3(-h - g, s, zOffset));
+      pts.push(new THREE.Vector3(-h, s, zOffset));
+      pts.push(new THREE.Vector3(-h, h, zOffset));
+
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      return new THREE.Line(geo, mat);
+    }
+
+    bhupuraGroup.add(createBhupuraLayer(5.5, 0.45, -0.1, amberLineMat));
+    bhupuraGroup.add(createBhupuraLayer(5.8, 0.5, 0.0, goldLineMat));
+    bhupuraGroup.add(createBhupuraLayer(6.1, 0.55, 0.1, cyanLineMat));
+
+    // Dynamic Parallax Mouse Interaction
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+
+    const onMouseMove = (e) => {
+      targetMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      targetMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    };
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+
+    // Responsive Resize Handler
     const onResize = () => {
-      if (!canvas) return;
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
+      width = window.innerWidth;
+      height = window.innerHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+      sriChakraMaster.position.x = width > 900 ? 1.8 : 0;
+      sriChakraMaster.position.y = width > 900 ? 0.3 : 0;
     };
     window.addEventListener('resize', onResize);
 
-    const stars = [];
-    for (let i = 0; i < 90; i++) {
-      stars.push({
-        x: (Math.random() - 0.5) * 2000,
-        y: (Math.random() - 0.5) * 2000,
-        z: Math.random() * 1000 + 1,
-        size: Math.random() * 1.8 + 0.6
-      });
-    }
-
-    let angle = 0;
-    let isVisible = true;
-
-    const onVis = () => {
+    // Performance Liveness: Pause on Tab Background
+    let isVisible = document.visibilityState === 'visible';
+    const onVisChange = () => {
       isVisible = document.visibilityState === 'visible';
     };
-    document.addEventListener('visibilitychange', onVis);
+    document.addEventListener('visibilitychange', onVisChange);
+
+    // Cinematic 60 FPS Animation Loop
+    let animId;
+    let clock = 0;
 
     const render = () => {
       animId = requestAnimationFrame(render);
       if (!isVisible) return;
 
-      ctx.clearRect(0, 0, w, h);
-      const cx = w * 0.72;
-      const cy = h * 0.38;
+      clock += 0.016;
 
-      // Animate starfield
-      for (let s of stars) {
-        s.z -= 0.8;
-        if (s.z <= 0) s.z = 1000;
-        const k = 350 / s.z;
-        const px = cx + s.x * k;
-        const py = cy + s.y * k;
-        if (px >= 0 && px <= w && py >= 0 && py <= h) {
-          const alpha = (1 - s.z / 1000) * (isDark ? 0.35 : 0.15);
-          ctx.fillStyle = isDark ? '#FDE68A' : '#D97706';
-          ctx.globalAlpha = alpha;
-          ctx.beginPath();
-          ctx.arc(px, py, s.size * (1 - s.z / 1000) * 1.2, 0, Math.PI * 2);
-          ctx.fill();
+      // Smooth mouse lerping
+      mouseX += (targetMouseX - mouseX) * 0.04;
+      mouseY += (targetMouseY - mouseY) * 0.04;
+
+      // IMAX Camera Motion: subtle breathing & orbital parallax
+      camera.position.x = mouseX * 2.2 + Math.sin(clock * 0.15) * 0.4;
+      camera.position.y = mouseY * 1.5 + Math.cos(clock * 0.12) * 0.3;
+      camera.lookAt(sriChakraMaster.position.x * 0.4, sriChakraMaster.position.y * 0.4, 0);
+
+      // Brahmanda Particle Drift (Hyper-drive cosmic zoom)
+      const positions = starGeo.attributes.position.array;
+      for (let i = 0; i < starCount; i++) {
+        positions[i * 3 + 2] += starVelocities[i] * 1.8;
+        if (positions[i * 3 + 2] > 20) {
+          positions[i * 3 + 2] = -60;
+          positions[i * 3] = (Math.random() - 0.5) * 55;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 40;
         }
       }
+      starGeo.attributes.position.needsUpdate = true;
 
-      // Delicate counter-rotating sacred geometry
-      angle += 0.003;
-      const baseR = Math.min(w, h) * 0.28;
+      // Master Breathing Scale
+      const breathe = 1 + 0.03 * Math.sin(clock * 0.8);
+      sriChakraMaster.scale.set(breathe, breathe, breathe);
 
-      ctx.save();
-      ctx.translate(cx, cy);
+      // Master 3D Spatial Tilt & Rotation
+      sriChakraMaster.rotation.x = 0.14 + Math.sin(clock * 0.25) * 0.04 + mouseY * 0.15;
+      sriChakraMaster.rotation.y = Math.cos(clock * 0.2) * 0.05 + mouseX * 0.2;
 
-      // Concentric rings
-      ctx.lineWidth = 1;
-      for (let r = 1; r <= 3; r++) {
-        ctx.strokeStyle = isDark ? `rgba(245, 158, 11, ${0.08 + r * 0.04})` : `rgba(217, 119, 6, ${0.05 + r * 0.03})`;
-        ctx.beginPath();
-        ctx.arc(0, 0, baseR * (0.3 + r * 0.2), 0, Math.PI * 2);
-        ctx.stroke();
-      }
+      // Bindu Core Pulse
+      const binduPulse = 1 + 0.15 * Math.sin(clock * 2.5);
+      binduMesh.scale.set(binduPulse, binduPulse, binduPulse);
+      binduWire.rotation.x += 0.01;
+      binduWire.rotation.y += 0.015;
 
-      // Counter-rotating 8-petal lotus
-      ctx.save();
-      ctx.rotate(-angle * 0.6);
-      const petals = 8;
-      for (let i = 0; i < petals; i++) {
-        const a = (i * Math.PI * 2) / petals;
-        const r1 = baseR * 0.65;
-        const r2 = baseR * 0.85;
-        ctx.strokeStyle = isDark ? 'rgba(251, 191, 36, 0.12)' : 'rgba(217, 119, 6, 0.08)';
-        ctx.beginPath();
-        ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1);
-        ctx.lineTo(Math.cos(a + 0.18) * r2, Math.sin(a + 0.18) * r2);
-        ctx.lineTo(Math.cos(a + 0.36) * r1, Math.sin(a + 0.36) * r1);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      // Interlocking triangles
-      ctx.save();
-      ctx.rotate(angle);
-      const triLayers = [
-        { scale: 0.55, down: false },
-        { scale: 0.44, down: true },
-        { scale: 0.33, down: false },
-        { scale: 0.22, down: true }
-      ];
-      triLayers.forEach((tri, idx) => {
-        const rad = baseR * tri.scale;
-        const rot = tri.down ? Math.PI : 0;
-        ctx.strokeStyle = idx % 2 === 0
-          ? (isDark ? 'rgba(245, 158, 11, 0.22)' : 'rgba(217, 119, 6, 0.14)')
-          : (isDark ? 'rgba(56, 189, 248, 0.18)' : 'rgba(37, 99, 235, 0.12)');
-        ctx.beginPath();
-        for (let pt = 0; pt < 3; pt++) {
-          const a = rot + (pt * Math.PI * 2) / 3 - Math.PI / 2;
-          const x = Math.cos(a) * rad;
-          const y = Math.sin(a) * rad;
-          if (pt === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        ctx.stroke();
+      // Harmonic Shockwave Expansions
+      shockwaveRings.forEach(ring => {
+        ring.userData.phase = (ring.userData.phase + 0.005) % 1.0;
+        const p = ring.userData.phase;
+        const currentRadius = p * 6.5;
+        ring.scale.set(currentRadius, currentRadius, 1);
+        ring.material.opacity = (1 - p) * (isDark ? 0.7 : 0.35);
       });
-      ctx.restore();
 
-      ctx.restore();
-      ctx.globalAlpha = 1.0;
+      // Sacred Counter-Rotation
+      lotus8Group.rotation.z += 0.0012;
+      lotus16Group.rotation.z -= 0.0009;
+
+      // Sacred Triangles micro harmonic vibration
+      shivaGroup.rotation.z = Math.sin(clock * 0.35) * 0.02;
+      shaktiGroup.rotation.z = -Math.sin(clock * 0.35) * 0.02;
+
+      // Celestial Photons Orbit along Girdles
+      photons.forEach(p => {
+        p.userData.angle += p.userData.speed;
+        p.position.x = Math.cos(p.userData.angle) * p.userData.radius;
+        p.position.y = Math.sin(p.userData.angle) * p.userData.radius;
+      });
+
+      // Bhupura subtle slow spin
+      bhupuraGroup.rotation.z = Math.sin(clock * 0.1) * 0.015;
+
+      renderer.render(scene, camera);
     };
 
     render();
 
+    // Comprehensive Resource Disposal on Unmount
     return () => {
       cancelAnimationFrame(animId);
+      window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', onResize);
-      document.removeEventListener('visibilitychange', onVis);
+      document.removeEventListener('visibilitychange', onVisChange);
+
+      if (renderer.domElement && container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+      starGeo.dispose();
+      starMat.dispose();
     };
   }, [isDark]);
 
   return (
     <div
+      ref={mountRef}
       style={{
         position: 'fixed',
         top: 0,
@@ -957,19 +1311,7 @@ function AmbientSriYantraBackground({ isDark }) {
         overflow: 'hidden'
       }}
     >
-      {/* Procedural Canvas Layer */}
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none'
-        }}
-      />
-      {/* Video Loop Layer (plays on top when available) */}
+      {/* Video Loop Layer (seamlessly blends on top when file exists) */}
       <video
         id="bg-video"
         autoPlay
@@ -987,7 +1329,8 @@ function AmbientSriYantraBackground({ isDark }) {
           height: 'auto',
           objectFit: 'cover',
           opacity: isDark ? 0.35 : 0.16,
-          transition: 'opacity 0.8s ease'
+          transition: 'opacity 0.8s ease',
+          pointerEvents: 'none'
         }}
       >
         <source src="sri-yantra-loop.mp4" type="video/mp4" />
@@ -995,7 +1338,8 @@ function AmbientSriYantraBackground({ isDark }) {
         <source src="generated_video_059bfe58.mp4" type="video/mp4" />
         <source src="/generated_video_059bfe58.mp4" type="video/mp4" />
       </video>
-      {/* Golden breathing radial overlay */}
+
+      {/* Golden breathing radial overlay for deep cosmic contrast across all screens */}
       <div
         id="sri-yantra-bg-overlay"
         style={{
@@ -1004,7 +1348,8 @@ function AmbientSriYantraBackground({ isDark }) {
           background: isDark
             ? 'radial-gradient(circle at 65% 25%, rgba(255,215,0,0.08) 0%, transparent 60%), radial-gradient(circle at center, transparent 35%, rgba(10,15,29,0.78) 100%)'
             : 'radial-gradient(circle at 65% 25%, rgba(255,215,0,0.05) 0%, transparent 60%), radial-gradient(circle at center, transparent 35%, rgba(255,255,255,0.82) 100%)',
-          transition: 'background 0.5s ease'
+          transition: 'background 0.5s ease',
+          pointerEvents: 'none'
         }}
       />
     </div>
