@@ -4448,6 +4448,7 @@ ENGAGEMENT COORDINATION
 
             {/* Quick Search Ctrl+K Button */}
             <button
+              className="desktop-only-btn"
               onClick={() => setCommandOpen(true)}
               style={styles.searchCommandBtn}
               title="Quick Search and Command Menu (Ctrl+K)"
@@ -4497,6 +4498,7 @@ ENGAGEMENT COORDINATION
 
             {/* Direct Project CTA */}
             <a
+              className="desktop-only-btn"
               href="#contact"
               onClick={(e) => scrollTo(e, 'contact')}
               style={{
