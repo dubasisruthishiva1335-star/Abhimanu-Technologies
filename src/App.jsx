@@ -2494,6 +2494,8 @@ function CountUp({ target, suffix = '', duration = 1800 }) {
   const [count, setCount] = useState(0);
   const [started, setStarted] = useState(false);
   const ref = useRef(null);
+  const isDecimal = String(target).includes('.');
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -2513,10 +2515,10 @@ function CountUp({ target, suffix = '', duration = 1800 }) {
     const timer = setInterval(() => {
       cur += inc;
       if (cur >= target) { setCount(target); clearInterval(timer); }
-      else { setCount(Math.floor(cur)); }
+      else { setCount(isDecimal ? parseFloat(cur.toFixed(1)) : Math.floor(cur)); }
     }, ms);
     return () => clearInterval(timer);
-  }, [started, target, duration]);
+  }, [started, target, duration, isDecimal]);
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
@@ -7248,6 +7250,50 @@ ENGAGEMENT COORDINATION
             {/* Controls Palette */}
             <div style={styles.studioControlsCol}>
               <div style={styles.controlGroup}>
+                <label style={styles.controlLabel}>⚡ Quick Presets</label>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {[
+                    { label: '💎 Cyber Quartz', shape: 'knot', mat: 'glass', color: '#06B6D4', speed: 1.2 },
+                    { label: '⚡ Golden Vortex', shape: 'flowField', mat: 'metallic', color: '#F59E0B', speed: 2.0 },
+                    { label: '🌀 Sacred Chakra', shape: 'chakra', mat: 'hologram', color: '#8B5CF6', speed: 0.8 },
+                    { label: '🔥 Ruby Matrix', shape: 'cube', mat: 'wireframe', color: '#EF4444', speed: 1.5 },
+                    { label: '🔷 Cobalt Prism', shape: 'diamond', mat: 'glossy', color: '#2563EB', speed: 1.0 }
+                  ].map((preset, pIdx) => (
+                    <button
+                      key={pIdx}
+                      onClick={() => {
+                        setStudioShape(preset.shape);
+                        setStudioMaterial(preset.mat);
+                        setStudioColor(preset.color);
+                        setStudioRotationSpeed(preset.speed);
+                        setStudioAutoRotate(true);
+                        playClickSound('crystal');
+                      }}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: '8px',
+                        background: studioShape === preset.shape && studioMaterial === preset.mat && studioColor === preset.color
+                          ? 'rgba(56, 189, 248, 0.25)'
+                          : 'rgba(30, 41, 59, 0.6)',
+                        border: studioShape === preset.shape && studioMaterial === preset.mat && studioColor === preset.color
+                          ? '1px solid #38BDF8'
+                          : '1px solid rgba(51, 65, 85, 0.6)',
+                        color: studioShape === preset.shape && studioMaterial === preset.mat && studioColor === preset.color
+                          ? '#38BDF8'
+                          : '#CBD5E1',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={styles.controlGroup}>
                 <label style={styles.controlLabel}>Shape</label>
                 <div style={styles.btnSelectorGrid}>
                   {[
@@ -7978,6 +8024,39 @@ ENGAGEMENT COORDINATION
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(51, 65, 85, 0.5)', paddingTop: '10px' }}>
                       <span style={{ fontSize: '12px', fontWeight: '800', color: '#FFD700' }}>{item.metric}</span>
                       <span style={{ fontSize: '10.5px', color: '#38BDF8', fontWeight: '700' }}>{item.tag}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Live Client Engineering Metrics Stats Row */}
+              <div style={{
+                marginTop: '40px',
+                padding: '24px 28px',
+                borderRadius: '16px',
+                background: isDark ? 'linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.7) 100%)' : '#FFFFFF',
+                border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '24px',
+                alignItems: 'center',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.04)'
+              }}>
+                {[
+                  { number: 99.9, suffix: '%', label: 'Uptime SLA Delivered', sub: 'Across 14 distributed clusters', color: '#10B981' },
+                  { number: 14, suffix: ':1', label: '3D Mesh Compression', sub: 'Sub-second model streaming', color: '#38BDF8' },
+                  { number: 85, suffix: 'ms', label: 'P95 Edge API Latency', sub: 'Cloudflare & AWS CloudFront', color: '#F59E0B' },
+                  { number: 120, suffix: '+', label: 'Sprint Milestones Shipped', sub: '100% on-time release record', color: '#8B5CF6' }
+                ].map((m, mIdx) => (
+                  <div key={mIdx} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ fontSize: '28px', fontWeight: '900', color: m.color, letterSpacing: '-0.5px' }}>
+                      <CountUp target={m.number} suffix={m.suffix} duration={1200} />
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A' }}>
+                      {m.label}
+                    </div>
+                    <div style={{ fontSize: '11px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                      {m.sub}
                     </div>
                   </div>
                 ))}
@@ -10234,6 +10313,44 @@ ENGAGEMENT COORDINATION
           </div>
         </div>
       </footer>
+
+      {/* Floating WhatsApp Quick-Contact Quick-Dial Button */}
+      <a
+        href="https://wa.me/919999999999?text=Hello%20Abhimanyu%20Technologies%2C%20I%20would%20like%20to%20inquire%20about%20a%20software%20engineering%20project."
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          zIndex: 9999,
+          backgroundColor: '#25D366',
+          color: '#FFFFFF',
+          borderRadius: '50px',
+          padding: '12px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          boxShadow: '0 4px 20px rgba(37, 211, 102, 0.45), 0 0 12px rgba(37, 211, 102, 0.3)',
+          textDecoration: 'none',
+          fontWeight: '700',
+          fontSize: '13px',
+          transition: 'all 0.2s ease',
+          cursor: 'pointer'
+        }}
+        title="Chat instantly with our Engineering Lead on WhatsApp"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px) scale(1.04)';
+          e.currentTarget.style.boxShadow = '0 6px 24px rgba(37, 211, 102, 0.6)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'none';
+          e.currentTarget.style.boxShadow = '0 4px 20px rgba(37, 211, 102, 0.45), 0 0 12px rgba(37, 211, 102, 0.3)';
+        }}
+      >
+        <span style={{ fontSize: '18px' }}>💬</span>
+        <span className="desktop-only-btn">WhatsApp</span>
+      </a>
     </div>
   );
 }
