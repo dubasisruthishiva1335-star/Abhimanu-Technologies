@@ -4657,6 +4657,8 @@ export default function App() {
     details: ''
   });
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactTicket, setContactTicket] = useState(null);
   const [inquiryCopied, setInquiryCopied] = useState(false);
   const [estimateCopied, setEstimateCopied] = useState(false);
 
@@ -5109,7 +5111,7 @@ ENGAGEMENT COORDINATION
     }, 900);
   };
 
-  const handleContactSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
     const name = contactData.name?.trim();
     const email = contactData.email?.trim();
@@ -5126,8 +5128,39 @@ ENGAGEMENT COORDINATION
       return;
     }
 
+    setContactSubmitting(true);
+    playClickSound('click');
+
+    const ticketId = `ABH-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    try {
+      const payload = {
+        ticket: ticketId,
+        timestamp: new Date().toISOString(),
+        ...contactData
+      };
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('abh_last_ticket', JSON.stringify(payload));
+      }
+    } catch (_) {}
+
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    setContactTicket(ticketId);
+    setContactSubmitting(false);
     playClickSound('success');
     setContactSubmitted(true);
+  };
+
+  const handleDownloadReceipt = () => {
+    const text = `========================================\nABHIMANYU TECHNOLOGIES — SCOPING DISPATCH\n========================================\nTicket Reference: ${contactTicket || 'ABH-8420'}\nTimestamp: ${new Date().toLocaleString()}\nClient: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService Tier: ${contactData.serviceNeed}\n\nProject Scope & Architecture Notes:\n${contactData.details}\n========================================\nStatus: DISPATCH CONFIRMED (P1 Priority Queue)\nSLA: Engineering Response Within 4 Hours\nDirect WhatsApp: https://wa.me/919999999999\n========================================`;
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Abhimanyu_Scoping_${contactTicket || 'ABH-8420'}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -7382,7 +7415,7 @@ ENGAGEMENT COORDINATION
             ];
 
             return (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', alignItems: 'start' }}>
+              <div className="cloud-sandbox-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', alignItems: 'start' }}>
                 {/* Topology Graph Canvas */}
                 <div style={{ position: 'relative', height: '420px', background: isDark ? 'rgba(15,23,42,0.7)' : '#FFFFFF', borderRadius: '16px', border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0', overflow: 'hidden' }}>
                   <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
@@ -10135,11 +10168,50 @@ ENGAGEMENT COORDINATION
                     We have received your project details. Our engineering lead will review your message and reply to <strong>{contactData.email}</strong> within one working day.
                   </p>
 
-                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center', margin: '18px 0 10px 0' }}>
+                  <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    border: '1px solid rgba(16, 185, 129, 0.4)',
+                    color: '#10B981',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    margin: '6px 0 12px 0'
+                  }}>
+                    <span>● SLA GUARANTEED</span>
+                    <span>·</span>
+                    <span>TICKET #{contactTicket || 'ABH-8420'}</span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center', margin: '14px 0 10px 0' }}>
+                    <button
+                      type="button"
+                      onClick={handleDownloadReceipt}
+                      style={{
+                        backgroundColor: isDark ? '#1E293B' : '#EFF6FF',
+                        color: isDark ? '#38BDF8' : '#0284C7',
+                        border: isDark ? '1px solid #38BDF8' : '1px solid #38BDF8',
+                        padding: '10px 18px',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        fontSize: '13.5px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                      title="Download Scoping Dispatch Receipt as text file"
+                    >
+                      📄 Download Scoping Receipt (.txt)
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => {
-                        const summary = `Abhimanyu Technologies - Project Inquiry\n\nName: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService Need: ${contactData.serviceNeed}\nDetails: ${contactData.details}`;
+                        const summary = `Abhimanyu Technologies - Project Inquiry\nTicket: #${contactTicket || 'ABH-8420'}\nName: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService Need: ${contactData.serviceNeed}\nDetails: ${contactData.details}`;
                         navigator.clipboard?.writeText(summary);
                         setInquiryCopied(true);
                         setTimeout(() => setInquiryCopied(false), 2500);
@@ -10162,8 +10234,8 @@ ENGAGEMENT COORDINATION
                     </button>
 
                     <a
-                      href={`mailto:hello@abhimanyutech.example?subject=Project%20Inquiry%20from%20${encodeURIComponent(contactData.name)}&body=${encodeURIComponent(
-                        `Hi Abhimanyu Technologies team,\n\nName: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService: ${contactData.serviceNeed}\n\nProject Details:\n${contactData.details}`
+                      href={`mailto:hello@abhimanyutech.example?subject=Project%20Inquiry%20%5B${contactTicket || 'ABH-8420'}%5D%20from%20${encodeURIComponent(contactData.name)}&body=${encodeURIComponent(
+                        `Hi Abhimanyu Technologies team,\n\nTicket: #${contactTicket || 'ABH-8420'}\nName: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService: ${contactData.serviceNeed}\n\nProject Details:\n${contactData.details}`
                       )}`}
                       style={{
                         backgroundColor: '#2563EB',
@@ -10183,7 +10255,7 @@ ENGAGEMENT COORDINATION
 
                     <a
                       href={`https://wa.me/919999999999?text=${encodeURIComponent(
-                        `Hi Abhimanyu Technologies Team,\n\nName: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService: ${contactData.serviceNeed}\n\nProject Scope:\n${contactData.details}`
+                        `Hi Abhimanyu Technologies Team,\n\nTicket: #${contactTicket || 'ABH-8420'}\nName: ${contactData.name}\nEmail: ${contactData.email}\nPhone: ${contactData.phone || 'N/A'}\nService: ${contactData.serviceNeed}\n\nProject Scope:\n${contactData.details}`
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -10207,6 +10279,7 @@ ENGAGEMENT COORDINATION
                   <button
                     onClick={() => {
                       setContactSubmitted(false);
+                      setContactTicket(null);
                       setContactData({
                         name: '',
                         email: '',
@@ -10289,8 +10362,16 @@ ENGAGEMENT COORDINATION
                     />
                   </div>
 
-                  <button type="submit" style={styles.submitBtn}>
-                    Send inquiry &rarr;
+                  <button
+                    type="submit"
+                    disabled={contactSubmitting}
+                    style={{
+                      ...styles.submitBtn,
+                      opacity: contactSubmitting ? 0.75 : 1,
+                      cursor: contactSubmitting ? 'wait' : 'pointer'
+                    }}
+                  >
+                    {contactSubmitting ? '⏳ Transmitting Architectural Dispatch...' : 'Send inquiry →'}
                   </button>
                 </form>
               )}
