@@ -413,11 +413,13 @@ export default function App() {
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-4 bg-black/85 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-3">
           <a href="#home" className="flex items-center gap-3 group">
-            <img
-              src="/abhimanyu-emblem-transparent.png"
-              alt="Abhimanyu Technologies Logo"
-              className="w-10 h-10 object-contain filter drop-shadow-[0_0_12px_rgba(212,175,55,0.45)] group-hover:scale-105 transition"
-            />
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-yellow-500/20 via-black/80 to-yellow-600/20 border border-yellow-500/50 p-1 flex items-center justify-center shadow-lg shadow-yellow-500/20 group-hover:border-yellow-400 group-hover:scale-105 transition shrink-0">
+              <img
+                src="/abhimanyu-emblem-transparent.png"
+                alt="Abhimanyu Technologies Logo"
+                className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(212,175,55,0.7)]"
+              />
+            </div>
             <div className="leading-tight">
               <span className="text-lg md:text-xl font-bold tracking-wide font-['Space_Grotesk'] text-white">ABHIMANYU</span>
               <span className="text-yellow-400 font-bold tracking-wider text-xs md:text-sm block">TECHNOLOGIES</span>
