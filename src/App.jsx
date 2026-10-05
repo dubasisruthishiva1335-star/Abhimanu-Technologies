@@ -226,7 +226,51 @@ const PITCH_DECK_SLIDES = [
     subtitle: 'Get Started in Under 24 Hours',
     headline: 'Break The Chakravyuha of Design & Technology',
     badge: 'NEXT STEPS',
-    content: '• Website: https://abhimanu-technologies.vercel.app/\n• Email: hello@abhimanyutech.in\n• Office: Plot 45, Kukatpally, Hyderabad, Telangana 500072\n• Phone / WhatsApp: +91 99890 28452\n\nLet\'s build your next building plan or software product.'
+    content: '• Website: https://abhimanyutech.in/\n• Email: hello@abhimanyutech.in\n• Office: Plot 45, Kukatpally, Hyderabad, Telangana 500072\n• Phone / WhatsApp: +91 99890 28452\n\nLet\'s build your next building plan or software product.'
+  }
+];
+
+const HOW_IT_WORKS_STEPS = [
+  {
+    step: '01',
+    title: 'Share Requirements',
+    desc: 'Send plot dimensions, hand sketches, vastu requirements, or software feature brief via WhatsApp or our instant quote form.',
+    tag: 'Step 1 • Immediate Kickoff'
+  },
+  {
+    step: '02',
+    title: 'We Design & Engineer',
+    desc: 'Our certified architects, BIM modelers, and AI engineers draft your 2D plans, 3D elevations, or software build in 24-48 hours.',
+    tag: 'Step 2 • 24-48hr Turnaround'
+  },
+  {
+    step: '03',
+    title: 'Deliver, Revise & Support',
+    desc: 'Receive full editable AutoCAD DWG, print PDFs, or live deployments. Includes 2 free revisions and full ongoing support.',
+    tag: 'Step 3 • Complete Handover'
+  }
+];
+
+const FAQS = [
+  {
+    q: 'How fast do you deliver AutoCAD architectural plans?',
+    a: 'Standard residential floor plans and elevations are delivered within 24 to 48 hours. Larger venture layouts and multi-storey commercial BIM packages are delivered within 3 to 7 working days with regular milestone previews.'
+  },
+  {
+    q: 'Do we get full ownership of editable AutoCAD (.DWG) and source files?',
+    a: 'Yes, 100%. Upon completion, you receive all raw editable AutoCAD .DWG files, Revit .RVT models, high-resolution 3D renders, and full source code repositories with zero vendor lock-in.'
+  },
+  {
+    q: 'Are your drawings compliant with GHMC and TS-bPASS sanction norms?',
+    a: 'Yes. All our architectural and venture drawings strictly follow GHMC, HMDA, and DTCP municipal building bylaws, ensuring seamless approval on Telangana’s TS-bPASS portal.'
+  },
+  {
+    q: 'How does the ₹25,000/month Dedicated Engineer plan work?',
+    a: 'You get an experienced civil draftsman, BIM modeler, or software engineer working exclusively on your projects for 8 hours a day, 6 days a week, with direct daily WhatsApp and phone coordination, plus a 48-hour replacement guarantee.'
+  },
+  {
+    q: 'Can you develop custom AI software or WhatsApp CRM for real estate builders?',
+    a: 'Yes. Our IT division specializes in real estate lead capture CRMs, automated WhatsApp bots that respond to buyer inquiries in 3 seconds, and interactive builder portals starting at ₹50,000.'
   }
 ];
 
@@ -347,6 +391,7 @@ export default function App() {
   const [pitchDeckModalOpen, setPitchDeckModalOpen] = useState(false);
   const [calculatorModalOpen, setCalculatorModalOpen] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   // Per-Sq.Ft Architecture Calculator State
   const [sqft, setSqft] = useState(2500);
@@ -461,11 +506,13 @@ export default function App() {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center gap-7 text-xs font-semibold tracking-widest text-gray-300">
+        <div className="hidden lg:flex items-center gap-6 text-xs font-semibold tracking-widest text-gray-300">
           <a href="#home" className="hover:text-yellow-400 transition">HOME</a>
           <a href="#services" className="hover:text-yellow-400 transition">SERVICES</a>
+          <a href="#how-it-works" className="hover:text-yellow-400 transition">PROCESS</a>
           <a href="#work" className="hover:text-yellow-400 transition">WORK</a>
           <a href="#pricing" className="hover:text-yellow-400 transition">PRICING</a>
+          <a href="#faq" className="hover:text-yellow-400 transition">FAQ</a>
           <a href="#contact" className="hover:text-yellow-400 transition">CONTACT</a>
           
           <button
@@ -473,7 +520,7 @@ export default function App() {
             className="px-3 py-1.5 rounded-lg border border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10 transition flex items-center gap-1.5"
           >
             <span>📇</span>
-            <span>VISITING CARD</span>
+            <span>CARD</span>
           </button>
 
           <button
@@ -481,7 +528,7 @@ export default function App() {
             className="px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition flex items-center gap-1.5"
           >
             <span>📊</span>
-            <span>PITCH DECK</span>
+            <span>DECK</span>
           </button>
         </div>
 
@@ -511,12 +558,14 @@ export default function App() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl pt-24 px-6 lg:hidden flex flex-col gap-6">
-          <a href="#home" onClick={() => setMobileMenuOpen(false)} className="text-xl font-bold text-gray-200">HOME</a>
-          <a href="#services" onClick={() => setMobileMenuOpen(false)} className="text-xl font-bold text-gray-200">SERVICES (3 CHAKRAS)</a>
-          <a href="#work" onClick={() => setMobileMenuOpen(false)} className="text-xl font-bold text-gray-200">WORK PORTFOLIO</a>
-          <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-xl font-bold text-gray-200">PRICING & CALCULATOR</a>
-          <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-xl font-bold text-yellow-400">CONTACT & GET QUOTE</a>
+        <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl pt-24 px-6 lg:hidden flex flex-col gap-5 overflow-y-auto pb-10">
+          <a href="#home" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">HOME</a>
+          <a href="#services" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">SERVICES (3 CHAKRAS)</a>
+          <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">HOW IT WORKS</a>
+          <a href="#work" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">WORK PORTFOLIO</a>
+          <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">PRICING & CALCULATOR</a>
+          <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">FREQUENT QUESTIONS</a>
+          <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-yellow-400">CONTACT & GET QUOTE</a>
           
           <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
             <button
@@ -663,6 +712,46 @@ export default function App() {
                   >
                     Inquire about {c.title} →
                   </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS SECTION */}
+      <section id="how-it-works" className="px-6 md:px-16 py-24 bg-[#0a0a0d] border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center">
+            <p className="text-[11px] tracking-[0.4em] text-yellow-500 font-semibold uppercase">3 SIMPLE STEPS</p>
+            <h2 className="text-3xl md:text-5xl font-bold font-['Space_Grotesk'] mt-2">How It Works</h2>
+            <p className="text-gray-400 mt-3 text-sm md:text-base max-w-xl mx-auto">
+              From raw plot sketches to approved blueprints or production software in 3 streamlined phases.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mt-14">
+            {HOW_IT_WORKS_STEPS.map((s, idx) => (
+              <div
+                key={idx}
+                className="relative rounded-3xl p-8 bg-black/60 border border-white/10 hover:border-yellow-500/40 transition duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex justify-between items-center mb-6">
+                    <span className="text-4xl font-black font-['Space_Grotesk'] text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-600">
+                      {s.step}
+                    </span>
+                    <span className="text-[10px] uppercase tracking-widest font-semibold px-3 py-1 rounded-full border border-yellow-500/30 text-yellow-400 bg-yellow-500/10">
+                      {s.tag}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold font-['Space_Grotesk'] text-white">{s.title}</h3>
+                  <p className="text-xs text-gray-400 leading-relaxed mt-3">{s.desc}</p>
+                </div>
+                <div className="mt-8 pt-4 border-t border-white/5 text-[11px] text-yellow-500/80 font-medium">
+                  {idx === 0 && '⚡ Zero upfront friction • Instant WhatsApp scoping'}
+                  {idx === 1 && '📐 Senior Architect & Dev review • 24hr first cut'}
+                  {idx === 2 && '🔒 Full DWG & source code handover • 2 revisions free'}
                 </div>
               </div>
             ))}
@@ -902,6 +991,73 @@ export default function App() {
                 Lock Quote & Book Consultation →
               </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ & GUARANTEES SECTION */}
+      <section id="faq" className="px-6 md:px-16 py-24 bg-[#0a0a0d] border-t border-white/5">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-[11px] tracking-[0.4em] text-yellow-500 font-semibold uppercase">COMMON INQUIRIES</p>
+            <h2 className="text-3xl md:text-5xl font-bold font-['Space_Grotesk'] mt-2">Frequently Asked Questions</h2>
+            <p className="text-gray-400 mt-3 text-sm max-w-lg mx-auto">
+              Everything you need to know about our AutoCAD architecture deliverables, IT projects, and dedicated engineers.
+            </p>
+          </div>
+
+          {/* Guarantees Strip */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 text-center">
+              <span className="text-2xl block mb-1">⚡</span>
+              <div className="text-xs font-bold text-white">24-48hr Turnaround</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">Rapid 2D/3D delivery</div>
+            </div>
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 text-center">
+              <span className="text-2xl block mb-1">📐</span>
+              <div className="text-xs font-bold text-white">GHMC Sanction Ready</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">TS-bPASS compliant</div>
+            </div>
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 text-center">
+              <span className="text-2xl block mb-1">🔄</span>
+              <div className="text-xs font-bold text-white">2 Free Revisions</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">Guaranteed satisfaction</div>
+            </div>
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 text-center">
+              <span className="text-2xl block mb-1">🤝</span>
+              <div className="text-xs font-bold text-white">48hr Replacement</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">Vetted engineer pledge</div>
+            </div>
+          </div>
+
+          {/* Accordion */}
+          <div className="space-y-4">
+            {FAQS.map((faq, idx) => {
+              const isOpen = openFaqIndex === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`rounded-2xl border transition duration-200 overflow-hidden ${
+                    isOpen ? 'border-yellow-500/50 bg-yellow-500/[0.04]' : 'border-white/10 bg-black/60 hover:border-white/20'
+                  }`}
+                >
+                  <button
+                    onClick={() => setOpenFaqIndex(isOpen ? -1 : idx)}
+                    className="w-full text-left p-6 flex justify-between items-center gap-4"
+                  >
+                    <span className="text-sm md:text-base font-bold text-white font-['Space_Grotesk']">{faq.q}</span>
+                    <span className={`text-yellow-400 text-xl font-bold transition-transform duration-200 ${isOpen ? 'rotate-45' : ''}`}>
+                      +
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-6 pb-6 text-xs md:text-sm text-gray-300 leading-relaxed border-t border-white/5 pt-4">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
