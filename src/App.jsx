@@ -163,73 +163,6 @@ const PRICING_PLANS = [
   }
 ];
 
-const PITCH_DECK_SLIDES = [
-  {
-    num: 1,
-    title: 'ABHIMANYU TECHNOLOGIES',
-    subtitle: 'Hyderabad • Private Presentation',
-    headline: 'Breaking The Chakravyuha Of Design & Code',
-    badge: 'CONFIDENTIAL EXECUTIVE BRIEFING',
-    content: 'We unify Architecture CAD BIM, IT AI Software, and Elite Freelance Engineers under one coordinated roof. Just as Abhimanyu understood the strategic entry of the Chakravyuha, we guide real estate builders and enterprises through the maze of modern engineering.'
-  },
-  {
-    num: 2,
-    title: 'THE CHAKRAVYUHA PROBLEM',
-    subtitle: 'The Fragmented Real Estate Dilemma',
-    headline: 'Builders Are Trapped Between 4 Disconnected Vendors',
-    badge: 'INDUSTRY BOTTLENECK',
-    content: '1. Architects take weeks for drawing modifications\n2. IT agencies don\'t understand square footage or civil approvals\n3. Freelancers disappear mid-project without documentation\n4. Real estate marketing leads are lost without automated WhatsApp qualification\n\nResult: 3-5 month project delays and massive cost overruns.'
-  },
-  {
-    num: 3,
-    title: 'THE ABHIMANYU SOLUTION',
-    subtitle: 'The 3-Chakra Operating Model',
-    headline: 'One Single Partner From Soil To Software',
-    badge: 'OUR VALUE PROPOSITION',
-    content: '• Chakra 01 (Architecture): 2D Plans, 3D Elevations, Revit BIM, GHMC Approvals from ₹15/sq.ft\n• Chakra 02 (IT & AI): Real Estate CRM, WhatsApp Bots, Builder Web & Mobile Platforms\n• Chakra 03 (Freelance Hub): 100+ Vetted Engineers on-demand for ₹25k/month with 48hr replacement.'
-  },
-  {
-    num: 4,
-    title: 'CHAKRA 01: ARCHITECTURE DIVISION',
-    subtitle: 'AutoCAD, BIM & Approvals',
-    headline: 'High-Precision Civil & Structural Engineering',
-    badge: 'CORE COMPETENCY',
-    content: '• Turnaround: 24 to 48 hours for standard municipal packages\n• Tools: AutoCAD, Revit, Civil 3D, SketchUp, Lumion, 3ds Max\n• Deliverables: G+5 to G+25 structural drawings, MEP clash detection, BOQ estimations, and TS-bPASS sanction dossiers\n• Track Record: Over 150+ successful residential & venture plans completed.'
-  },
-  {
-    num: 5,
-    title: 'CHAKRA 02: IT & AI SOFTWARE DIVISION',
-    subtitle: 'Digital Transformation for Builders',
-    headline: 'AI Agents & Custom Software Built for Real Estate',
-    badge: 'TECHNOLOGY ACCELERATOR',
-    content: '• Real Estate CRM: Live lead routing from Meta & Google directly to field sales\n• WhatsApp AI Qualifier: Answers unit pricing, amenities, and downloads brochures in 3 seconds\n• Cloud Infrastructure: Ultra-fast Next.js portals with sub-second page loads globally\n• Revenue Model: From ₹50,000 project fees + ₹10,000/mo recurring SaaS maintenance.'
-  },
-  {
-    num: 6,
-    title: 'CHAKRA 03: FREELANCE HUB',
-    subtitle: 'Elastic Engineering Workforce',
-    headline: '100+ On-Demand Civil & Software Engineers',
-    badge: 'HUMAN CAPITAL PLATFORM',
-    content: '• 60+ Certified AutoCAD Draftsmen & BIM Modelers\n• 40+ Full-Stack Software Engineers (React, Node, Python, Mobile)\n• Transparent Pricing: ₹25,000/month dedicated talent or pay-per-drawing at ₹5,000\n• 20% Platform Fee with 100% quality escrow and 48-hour replacement guarantee.'
-  },
-  {
-    num: 7,
-    title: 'TRACTION & HYDERABAD MARKET',
-    subtitle: 'Operational Milestones',
-    headline: 'Rapid Momentum Across Telangana & Andhra Pradesh',
-    badge: 'KEY METRICS',
-    content: '• 150+ Residential & Commercial Building Plans delivered\n• 40+ Custom Software Platforms & AI agents deployed\n• 100+ Engineers vetted and active in our on-demand network\n• Headquarters: Plot 45, Kukatpally, Hyderabad — strategic hub near Hitec City & ORR real estate corridors.'
-  },
-  {
-    num: 8,
-    title: 'PARTNER WITH US TODAY',
-    subtitle: 'Get Started in Under 24 Hours',
-    headline: 'Break The Chakravyuha of Design & Technology',
-    badge: 'NEXT STEPS',
-    content: '• Website: https://abhimanyutech.in/\n• Email: hello@abhimanyutech.in\n• Office: Plot 45, Kukatpally, Hyderabad, Telangana 500072\n• Phone / WhatsApp: +91 99890 28452\n\nLet\'s build your next building plan or software product.'
-  }
-];
-
 const HOW_IT_WORKS_STEPS = [
   {
     step: '01',
@@ -387,10 +320,7 @@ function SriYantraCanvas() {
 // --- MAIN APPLICATION COMPONENT ---
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [visitingCardModalOpen, setVisitingCardModalOpen] = useState(false);
-  const [pitchDeckModalOpen, setPitchDeckModalOpen] = useState(false);
   const [calculatorModalOpen, setCalculatorModalOpen] = useState(false);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   // Per-Sq.Ft Architecture Calculator State
@@ -407,9 +337,6 @@ export default function App() {
   const [formMessage, setFormMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState(null);
-
-  // Visiting card 3D flip state
-  const [cardFlipped, setCardFlipped] = useState(false);
 
   // Calculate pricing based on selections
   const baseCadRate = 15; // ₹15 per sq.ft base 2D CAD
@@ -456,7 +383,6 @@ export default function App() {
         setFormPhone('');
         setFormMessage('');
       } else {
-        // Fallback success if API route is in static preview mode
         setSubmitResult({
           success: true,
           ticketId,
@@ -474,22 +400,6 @@ export default function App() {
     }
   };
 
-  // Keyboard navigation for Pitch Deck
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!pitchDeckModalOpen) return;
-      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
-        setCurrentSlideIndex((prev) => (prev < PITCH_DECK_SLIDES.length - 1 ? prev + 1 : prev));
-      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-        setCurrentSlideIndex((prev) => (prev > 0 ? prev - 1 : prev));
-      } else if (e.key === 'Escape') {
-        setPitchDeckModalOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [pitchDeckModalOpen]);
-
   return (
     <div className="bg-[#08080a] text-white min-h-screen font-['Inter',sans-serif] selection:bg-yellow-500 selection:text-black">
       
@@ -506,7 +416,7 @@ export default function App() {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center gap-6 text-xs font-semibold tracking-widest text-gray-300">
+        <div className="hidden lg:flex items-center gap-7 text-xs font-semibold tracking-widest text-gray-300">
           <a href="#home" className="hover:text-yellow-400 transition">HOME</a>
           <a href="#services" className="hover:text-yellow-400 transition">SERVICES</a>
           <a href="#how-it-works" className="hover:text-yellow-400 transition">PROCESS</a>
@@ -514,22 +424,6 @@ export default function App() {
           <a href="#pricing" className="hover:text-yellow-400 transition">PRICING</a>
           <a href="#faq" className="hover:text-yellow-400 transition">FAQ</a>
           <a href="#contact" className="hover:text-yellow-400 transition">CONTACT</a>
-          
-          <button
-            onClick={() => setVisitingCardModalOpen(true)}
-            className="px-3 py-1.5 rounded-lg border border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10 transition flex items-center gap-1.5"
-          >
-            <span>📇</span>
-            <span>CARD</span>
-          </button>
-
-          <button
-            onClick={() => setPitchDeckModalOpen(true)}
-            className="px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition flex items-center gap-1.5"
-          >
-            <span>📊</span>
-            <span>DECK</span>
-          </button>
         </div>
 
         {/* CTA Button & Mobile Toggle */}
@@ -566,21 +460,6 @@ export default function App() {
           <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">PRICING & CALCULATOR</a>
           <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">FREQUENT QUESTIONS</a>
           <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-yellow-400">CONTACT & GET QUOTE</a>
-          
-          <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-            <button
-              onClick={() => { setVisitingCardModalOpen(true); setMobileMenuOpen(false); }}
-              className="w-full text-left py-3 px-4 rounded-xl border border-yellow-500/30 text-yellow-300 bg-yellow-500/10 font-medium"
-            >
-              📇 Open Corporate Visiting Card
-            </button>
-            <button
-              onClick={() => { setPitchDeckModalOpen(true); setMobileMenuOpen(false); }}
-              className="w-full text-left py-3 px-4 rounded-xl border border-amber-500/30 text-amber-300 bg-amber-500/10 font-medium"
-            >
-              📊 View 8-Slide Pitch Deck
-            </button>
-          </div>
         </div>
       )}
 
@@ -1114,13 +993,6 @@ export default function App() {
                 <span>💬</span>
                 <span>WhatsApp Us Direct →</span>
               </a>
-
-              <button
-                onClick={() => setVisitingCardModalOpen(true)}
-                className="border border-white/20 hover:border-yellow-500 text-gray-300 hover:text-white px-6 py-3.5 rounded-full text-xs font-semibold transition"
-              >
-                📇 Download Visiting Card
-              </button>
             </div>
           </div>
 
@@ -1218,180 +1090,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* --- MODAL 1: CORPORATE VISITING CARD --- */}
-      {visitingCardModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-          <div className="relative w-full max-w-xl bg-neutral-900 border border-yellow-500/40 rounded-3xl p-6 md:p-8 shadow-2xl">
-            <div className="flex justify-between items-center pb-4 border-b border-white/10">
-              <div>
-                <span className="text-[10px] tracking-[0.25em] text-yellow-400 font-bold uppercase">OFFICIAL ASSET</span>
-                <h3 className="text-xl font-bold font-['Space_Grotesk'] text-white">Corporate Visiting Card</h3>
-              </div>
-              <button
-                onClick={() => setVisitingCardModalOpen(false)}
-                className="text-gray-400 hover:text-white p-2 text-xl"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Realistic Visiting Card Preview (Card Flip) */}
-            <div className="my-6 flex flex-col items-center">
-              <div
-                onClick={() => setCardFlipped(!cardFlipped)}
-                className="w-full max-w-md aspect-[1.75/1] rounded-2xl p-6 cursor-pointer transition-transform duration-500 shadow-2xl relative overflow-hidden flex flex-col justify-between"
-                style={{
-                  background: cardFlipped
-                    ? 'linear-gradient(135deg, #1c1a16 0%, #0a0a0a 100%)'
-                    : 'linear-gradient(135deg, #0d0f14 0%, #050608 100%)',
-                  border: '1px solid rgba(212, 175, 55, 0.4)'
-                }}
-              >
-                {!cardFlipped ? (
-                  <>
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F5E6C8] via-[#D4AF37] to-[#8C6A1F] flex items-center justify-center font-bold text-black text-xl shadow">
-                          A
-                        </div>
-                        <div>
-                          <div className="text-base font-bold font-['Space_Grotesk'] tracking-wider text-white">ABHIMANYU</div>
-                          <div className="text-[9px] tracking-[0.25em] text-yellow-400 font-semibold">TECHNOLOGIES</div>
-                        </div>
-                      </div>
-                      <span className="text-[9px] text-gray-500 uppercase tracking-widest">FRONT • TAP TO FLIP</span>
-                    </div>
-
-                    <div>
-                      <div className="text-sm font-bold text-white">DIRECTOR OF ENGINEERING</div>
-                      <div className="text-xs text-yellow-400/90 font-medium">Civil Architecture & IT Solutions</div>
-                      <div className="text-[10px] text-gray-400 mt-2">Plot 45, Kukatpally, Hyderabad, India</div>
-                      <div className="text-[10px] text-gray-400">hello@abhimanyutech.in • +91 99890 28452</div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex justify-between items-start">
-                      <span className="text-[9px] text-yellow-400 uppercase tracking-widest font-semibold">THE 3 CHAKRAS</span>
-                      <span className="text-[9px] text-gray-500 uppercase tracking-widest">BACK • TAP TO FLIP</span>
-                    </div>
-                    <div className="space-y-1.5 text-xs text-gray-300">
-                      <div><b className="text-yellow-400">01. Architecture:</b> AutoCAD, 3D Elevation, Revit BIM, GHMC</div>
-                      <div><b className="text-yellow-400">02. IT Division:</b> AI Agents, Builder CRM, Web, Mobile</div>
-                      <div><b className="text-yellow-400">03. Freelance:</b> 100+ On-Demand Civil & IT Engineers</div>
-                    </div>
-                    <div className="text-[9px] text-gray-400 border-t border-white/10 pt-2 flex justify-between">
-                      <span>www.abhimanyutech.in</span>
-                      <span>BREAK THE CHAKRAVYUHA</span>
-                    </div>
-                  </>
-                )}
-              </div>
-              <p className="text-[11px] text-gray-500 mt-2">Click card above to flip between Front and Back</p>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-4">
-              <a
-                href="/visiting-card.jpg"
-                download="Abhimanyu_Technologies_Visiting_Card.jpg"
-                className="flex-1 bg-yellow-400 hover:bg-yellow-300 text-black py-3 rounded-xl font-bold text-xs text-center tracking-wider transition"
-              >
-                Download Card JPG
-              </a>
-              <button
-                onClick={() => window.print()}
-                className="px-6 py-3 rounded-xl border border-white/20 text-gray-300 hover:text-white text-xs font-semibold transition"
-              >
-                Print
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* --- MODAL 2: 8-SLIDE EXECUTIVE PITCH DECK --- */}
-      {pitchDeckModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-          <div className="relative w-full max-w-3xl bg-neutral-950 border border-yellow-500/40 rounded-3xl p-6 md:p-8 shadow-2xl flex flex-col justify-between min-h-[520px]">
-            <div>
-              {/* Deck Header */}
-              <div className="flex justify-between items-center pb-4 border-b border-white/10">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F5E6C8] to-[#8C6A1F] flex items-center justify-center font-bold text-black text-sm">
-                    A
-                  </div>
-                  <div>
-                    <div className="text-xs text-yellow-400 font-bold tracking-widest uppercase">
-                      SLIDE {currentSlideIndex + 1} OF {PITCH_DECK_SLIDES.length}
-                    </div>
-                    <div className="text-sm font-bold text-white font-['Space_Grotesk']">
-                      {PITCH_DECK_SLIDES[currentSlideIndex].title}
-                    </div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setPitchDeckModalOpen(false)}
-                  className="text-gray-400 hover:text-white p-2 text-xl"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Slide Content Body */}
-              <div className="py-8">
-                <span className="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wider bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 mb-3">
-                  {PITCH_DECK_SLIDES[currentSlideIndex].badge}
-                </span>
-                <div className="text-xs text-gray-400 uppercase tracking-widest font-semibold">
-                  {PITCH_DECK_SLIDES[currentSlideIndex].subtitle}
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold font-['Space_Grotesk'] text-white mt-1 leading-snug">
-                  {PITCH_DECK_SLIDES[currentSlideIndex].headline}
-                </h3>
-                <div className="mt-6 text-sm text-gray-300 leading-relaxed whitespace-pre-line bg-white/5 p-6 rounded-2xl border border-white/5">
-                  {PITCH_DECK_SLIDES[currentSlideIndex].content}
-                </div>
-              </div>
-            </div>
-
-            {/* Deck Controls */}
-            <div className="pt-4 border-t border-white/10 flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                {PITCH_DECK_SLIDES.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentSlideIndex(i)}
-                    className={`h-2 rounded-full transition-all ${
-                      currentSlideIndex === i ? 'w-8 bg-yellow-400' : 'w-2 bg-neutral-700'
-                    }`}
-                    aria-label={`Go to slide ${i + 1}`}
-                  />
-                ))}
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  disabled={currentSlideIndex === 0}
-                  onClick={() => setCurrentSlideIndex((prev) => prev - 1)}
-                  className="px-5 py-2 rounded-full border border-white/20 text-xs font-semibold text-gray-300 hover:text-white disabled:opacity-30"
-                >
-                  ← Previous
-                </button>
-                <button
-                  disabled={currentSlideIndex === PITCH_DECK_SLIDES.length - 1}
-                  onClick={() => setCurrentSlideIndex((prev) => prev + 1)}
-                  className="px-5 py-2 rounded-full bg-yellow-400 text-black text-xs font-bold hover:bg-yellow-300 disabled:opacity-30"
-                >
-                  Next Slide →
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* --- MODAL 3: POPUP CALCULATOR --- */}
+      {/* --- MODAL: POPUP CALCULATOR --- */}
       {calculatorModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
           <div className="relative w-full max-w-xl bg-neutral-900 border border-yellow-500/40 rounded-3xl p-6 md:p-8 shadow-2xl">
