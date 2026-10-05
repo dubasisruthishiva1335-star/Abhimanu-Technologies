@@ -12316,6 +12316,11 @@ function getStyles(isDark) {
       ...base.brandMain,
       color: '#FFFFFF'
     },
+    brandSub: {
+      ...base.brandSub,
+      color: '#38BDF8',
+      textShadow: '0 0 10px rgba(56, 189, 248, 0.45)'
+    },
     navItem: {
       ...base.navItem,
       color: '#CBD5E1'
@@ -12427,6 +12432,16 @@ function getStyles(isDark) {
       ...base.bulletItem,
       color: '#E2E8F0'
     },
+    bulletDot: {
+      ...base.bulletDot,
+      color: '#38BDF8'
+    },
+    newBadge: {
+      ...base.newBadge,
+      backgroundColor: 'rgba(56, 189, 248, 0.15)',
+      border: '1px solid rgba(56, 189, 248, 0.3)',
+      color: '#38BDF8'
+    },
     appTab: {
       ...base.appTab,
       backgroundColor: '#1E293B',
@@ -12438,6 +12453,15 @@ function getStyles(isDark) {
       backgroundColor: 'rgba(17, 24, 39, 0.85)',
       backdropFilter: 'blur(12px)',
       border: '1px solid rgba(56, 189, 248, 0.22)'
+    },
+    ordersFilter: {
+      ...base.ordersFilter,
+      color: '#38BDF8'
+    },
+    statusReady: {
+      ...base.statusReady,
+      backgroundColor: 'rgba(56, 189, 248, 0.15)',
+      color: '#38BDF8'
     },
     controlsHeading: {
       ...base.controlsHeading,
@@ -12489,11 +12513,26 @@ function getStyles(isDark) {
       border: '1px solid #334155',
       color: '#CBD5E1'
     },
+    ringTabNum: {
+      ...base.ringTabNum,
+      color: '#38BDF8'
+    },
+    conceptTag: {
+      ...base.conceptTag,
+      backgroundColor: 'rgba(56, 189, 248, 0.15)',
+      border: '1px solid rgba(56, 189, 248, 0.3)',
+      color: '#38BDF8'
+    },
     processCard: {
       ...base.processCard,
       backgroundColor: 'rgba(17, 24, 39, 0.85)',
       backdropFilter: 'blur(12px)',
       border: '1px solid rgba(56, 189, 248, 0.22)'
+    },
+    stepBadge: {
+      ...base.stepBadge,
+      color: '#38BDF8',
+      textShadow: '0 0 10px rgba(56, 189, 248, 0.35)'
     },
     processStepTitle: {
       ...base.processStepTitle,
@@ -12650,9 +12689,30 @@ function getStyles(isDark) {
       ...base.faqAnswerBox,
       borderTop: '1px solid #1F2937'
     },
+    faqToggleChar: {
+      ...base.faqToggleChar,
+      color: '#38BDF8'
+    },
     contactAddress: {
       ...base.contactAddress,
       color: '#FFFFFF'
+    },
+    contactInfoLink: {
+      ...base.contactInfoLink,
+      color: '#38BDF8',
+      textShadow: '0 0 10px rgba(56, 189, 248, 0.3)'
+    },
+    fLink: {
+      ...base.fLink,
+      color: '#CBD5E1'
+    },
+    footerBio: {
+      ...base.footerBio,
+      color: '#CBD5E1'
+    },
+    footerBottomBar: {
+      ...base.footerBottomBar,
+      color: '#94A3B8'
     },
     instantWhatsappBox: {
       ...base.instantWhatsappBox,
