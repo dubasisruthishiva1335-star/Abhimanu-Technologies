@@ -2,17 +2,17 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 /**
- * Full Website 3D Model Background
+ * Full Website 3D Chakravyuham (Chakravyuha) Model Background
  * Powered by Three.js (WebGL)
- * 
- * Features:
- *  - Fixed full-viewport 3D scene running behind the entire website
- *  - 3D Architectural CAD Wireframe Towers & Villa structural grids
- *  - 7 Concentric 3D Chakravyuham sacred golden rings revolving in deep space
- *  - 800 Floating golden stardust particles with gentle cosmic drift
- *  - Scroll-reactive camera flight that travels through the 3D scene as user scrolls
- *  - Subtle mouse perspective parallax
- *  - 60 FPS hardware accelerated with automatic lifecycle cleanup
+ *
+ * Replaces generic backgrounds with the authentic 3D Chakravyuham:
+ * - 7 Concentric 3D Defensive Bastion Tiers with spiral breach dwāras (gateways)
+ * - Watchtower monoliths and architectural battlements positioned along each tier
+ * - Abhimanyu's golden entry spiral path (Veera Patha) winding from Tier 1 to 7
+ * - Central Padmavyuha sanctum with rotating sacred Meru geometry & pulsing Bindu orb
+ * - Expansive 3D Vastu foundation grid & 800 floating golden cosmic stardust particles
+ * - Scroll-reactive orbital camera flight that descends through the labyrinth
+ * - Hardware accelerated 60 FPS, pointer-events none, 100% responsive
  */
 export default function FullWebsite3DBackground() {
   const containerRef = useRef(null);
@@ -26,10 +26,11 @@ export default function FullWebsite3DBackground() {
 
     // 1. Scene, Camera, Renderer
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x08080a, 0.018);
+    scene.fog = new THREE.FogExp2(0x08080a, 0.016);
 
-    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-    camera.position.set(0, 10, 45);
+    const camera = new THREE.PerspectiveCamera(52, width / height, 0.1, 1000);
+    // Initial camera position for heroic elevated isometric perspective
+    camera.position.set(0, 36, 44);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -42,168 +43,272 @@ export default function FullWebsite3DBackground() {
     container.appendChild(renderer.domElement);
 
     // 2. Lighting
-    const ambientLight = new THREE.AmbientLight(0xfff0cc, 0.7);
+    const ambientLight = new THREE.AmbientLight(0xfff3d6, 0.9);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xe6c07a, 1.5);
-    dirLight.position.set(30, 45, 20);
-    scene.add(dirLight);
+    const centralLight = new THREE.PointLight(0xffd700, 2.8, 120);
+    centralLight.position.set(0, 6, 0);
+    scene.add(centralLight);
 
-    const pointLight = new THREE.PointLight(0xffd700, 1.8, 80);
-    pointLight.position.set(10, 15, -10);
-    scene.add(pointLight);
+    const topLight = new THREE.DirectionalLight(0xf5e6c8, 1.6);
+    topLight.position.set(20, 50, 30);
+    scene.add(topLight);
 
-    // 3. Materials
+    const rimLight = new THREE.DirectionalLight(0xd4af37, 1.2);
+    rimLight.position.set(-25, 30, -25);
+    scene.add(rimLight);
+
+    // 3. Shared Materials
     const goldLineMat = new THREE.LineBasicMaterial({
-      color: 0xe6c07a,
+      color: 0xffd700,
       transparent: true,
-      opacity: 0.35
+      opacity: 0.55
     });
 
     const faintLineMat = new THREE.LineBasicMaterial({
       color: 0xd4af37,
       transparent: true,
-      opacity: 0.18
+      opacity: 0.25
     });
 
-    const slabMat = new THREE.MeshStandardMaterial({
-      color: 0x14141c,
+    const wallMaterial = new THREE.MeshStandardMaterial({
+      color: 0x121118,
       emissive: 0xd4af37,
-      emissiveIntensity: 0.12,
-      roughness: 0.4,
-      metalness: 0.8,
+      emissiveIntensity: 0.16,
+      roughness: 0.35,
+      metalness: 0.85,
       transparent: true,
-      opacity: 0.25,
+      opacity: 0.72,
       side: THREE.DoubleSide
     });
 
-    // 4. Construct 3D Architectural Structures
-    const worldGroup = new THREE.Group();
+    const pylonMaterial = new THREE.MeshStandardMaterial({
+      color: 0x1e1c24,
+      emissive: 0xffd700,
+      emissiveIntensity: 0.28,
+      roughness: 0.25,
+      metalness: 0.9,
+      transparent: true,
+      opacity: 0.85
+    });
 
-    // Building 1: Main Commercial Tower (Right-side background)
-    const towerGroup = new THREE.Group();
-    towerGroup.position.set(22, -8, -15);
-    const towerFloors = 9;
-    const floorH = 3.2;
+    const goldCoreMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff
+    });
 
-    for (let i = 0; i < towerFloors; i++) {
-      const fw = 14 - i * 0.6;
-      const fd = 12 - i * 0.5;
-      const fy = i * floorH;
+    const glowingRaysMaterial = new THREE.LineBasicMaterial({
+      color: 0xe6c07a,
+      transparent: true,
+      opacity: 0.4
+    });
 
-      // Slab
-      const slabGeo = new THREE.BoxGeometry(fw, 0.3, fd);
-      const slabMesh = new THREE.Mesh(slabGeo, slabMat);
-      slabMesh.position.y = fy;
-      towerGroup.add(slabMesh);
+    // 4. Master 3D Chakravyuham Group
+    const chakravyuhaGroup = new THREE.Group();
+    // Tilt the formation slightly for dramatic 3D architectural elevation
+    chakravyuhaGroup.rotation.x = Math.PI * 0.18;
+    chakravyuhaGroup.position.set(0, -2, -6);
+    scene.add(chakravyuhaGroup);
 
-      // Wireframe Edges
-      const edges = new THREE.EdgesGeometry(slabGeo);
-      const lines = new THREE.LineSegments(edges, goldLineMat);
-      lines.position.y = fy;
-      towerGroup.add(lines);
+    // Dynamic rotation tiers array
+    const tierGroups = [];
 
-      // Columns
-      const colGeo = new THREE.CylinderGeometry(0.12, 0.12, floorH, 6);
-      [
-        [-fw / 2 + 0.5, -fd / 2 + 0.5],
-        [fw / 2 - 0.5, -fd / 2 + 0.5],
-        [-fw / 2 + 0.5, fd / 2 - 0.5],
-        [fw / 2 - 0.5, fd / 2 - 0.5]
-      ].forEach(([cx, cz]) => {
-        const colMesh = new THREE.Mesh(colGeo, slabMat);
-        colMesh.position.set(cx, fy + floorH / 2, cz);
-        towerGroup.add(colMesh);
+    // --- CONSTRUCT 7 3D DEFENSIVE CHAKRAVYUHAM TIERS ---
+    const tierCount = 7;
+    const baseRadius = 4.2;
+    const tierSpacing = 3.8;
 
-        const colEdges = new THREE.EdgesGeometry(colGeo);
-        const colLine = new THREE.LineSegments(colEdges, faintLineMat);
-        colLine.position.set(cx, fy + floorH / 2, cz);
-        towerGroup.add(colLine);
-      });
-    }
-    worldGroup.add(towerGroup);
+    for (let t = 1; t <= tierCount; t++) {
+      const tierGroup = new THREE.Group();
+      const radius = baseRadius + t * tierSpacing;
+      const wallHeight = 1.6 + (tierCount - t) * 0.22;
+      const wallThick = 0.55;
 
-    // Building 2: Contemporary Villa / Pavilion (Left background)
-    const villaGroup = new THREE.Group();
-    villaGroup.position.set(-24, -10, -25);
-    for (let f = 0; f < 3; f++) {
-      const vw = 18;
-      const vd = 14;
-      const vy = f * 3.8;
+      // Spiral Breach Angle: Each tier has an open gateway rotated by ~52 degrees
+      const breachAngle = (t - 1) * 0.92;
+      const breachWidth = 0.65; // ~37 degrees opening
 
-      const vSlabGeo = new THREE.BoxGeometry(vw, 0.4, vd);
-      const vSlab = new THREE.Mesh(vSlabGeo, slabMat);
-      vSlab.position.y = vy;
-      villaGroup.add(vSlab);
+      // Create 3D Curved Bastion Wall using arc segments
+      // Two wall arcs per tier flanking the breach
+      const arc1Start = breachAngle + breachWidth / 2;
+      const arc1Length = Math.PI * 2 - breachWidth;
 
-      const vEdges = new THREE.EdgesGeometry(vSlabGeo);
-      const vLines = new THREE.LineSegments(vEdges, goldLineMat);
-      vLines.position.y = vy;
-      villaGroup.add(vLines);
-    }
-    worldGroup.add(villaGroup);
+      const wallGeo = new THREE.CylinderGeometry(
+        radius + wallThick / 2,
+        radius + wallThick / 2,
+        wallHeight,
+        64,
+        1,
+        true,
+        arc1Start,
+        arc1Length
+      );
 
-    // 5. 3D Ground Foundation Grid (Vastu Demarcation Grid)
-    const gridHelper = new THREE.GridHelper(90, 45, 0xd4af37, 0x1f1f26);
-    gridHelper.position.y = -12;
-    gridHelper.material.opacity = 0.22;
-    gridHelper.material.transparent = true;
-    worldGroup.add(gridHelper);
+      const wallMesh = new THREE.Mesh(wallGeo, wallMaterial);
+      tierGroup.add(wallMesh);
 
-    // 6. 3D Sacred Chakravyuham Revolving Celestial Rings (Hovering in deep 3D space)
-    const chakraRingsGroup = new THREE.Group();
-    chakraRingsGroup.position.set(12, 18, -35);
-    chakraRingsGroup.rotation.x = Math.PI / 4.5;
+      // Golden Wireframe Edges for High-Tech CAD/Vedic Aesthetic
+      const wallEdges = new THREE.EdgesGeometry(wallGeo, 25);
+      const wallLine = new THREE.LineSegments(wallEdges, t === 7 ? goldLineMat : faintLineMat);
+      tierGroup.add(wallLine);
 
-    const ringCount = 7;
-    const ringMeshes = [];
-
-    for (let r = 1; r <= ringCount; r++) {
-      const ringRadius = r * 3.4;
-      const ringGeo = new THREE.RingGeometry(ringRadius, ringRadius + 0.12, 64);
+      // Concentric Ground Rings (Circular trench / baseline guide)
+      const ringGeo = new THREE.RingGeometry(radius - 0.08, radius + 0.08, 96);
       const ringMat = new THREE.MeshBasicMaterial({
-        color: r === 7 ? 0xffd700 : 0xe6c07a,
+        color: t === 7 ? 0xffd700 : 0xd4af37,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: r === 7 ? 0.35 : 0.18
+        opacity: t === 7 ? 0.6 : 0.22
       });
       const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-      ringMesh.userData = { speed: (r % 2 === 0 ? 1 : -1) * (0.001 + (7 - r) * 0.0003) };
-      chakraRingsGroup.add(ringMesh);
-      ringMeshes.push(ringMesh);
+      ringMesh.rotation.x = Math.PI / 2;
+      ringMesh.position.y = -wallHeight / 2;
+      tierGroup.add(ringMesh);
+
+      // Defensive Monolith Pylons / Watchtowers along the ring perimeter
+      const pylonCount = 8 + t * 4;
+      const pylonGeo = new THREE.BoxGeometry(0.5, wallHeight + 0.8, 0.5);
+      const pylonEdgeGeo = new THREE.EdgesGeometry(pylonGeo);
+
+      for (let p = 0; p < pylonCount; p++) {
+        const angle = (p / pylonCount) * Math.PI * 2;
+        // Don't place pylons directly inside the breach gateway
+        const diff = Math.atan2(Math.sin(angle - breachAngle), Math.cos(angle - breachAngle));
+        if (Math.abs(diff) < breachWidth / 2 + 0.15) continue;
+
+        const px = Math.cos(angle) * radius;
+        const pz = Math.sin(angle) * radius;
+
+        const pylon = new THREE.Mesh(pylonGeo, pylonMaterial);
+        pylon.position.set(px, 0.2, pz);
+        pylon.rotation.y = -angle;
+        tierGroup.add(pylon);
+
+        const pylonLines = new THREE.LineSegments(pylonEdgeGeo, goldLineMat);
+        pylonLines.position.set(px, 0.2, pz);
+        pylonLines.rotation.y = -angle;
+        tierGroup.add(pylonLines);
+      }
+
+      // Gateway Markers (2 Golden Bastion Obelisks flanking the breach entrance)
+      const gateObeliskGeo = new THREE.CylinderGeometry(0.2, 0.35, wallHeight + 1.4, 6);
+      const gateEdgeGeo = new THREE.EdgesGeometry(gateObeliskGeo);
+
+      [breachAngle - breachWidth / 2, breachAngle + breachWidth / 2].forEach((gAngle) => {
+        const gx = Math.cos(gAngle) * radius;
+        const gz = Math.sin(gAngle) * radius;
+
+        const gateMesh = new THREE.Mesh(gateObeliskGeo, pylonMaterial);
+        gateMesh.position.set(gx, 0.5, gz);
+        tierGroup.add(gateMesh);
+
+        const gateLine = new THREE.LineSegments(gateEdgeGeo, goldLineMat);
+        gateLine.position.set(gx, 0.5, gz);
+        tierGroup.add(gateLine);
+      });
+
+      // Individual slow counter-rotation for mystical battle formation dynamics
+      tierGroup.userData = {
+        speed: (t % 2 === 0 ? 1 : -1) * (0.0006 + (tierCount - t) * 0.00015)
+      };
+
+      chakravyuhaGroup.add(tierGroup);
+      tierGroups.push(tierGroup);
     }
 
-    // Central Golden Bindu in 3D
-    const binduGeo = new THREE.SphereGeometry(0.6, 24, 24);
-    const binduMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const binduMesh = new THREE.Mesh(binduGeo, binduMat);
-    chakraRingsGroup.add(binduMesh);
+    // --- 5. ABHIMANYU'S GOLDEN PENETRATION SPIRAL (VEERA PATHA) ---
+    // Smooth 3D curve winding from outermost perimeter through all 7 gateways to center
+    const spiralPoints = [];
+    const totalSpiralSteps = 160;
+    const maxSpiralR = baseRadius + tierCount * tierSpacing + 2.5;
 
-    worldGroup.add(chakraRingsGroup);
+    for (let s = 0; s <= totalSpiralSteps; s++) {
+      const progress = s / totalSpiralSteps; // 0 (outer) to 1 (inner)
+      const currentR = maxSpiralR * (1 - progress * 0.94);
+      // Angular trajectory following the breach sequence
+      const theta = progress * Math.PI * 5.2 - 0.2;
+      const x = Math.cos(theta) * currentR;
+      const z = Math.sin(theta) * currentR;
+      const y = Math.sin(progress * Math.PI * 4) * 0.4 + (1 - progress) * 0.6;
+      spiralPoints.push(new THREE.Vector3(x, y, z));
+    }
 
-    // 7. Floating Cosmic Stardust Particles
-    const particleCount = 700;
+    const spiralCurve = new THREE.CatmullRomCurve3(spiralPoints);
+    const spiralTubeGeo = new THREE.TubeGeometry(spiralCurve, 140, 0.12, 8, false);
+    const spiralMat = new THREE.MeshStandardMaterial({
+      color: 0xffd700,
+      emissive: 0xffa500,
+      emissiveIntensity: 0.6,
+      roughness: 0.2,
+      metalness: 0.9,
+      transparent: true,
+      opacity: 0.85
+    });
+    const spiralMesh = new THREE.Mesh(spiralTubeGeo, spiralMat);
+    chakravyuhaGroup.add(spiralMesh);
+
+    // --- 6. CENTRAL INNER CITADEL & PADMAVYUHA SANCTUM (7th CHAKRA) ---
+    const sanctumGroup = new THREE.Group();
+
+    // Sacred 3D Meru Octahedron Wireframe
+    const octaGeo = new THREE.OctahedronGeometry(2.4, 0);
+    const octaEdges = new THREE.EdgesGeometry(octaGeo);
+    const octaLines = new THREE.LineSegments(octaEdges, goldLineMat);
+    sanctumGroup.add(octaLines);
+
+    const innerIcosaGeo = new THREE.IcosahedronGeometry(1.6, 0);
+    const innerIcosaEdges = new THREE.EdgesGeometry(innerIcosaGeo);
+    const innerIcosaLines = new THREE.LineSegments(
+      innerIcosaEdges,
+      new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.75 })
+    );
+    sanctumGroup.add(innerIcosaLines);
+
+    // Central Glowing Bindu Sphere
+    const binduGeo = new THREE.SphereGeometry(0.85, 32, 32);
+    const binduMesh = new THREE.Mesh(binduGeo, goldCoreMaterial);
+    sanctumGroup.add(binduMesh);
+
+    // Radial Sacred Geometric Energy Rays (8 cardinal rays connecting Bindu to Tier 1)
+    const rayPoints = [];
+    for (let r = 0; r < 8; r++) {
+      const rayAngle = (r / 8) * Math.PI * 2;
+      rayPoints.push(new THREE.Vector3(0, 0, 0));
+      rayPoints.push(new THREE.Vector3(Math.cos(rayAngle) * 7.5, 0, Math.sin(rayAngle) * 7.5));
+    }
+    const rayGeo = new THREE.BufferGeometry().setFromPoints(rayPoints);
+    const rayLines = new THREE.LineSegments(rayGeo, glowingRaysMaterial);
+    sanctumGroup.add(rayLines);
+
+    chakravyuhaGroup.add(sanctumGroup);
+
+    // --- 7. 3D VASTU ARCHITECTURAL DEMARCATION FOUNDATION GRID ---
+    const gridHelper = new THREE.GridHelper(110, 55, 0xd4af37, 0x1f1f28);
+    gridHelper.position.y = -10;
+    gridHelper.material.opacity = 0.28;
+    gridHelper.material.transparent = true;
+    scene.add(gridHelper);
+
+    // --- 8. 800 FLOATING GOLDEN COSMIC STARDUST PARTICLES ---
+    const particleCount = 800;
     const particlePos = new Float32Array(particleCount * 3);
     for (let p = 0; p < particleCount * 3; p += 3) {
-      particlePos[p] = (Math.random() - 0.5) * 110;
-      particlePos[p + 1] = (Math.random() - 0.5) * 80;
-      particlePos[p + 2] = (Math.random() - 0.5) * 90;
+      particlePos[p] = (Math.random() - 0.5) * 130;
+      particlePos[p + 1] = (Math.random() - 0.5) * 90;
+      particlePos[p + 2] = (Math.random() - 0.5) * 110;
     }
     const particleGeo = new THREE.BufferGeometry();
     particleGeo.setAttribute('position', new THREE.Float32BufferAttribute(particlePos, 3));
     const particleMat = new THREE.PointsMaterial({
       color: 0xffd700,
-      size: 0.22,
+      size: 0.26,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.5,
       blending: THREE.AdditiveBlending
     });
     const particles = new THREE.Points(particleGeo, particleMat);
-    worldGroup.add(particles);
+    scene.add(particles);
 
-    scene.add(worldGroup);
-
-    // 8. Interaction & Scroll Tracking
+    // --- 9. INTERACTION & SCROLL-BASED ORBITAL FLIGHT ---
     let scrollY = window.scrollY;
     let targetScrollY = window.scrollY;
     let mouseX = 0;
@@ -232,50 +337,65 @@ export default function FullWebsite3DBackground() {
     };
     window.addEventListener('resize', onResize);
 
-    // 9. Animation Loop
+    // --- 10. ANIMATION LOOP ---
     let animId;
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
-      const delta = clock.getDelta();
       const time = clock.getElapsedTime();
 
       // Smooth scroll interpolation
-      scrollY += (targetScrollY - scrollY) * 0.05;
+      scrollY += (targetScrollY - scrollY) * 0.055;
       mouseX += (targetMouseX - mouseX) * 0.05;
       mouseY += (targetMouseY - mouseY) * 0.05;
 
-      // Scroll progress from 0 to 1
       const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const scrollProgress = Math.min(1, Math.max(0, scrollY / maxScroll));
 
-      // Camera Flight Trajectory based on scroll position
-      // At top (Hero): High-tech front/isometric view
-      // As scrolling down: Camera smoothly revolves around the 3D CAD models
-      const camRadius = 45 - scrollProgress * 12;
-      const camAngle = scrollProgress * Math.PI * 1.2 + 0.3;
-      camera.position.x = Math.sin(camAngle) * camRadius + mouseX * 2.5;
-      camera.position.y = 8 + scrollProgress * 14 - mouseY * 2.5;
-      camera.position.z = Math.cos(camAngle) * camRadius;
-      camera.lookAt(0, scrollProgress * 6, -5);
+      // DYNAMIC 3D CAMERA FLIGHT THROUGH CHAKRAVYUHAM:
+      // At Top (Hero): Majestic high aerial overview of all 7 tiers
+      // Mid-page (Services & Process): Camera spirals closer, tilting down towards the gate breaches
+      // Bottom (Pricing, FAQ, Contact): Camera dives in close to the glowing Padmavyuha sanctum
+      const camRadius = 50 - scrollProgress * 22;
+      const camHeight = 34 - scrollProgress * 18;
+      const camAngle = scrollProgress * Math.PI * 1.5 + 0.15;
 
-      // Rotate individual Chakravyuha rings
-      ringMeshes.forEach((mesh) => {
-        mesh.rotation.z += mesh.userData.speed;
+      camera.position.x = Math.sin(camAngle) * camRadius + mouseX * 3.0;
+      camera.position.y = camHeight - mouseY * 2.5;
+      camera.position.z = Math.cos(camAngle) * camRadius;
+
+      // Dynamic LookAt point navigating through the labyrinth
+      const lookY = -2 + scrollProgress * 2;
+      camera.lookAt(0, lookY, -3);
+
+      // Rotate individual Chakravyuham tiers at their designated speeds
+      tierGroups.forEach((tier) => {
+        tier.rotation.y += tier.userData.speed;
       });
 
-      // Slowly rotate world particles
-      particles.rotation.y = time * 0.015;
+      // Slowly rotate the entire formation
+      chakravyuhaGroup.rotation.y = time * 0.02;
 
-      // Subtle pulse on central bindu
-      binduMesh.scale.setScalar(1 + Math.sin(time * 3) * 0.2);
+      // Rotate central Meru sacred geometry
+      octaLines.rotation.x = time * 0.35;
+      octaLines.rotation.y = time * 0.25;
+      innerIcosaLines.rotation.y = -time * 0.4;
+      innerIcosaLines.rotation.z = time * 0.2;
+
+      // Pulsing glow on Central Bindu Orb
+      const pulse = 1 + Math.sin(time * 3.5) * 0.18;
+      binduMesh.scale.set(pulse, pulse, pulse);
+
+      // Cosmic stardust particle drift
+      particles.rotation.y = time * 0.012;
+      particles.rotation.x = Math.sin(time * 0.01) * 0.05;
 
       renderer.render(scene, camera);
     };
     animate();
 
-    // 10. Cleanup
+    // --- 11. LIFECYCLE CLEANUP ---
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('scroll', onScroll);

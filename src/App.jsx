@@ -3,7 +3,6 @@ import ThreeHologramViewer from './components/ThreeHologramViewer.jsx';
 import CadBlueprintInspector from './components/CadBlueprintInspector.jsx';
 import TiltCard from './components/TiltCard.jsx';
 import FloatingContactOrb from './components/FloatingContactOrb.jsx';
-import ChakravyuhaBackground from './components/ChakravyuhaBackground.jsx';
 import FullWebsite3DBackground from './components/FullWebsite3DBackground.jsx';
 
 // --- DATA DEFINITIONS ---
@@ -503,11 +502,8 @@ export default function App() {
 
       {/* 2. HERO SECTION */}
       <section id="home" className="relative min-h-screen flex items-center px-6 md:px-16 pt-32 pb-20 overflow-hidden">
-        {/* Dynamic 7-Tier Chakravyuham Labyrinth Background */}
-        <ChakravyuhaBackground />
-
-        {/* Subtle Obsidian Gradient Overlay for Pristine Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#08080a] via-[#08080a]/85 to-transparent pointer-events-none"></div>
+        {/* Subtle Obsidian Gradient Overlay on Left for Pristine Text Contrast */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#08080a]/90 via-[#08080a]/60 to-transparent pointer-events-none"></div>
 
         <div className="relative z-10 max-w-5xl mx-auto w-full">
           <div>
