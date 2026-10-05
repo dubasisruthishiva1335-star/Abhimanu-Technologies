@@ -4386,6 +4386,18 @@ export default function App() {
 
   const handleSendEstimateToContact = () => {
     const summary = `Selected Building: ${estBuildingType} | Complexity: ${estComplexity} | Features: ${Object.keys(estFeatures).filter((k) => estFeatures[k]).join(', ')} | Timeline: ${calcTimelineWeeks()} | Indicative Budget: ${calcEstimatedBudget()}`;
+    try {
+      fetch('/api/estimate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectType: estBuildingType,
+          complexity: estComplexity,
+          currency: estCurrency,
+          features: Object.keys(estFeatures).filter((k) => estFeatures[k])
+        })
+      }).catch(() => {});
+    } catch (_) {}
     setContactData((prev) => ({
       ...prev,
       serviceNeed: estBuildingType,
@@ -4768,7 +4780,21 @@ ENGAGEMENT COORDINATION
     setContactSubmitting(true);
     playClickSound('click');
 
-    const ticketId = `ABH-${Math.floor(1000 + Math.random() * 9000)}`;
+    let ticketId = `ABH-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactData)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.ticketId) ticketId = data.ticketId;
+      }
+    } catch (err) {
+      console.warn('Backend unreachable, using local ticket fallback:', err);
+    }
 
     try {
       const payload = {
@@ -4781,7 +4807,7 @@ ENGAGEMENT COORDINATION
       }
     } catch (_) {}
 
-    await new Promise((resolve) => setTimeout(resolve, 600));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     setContactTicket(ticketId);
     setContactSubmitting(false);
@@ -5194,12 +5220,23 @@ ENGAGEMENT COORDINATION
               </div>
             ) : (
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
                   if (!scheduleName || !scheduleEmail) {
                     alert('Please enter your name and work email.');
                     return;
                   }
+                  try {
+                    await fetch('/api/schedule', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        name: scheduleName,
+                        email: scheduleEmail,
+                        timeSlot: scheduleSlot
+                      })
+                    });
+                  } catch (_) {}
                   setScheduleSuccess(true);
                 }}
                 style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}

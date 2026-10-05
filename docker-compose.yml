@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # --- Layer 7 Reverse Proxy & Load Balancer ---
+  load-balancer:
+    image: nginx:alpine
+    container_name: abhimanyu-l7-load-balancer
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend-node-1
+      - backend-node-2
+      - backend-node-3
+    networks:
+      - abhimanyu-net
+    restart: always
+
+  # --- Backend Worker Node 1 ---
+  backend-node-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: abhimanyu-worker-1
+    environment:
+      - PORT=5001
+      - WORKER_ID=worker-node-1
+      - NODE_ENV=production
+    command: ["node", "server/server.js"]
+    networks:
+      - abhimanyu-net
+    restart: always
+
+  # --- Backend Worker Node 2 ---
+  backend-node-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: abhimanyu-worker-2
+    environment:
+      - PORT=5002
+      - WORKER_ID=worker-node-2
+      - NODE_ENV=production
+    command: ["node", "server/server.js"]
+    networks:
+      - abhimanyu-net
+    restart: always
+
+  # --- Backend Worker Node 3 ---
+  backend-node-3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: abhimanyu-worker-3
+    environment:
+      - PORT=5003
+      - WORKER_ID=worker-node-3
+      - NODE_ENV=production
+    command: ["node", "server/server.js"]
+    networks:
+      - abhimanyu-net
+    restart: always
+
+  # --- Redis In-Memory Cache & Session Store ---
+  redis:
+    image: redis:alpine
+    container_name: abhimanyu-redis-cache
+    ports:
+      - "6379:6379"
+    networks:
+      - abhimanyu-net
+    restart: always
+
+networks:
+  abhimanyu-net:
+    driver: bridge

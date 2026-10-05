@@ -1,0 +1,23 @@
+[
+  {
+    "ticketId": "ABH-102D8F",
+    "timestamp": "2026-10-05T11:15:12.689Z",
+    "slaGuaranteeTime": "2026-10-05T12:15:12.689Z",
+    "status": "RECEIVED",
+    "client": {
+      "name": "Automated Test",
+      "email": "test@abhimanyu.com",
+      "company": "Undisclosed"
+    },
+    "scope": {
+      "serviceNeed": "General Engineering Architecture",
+      "budget": "Undisclosed",
+      "timeline": "Immediate",
+      "details": "Backend cluster test"
+    },
+    "meta": {
+      "ip": "::ffff:127.0.0.1",
+      "userAgent": "node"
+    }
+  }
+]
