@@ -12,20 +12,25 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { name, email, company, serviceNeed, budget, timeline, details } = req.body || {};
+    const { name, email, phone, company, serviceNeed, service, budget, timeline, details, message, sqftEstimate } = req.body || {};
 
     if (!name || typeof name !== 'string' || name.trim().length < 2) {
       return res.status(400).json({ success: false, error: 'Valid full name is required.' });
     }
+
+    // Require at least a valid phone number or email address
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
-      return res.status(400).json({ success: false, error: 'Valid email address is required.' });
+    const hasValidEmail = email && typeof email === 'string' && emailRegex.test(email.trim());
+    const hasValidPhone = phone && typeof phone === 'string' && phone.trim().length >= 8;
+
+    if (!hasValidEmail && !hasValidPhone) {
+      return res.status(400).json({ success: false, error: 'Valid phone number or email address is required.' });
     }
 
     const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
     const ticketRef = `ABH-${randomSuffix}`;
     const now = new Date();
-    const slaDeadline = new Date(now.getTime() + 60 * 60 * 1000);
+    const slaDeadline = new Date(now.getTime() + 2 * 60 * 60 * 1000); // 2-hour SLA
 
     const inquiry = {
       ticketId: ticketRef,
@@ -34,14 +39,16 @@ export default async function handler(req, res) {
       status: 'RECEIVED',
       client: {
         name: name.trim(),
-        email: email.trim().toLowerCase(),
+        email: hasValidEmail ? email.trim().toLowerCase() : null,
+        phone: hasValidPhone ? phone.trim() : null,
         company: company ? company.trim() : 'Undisclosed'
       },
       scope: {
-        serviceNeed: serviceNeed || 'General Engineering Architecture',
+        service: service || serviceNeed || 'Architecture CAD/BIM',
         budget: budget || 'Undisclosed',
-        timeline: timeline || 'Immediate',
-        details: details ? details.trim() : ''
+        timeline: timeline || 'Immediate (24-48hr)',
+        sqftEstimate: sqftEstimate || 'N/A',
+        details: (details || message || '').trim()
       }
     };
 
