@@ -5,6 +5,7 @@ import MunicipalSanctionChecker from './components/MunicipalSanctionChecker.jsx'
 import TiltCard from './components/TiltCard.jsx';
 import FloatingContactOrb from './components/FloatingContactOrb.jsx';
 import ChakravyuhaBackground from './components/ChakravyuhaBackground.jsx';
+import FullWebsite3DBackground from './components/FullWebsite3DBackground.jsx';
 
 // --- DATA DEFINITIONS ---
 
@@ -408,7 +409,9 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#08080a] text-white min-h-screen font-['Inter',sans-serif] selection:bg-yellow-500 selection:text-black">
+    <div className="bg-[#08080a] text-white min-h-screen font-['Inter',sans-serif] selection:bg-yellow-500 selection:text-black relative">
+      {/* FULL WEBSITE 3D WEBGL MODEL BACKGROUND */}
+      <FullWebsite3DBackground />
       
       {/* 1. STICKY LUXURY NAVBAR */}
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-4 bg-black/85 backdrop-blur-md border-b border-white/10">
@@ -576,7 +579,7 @@ export default function App() {
       </section>
 
       {/* 2.5 INTERACTIVE 3D WEBGL STUDIO */}
-      <section id="3d-studio" className="px-6 md:px-16 py-20 bg-gradient-to-b from-[#08080a] via-[#0d0d12] to-[#08080a] relative border-t border-white/5">
+      <section id="3d-studio" className="px-6 md:px-16 py-20 bg-gradient-to-b from-[#08080a]/80 via-[#0d0d12]/70 to-[#08080a]/80 backdrop-blur-[2px] relative border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
@@ -609,7 +612,7 @@ export default function App() {
       </section>
 
       {/* 3. SERVICES SECTION: OUR 3 CHAKRAS */}
-      <section id="services" className="px-6 md:px-16 py-24 bg-[#0F0F10] border-t border-white/5">
+      <section id="services" className="px-6 md:px-16 py-24 bg-[#0F0F10]/75 backdrop-blur-[2px] relative border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <p className="text-[11px] tracking-[0.4em] text-yellow-500 font-semibold uppercase">OUR 3 CHAKRAS</p>
@@ -667,7 +670,7 @@ export default function App() {
       </section>
 
       {/* HOW IT WORKS SECTION */}
-      <section id="how-it-works" className="px-6 md:px-16 py-24 bg-[#0a0a0d] border-t border-white/5">
+      <section id="how-it-works" className="px-6 md:px-16 py-24 bg-[#0a0a0d]/75 backdrop-blur-[2px] relative border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <p className="text-[11px] tracking-[0.4em] text-yellow-500 font-semibold uppercase">3 SIMPLE STEPS</p>
@@ -707,7 +710,7 @@ export default function App() {
       </section>
 
       {/* 4. WORK SECTION: BUILDINGS & SOFTWARE WE BUILT */}
-      <section id="work" className="px-6 md:px-16 py-24">
+      <section id="work" className="px-6 md:px-16 py-24 relative">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
             <div>
@@ -740,14 +743,14 @@ export default function App() {
       </section>
 
       {/* 4.5 TS-bPASS & GHMC MUNICIPAL SANCTION RULES CHECKER */}
-      <section id="sanction-checker" className="px-6 md:px-16 py-20 bg-gradient-to-b from-[#08080a] via-[#0d0d12] to-[#08080a] border-t border-white/5">
+      <section id="sanction-checker" className="px-6 md:px-16 py-20 bg-gradient-to-b from-[#08080a]/80 via-[#0d0d12]/70 to-[#08080a]/80 backdrop-blur-[2px] relative border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <MunicipalSanctionChecker />
         </div>
       </section>
 
       {/* 5. PRICING SECTION: SIMPLE PRICING & PER-SQ.FT CALCULATOR */}
-      <section id="pricing" className="px-6 md:px-16 py-24 bg-[#0F0F10] border-t border-white/5">
+      <section id="pricing" className="px-6 md:px-16 py-24 bg-[#0F0F10]/75 backdrop-blur-[2px] relative border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <p className="text-[11px] tracking-[0.4em] text-yellow-500 font-semibold uppercase">TRANSPARENT VALUE</p>
@@ -950,7 +953,7 @@ export default function App() {
       </section>
 
       {/* FAQ & GUARANTEES SECTION */}
-      <section id="faq" className="px-6 md:px-16 py-24 bg-[#0a0a0d] border-t border-white/5">
+      <section id="faq" className="px-6 md:px-16 py-24 bg-[#0a0a0d]/75 backdrop-blur-[2px] relative border-t border-white/5">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="text-[11px] tracking-[0.4em] text-yellow-500 font-semibold uppercase">COMMON INQUIRIES</p>
@@ -1153,7 +1156,7 @@ export default function App() {
       </section>
 
       {/* 7. FOOTER */}
-      <footer className="border-t border-white/10 px-6 md:px-16 py-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+      <footer className="border-t border-white/10 px-6 md:px-16 py-8 bg-black/70 backdrop-blur-sm relative flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
         <div className="flex items-center gap-2.5">
           <span className="font-bold text-yellow-500 font-['Space_Grotesk'] text-sm tracking-wider">AT</span>
           <span>© 2026 ABHIMANYU TECHNOLOGIES PVT LTD. All Rights Reserved.</span>
