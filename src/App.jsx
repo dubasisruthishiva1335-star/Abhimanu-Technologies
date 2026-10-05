@@ -6059,10 +6059,10 @@ ENGAGEMENT COORDINATION
           {/* Desktop Navigation Links */}
           <nav className="desktop-nav" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             {[
-              { id: 'services', label: LANG_DICT[currentLang]?.navServices || 'Services' },
-              { id: 'studio', label: LANG_DICT[currentLang]?.navStudio || '3D Studio' },
               { id: 'tech-stack', label: LANG_DICT[currentLang]?.navTech || 'Architecture' },
               { id: 'cloud-sandbox', label: 'Sandbox' },
+              { id: 'services', label: LANG_DICT[currentLang]?.navServices || 'Services' },
+              { id: 'studio', label: LANG_DICT[currentLang]?.navStudio || '3D Studio' },
               { id: 'industries', label: 'Industries' },
               { id: 'work', label: LANG_DICT[currentLang]?.navWork || 'Work' },
               { id: 'insights', label: LANG_DICT[currentLang]?.navInsights || 'Insights' },
