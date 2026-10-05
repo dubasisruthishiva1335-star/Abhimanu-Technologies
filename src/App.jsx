@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ThreeHologramViewer from './components/ThreeHologramViewer.jsx';
 import CadBlueprintInspector from './components/CadBlueprintInspector.jsx';
-import MunicipalSanctionChecker from './components/MunicipalSanctionChecker.jsx';
 import TiltCard from './components/TiltCard.jsx';
 import FloatingContactOrb from './components/FloatingContactOrb.jsx';
 import ChakravyuhaBackground from './components/ChakravyuhaBackground.jsx';
@@ -439,7 +438,6 @@ export default function App() {
             3D STUDIO
           </a>
           <a href="#services" className="hover:text-yellow-400 transition">SERVICES</a>
-          <a href="#sanction-checker" className="hover:text-yellow-400 transition">TS-bPASS</a>
           <a href="#how-it-works" className="hover:text-yellow-400 transition">PROCESS</a>
           <a href="#work" className="hover:text-yellow-400 transition">WORK</a>
           <a href="#pricing" className="hover:text-yellow-400 transition">PRICING</a>
@@ -495,7 +493,6 @@ export default function App() {
             <span>📐</span> INSPECT CAD BLUEPRINT
           </button>
           <a href="#services" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">SERVICES (3 CHAKRAS)</a>
-          <a href="#sanction-checker" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">TS-bPASS SANCTIONS</a>
           <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">HOW IT WORKS</a>
           <a href="#work" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">WORK PORTFOLIO</a>
           <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">PRICING & CALCULATOR</a>
@@ -739,13 +736,6 @@ export default function App() {
               </TiltCard>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* 4.5 TS-bPASS & GHMC MUNICIPAL SANCTION RULES CHECKER */}
-      <section id="sanction-checker" className="px-6 md:px-16 py-20 bg-gradient-to-b from-[#08080a]/80 via-[#0d0d12]/70 to-[#08080a]/80 backdrop-blur-[2px] relative border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <MunicipalSanctionChecker />
         </div>
       </section>
 
