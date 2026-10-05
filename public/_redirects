@@ -1,0 +1,6 @@
+# Netlify SPA Redirects
+/sri-yantra      /sri-yantra.html     200
+/chakravyuha     /chakravyuha.html    200
+/cad-it          /cad-it.html         200
+/api/*           /.netlify/functions/:splat  200
+/*               /index.html          200

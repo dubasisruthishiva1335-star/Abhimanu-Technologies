@@ -5,6 +5,7 @@ import TiltCard from './components/TiltCard.jsx';
 import FloatingContactOrb from './components/FloatingContactOrb.jsx';
 import FullWebsite3DBackground from './components/FullWebsite3DBackground.jsx';
 import Interactive3DModelCards from './components/Interactive3DModelCards.jsx';
+import BuilderTestimonials from './components/BuilderTestimonials.jsx';
 
 // --- DATA DEFINITIONS ---
 
@@ -381,27 +382,29 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      if (res.ok) {
-        setSubmitResult({
-          success: true,
-          ticketId,
-          msg: `Quote request received! Reference #${ticketId}. Our engineering director will call or WhatsApp you within 2 hours.`
-        });
-        setFormName('');
-        setFormPhone('');
-        setFormMessage('');
-      } else {
-        setSubmitResult({
-          success: true,
-          ticketId,
-          msg: `Request noted! Reference #${ticketId}. We will connect via WhatsApp at ${formPhone} within 2 hours.`
-        });
-      }
+      const data = await res.json().catch(() => ({}));
+      const generatedWaUrl = data.whatsAppUrl || `https://wa.me/919989028452?text=${encodeURIComponent(
+        `*🏛️ INQUIRY #${ticketId} - ABHIMANYU TECHNOLOGIES*\nClient: ${formName}\nPhone: ${formPhone}\nService: ${formService}\nScope: ${sqft} sq.ft\nBrief: ${formMessage || 'Quote request'}`
+      )}`;
+
+      setSubmitResult({
+        success: true,
+        ticketId: data.ticketId || ticketId,
+        whatsAppUrl: generatedWaUrl,
+        msg: data.msg || data.message || `Quote registered! Reference #${ticketId}. Our engineering director will connect within 2 hours.`
+      });
+      setFormName('');
+      setFormPhone('');
+      setFormMessage('');
     } catch {
+      const fallbackWaUrl = `https://wa.me/919989028452?text=${encodeURIComponent(
+        `*🏛️ INQUIRY #${ticketId} - ABHIMANYU TECHNOLOGIES*\nClient: ${formName}\nPhone: ${formPhone}\nService: ${formService}\nScope: ${sqft} sq.ft\nBrief: ${formMessage || 'Quote request'}`
+      )}`;
       setSubmitResult({
         success: true,
         ticketId,
-        msg: `Request noted! Reference #${ticketId}. We will connect via WhatsApp at ${formPhone} within 2 hours.`
+        whatsAppUrl: fallbackWaUrl,
+        msg: `Inquiry registered! Reference #${ticketId}. Click below to dispatch directly via WhatsApp.`
       });
     } finally {
       setSubmitting(false);
@@ -441,6 +444,7 @@ export default function App() {
           <a href="#services" className="hover:text-yellow-400 transition">SERVICES</a>
           <a href="#how-it-works" className="hover:text-yellow-400 transition">PROCESS</a>
           <a href="#work" className="hover:text-yellow-400 transition">WORK</a>
+          <a href="#testimonials" className="hover:text-yellow-400 transition">REVIEWS</a>
           <a href="#pricing" className="hover:text-yellow-400 transition">PRICING</a>
           <a href="#faq" className="hover:text-yellow-400 transition">FAQ</a>
           <a href="#contact" className="hover:text-yellow-400 transition">CONTACT</a>
@@ -496,6 +500,7 @@ export default function App() {
           <a href="#services" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">SERVICES (3 CHAKRAS)</a>
           <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">HOW IT WORKS</a>
           <a href="#work" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">WORK PORTFOLIO</a>
+          <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">BUILDER REVIEWS</a>
           <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">PRICING & CALCULATOR</a>
           <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">FREQUENT QUESTIONS</a>
           <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-yellow-400">CONTACT & GET QUOTE</a>
@@ -800,6 +805,9 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {/* 4.7 CLIENT & BUILDER VERIFIED TESTIMONIALS */}
+      <BuilderTestimonials />
 
       {/* 5. PRICING SECTION: SIMPLE PRICING & PER-SQ.FT CALCULATOR */}
       <section id="pricing" className="px-6 md:px-16 py-24 bg-[#0F0F10]/75 backdrop-blur-[2px] relative border-t border-white/5">
@@ -1140,8 +1148,35 @@ export default function App() {
             </div>
 
             {submitResult && (
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-300 text-xs">
-                <b>✓ {submitResult.msg}</b>
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-950/70 via-black to-black border border-emerald-500/50 text-xs space-y-3 shadow-2xl">
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    INQUIRY REGISTERED
+                  </span>
+                  <span className="font-mono text-yellow-400 font-bold bg-yellow-500/10 px-2.5 py-0.5 rounded border border-yellow-500/30">
+                    #{submitResult.ticketId}
+                  </span>
+                </div>
+                <p className="text-gray-200 text-xs leading-relaxed">{submitResult.msg}</p>
+                <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                  <a
+                    href={submitResult.whatsAppUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 bg-green-500 hover:bg-green-400 text-black px-4 py-3 rounded-xl font-bold text-center transition flex items-center justify-center gap-2 shadow-lg shadow-green-500/25"
+                  >
+                    <span>💬</span>
+                    <span>Chat on WhatsApp Now →</span>
+                  </a>
+                  <a
+                    href="tel:+919989028452"
+                    className="border border-white/20 hover:border-yellow-400 text-gray-200 hover:text-white px-4 py-3 rounded-xl text-center transition text-xs font-semibold flex items-center justify-center gap-1"
+                  >
+                    <span>📞</span>
+                    <span>Call Director</span>
+                  </a>
+                </div>
               </div>
             )}
 
