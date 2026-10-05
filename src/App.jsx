@@ -414,9 +414,9 @@ export default function App() {
         <div className="flex items-center gap-3">
           <a href="#home" className="relative group">
             <img
-              src="/abhimanyu-official-logo.jpg"
+              src="/abhimanyu-emblem-transparent.png"
               alt="Abhimanyu Technologies Logo"
-              className="w-11 h-11 rounded-xl object-cover border border-yellow-500/40 shadow-lg shadow-yellow-500/20 group-hover:border-yellow-400 group-hover:scale-105 transition"
+              className="w-11 h-11 object-contain filter drop-shadow-[0_0_12px_rgba(212,175,55,0.45)] group-hover:scale-105 transition"
             />
           </a>
           <div className="leading-tight">
@@ -582,23 +582,15 @@ export default function App() {
             </div>
           </div>
 
-          {/* Official Sacred Sri Yantra Emblem Card */}
+          {/* Official Sacred Sri Yantra Transparent Emblem */}
           <div className="hidden lg:flex flex-col items-center justify-center shrink-0">
-            <div className="relative p-2.5 rounded-full border border-yellow-500/40 bg-black/60 shadow-[0_0_100px_rgba(212,175,55,0.3)] hover:scale-105 transition duration-500">
+            <div className="relative p-2 rounded-full border border-yellow-500/20 bg-gradient-to-b from-yellow-500/10 via-black/30 to-transparent shadow-[0_0_90px_rgba(212,175,55,0.22)] hover:scale-105 transition duration-500">
               <img
-                src="/abhimanyu-official-logo.jpg"
+                src="/abhimanyu-official-logo.png"
                 alt="Abhimanyu Technologies Sacred Sri Yantra Emblem"
-                className="w-72 h-72 xl:w-80 xl:h-80 rounded-full object-cover shadow-2xl"
+                className="w-72 h-72 xl:w-80 xl:h-80 object-contain filter drop-shadow-[0_0_30px_rgba(212,175,55,0.35)]"
               />
-              <div className="absolute inset-0 rounded-full border-2 border-yellow-400/30 pointer-events-none animate-pulse"></div>
-            </div>
-            <div className="mt-5 text-center">
-              <div className="text-xs font-bold font-['Space_Grotesk'] tracking-[0.25em] text-yellow-300 uppercase">
-                ABHIMANYU TECHNOLOGIES
-              </div>
-              <div className="text-[10px] text-gray-400 tracking-[0.2em] uppercase mt-1 font-medium">
-                Sacred Innovation & Tech Excellence
-              </div>
+              <div className="absolute inset-0 rounded-full border border-yellow-400/20 pointer-events-none animate-pulse"></div>
             </div>
           </div>
         </div>
@@ -1185,9 +1177,9 @@ export default function App() {
       <footer className="border-t border-white/10 px-6 md:px-16 py-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
         <div className="flex items-center gap-2.5">
           <img
-            src="/abhimanyu-official-logo.jpg"
+            src="/abhimanyu-emblem-transparent.png"
             alt="Abhimanyu Technologies Logo"
-            className="w-7 h-7 rounded-lg object-cover border border-yellow-500/40"
+            className="w-7 h-7 object-contain filter drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]"
           />
           <span>© 2026 ABHIMANYU TECHNOLOGIES PVT LTD. All Rights Reserved.</span>
         </div>

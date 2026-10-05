@@ -4,13 +4,13 @@
   "description": "AutoCAD Architecture, BIM Modeling, Building Plans, AI Software, and Freelance Engineers in Hyderabad.",
   "icons": [
     {
-      "src": "/abhimanyu-official-logo.jpg",
-      "type": "image/jpeg",
+      "src": "/logo-gold.png",
+      "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/abhimanyu-official-logo.jpg",
-      "type": "image/jpeg",
+      "src": "/logo-gold.png",
+      "type": "image/png",
       "sizes": "512x512"
     }
   ],
