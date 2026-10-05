@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ThreeHologramViewer from './components/ThreeHologramViewer.jsx';
+import CadBlueprintInspector from './components/CadBlueprintInspector.jsx';
+import MunicipalSanctionChecker from './components/MunicipalSanctionChecker.jsx';
+import TiltCard from './components/TiltCard.jsx';
+import FloatingContactOrb from './components/FloatingContactOrb.jsx';
 
 // --- DATA DEFINITIONS ---
 
@@ -321,6 +326,7 @@ function SriYantraCanvas() {
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [calculatorModalOpen, setCalculatorModalOpen] = useState(false);
+  const [blueprintInspectorOpen, setBlueprintInspectorOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   // Per-Sq.Ft Architecture Calculator State
@@ -420,9 +426,14 @@ export default function App() {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center gap-7 text-xs font-semibold tracking-widest text-gray-300">
+        <div className="hidden lg:flex items-center gap-6 text-xs font-semibold tracking-widest text-gray-300">
           <a href="#home" className="hover:text-yellow-400 transition">HOME</a>
+          <a href="#3d-studio" className="hover:text-yellow-400 transition flex items-center gap-1.5 text-yellow-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping"></span>
+            3D STUDIO
+          </a>
           <a href="#services" className="hover:text-yellow-400 transition">SERVICES</a>
+          <a href="#sanction-checker" className="hover:text-yellow-400 transition">TS-bPASS</a>
           <a href="#how-it-works" className="hover:text-yellow-400 transition">PROCESS</a>
           <a href="#work" className="hover:text-yellow-400 transition">WORK</a>
           <a href="#pricing" className="hover:text-yellow-400 transition">PRICING</a>
@@ -431,7 +442,14 @@ export default function App() {
         </div>
 
         {/* CTA Button & Mobile Toggle */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => setBlueprintInspectorOpen(true)}
+            className="hidden xl:flex items-center gap-1.5 border border-yellow-500/30 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 px-3.5 py-2 rounded-full text-xs font-medium transition"
+          >
+            <span>📐</span>
+            <span>Inspect CAD</span>
+          </button>
           <a
             href="#contact"
             className="hidden sm:inline-block border border-yellow-500/50 bg-yellow-500/10 hover:bg-yellow-400 hover:text-black text-yellow-300 px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition shadow-sm"
@@ -458,7 +476,20 @@ export default function App() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl pt-24 px-6 lg:hidden flex flex-col gap-5 overflow-y-auto pb-10">
           <a href="#home" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">HOME</a>
+          <a href="#3d-studio" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-yellow-300 flex items-center gap-2">
+            <span>⚡</span> 3D WEBGL STUDIO
+          </a>
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              setBlueprintInspectorOpen(true);
+            }}
+            className="text-left text-lg font-bold text-yellow-300 flex items-center gap-2"
+          >
+            <span>📐</span> INSPECT CAD BLUEPRINT
+          </button>
           <a href="#services" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">SERVICES (3 CHAKRAS)</a>
+          <a href="#sanction-checker" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">TS-bPASS SANCTIONS</a>
           <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">HOW IT WORKS</a>
           <a href="#work" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">WORK PORTFOLIO</a>
           <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">PRICING & CALCULATOR</a>
@@ -526,6 +557,13 @@ export default function App() {
                 <span>📐</span>
                 <span>Per-Sq.Ft Calculator</span>
               </button>
+              <button
+                onClick={() => setBlueprintInspectorOpen(true)}
+                className="border border-white/20 text-gray-200 hover:border-yellow-400 hover:text-yellow-300 px-6 py-4 rounded-full font-medium text-sm transition flex items-center gap-2"
+              >
+                <span>🔍</span>
+                <span>Inspect Sample CAD Plan</span>
+              </button>
             </div>
 
             <div className="mt-12 grid grid-cols-3 gap-6 max-w-lg border-t border-white/10 pt-8">
@@ -566,6 +604,39 @@ export default function App() {
         </div>
       </section>
 
+      {/* 2.5 INTERACTIVE 3D WEBGL STUDIO */}
+      <section id="3d-studio" className="px-6 md:px-16 py-20 bg-gradient-to-b from-[#08080a] via-[#0d0d12] to-[#08080a] relative border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div>
+              <div className="inline-flex items-center gap-2 border border-yellow-500/40 bg-yellow-500/10 rounded-full px-3.5 py-1 text-[11px] tracking-[0.25em] text-yellow-400 font-bold uppercase mb-3">
+                <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
+                ● REAL-TIME WEBGL 3D ENGINE
+              </div>
+              <h2 className="text-3xl md:text-5xl font-bold font-['Space_Grotesk'] text-white">
+                Interactive 3D Hologram & BIM Studio
+              </h2>
+              <p className="text-gray-400 text-sm md:text-base mt-2 max-w-2xl leading-relaxed">
+                Interact with high-precision architectural models in real-time 3D. Drag to rotate in 360°, inspect BIM structural grids and MEP conduits, explode floor plates, or experience the sacred 3D Sri Yantra Meru geometry.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setBlueprintInspectorOpen(true)}
+                className="bg-yellow-500/10 border border-yellow-500/40 hover:bg-yellow-400 hover:text-black text-yellow-300 px-5 py-3 rounded-full text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-yellow-500/10"
+              >
+                <span>📐</span>
+                <span>Open 2D CAD Layer Inspector</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 3D WebGL Three.js Component */}
+          <ThreeHologramViewer />
+        </div>
+      </section>
+
       {/* 3. SERVICES SECTION: OUR 3 CHAKRAS */}
       <section id="services" className="px-6 md:px-16 py-24 bg-[#0F0F10] border-t border-white/5">
         <div className="max-w-6xl mx-auto">
@@ -579,7 +650,7 @@ export default function App() {
 
           <div className="grid md:grid-cols-3 gap-6 mt-14">
             {CHAKRAS.map((c) => (
-              <div
+              <TiltCard
                 key={c.id}
                 className={`rounded-[24px] p-8 transition duration-300 flex flex-col justify-between ${
                   c.highlight
@@ -618,7 +689,7 @@ export default function App() {
                     Inquire about {c.title} →
                   </a>
                 </div>
-              </div>
+              </TiltCard>
             ))}
           </div>
         </div>
@@ -679,7 +750,7 @@ export default function App() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {PROJECTS.map((p, idx) => (
-              <div
+              <TiltCard
                 key={idx}
                 className={`rounded-2xl border border-white/10 bg-gradient-to-br ${p.bgGrad} p-6 flex flex-col justify-between hover:border-yellow-500/40 transition duration-300 min-h-[260px]`}
               >
@@ -691,9 +762,16 @@ export default function App() {
                   <p className="text-xs text-yellow-400/90 font-medium mt-1">{p.specs}</p>
                 </div>
                 <p className="text-xs text-gray-400 leading-relaxed mt-4">{p.desc}</p>
-              </div>
+              </TiltCard>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* 4.5 TS-bPASS & GHMC MUNICIPAL SANCTION RULES CHECKER */}
+      <section id="sanction-checker" className="px-6 md:px-16 py-20 bg-gradient-to-b from-[#08080a] via-[#0d0d12] to-[#08080a] border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <MunicipalSanctionChecker />
         </div>
       </section>
 
@@ -1173,6 +1251,18 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* --- MODAL: CAD BLUEPRINT & LAYER INSPECTOR --- */}
+      <CadBlueprintInspector
+        isOpen={blueprintInspectorOpen}
+        onClose={() => setBlueprintInspectorOpen(false)}
+      />
+
+      {/* --- 3D FLOATING CONTACT & SPEED DIAL ORB --- */}
+      <FloatingContactOrb
+        onOpenInspector={() => setBlueprintInspectorOpen(true)}
+        onOpenCalculator={() => setCalculatorModalOpen(true)}
+      />
     </div>
   );
 }
