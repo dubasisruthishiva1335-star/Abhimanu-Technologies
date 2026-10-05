@@ -3814,6 +3814,510 @@ function ClientTestimonialsModal({ isOpen, onClose, playClickSound }) {
   );
 }
 
+// --- DIGITAL VISITING CARD & IDENTITY MODAL ---
+function VisitingCardModal({ isOpen, onClose, playClickSound }) {
+  const [flipped, setFlipped] = useState(false);
+  if (!isOpen) return null;
+
+  return (
+    <>
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(5, 8, 16, 0.88)',
+          backdropFilter: 'blur(14px)',
+          zIndex: 10020
+        }}
+      />
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '94vw',
+          maxWidth: '680px',
+          maxHeight: '92vh',
+          overflowY: 'auto',
+          backgroundColor: '#0A0F1D',
+          border: '1px solid rgba(212, 175, 55, 0.4)',
+          boxShadow: '0 25px 70px rgba(0, 0, 0, 0.95), 0 0 40px rgba(212, 175, 55, 0.25)',
+          borderRadius: '24px',
+          padding: '28px',
+          zIndex: 10021,
+          color: '#FFFFFF'
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: '800', color: '#FFD700', letterSpacing: '1px', textTransform: 'uppercase' }}>
+              OFFICIAL CORPORATE IDENTITY
+            </div>
+            <h3 style={{ margin: '4px 0 0 0', fontSize: '22px', fontWeight: '800', color: '#FFFFFF' }}>
+              Executive Visiting Card
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'rgba(30, 41, 59, 0.8)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+              color: '#CBD5E1',
+              width: '34px',
+              height: '34px',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              fontSize: '15px'
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Card Mockup Image Preview */}
+        <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(212, 175, 55, 0.3)', marginBottom: '20px', boxShadow: '0 12px 30px rgba(0,0,0,0.6)' }}>
+          <img
+            src="/visiting-card.jpg"
+            alt="Abhimanyu Technologies Luxury Visiting Card Mockup"
+            style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
+          />
+        </div>
+
+        {/* Interactive Digital Card Flip View */}
+        <div style={{ marginBottom: '24px' }}>
+          <div
+            onClick={() => {
+              setFlipped(!flipped);
+              if (playClickSound) playClickSound('soft');
+            }}
+            style={{
+              background: flipped
+                ? 'linear-gradient(135deg, #111827 0%, #030712 100%)'
+                : 'linear-gradient(135deg, #1A1810 0%, #08080A 100%)',
+              border: '2px solid rgba(212, 175, 55, 0.55)',
+              borderRadius: '16px',
+              padding: '24px',
+              cursor: 'pointer',
+              boxShadow: '0 8px 30px rgba(212, 175, 55, 0.15)',
+              transition: 'all 0.3s ease',
+              minHeight: '180px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}
+          >
+            {!flipped ? (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'linear-gradient(135deg, #F5E6C8, #8C6A1F)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000000', fontWeight: '900', fontSize: '22px' }}>
+                      A
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '16px', fontWeight: '900', letterSpacing: '0.5px', color: '#FFFFFF' }}>ABHIMANYU TECHNOLOGIES</div>
+                      <div style={{ fontSize: '11px', color: '#FFD700', fontStyle: 'italic', marginTop: '2px' }}>Break the Chakravyuha of Design & Code</div>
+                    </div>
+                  </div>
+                  <span style={{ fontSize: '10px', background: 'rgba(212,175,55,0.2)', color: '#FFD700', padding: '3px 8px', borderRadius: '8px', fontWeight: '700' }}>
+                    TAP TO FLIP 🔄
+                  </span>
+                </div>
+                <div style={{ marginTop: '20px', borderTop: '1px solid rgba(212,175,55,0.2)', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                  <div>
+                    <div style={{ fontSize: '12px', color: '#CBD5E1', fontWeight: '700' }}>AutoCAD Architecture · BIM · IT AI Software · Freelance Hub</div>
+                    <div style={{ fontSize: '11px', color: '#94A3B8', marginTop: '3px' }}>Plot 45, Kukatpally, Hyderabad, Telangana</div>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#10B981', fontWeight: '800' }}>● VERIFIED HQ</div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#FFD700' }}>Executive Engineering Desk</div>
+                    <div style={{ fontSize: '12px', color: '#CBD5E1', marginTop: '4px' }}>Civil Architecture · Software Engineering · On-Demand Talent</div>
+                  </div>
+                  <span style={{ fontSize: '10px', background: 'rgba(212,175,55,0.2)', color: '#FFD700', padding: '3px 8px', borderRadius: '8px', fontWeight: '700' }}>
+                    TAP TO FLIP 🔄
+                  </span>
+                </div>
+                <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '11.5px', color: '#E2E8F0' }}>
+                  <div>📍 <strong>Address:</strong> Kukatpally, Hyderabad</div>
+                  <div>✉️ <strong>Email:</strong> hello@abhimanyutech.in</div>
+                  <div>💬 <strong>WhatsApp:</strong> +91 9XXXX XXXXX</div>
+                  <div>🌐 <strong>Web:</strong> abhimanu-technologies.vercel.app</div>
+                </div>
+                <div style={{ marginTop: '14px', fontSize: '10px', color: '#94A3B8', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '8px' }}>
+                  Turnaround SLA: 24–48 Hours for Architectural Drawings & Estimates
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <a
+            href="/visiting-card.jpg"
+            download="Abhimanyu-Technologies-Visiting-Card.jpg"
+            style={{
+              flex: 1,
+              minWidth: '200px',
+              background: 'linear-gradient(135deg, #FFD700, #E6C07A)',
+              color: '#000000',
+              padding: '12px 18px',
+              borderRadius: '12px',
+              fontWeight: '800',
+              fontSize: '13px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              boxShadow: '0 4px 15px rgba(212,175,55,0.35)'
+            }}
+          >
+            💾 Download Visiting Card (JPG)
+          </a>
+          <button
+            onClick={() => window.print()}
+            style={{
+              background: 'rgba(30, 41, 59, 0.8)',
+              border: '1px solid rgba(212, 175, 55, 0.4)',
+              color: '#FFD700',
+              padding: '12px 18px',
+              borderRadius: '12px',
+              fontWeight: '700',
+              fontSize: '13px',
+              cursor: 'pointer'
+            }}
+          >
+            🖨️ Print Card
+          </button>
+          <a
+            href="https://wa.me/919999999999?text=Hello%20Abhimanyu%20Technologies,%20I%20saved%20your%20visiting%20card%20and%20would%20like%20to%20discuss%20a%20project."
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: '#25D366',
+              color: '#000000',
+              padding: '12px 18px',
+              borderRadius: '12px',
+              fontWeight: '800',
+              fontSize: '13px',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            💬 WhatsApp Desk
+          </a>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// --- EXECUTIVE INVESTOR & CLIENT PITCH DECK MODAL ---
+function PitchDeckModal({ isOpen, onClose, playClickSound }) {
+  const [slide, setSlide] = useState(0);
+
+  const slides = [
+    {
+      title: 'Title & Vision',
+      badge: 'SLIDE 01 / 08',
+      headline: 'We Break The Chakravyuha Of Design & Code',
+      subhead: 'Hyderabad\'s First Hybrid: AutoCAD Architecture + BIM + IT Software + Elite Freelance Engineers.',
+      bullets: [
+        'Named after Abhimanyu who breached the Chakravyuha, breaking the complex labyrinth of building plans and software code.',
+        'Unified end-to-end delivery: architectural 2D/3D blueprints to production cloud applications.',
+        'HQ in Hyderabad, India serving domestic infrastructure & global cross-border clients.'
+      ],
+      image: '/pitch-deck.jpg'
+    },
+    {
+      title: 'The Problem',
+      badge: 'SLIDE 02 / 08',
+      headline: 'The Fragmented Chakravyuha Facing Modern Builders',
+      subhead: 'Real estate developers and enterprises are trapped between isolated vendors.',
+      bullets: [
+        'Disconnection: CAD draftsmen do not understand web backends or cloud workflows; IT agencies do not know civil blueprints or municipal norms.',
+        'Delayed Approvals: Inconsistent drawing formats cause costly GHMC/HMDA sanction rejections.',
+        'Lost Inbound Leads: Over 40% of real estate inquiries leak due to lack of automated WhatsApp CRM pipelines.',
+        'Talent Scarcity: Hiring full-time CAD engineers or senior full-stack developers creates heavy fixed payroll overhead.'
+      ]
+    },
+    {
+      title: 'The Solution: 3 Chakras',
+      badge: 'SLIDE 03 / 08',
+      headline: 'One Company. Three Interlocking Chakras.',
+      subhead: 'A complete, integrated ecosystem delivering design, code, and talent.',
+      bullets: [
+        'Chakra 01 — Architecture CAD & BIM: 2D floor plans, 3D elevations, structural analysis, venture layouts & GHMC approvals from ₹15/sq.ft with 24hr delivery.',
+        'Chakra 02 — IT Division & AI Software: Custom SaaS platforms, Real Estate AI CRMs, WhatsApp automation, and cloud backends from ₹50k/project.',
+        'Chakra 03 — Freelance Hub: 100+ vetted AutoCAD draftsmen and full-stack engineers at ₹25,000/mo dedicated rates with 48hr replacement guarantee.'
+      ]
+    },
+    {
+      title: 'Proven Deliverables',
+      badge: 'SLIDE 04 / 08',
+      headline: 'High-Impact Traction Across Construction & Tech',
+      subhead: 'Measurable outcomes delivered for leading developers and enterprises.',
+      bullets: [
+        '200 Villas Venture (Shadnagar): 120-acre master venture layout with 100% municipal approval clearance in under 30 days.',
+        'Real Estate AI CRM Suite: Automated ad lead capture to WhatsApp site visits with a 4.8x conversion increase.',
+        '150+ Building Plans Completed across residential, commercial, and gated communities.',
+        '40+ Production Software Sprints and 100+ on-demand engineers deployed.'
+      ]
+    },
+    {
+      title: 'Market Opportunity',
+      badge: 'SLIDE 05 / 08',
+      headline: 'Capturing India\'s Explosive Infrastructure & PropTech Boom',
+      subhead: 'Hyderabad is India\'s fastest-growing construction and technology hub.',
+      bullets: [
+        'Hyderabad Real Estate: ₹1.2+ Lakh Crore annual construction and development investment pipeline.',
+        'India PropTech & AEC Market: Growing to $10B+ with mandatory BIM modeling and digital municipal clearance.',
+        'Global Remote Arbitrage: Dedicated daily overlap windows for US, UK, and UAE clients delivering 60% margin advantages.'
+      ]
+    },
+    {
+      title: 'Business & Pricing Model',
+      badge: 'SLIDE 06 / 08',
+      headline: 'Diversified, High-Margin Revenue Streams',
+      subhead: 'Predictable pricing without hidden Chakravyuha labyrinths.',
+      bullets: [
+        'Per Drawing Plan: ₹5,000 / drawing (Immediate cashflow from independent builders).',
+        'Square Footage Architectural Drafting: ₹15 to ₹35 / sq.ft for turnkey master planning.',
+        'Dedicated Monthly Engineer: ₹25,000 / month (High recurring retainer revenue).',
+        'PropTech Builder SaaS: ₹10,000 / month recurring subscription.',
+        'Freelance Marketplace: 20% platform commission on technical contract billings.'
+      ]
+    },
+    {
+      title: 'Deep Tech Moat',
+      badge: 'SLIDE 07 / 08',
+      headline: 'Engineered for Performance, Resilience & Scale',
+      subhead: 'Proprietary technology stack separating Abhimanyu from conventional drafting shops.',
+      bullets: [
+        'Layer 7 Load Balancer: Round-robin, least-connections, and IP-hash with zero-downtime circuit breaker failover.',
+        'High-Availability Node.js Cluster: 3 parallel worker processes handling enterprise APIs.',
+        'Three.js WebGL Engine: Real-time 3D interactive architectural configurators rendered in 60 FPS.',
+        'Offline CRDT Sync: Local SQLite synchronization ensuring 100% data integrity in subterranean sites.'
+      ]
+    },
+    {
+      title: 'Leadership & Next Steps',
+      badge: 'SLIDE 08 / 08',
+      headline: 'Ready to Break the Chakravyuha of Your Project?',
+      subhead: 'Get in touch with our engineering team today.',
+      bullets: [
+        'Headquarters: Plot 45, Kukatpally, Hyderabad, Telangana, India.',
+        'Direct Desk: hello@abhimanyutech.in | WhatsApp: Direct Scoping Link.',
+        'Guaranteed Response: Scoping quotation provided within 2 hours.',
+        'Start your project today at ₹5,000 or hire a dedicated engineer for ₹25,000/month.'
+      ]
+    }
+  ];
+
+  if (!isOpen) return null;
+  const current = slides[slide];
+
+  return (
+    <>
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(5, 8, 16, 0.92)',
+          backdropFilter: 'blur(16px)',
+          zIndex: 10020
+        }}
+      />
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '94vw',
+          maxWidth: '840px',
+          maxHeight: '92vh',
+          overflowY: 'auto',
+          backgroundColor: '#0F172A',
+          border: '1px solid rgba(212, 175, 55, 0.45)',
+          boxShadow: '0 25px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(212, 175, 55, 0.25)',
+          borderRadius: '24px',
+          padding: '30px',
+          zIndex: 10021,
+          color: '#FFFFFF'
+        }}
+      >
+        {/* Header & Slide Counter */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid rgba(56, 189, 248, 0.2)', paddingBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '20px' }}>📊</span>
+            <div>
+              <span style={{ fontSize: '10.5px', color: '#FFD700', fontWeight: '800', letterSpacing: '1px' }}>{current.badge}</span>
+              <div style={{ fontSize: '15px', fontWeight: '800', color: '#FFFFFF' }}>{current.title}</div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={() => {
+                setSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+                if (playClickSound) playClickSound('soft');
+              }}
+              style={{
+                background: 'rgba(30, 41, 59, 0.8)',
+                border: '1px solid #334155',
+                color: '#FFFFFF',
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              ←
+            </button>
+            <span style={{ fontSize: '12px', fontWeight: '700', color: '#CBD5E1', padding: '0 4px' }}>
+              {slide + 1} / {slides.length}
+            </span>
+            <button
+              onClick={() => {
+                setSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+                if (playClickSound) playClickSound('soft');
+              }}
+              style={{
+                background: 'rgba(30, 41, 59, 0.8)',
+                border: '1px solid #334155',
+                color: '#FFFFFF',
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              →
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                marginLeft: '10px',
+                background: 'rgba(30, 41, 59, 0.8)',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
+                color: '#94A3B8',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                cursor: 'pointer'
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div style={{ width: '100%', height: '4px', background: 'rgba(51, 65, 85, 0.6)', borderRadius: '2px', marginBottom: '24px', overflow: 'hidden' }}>
+          <div
+            style={{
+              width: `${((slide + 1) / slides.length) * 100}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #FFD700, #38BDF8)',
+              transition: 'width 0.3s ease'
+            }}
+          />
+        </div>
+
+        {/* Slide Content */}
+        <div>
+          {current.image && (
+            <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(212, 175, 55, 0.3)', marginBottom: '22px' }}>
+              <img
+                src={current.image}
+                alt="Abhimanyu Technologies Pitch Deck"
+                style={{ width: '100%', height: 'auto', display: 'block' }}
+              />
+            </div>
+          )}
+
+          <h2 style={{ fontSize: '24px', fontWeight: '900', color: '#FFFFFF', margin: '0 0 8px 0', lineHeight: '1.25' }}>
+            {current.headline}
+          </h2>
+          <p style={{ fontSize: '14.5px', color: '#38BDF8', fontWeight: '600', margin: '0 0 20px 0' }}>
+            {current.subhead}
+          </p>
+
+          <div style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(56, 189, 248, 0.25)', borderRadius: '16px', padding: '20px', marginBottom: '24px' }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {current.bullets.map((b, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13.5px', color: '#E2E8F0', lineHeight: '1.6' }}>
+                  <span style={{ color: '#FFD700', fontSize: '16px', lineHeight: '1.2' }}>🔱</span>
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Footer Navigation */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', borderTop: '1px solid rgba(51, 65, 85, 0.6)', paddingTop: '18px' }}>
+          <div style={{ fontSize: '12px', color: '#94A3B8' }}>
+            Abhimanyu Technologies Pvt Ltd • Hyderabad, India
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            {slide < slides.length - 1 ? (
+              <button
+                onClick={() => {
+                  setSlide((prev) => prev + 1);
+                  if (playClickSound) playClickSound('soft');
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, #FFD700, #E6C07A)',
+                  color: '#000000',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  fontWeight: '800',
+                  fontSize: '13px',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                Next Slide →
+              </button>
+            ) : (
+              <a
+                href="#contact"
+                onClick={(e) => {
+                  onClose();
+                  const elem = document.getElementById('contact');
+                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, #FFD700, #E6C07A)',
+                  color: '#000000',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  fontWeight: '800',
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 15px rgba(212,175,55,0.4)'
+                }}
+              >
+                Book Discovery Call →
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -3824,6 +4328,19 @@ export default function App() {
 
   // Client Testimonials & Case Study Reel Modal State
   const [testimonialsModalOpen, setTestimonialsModalOpen] = useState(false);
+  const [visitingCardModalOpen, setVisitingCardModalOpen] = useState(false);
+  const [pitchDeckModalOpen, setPitchDeckModalOpen] = useState(false);
+
+  // Estimator Tab & CAD Architecture Sq.Ft Calculator State
+  const [estimatorTab, setEstimatorTab] = useState('cad'); // 'cad' | 'software'
+  const [cadSqFt, setCadSqFt] = useState(2400);
+  const [cadOptions, setCadOptions] = useState({
+    twoD: true, // ₹15/sq.ft
+    threeD: true, // +₹8/sq.ft
+    structural: false, // +₹12/sq.ft
+    ghmc: true, // +₹15,000 flat
+    crm: false // +₹25,000 flat
+  });
 
   // Pure Dark Mode Only (Permanently locked as per user specification)
   const isDark = true;
@@ -6079,6 +6596,20 @@ ENGAGEMENT COORDINATION
         playClickSound={playClickSound}
       />
 
+      {/* --- EXECUTIVE VISITING CARD MODAL --- */}
+      <VisitingCardModal
+        isOpen={visitingCardModalOpen}
+        onClose={() => setVisitingCardModalOpen(false)}
+        playClickSound={playClickSound}
+      />
+
+      {/* --- INVESTOR & CLIENT PITCH DECK MODAL --- */}
+      <PitchDeckModal
+        isOpen={pitchDeckModalOpen}
+        onClose={() => setPitchDeckModalOpen(false)}
+        playClickSound={playClickSound}
+      />
+
       {/* --- FLOATING ACTION BUTTONS (WhatsApp + Back to Top) --- */}
       {scrollProgress > 8 && (
         <div style={{
@@ -6369,6 +6900,64 @@ ENGAGEMENT COORDINATION
               <span>⚡</span>
               <span>CAD/IT ↗</span>
             </a>
+
+            {/* Visiting Card Quick Modal Trigger */}
+            <button
+              className="desktop-only-btn"
+              onClick={() => {
+                setVisitingCardModalOpen(true);
+                playClickSound('crystal');
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '6px 12px',
+                borderRadius: '16px',
+                border: '1px solid rgba(212, 175, 55, 0.45)',
+                background: 'rgba(212, 175, 55, 0.12)',
+                color: '#FFD700',
+                fontSize: '11px',
+                fontWeight: '800',
+                letterSpacing: '0.4px',
+                cursor: 'pointer',
+                boxShadow: '0 0 12px rgba(212, 175, 55, 0.15)',
+                transition: 'all 0.2s ease'
+              }}
+              title="View & Download Official Abhimanyu Technologies Visiting Card"
+            >
+              <span>📇</span>
+              <span>CARD</span>
+            </button>
+
+            {/* Pitch Deck Quick Modal Trigger */}
+            <button
+              className="desktop-only-btn"
+              onClick={() => {
+                setPitchDeckModalOpen(true);
+                playClickSound('chime');
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '6px 12px',
+                borderRadius: '16px',
+                border: '1px solid rgba(56, 189, 248, 0.45)',
+                background: 'rgba(56, 189, 248, 0.12)',
+                color: '#38BDF8',
+                fontSize: '11px',
+                fontWeight: '800',
+                letterSpacing: '0.4px',
+                cursor: 'pointer',
+                boxShadow: '0 0 12px rgba(56, 189, 248, 0.15)',
+                transition: 'all 0.2s ease'
+              }}
+              title="Open Executive Investor & Client Pitch Deck"
+            >
+              <span>📊</span>
+              <span>DECK</span>
+            </button>
 
             {/* Futuristic Sidebar HUD Trigger */}
             <button
@@ -9140,9 +9729,278 @@ ENGAGEMENT COORDINATION
             </div>
           </div>
 
-          <div className="estimator-grid" style={styles.estimatorGrid}>
-            {/* Options Side */}
-            <div style={styles.estimatorOptions}>
+          {/* Estimator Mode Switcher: CAD Architecture Sq.Ft vs Custom Software */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '32px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => {
+                setEstimatorTab('cad');
+                playClickSound('click');
+              }}
+              style={{
+                padding: '12px 24px',
+                borderRadius: '16px',
+                border: estimatorTab === 'cad' ? '2px solid #FFD700' : '1px solid rgba(212, 175, 55, 0.3)',
+                background: estimatorTab === 'cad' ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(15, 23, 42, 0.9) 100%)' : 'rgba(15, 23, 42, 0.6)',
+                color: estimatorTab === 'cad' ? '#FFD700' : '#94A3B8',
+                fontWeight: '800',
+                fontSize: '13.5px',
+                cursor: 'pointer',
+                boxShadow: estimatorTab === 'cad' ? '0 0 20px rgba(212, 175, 55, 0.25)' : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>📐</span>
+              <span>AutoCAD Architecture & BIM (Per Sq.Ft Calculator)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setEstimatorTab('software');
+                playClickSound('click');
+              }}
+              style={{
+                padding: '12px 24px',
+                borderRadius: '16px',
+                border: estimatorTab === 'software' ? '2px solid #38BDF8' : '1px solid rgba(56, 189, 248, 0.3)',
+                background: estimatorTab === 'software' ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(15, 23, 42, 0.9) 100%)' : 'rgba(15, 23, 42, 0.6)',
+                color: estimatorTab === 'software' ? '#38BDF8' : '#94A3B8',
+                fontWeight: '800',
+                fontSize: '13.5px',
+                cursor: 'pointer',
+                boxShadow: estimatorTab === 'software' ? '0 0 20px rgba(56, 189, 248, 0.25)' : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>💻</span>
+              <span>Software Engineering & Cloud Estimator</span>
+            </button>
+          </div>
+
+          {estimatorTab === 'cad' ? (
+            /* --- ARCHITECTURE CAD / SQ.FT CALCULATOR --- */
+            (() => {
+              const ratePerSqFt = (cadOptions.twoD ? 15 : 0) + (cadOptions.threeD ? 8 : 0) + (cadOptions.structural ? 12 : 0);
+              const areaCost = cadSqFt * ratePerSqFt;
+              const flatFees = (cadOptions.ghmc ? 15000 : 0) + (cadOptions.crm ? 25000 : 0);
+              const totalEst = areaCost + flatFees;
+              const deliveryTimeline = cadSqFt <= 2000 ? '24–48 Hours' : cadSqFt <= 6000 ? '3–5 Working Days' : '7–10 Working Days';
+
+              return (
+                <div style={{
+                  background: isDark ? 'rgba(15, 23, 42, 0.9)' : '#FFFFFF',
+                  border: '1px solid rgba(212, 175, 55, 0.45)',
+                  borderRadius: '24px',
+                  padding: '32px',
+                  boxShadow: '0 12px 40px rgba(0, 0, 0, 0.5)',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                  gap: '30px'
+                }}>
+                  {/* Left Controls */}
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#FFD700', fontWeight: '800' }}>
+                        PROJECT AREA CONFIGURATION
+                      </span>
+                      <span style={{ fontSize: '18px', fontWeight: '900', color: '#FFD700' }}>
+                        {cadSqFt.toLocaleString()} sq.ft
+                      </span>
+                    </div>
+
+                    {/* Area Slider */}
+                    <input
+                      type="range"
+                      min="500"
+                      max="20000"
+                      step="100"
+                      value={cadSqFt}
+                      onChange={(e) => setCadSqFt(Number(e.target.value))}
+                      style={{ width: '100%', accentColor: '#FFD700', height: '6px', cursor: 'pointer', marginBottom: '14px' }}
+                    />
+
+                    {/* Quick Area Presets */}
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                      {[
+                        { label: 'Villa (1,200 sq.ft)', val: 1200 },
+                        { label: 'Duplex (2,400 sq.ft)', val: 2400 },
+                        { label: 'Commercial (5,000 sq.ft)', val: 5000 },
+                        { label: 'Venture (15,000 sq.ft)', val: 15000 }
+                      ].map((p) => (
+                        <button
+                          key={p.val}
+                          onClick={() => {
+                            setCadSqFt(p.val);
+                            playClickSound('soft');
+                          }}
+                          style={{
+                            background: cadSqFt === p.val ? '#FFD700' : 'rgba(30, 41, 59, 0.7)',
+                            color: cadSqFt === p.val ? '#000000' : '#CBD5E1',
+                            border: cadSqFt === p.val ? '1px solid #FFD700' : '1px solid #334155',
+                            padding: '5px 10px',
+                            borderRadius: '8px',
+                            fontSize: '11.5px',
+                            fontWeight: '700',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {p.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <h4 style={{ fontSize: '14px', fontWeight: '800', color: '#FFFFFF', marginBottom: '12px' }}>
+                      Select Engineering & Design Modules
+                    </h4>
+
+                    {/* Checkbox Options */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {[
+                        { key: 'twoD', label: '2D Floor Plans & Working Elevations', rate: '₹15 / sq.ft' },
+                        { key: 'threeD', label: '3D Exterior Elevation & Photoreal Visuals', rate: '+₹8 / sq.ft' },
+                        { key: 'structural', label: 'Structural Design & MEP Engineering', rate: '+₹12 / sq.ft' },
+                        { key: 'ghmc', label: 'GHMC / Municipal Sanction Drawings & Clearances', rate: '+₹15,000 flat' },
+                        { key: 'crm', label: 'Builder Real Estate AI CRM & WhatsApp Pipeline', rate: '+₹25,000 flat' }
+                      ].map((item) => (
+                        <label
+                          key={item.key}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '10px 14px',
+                            borderRadius: '10px',
+                            background: cadOptions[item.key] ? 'rgba(212, 175, 55, 0.12)' : 'rgba(30, 41, 59, 0.5)',
+                            border: cadOptions[item.key] ? '1px solid rgba(212, 175, 55, 0.45)' : '1px solid #334155',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <input
+                              type="checkbox"
+                              checked={cadOptions[item.key]}
+                              onChange={(e) => {
+                                setCadOptions({ ...cadOptions, [item.key]: e.target.checked });
+                                playClickSound('soft');
+                              }}
+                              style={{ accentColor: '#FFD700', width: '16px', height: '16px' }}
+                            />
+                            <span style={{ fontSize: '13px', color: '#FFFFFF', fontWeight: '600' }}>{item.label}</span>
+                          </div>
+                          <span style={{ fontSize: '12px', fontWeight: '800', color: '#FFD700' }}>{item.rate}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Right Summary Card */}
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(20, 20, 25, 0.95) 0%, rgba(10, 15, 29, 0.95) 100%)',
+                    border: '2px solid rgba(212, 175, 55, 0.55)',
+                    borderRadius: '20px',
+                    padding: '26px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    boxShadow: '0 0 35px rgba(212, 175, 55, 0.15)'
+                  }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94A3B8', fontWeight: '800' }}>
+                          TRANSPARENT QUOTATION
+                        </span>
+                        <span style={{ fontSize: '11px', background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', padding: '3px 8px', borderRadius: '8px', fontWeight: '800' }}>
+                          ● GUARANTEED SLA
+                        </span>
+                      </div>
+
+                      <div style={{ marginTop: '16px', marginBottom: '20px' }}>
+                        <div style={{ fontSize: '13px', color: '#CBD5E1' }}>Estimated Architectural Total</div>
+                        <div style={{ fontSize: '42px', fontWeight: '900', color: '#FFD700', lineHeight: '1.1', marginTop: '4px' }}>
+                          ₹{totalEst.toLocaleString('en-IN')}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '4px' }}>
+                          Effective Rate: ₹{(totalEst / cadSqFt).toFixed(2)} / sq.ft all-inclusive
+                        </div>
+                      </div>
+
+                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '14px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12.5px', color: '#CBD5E1' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span>Area Scope:</span>
+                          <strong style={{ color: '#FFFFFF' }}>{cadSqFt.toLocaleString()} sq.ft</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span>Base Drafting Rate:</span>
+                          <strong style={{ color: '#FFD700' }}>₹{ratePerSqFt}/sq.ft</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span>Turnaround SLA:</span>
+                          <strong style={{ color: '#10B981' }}>{deliveryTimeline}</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span>Format Handover:</span>
+                          <strong style={{ color: '#FFFFFF' }}>AutoCAD DWG + BIM + PDF</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <a
+                        href="#contact"
+                        onClick={(e) => {
+                          setContactData({
+                            ...contactData,
+                            serviceNeed: 'Chakra 01: Architecture CAD/BIM',
+                            details: `CAD Quotation for ${cadSqFt.toLocaleString()} sq.ft (Est: ₹${totalEst.toLocaleString('en-IN')}). Selected modules: ${Object.keys(cadOptions).filter(k => cadOptions[k]).join(', ')}.`
+                          });
+                          scrollTo(e, 'contact');
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #FFD700, #E6C07A)',
+                          color: '#000000',
+                          padding: '13px',
+                          borderRadius: '12px',
+                          fontWeight: '800',
+                          fontSize: '13.5px',
+                          textAlign: 'center',
+                          textDecoration: 'none',
+                          boxShadow: '0 4px 15px rgba(212,175,55,0.35)'
+                        }}
+                      >
+                        Book This Architectural Scope →
+                      </a>
+
+                      <a
+                        href={`https://wa.me/919999999999?text=${encodeURIComponent(
+                          `Hello Abhimanyu Technologies, I generated a CAD quotation for ${cadSqFt.toLocaleString()} sq.ft at ₹${totalEst.toLocaleString('en-IN')}. Please confirm discovery call.`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: '#25D366',
+                          color: '#000000',
+                          padding: '12px',
+                          borderRadius: '12px',
+                          fontWeight: '800',
+                          fontSize: '13px',
+                          textAlign: 'center',
+                          textDecoration: 'none'
+                        }}
+                      >
+                        💬 WhatsApp Quote to Hyderabad Desk
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()
+          ) : (
+            <div className="estimator-grid" style={styles.estimatorGrid}>
+              {/* Options Side */}
+              <div style={styles.estimatorOptions}>
               <div style={styles.estimatorGroup}>
                 <h4 style={styles.estLabel}>What are you building?</h4>
                 <div style={styles.estTypeSelectGrid}>
@@ -9374,6 +10232,7 @@ ENGAGEMENT COORDINATION
               </div>
             </div>
           </div>
+        )}
 
           {/* Client ROI & Cost Savings Calculator */}
           <div style={{

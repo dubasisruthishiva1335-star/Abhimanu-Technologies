@@ -312,6 +312,141 @@
       </div>
 
     </div>
+
+    <!-- INTERACTIVE ARCHITECTURE PER-SQ.FT CALCULATOR -->
+    <div class="mt-16 glass rounded-3xl p-8 md:p-12 border border-yellow-500/40">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-[11px] uppercase tracking-[0.3em] text-yellow-400 font-bold block mb-2">CUSTOM SCOPE ENGINE</span>
+        <h3 class="text-2xl md:text-4xl font-bold">AutoCAD Architecture Per-Sq.Ft Calculator</h3>
+        <p class="text-gray-400 text-sm mt-2">Adjust square footage and engineering modules for an instant binding quotation.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-xs text-yellow-400 uppercase tracking-wider font-bold">Total Project Area</span>
+            <span id="sqFtValue" class="text-2xl font-black text-yellow-300">2,400 sq.ft</span>
+          </div>
+
+          <input id="sqFtSlider" type="range" min="500" max="25000" step="100" value="2400" class="w-full accent-yellow-400 cursor-pointer h-2 bg-black/80 rounded-lg mb-6" oninput="calculateCadQuote()"/>
+
+          <div class="flex gap-2 flex-wrap mb-6">
+            <button type="button" onclick="setSqFt(1200)" class="text-xs bg-white/5 hover:bg-yellow-500/20 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300 transition">Villa (1,200 sq.ft)</button>
+            <button type="button" onclick="setSqFt(2400)" class="text-xs bg-white/5 hover:bg-yellow-500/20 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300 transition">Duplex (2,400 sq.ft)</button>
+            <button type="button" onclick="setSqFt(5000)" class="text-xs bg-white/5 hover:bg-yellow-500/20 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300 transition">Commercial (5,000 sq.ft)</button>
+            <button type="button" onclick="setSqFt(15000)" class="text-xs bg-white/5 hover:bg-yellow-500/20 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300 transition">Venture (15,000 sq.ft)</button>
+          </div>
+
+          <div class="space-y-3">
+            <label class="flex justify-between items-center p-3.5 rounded-xl bg-black/40 border border-white/10 cursor-pointer hover:border-yellow-500/40 transition">
+              <div class="flex items-center gap-3">
+                <input id="opt2D" type="checkbox" checked class="accent-yellow-400 w-4 h-4" onchange="calculateCadQuote()"/>
+                <span class="text-sm font-medium text-gray-200">2D Floor Plans & Working Elevations</span>
+              </div>
+              <span class="text-xs font-bold text-yellow-400">₹15/sq.ft</span>
+            </label>
+
+            <label class="flex justify-between items-center p-3.5 rounded-xl bg-black/40 border border-white/10 cursor-pointer hover:border-yellow-500/40 transition">
+              <div class="flex items-center gap-3">
+                <input id="opt3D" type="checkbox" checked class="accent-yellow-400 w-4 h-4" onchange="calculateCadQuote()"/>
+                <span class="text-sm font-medium text-gray-200">3D Exterior Elevation & Photoreal Visuals</span>
+              </div>
+              <span class="text-xs font-bold text-yellow-400">+₹8/sq.ft</span>
+            </label>
+
+            <label class="flex justify-between items-center p-3.5 rounded-xl bg-black/40 border border-white/10 cursor-pointer hover:border-yellow-500/40 transition">
+              <div class="flex items-center gap-3">
+                <input id="optStruct" type="checkbox" class="accent-yellow-400 w-4 h-4" onchange="calculateCadQuote()"/>
+                <span class="text-sm font-medium text-gray-200">Structural Design & MEP Engineering</span>
+              </div>
+              <span class="text-xs font-bold text-yellow-400">+₹12/sq.ft</span>
+            </label>
+
+            <label class="flex justify-between items-center p-3.5 rounded-xl bg-black/40 border border-white/10 cursor-pointer hover:border-yellow-500/40 transition">
+              <div class="flex items-center gap-3">
+                <input id="optGHMC" type="checkbox" checked class="accent-yellow-400 w-4 h-4" onchange="calculateCadQuote()"/>
+                <span class="text-sm font-medium text-gray-200">GHMC / Municipal Sanction Clearances</span>
+              </div>
+              <span class="text-xs font-bold text-yellow-400">+₹15,000 flat</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Quote Summary Card -->
+        <div class="glass-card rounded-2xl p-8 border-yellow-500/50 bg-gradient-to-br from-yellow-500/[0.08] to-black flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-gray-400 font-bold tracking-widest uppercase">INSTANT QUOTATION</span>
+              <span class="text-[11px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2.5 py-1 rounded-full font-bold">● 24HR SLA</span>
+            </div>
+            <div class="mt-6">
+              <div class="text-xs text-gray-400">Total Estimated Price</div>
+              <div id="quoteTotal" class="text-4xl md:text-5xl font-black text-yellow-300 mt-1">₹70,200</div>
+              <div id="effectiveRate" class="text-xs text-gray-400 mt-1">Effective: ₹29.25 / sq.ft all-inclusive</div>
+            </div>
+
+            <div class="mt-6 border-t border-white/10 pt-4 space-y-2 text-xs text-gray-300">
+              <div class="flex justify-between"><span>Turnaround Delivery:</span><strong id="turnaroundText" class="text-emerald-400">24–48 Hours</strong></div>
+              <div class="flex justify-between"><span>Format Handover:</span><strong class="text-white">AutoCAD DWG + BIM + PDF</strong></div>
+              <div class="flex justify-between"><span>Revisions Included:</span><strong class="text-yellow-400">2 Comprehensive Free</strong></div>
+            </div>
+          </div>
+
+          <div class="mt-8 space-y-3">
+            <a href="#contact" onclick="applyQuoteToContact()" class="block text-center bg-yellow-500 text-black py-3.5 rounded-full font-bold text-sm hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20">
+              Apply Quote to Scoping Form →
+            </a>
+            <a id="waQuoteBtn" href="https://wa.me/919999999999?text=Hello%20Abhimanyu%20Technologies,%20I%20calculated%20a%20CAD%20quote%20for%202400%20sq.ft%20at%20₹70,200." target="_blank" rel="noopener noreferrer" class="block text-center bg-[#25D366] text-black py-3 rounded-full font-bold text-xs hover:bg-[#20ba5a] transition">
+              💬 WhatsApp Quote to Hyderabad Desk
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXECUTIVE BRAND ASSETS (VISITING CARD & PITCH DECK) -->
+    <div class="mt-16 grid md:grid-cols-2 gap-8">
+      <!-- Visiting Card Preview -->
+      <div class="glass-card rounded-3xl p-8 border border-yellow-500/30 flex flex-col justify-between">
+        <div>
+          <span class="text-xs text-yellow-400 font-bold uppercase tracking-widest">OFFICIAL CORPORATE IDENTITY</span>
+          <h4 class="text-2xl font-bold mt-1 text-white">Executive Visiting Card</h4>
+          <p class="text-gray-400 text-xs mt-2">Luxury gold embossed business card for Abhimanyu Technologies with Hyderabad coordinates.</p>
+          <div class="mt-6 rounded-2xl overflow-hidden border border-yellow-500/20 shadow-xl">
+            <img src="/visiting-card.jpg" alt="Abhimanyu Technologies Visiting Card" class="w-full h-auto object-cover"/>
+          </div>
+        </div>
+        <div class="mt-6 flex gap-3">
+          <a href="/visiting-card.jpg" download="Abhimanyu-Technologies-Visiting-Card.jpg" class="flex-1 text-center bg-yellow-500 text-black py-3 rounded-xl font-bold text-xs hover:bg-yellow-400 transition">
+            💾 Download Visiting Card (JPG)
+          </a>
+          <button onclick="window.print()" class="px-4 py-3 rounded-xl border border-white/20 text-xs hover:border-yellow-500 transition">
+            🖨️ Print
+          </button>
+        </div>
+      </div>
+
+      <!-- Pitch Deck Preview -->
+      <div class="glass-card rounded-3xl p-8 border border-yellow-500/30 flex flex-col justify-between">
+        <div>
+          <span class="text-xs text-yellow-400 font-bold uppercase tracking-widest">INVESTOR & CLIENT OVERVIEW</span>
+          <h4 class="text-2xl font-bold mt-1 text-white">Executive Pitch Deck</h4>
+          <p class="text-gray-400 text-xs mt-2">Comprehensive 8-slide briefing on the 3 Chakras, market traction, and hybrid engineering model.</p>
+          <div class="mt-6 rounded-2xl overflow-hidden border border-yellow-500/20 shadow-xl">
+            <img src="/pitch-deck.jpg" alt="Abhimanyu Technologies Pitch Deck" class="w-full h-auto object-cover"/>
+          </div>
+        </div>
+        <div class="mt-6 flex gap-3">
+          <a href="/pitch-deck.jpg" download="Abhimanyu-Technologies-Pitch-Deck.jpg" class="flex-1 text-center bg-yellow-500 text-black py-3 rounded-xl font-bold text-xs hover:bg-yellow-400 transition">
+            💾 Download Pitch Deck Cover (JPG)
+          </a>
+          <a href="/" class="px-5 py-3 rounded-xl border border-cyan-500/40 text-cyan-300 text-xs hover:bg-cyan-500/10 transition">
+            Open Full 3D Platform ⚡
+          </a>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -403,6 +538,43 @@
 </footer>
 
 <script>
+let currentTotalCadQuote = 70200;
+let currentSqFt = 2400;
+
+function setSqFt(val) {
+  document.getElementById('sqFtSlider').value = val;
+  calculateCadQuote();
+}
+
+function calculateCadQuote() {
+  currentSqFt = Number(document.getElementById('sqFtSlider').value);
+  document.getElementById('sqFtValue').innerText = currentSqFt.toLocaleString() + ' sq.ft';
+
+  const twoD = document.getElementById('opt2D').checked;
+  const threeD = document.getElementById('opt3D').checked;
+  const struct = document.getElementById('optStruct').checked;
+  const ghmc = document.getElementById('optGHMC').checked;
+
+  const ratePerSqFt = (twoD ? 15 : 0) + (threeD ? 8 : 0) + (struct ? 12 : 0);
+  const areaCost = currentSqFt * ratePerSqFt;
+  const flatFees = (ghmc ? 15000 : 0);
+  currentTotalCadQuote = areaCost + flatFees;
+
+  document.getElementById('quoteTotal').innerText = '₹' + currentTotalCadQuote.toLocaleString('en-IN');
+  document.getElementById('effectiveRate').innerText = 'Effective: ₹' + (currentTotalCadQuote / currentSqFt).toFixed(2) + ' / sq.ft all-inclusive';
+
+  const turnaround = currentSqFt <= 2000 ? '24–48 Hours' : currentSqFt <= 6000 ? '3–5 Working Days' : '7–10 Working Days';
+  document.getElementById('turnaroundText').innerText = turnaround;
+
+  const waMsg = `Hello Abhimanyu Technologies, I calculated an architectural CAD quotation for ${currentSqFt.toLocaleString()} sq.ft at ₹${currentTotalCadQuote.toLocaleString('en-IN')}. Please confirm consultation.`;
+  document.getElementById('waQuoteBtn').href = `https://wa.me/919999999999?text=${encodeURIComponent(waMsg)}`;
+}
+
+function applyQuoteToContact() {
+  document.getElementById('userService').value = 'Architecture CAD/BIM';
+  document.getElementById('userMessage').value = `AutoCAD Architecture Scope: ${currentSqFt.toLocaleString()} sq.ft (Instant Quote: ₹${currentTotalCadQuote.toLocaleString('en-IN')}). Please schedule discovery call.`;
+}
+
 async function handleCadSubmit(e) {
   e.preventDefault();
   const btn = document.getElementById('submitBtn');
