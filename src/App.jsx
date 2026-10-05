@@ -406,8 +406,12 @@ export default function App() {
       {/* 1. STICKY LUXURY NAVBAR */}
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-4 bg-black/85 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-3">
-          <a href="#home" className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F5E6C8] via-[#D4AF37] to-[#8C6A1F] flex items-center justify-center font-bold text-black text-xl shadow-lg shadow-yellow-500/20">
-            A
+          <a href="#home" className="relative group">
+            <img
+              src="/abhimanyu-official-logo.jpg"
+              alt="Abhimanyu Technologies Logo"
+              className="w-11 h-11 rounded-xl object-cover border border-yellow-500/40 shadow-lg shadow-yellow-500/20 group-hover:border-yellow-400 group-hover:scale-105 transition"
+            />
           </a>
           <div className="leading-tight">
             <span className="text-lg md:text-xl font-bold tracking-wide font-['Space_Grotesk'] text-white">ABHIMANYU</span>
@@ -483,58 +487,80 @@ export default function App() {
         {/* Gradient Overlay for Pristine Readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#08080a] via-[#08080a]/90 to-transparent pointer-events-none"></div>
 
-        <div className="relative z-10 max-w-4xl">
-          <div className="inline-flex items-center gap-2 border border-yellow-600/40 bg-yellow-500/10 rounded-full px-4 py-1.5 text-[11px] tracking-[0.25em] text-yellow-400 mb-6 font-semibold">
-            <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-            ● CHAKRAVYUHA BREAKER • HYDERABAD • SINCE 2024
+        <div className="relative z-10 max-w-6xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-12">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 border border-yellow-600/40 bg-yellow-500/10 rounded-full px-4 py-1.5 text-[11px] tracking-[0.25em] text-yellow-400 mb-6 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+              ● CHAKRAVYUHA BREAKER • HYDERABAD • SINCE 2024
+            </div>
+
+            <h1 className="text-4xl sm:text-6xl lg:text-[76px] font-bold leading-[1.0] font-['Space_Grotesk'] tracking-tight">
+              We Break The<br />
+              Chakravyuha Of<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5E6C8] via-[#E6C07A] to-[#D4AF37]">
+                Design & Code.
+              </span>
+            </h1>
+
+            <p className="mt-6 text-gray-300 text-base md:text-xl max-w-2xl leading-relaxed">
+              Abhimanyu Technologies is Hyderabad's first hybrid: <b className="text-white font-semibold">AutoCAD Architecture + BIM + AI Software + Elite Freelance Engineers</b>. From building plans to AI agents, we know the way in and out.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-4 items-center">
+              <a
+                href="#contact"
+                className="bg-[#E6C07A] hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-bold text-sm tracking-wide transition shadow-lg shadow-yellow-500/20"
+              >
+                Start Project at ₹5000 →
+              </a>
+              <a
+                href="#work"
+                className="bg-white/5 hover:bg-white/10 border border-white/15 px-8 py-4 rounded-full font-bold text-sm text-gray-200 transition"
+              >
+                See 150+ Plans Built
+              </a>
+              <button
+                onClick={() => setCalculatorModalOpen(true)}
+                className="border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/10 px-6 py-4 rounded-full font-medium text-sm transition flex items-center gap-2"
+              >
+                <span>📐</span>
+                <span>Per-Sq.Ft Calculator</span>
+              </button>
+            </div>
+
+            <div className="mt-12 grid grid-cols-3 gap-6 max-w-lg border-t border-white/10 pt-8">
+              <div>
+                <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">150+</div>
+                <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Building Plans</div>
+              </div>
+              <div>
+                <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">40+</div>
+                <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Software Built</div>
+              </div>
+              <div>
+                <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">100+</div>
+                <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Engineers</div>
+              </div>
+            </div>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-[76px] font-bold leading-[1.0] font-['Space_Grotesk'] tracking-tight">
-            We Break The<br />
-            Chakravyuha Of<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5E6C8] via-[#E6C07A] to-[#D4AF37]">
-              Design & Code.
-            </span>
-          </h1>
-
-          <p className="mt-6 text-gray-300 text-base md:text-xl max-w-2xl leading-relaxed">
-            Abhimanyu Technologies is Hyderabad's first hybrid: <b className="text-white font-semibold">AutoCAD Architecture + BIM + AI Software + Elite Freelance Engineers</b>. From building plans to AI agents, we know the way in and out.
-          </p>
-
-          <div className="mt-8 flex flex-wrap gap-4 items-center">
-            <a
-              href="#contact"
-              className="bg-[#E6C07A] hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-bold text-sm tracking-wide transition shadow-lg shadow-yellow-500/20"
-            >
-              Start Project at ₹5000 →
-            </a>
-            <a
-              href="#work"
-              className="bg-white/5 hover:bg-white/10 border border-white/15 px-8 py-4 rounded-full font-bold text-sm text-gray-200 transition"
-            >
-              See 150+ Plans Built
-            </a>
-            <button
-              onClick={() => setCalculatorModalOpen(true)}
-              className="border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/10 px-6 py-4 rounded-full font-medium text-sm transition flex items-center gap-2"
-            >
-              <span>📐</span>
-              <span>Per-Sq.Ft Calculator</span>
-            </button>
-          </div>
-
-          <div className="mt-12 grid grid-cols-3 gap-6 max-w-lg border-t border-white/10 pt-8">
-            <div>
-              <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">150+</div>
-              <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Building Plans</div>
+          {/* Official Sacred Sri Yantra Emblem Card */}
+          <div className="hidden lg:flex flex-col items-center justify-center shrink-0">
+            <div className="relative p-2.5 rounded-full border border-yellow-500/40 bg-black/60 shadow-[0_0_100px_rgba(212,175,55,0.3)] hover:scale-105 transition duration-500">
+              <img
+                src="/abhimanyu-official-logo.jpg"
+                alt="Abhimanyu Technologies Sacred Sri Yantra Emblem"
+                className="w-72 h-72 xl:w-80 xl:h-80 rounded-full object-cover shadow-2xl"
+              />
+              <div className="absolute inset-0 rounded-full border-2 border-yellow-400/30 pointer-events-none animate-pulse"></div>
             </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">40+</div>
-              <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Software Built</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">100+</div>
-              <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Engineers</div>
+            <div className="mt-5 text-center">
+              <div className="text-xs font-bold font-['Space_Grotesk'] tracking-[0.25em] text-yellow-300 uppercase">
+                ABHIMANYU TECHNOLOGIES
+              </div>
+              <div className="text-[10px] text-gray-400 tracking-[0.2em] uppercase mt-1 font-medium">
+                Sacred Innovation & Tech Excellence
+              </div>
             </div>
           </div>
         </div>
@@ -1079,10 +1105,12 @@ export default function App() {
 
       {/* 7. FOOTER */}
       <footer className="border-t border-white/10 px-6 md:px-16 py-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-md bg-gradient-to-br from-[#F5E6C8] to-[#8C6A1F] flex items-center justify-center font-bold text-black text-[10px]">
-            A
-          </div>
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/abhimanyu-official-logo.jpg"
+            alt="Abhimanyu Technologies Logo"
+            className="w-7 h-7 rounded-lg object-cover border border-yellow-500/40"
+          />
           <span>© 2026 ABHIMANYU TECHNOLOGIES PVT LTD. All Rights Reserved.</span>
         </div>
         <div className="tracking-widest text-[10px] text-yellow-500/80 uppercase">
