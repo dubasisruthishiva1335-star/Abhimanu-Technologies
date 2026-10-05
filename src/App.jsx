@@ -412,17 +412,15 @@ export default function App() {
       {/* 1. STICKY LUXURY NAVBAR */}
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-4 bg-black/85 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-3">
-          <a href="#home" className="relative group">
-            <img
-              src="/abhimanyu-emblem-transparent.png"
-              alt="Abhimanyu Technologies Logo"
-              className="w-11 h-11 object-contain filter drop-shadow-[0_0_12px_rgba(212,175,55,0.45)] group-hover:scale-105 transition"
-            />
+          <a href="#home" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500 via-amber-400 to-yellow-600 flex items-center justify-center font-bold text-black font-['Space_Grotesk'] text-base shadow-lg shadow-yellow-500/20 group-hover:scale-105 transition">
+              AT
+            </div>
+            <div className="leading-tight">
+              <span className="text-lg md:text-xl font-bold tracking-wide font-['Space_Grotesk'] text-white">ABHIMANYU</span>
+              <span className="text-yellow-400 font-bold tracking-wider text-xs md:text-sm block">TECHNOLOGIES</span>
+            </div>
           </a>
-          <div className="leading-tight">
-            <span className="text-lg md:text-xl font-bold tracking-wide font-['Space_Grotesk'] text-white">ABHIMANYU</span>
-            <span className="text-yellow-400 font-bold tracking-wider text-xs md:text-sm block">TECHNOLOGIES</span>
-          </div>
         </div>
 
         {/* Desktop Navigation Links */}
@@ -518,8 +516,8 @@ export default function App() {
         {/* Gradient Overlay for Pristine Readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#08080a] via-[#08080a]/90 to-transparent pointer-events-none"></div>
 
-        <div className="relative z-10 max-w-6xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-12">
-          <div className="max-w-3xl">
+        <div className="relative z-10 max-w-5xl mx-auto w-full">
+          <div>
             <div className="inline-flex items-center gap-2 border border-yellow-600/40 bg-yellow-500/10 rounded-full px-4 py-1.5 text-[11px] tracking-[0.25em] text-yellow-400 mb-6 font-semibold">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
               ● CHAKRAVYUHA BREAKER • HYDERABAD • SINCE 2024
@@ -579,18 +577,6 @@ export default function App() {
                 <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">100+</div>
                 <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Engineers</div>
               </div>
-            </div>
-          </div>
-
-          {/* Official Sacred Sri Yantra Transparent Emblem */}
-          <div className="hidden lg:flex flex-col items-center justify-center shrink-0">
-            <div className="relative p-2 rounded-full border border-yellow-500/20 bg-gradient-to-b from-yellow-500/10 via-black/30 to-transparent shadow-[0_0_90px_rgba(212,175,55,0.22)] hover:scale-105 transition duration-500">
-              <img
-                src="/abhimanyu-official-logo.png"
-                alt="Abhimanyu Technologies Sacred Sri Yantra Emblem"
-                className="w-72 h-72 xl:w-80 xl:h-80 object-contain filter drop-shadow-[0_0_30px_rgba(212,175,55,0.35)]"
-              />
-              <div className="absolute inset-0 rounded-full border border-yellow-400/20 pointer-events-none animate-pulse"></div>
             </div>
           </div>
         </div>
@@ -1176,11 +1162,7 @@ export default function App() {
       {/* 7. FOOTER */}
       <footer className="border-t border-white/10 px-6 md:px-16 py-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
         <div className="flex items-center gap-2.5">
-          <img
-            src="/abhimanyu-emblem-transparent.png"
-            alt="Abhimanyu Technologies Logo"
-            className="w-7 h-7 object-contain filter drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]"
-          />
+          <span className="font-bold text-yellow-500 font-['Space_Grotesk'] text-sm tracking-wider">AT</span>
           <span>© 2026 ABHIMANYU TECHNOLOGIES PVT LTD. All Rights Reserved.</span>
         </div>
         <div className="tracking-widest text-[10px] text-yellow-500/80 uppercase">
