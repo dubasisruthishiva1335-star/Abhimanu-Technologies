@@ -5169,14 +5169,6 @@ ENGAGEMENT COORDINATION
         onOpenCaseStudies={() => setTestimonialsModalOpen(true)}
       />
 
-      {/* --- VERTICAL FLOATING HUD DOTS SCROLL SIDEBAR (ON-PAGE SCROLLING DOTS FEATURE) --- */}
-      <FloatingDotsScrollSidebar
-        activeSection={activeSection}
-        scrollTo={scrollTo}
-        scrollProgress={scrollProgress}
-        playClickSound={playClickSound}
-      />
-
       {/* --- SCROLL PROGRESS BAR --- */}
       <div
         style={{
