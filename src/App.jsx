@@ -4,6 +4,7 @@ import CadBlueprintInspector from './components/CadBlueprintInspector.jsx';
 import MunicipalSanctionChecker from './components/MunicipalSanctionChecker.jsx';
 import TiltCard from './components/TiltCard.jsx';
 import FloatingContactOrb from './components/FloatingContactOrb.jsx';
+import ChakravyuhaBackground from './components/ChakravyuhaBackground.jsx';
 
 // --- DATA DEFINITIONS ---
 
@@ -502,8 +503,11 @@ export default function App() {
 
       {/* 2. HERO SECTION */}
       <section id="home" className="relative min-h-screen flex items-center px-6 md:px-16 pt-32 pb-20 overflow-hidden">
-        {/* Clean Luxury Obsidian Background with Subtle Warm Light */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-yellow-500/[0.04] rounded-full blur-[140px] pointer-events-none"></div>
+        {/* Dynamic 7-Tier Chakravyuham Labyrinth Background */}
+        <ChakravyuhaBackground />
+
+        {/* Subtle Obsidian Gradient Overlay for Pristine Readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#08080a] via-[#08080a]/85 to-transparent pointer-events-none"></div>
 
         <div className="relative z-10 max-w-5xl mx-auto w-full">
           <div>
