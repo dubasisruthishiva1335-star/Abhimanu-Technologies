@@ -1,22 +1,22 @@
 {
   "short_name": "Abhimanyu Tech",
-  "name": "Abhimanyu Technologies — Global Software Engineering & Enterprise Solutions",
-  "description": "Global Software Engineering, High-Performance Web & Mobile Platforms, Distributed Cloud Microservices, and Strategic Industry Solutions.",
+  "name": "Abhimanyu Technologies — IT + AutoCAD Architecture",
+  "description": "AutoCAD Architecture, BIM Modeling, Building Plans, AI Software, and Freelance Engineers in Hyderabad.",
   "icons": [
     {
-      "src": "/logo.png",
-      "type": "image/png",
+      "src": "/abhimanyu-official-logo.jpg",
+      "type": "image/jpeg",
       "sizes": "192x192"
     },
     {
-      "src": "/logo.png",
-      "type": "image/png",
+      "src": "/abhimanyu-official-logo.jpg",
+      "type": "image/jpeg",
       "sizes": "512x512"
     }
   ],
   "start_url": "/",
-  "background_color": "#0A0F1D",
-  "theme_color": "#0A0F1D",
+  "background_color": "#08080a",
+  "theme_color": "#08080a",
   "display": "standalone",
   "orientation": "portrait-primary"
 }
