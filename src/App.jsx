@@ -5010,7 +5010,7 @@ ENGAGEMENT COORDINATION
             </p>
 
             <div style={{ backgroundColor: isDark ? '#1E293B' : '#F8FAFC', borderRadius: '12px', padding: '16px', marginBottom: '18px' }}>
-              <div style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: '#2563EB', marginBottom: '4px' }}>
+              <div style={{ fontSize: '12px', fontWeight: '800', textTransform: 'uppercase', color: isDark ? '#38BDF8' : '#2563EB', marginBottom: '4px', letterSpacing: '0.6px' }}>
                 System Architecture
               </div>
               <div style={{ fontSize: '14px', color: isDark ? '#F1F5F9' : '#0F172A', fontWeight: '600' }}>
@@ -5019,7 +5019,7 @@ ENGAGEMENT COORDINATION
             </div>
 
             <div style={{ marginBottom: '18px' }}>
-              <div style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: isDark ? '#94A3B8' : '#64748B', marginBottom: '8px' }}>
+              <div style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: isDark ? '#CBD5E1' : '#64748B', marginBottom: '8px' }}>
                 Technology Stack
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -5153,7 +5153,7 @@ ENGAGEMENT COORDINATION
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div>
-                <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                <span style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
                   Engineering Consultation
                 </span>
                 <h3 style={{ fontSize: '22px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '4px 0 0 0' }}>
@@ -5364,11 +5364,11 @@ ENGAGEMENT COORDINATION
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
               <div>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
                     {activeArticle.category}
                   </span>
-                  <span style={{ color: '#94A3B8', fontSize: '12px' }}>•</span>
-                  <span style={{ fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                  <span style={{ color: isDark ? '#64748B' : '#94A3B8', fontSize: '12px' }}>•</span>
+                  <span style={{ fontSize: '12px', color: isDark ? '#CBD5E1' : '#64748B' }}>
                     {activeArticle.date} · {activeArticle.readTime}
                   </span>
                 </div>
@@ -6296,14 +6296,30 @@ ENGAGEMENT COORDINATION
 
               <h1 className="hero-title" style={styles.heroTitle}>
                 {LANG_DICT[currentLang]?.heroBuild || 'We build'}{' '}
-                <span style={{ color: '#2563EB', display: 'inline' }}>
+                <span style={{
+                  color: isDark ? '#38BDF8' : '#2563EB',
+                  background: isDark
+                    ? 'linear-gradient(135deg, #38BDF8 0%, #60A5FA 60%, #FFD700 100%)'
+                    : 'linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  textShadow: isDark ? '0 0 30px rgba(56, 189, 248, 0.45)' : 'none',
+                  display: 'inline',
+                  fontWeight: '900'
+                }}>
                   {typingPhrase}
-                  <span className="typing-cursor">|</span>
+                  <span className="typing-cursor" style={{ color: '#38BDF8', WebkitTextFillColor: '#38BDF8' }}>|</span>
                 </span>
                 {' '}{LANG_DICT[currentLang]?.heroTagline || '— apps, maintenance, IT services and 3D.'}
               </h1>
 
-              <p className="hero-subtitle" style={styles.heroSubtitle}>
+              <p className="hero-subtitle" style={{
+                ...styles.heroSubtitle,
+                color: isDark ? '#F1F5F9' : '#334155',
+                fontSize: '17px',
+                lineHeight: '1.7',
+                textShadow: isDark ? '0 1px 4px rgba(0,0,0,0.8)' : 'none'
+              }}>
                 Abhimanyu Technologies is a software company for businesses that want dependable apps and standout visuals. We design and develop web and mobile applications, maintain them after launch, deliver IT services, and create 3D animation and interactive 3D experiences.
               </p>
 
@@ -6525,15 +6541,16 @@ ENGAGEMENT COORDINATION
                 <span style={{
                   fontSize: '32px',
                   fontWeight: '900',
-                  color: '#2563EB',
+                  color: isDark ? '#38BDF8' : '#2563EB',
+                  textShadow: isDark ? '0 0 20px rgba(56, 189, 248, 0.45)' : 'none',
                   lineHeight: '1'
                 }}>
                   {stat.static ? stat.static : <CountUp target={stat.target} suffix={stat.suffix} />}
                 </span>
                 <span style={{
                   fontSize: '13px',
-                  color: isDark ? '#94A3B8' : '#64748B',
-                  fontWeight: '500'
+                  color: isDark ? '#CBD5E1' : '#64748B',
+                  fontWeight: '600'
                 }}>{stat.label}</span>
               </div>
             ))}
@@ -6596,13 +6613,13 @@ ENGAGEMENT COORDINATION
             boxShadow: '0 8px 30px rgba(0,0,0,0.06)'
           }}>
             <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px', textShadow: isDark ? '0 0 12px rgba(56, 189, 248, 0.4)' : 'none' }}>
                 Architecture Advisory Wizard
               </span>
               <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
                 Find Your Optimal Technology Stack & Architecture
               </h3>
-              <p style={{ fontSize: '14px', color: isDark ? '#94A3B8' : '#64748B', maxWidth: '640px', margin: '8px auto 0 auto' }}>
+              <p style={{ fontSize: '14.5px', color: isDark ? '#CBD5E1' : '#64748B', maxWidth: '640px', margin: '8px auto 0 auto', lineHeight: '1.6' }}>
                 Select your platform goals, engineering constraints, and projected scale to generate a tailored production architecture specification.
               </p>
             </div>
@@ -6744,7 +6761,7 @@ ENGAGEMENT COORDINATION
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span style={{ fontSize: '28px' }}>{bp.icon}</span>
                       <div>
-                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+                        <span style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
                           Generated Architecture Specification
                         </span>
                         <h4 style={{ fontSize: '18px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '2px 0 0 0' }}>
@@ -6767,7 +6784,7 @@ ENGAGEMENT COORDINATION
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '20px' }}>
                     <div style={{ backgroundColor: isDark ? '#111827' : '#FFFFFF', padding: '16px', borderRadius: '12px', border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', marginBottom: '4px' }}>
                         1. Frontend Layer
                       </div>
                       <div style={{ fontSize: '13px', fontWeight: '600', color: isDark ? '#F1F5F9' : '#0F172A', lineHeight: '1.4' }}>
@@ -6811,7 +6828,7 @@ ENGAGEMENT COORDINATION
                     padding: '14px 18px',
                     marginBottom: '22px'
                   }}>
-                    <strong style={{ fontSize: '12px', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'block', marginBottom: '4px' }}>
+                    <strong style={{ fontSize: '12px', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'block', marginBottom: '4px' }}>
                       Production Bottleneck & Scaling Rationale
                     </strong>
                     <p style={{ margin: 0, fontSize: '13px', color: isDark ? '#CBD5E1' : '#334155', lineHeight: '1.5' }}>
@@ -7201,7 +7218,7 @@ ENGAGEMENT COORDINATION
                         if (elem) elem.scrollIntoView({ behavior: 'smooth' });
                       }}
                       style={{
-                        color: '#2563EB',
+                        color: isDark ? '#38BDF8' : '#2563EB',
                         fontSize: '13px',
                         fontWeight: '700',
                         textDecoration: 'none',
@@ -7224,7 +7241,7 @@ ENGAGEMENT COORDINATION
       <section id="studio" style={styles.sectionDark}>
         <div style={styles.container}>
           <div style={styles.sectionHeaderDark}>
-            <span style={styles.sectionEyebrowCyan}>3D Studio · live demo</span>
+            <span style={styles.sectionEyebrowCyan}>3D Studio · Live Demo</span>
             <h2 style={styles.sectionTitleDark}>This is rendering in your browser right now.</h2>
             <p style={styles.sectionSubtitleDark}>
               Change the shape, material, color and light. Drag the model to rotate it. This is the kind of interactive 3D we build into client websites, product pages and apps.
@@ -8094,14 +8111,15 @@ ENGAGEMENT COORDINATION
               <div
                 key={post.id}
                 style={{
-                  backgroundColor: isDark ? '#111827' : '#FFFFFF',
-                  border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+                  backgroundColor: isDark ? 'rgba(17, 24, 39, 0.85)' : '#FFFFFF',
+                  backdropFilter: 'blur(12px)',
+                  border: isDark ? '1px solid rgba(56, 189, 248, 0.2)' : '1px solid #E2E8F0',
                   borderRadius: '16px',
                   padding: '28px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
+                  boxShadow: isDark ? '0 8px 30px rgba(0,0,0,0.45)' : '0 4px 20px rgba(0,0,0,0.04)',
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                   cursor: 'pointer'
                 }}
@@ -8112,16 +8130,17 @@ ENGAGEMENT COORDINATION
                     <span style={{
                       fontSize: '11px',
                       fontWeight: '800',
-                      color: '#2563EB',
+                      color: isDark ? '#38BDF8' : '#2563EB',
                       textTransform: 'uppercase',
                       letterSpacing: '0.8px',
-                      backgroundColor: isDark ? 'rgba(37,99,235,0.15)' : '#EFF6FF',
+                      backgroundColor: isDark ? 'rgba(56, 189, 248, 0.15)' : '#EFF6FF',
+                      border: isDark ? '1px solid rgba(56, 189, 248, 0.25)' : 'none',
                       padding: '4px 10px',
                       borderRadius: '6px'
                     }}>
                       {post.category}
                     </span>
-                    <span style={{ fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                    <span style={{ fontSize: '12px', color: isDark ? '#CBD5E1' : '#64748B' }}>
                       {post.date} · {post.readTime}
                     </span>
                   </div>
@@ -8138,8 +8157,8 @@ ENGAGEMENT COORDINATION
 
                   <p style={{
                     fontSize: '14px',
-                    lineHeight: '1.6',
-                    color: isDark ? '#94A3B8' : '#64748B',
+                    lineHeight: '1.65',
+                    color: isDark ? '#CBD5E1' : '#64748B',
                     margin: '0 0 20px 0'
                   }}>
                     {post.excerpt}
@@ -8152,7 +8171,7 @@ ENGAGEMENT COORDINATION
                       <span key={idx} style={{
                         fontSize: '11.5px',
                         fontWeight: '600',
-                        color: isDark ? '#CBD5E1' : '#475569',
+                        color: isDark ? '#E2E8F0' : '#475569',
                         backgroundColor: isDark ? '#1E293B' : '#F1F5F9',
                         padding: '3px 8px',
                         borderRadius: '4px'
@@ -8171,7 +8190,7 @@ ENGAGEMENT COORDINATION
                       background: 'none',
                       border: 'none',
                       padding: 0,
-                      color: '#2563EB',
+                      color: isDark ? '#38BDF8' : '#2563EB',
                       fontWeight: '700',
                       fontSize: '14px',
                       cursor: 'pointer',
@@ -8314,20 +8333,21 @@ ENGAGEMENT COORDINATION
           {/* Client Onboarding Sprint Roadmap */}
           <div style={{
             marginTop: '56px',
-            backgroundColor: isDark ? '#111827' : '#F8FAFC',
-            border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+            backgroundColor: isDark ? 'rgba(17, 24, 39, 0.85)' : '#F8FAFC',
+            backdropFilter: 'blur(12px)',
+            border: isDark ? '1px solid rgba(56, 189, 248, 0.22)' : '1px solid #E2E8F0',
             borderRadius: '20px',
             padding: '36px',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.04)'
+            boxShadow: isDark ? '0 8px 30px rgba(0,0,0,0.45)' : '0 8px 30px rgba(0,0,0,0.04)'
           }}>
             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px', textShadow: isDark ? '0 0 12px rgba(56, 189, 248, 0.4)' : 'none' }}>
                 Fast-Track Kickoff
               </span>
               <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
                 What Your First 30 Days Look Like
               </h3>
-              <p style={{ fontSize: '14px', color: isDark ? '#94A3B8' : '#64748B', maxWidth: '540px', margin: '8px auto 0 auto' }}>
+              <p style={{ fontSize: '14.5px', color: isDark ? '#CBD5E1' : '#64748B', maxWidth: '540px', margin: '8px auto 0 auto', lineHeight: '1.6' }}>
                 We eliminate the traditional agency delay. Here is how we take you from signed contract to a working demo in 14 days.
               </p>
             </div>
@@ -8346,7 +8366,7 @@ ENGAGEMENT COORDINATION
                     style={{
                       backgroundColor: active ? '#2563EB' : (isDark ? '#1E293B' : '#FFFFFF'),
                       color: active ? '#FFFFFF' : (isDark ? '#CBD5E1' : '#475569'),
-                      border: active ? '1px solid #2563EB' : (isDark ? '1px solid #334155' : '1px solid #CBD5E1'),
+                      border: active ? '1px solid #38BDF8' : (isDark ? '1px solid #334155' : '1px solid #CBD5E1'),
                       padding: '10px 20px',
                       borderRadius: '12px',
                       fontSize: '13.5px',
@@ -8367,19 +8387,19 @@ ENGAGEMENT COORDINATION
 
             {/* Active Week Deliverables Card */}
             <div style={{
-              backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
-              border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+              backgroundColor: isDark ? 'rgba(15, 23, 42, 0.9)' : '#FFFFFF',
+              border: isDark ? '1px solid rgba(56, 189, 248, 0.18)' : '1px solid #E2E8F0',
               borderRadius: '16px',
               padding: '28px'
             }}>
               <div style={{ marginBottom: '18px' }}>
-                <span style={{ fontSize: '12px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '12px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
                   {ONBOARDING_WEEKS[activeRoadmapWeek].week} Milestone
                 </span>
                 <h4 style={{ fontSize: '19px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '4px 0 2px 0' }}>
                   {ONBOARDING_WEEKS[activeRoadmapWeek].title}
                 </h4>
-                <p style={{ fontSize: '13.5px', color: isDark ? '#94A3B8' : '#64748B', margin: 0 }}>
+                <p style={{ fontSize: '13.5px', color: isDark ? '#CBD5E1' : '#64748B', margin: 0 }}>
                   {ONBOARDING_WEEKS[activeRoadmapWeek].subtitle}
                 </p>
               </div>
@@ -8571,14 +8591,16 @@ ENGAGEMENT COORDINATION
           {/* Studio Comparison Table */}
           <div style={{
             marginTop: '48px',
-            backgroundColor: isDark ? '#111827' : '#F8FAFC',
-            border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+            backgroundColor: isDark ? 'rgba(17, 24, 39, 0.85)' : '#F8FAFC',
+            backdropFilter: 'blur(12px)',
+            border: isDark ? '1px solid rgba(56, 189, 248, 0.22)' : '1px solid #E2E8F0',
             borderRadius: '20px',
             padding: '32px',
+            boxShadow: isDark ? '0 8px 30px rgba(0,0,0,0.45)' : 'none',
             overflowX: 'auto'
           }}>
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px', textShadow: isDark ? '0 0 12px rgba(56, 189, 248, 0.4)' : 'none' }}>
                 How We Compare
               </span>
               <h3 style={{ fontSize: '22px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
@@ -8589,13 +8611,13 @@ ENGAGEMENT COORDINATION
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '600px' }}>
               <thead>
                 <tr style={{ borderBottom: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0' }}>
-                  <th style={{ padding: '12px 16px', fontSize: '13px', fontWeight: '700', color: isDark ? '#94A3B8' : '#64748B' }}>
+                  <th style={{ padding: '12px 16px', fontSize: '13px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#64748B' }}>
                     Criteria
                   </th>
-                  <th style={{ padding: '12px 16px', fontSize: '13px', fontWeight: '700', color: isDark ? '#94A3B8' : '#64748B' }}>
+                  <th style={{ padding: '12px 16px', fontSize: '13px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#64748B' }}>
                     Traditional Agency / Outsourcing
                   </th>
-                  <th style={{ padding: '12px 16px', fontSize: '13px', fontWeight: '700', color: '#2563EB' }}>
+                  <th style={{ padding: '12px 16px', fontSize: '13px', fontWeight: '700', color: isDark ? '#38BDF8' : '#2563EB' }}>
                     Abhimanyu Technologies
                   </th>
                 </tr>
@@ -8638,11 +8660,11 @@ ENGAGEMENT COORDINATION
                     <td style={{ padding: '14px 16px', fontSize: '14px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A' }}>
                       {row.feature}
                     </td>
-                    <td style={{ padding: '14px 16px', fontSize: '13.5px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                    <td style={{ padding: '14px 16px', fontSize: '13.5px', color: isDark ? '#CBD5E1' : '#64748B' }}>
                       <span style={{ color: '#EF4444', marginRight: '6px' }}>✕</span>
                       {row.traditional}
                     </td>
-                    <td style={{ padding: '14px 16px', fontSize: '13.5px', fontWeight: '600', color: isDark ? '#60A5FA' : '#1D4ED8' }}>
+                    <td style={{ padding: '14px 16px', fontSize: '13.5px', fontWeight: '600', color: isDark ? '#38BDF8' : '#1D4ED8' }}>
                       <span style={{ color: '#10B981', marginRight: '6px' }}>✓</span>
                       {row.ours}
                     </td>
@@ -8726,15 +8748,16 @@ ENGAGEMENT COORDINATION
             ].map((hub, hIdx) => (
               <RevealSection key={hIdx} delay={hIdx * 80}>
                 <div style={{
-                  backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
-                  border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+                  backgroundColor: isDark ? 'rgba(17, 24, 39, 0.85)' : '#FFFFFF',
+                  backdropFilter: 'blur(12px)',
+                  border: isDark ? '1px solid rgba(56, 189, 248, 0.2)' : '1px solid #E2E8F0',
                   borderRadius: '16px',
                   padding: '24px',
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '12px',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
+                  boxShadow: isDark ? '0 8px 30px rgba(0,0,0,0.4)' : '0 2px 10px rgba(0,0,0,0.03)'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -8744,8 +8767,8 @@ ENGAGEMENT COORDINATION
                     <span style={{
                       fontSize: '11px',
                       fontWeight: '700',
-                      backgroundColor: isDark ? 'rgba(37,99,235,0.2)' : '#EFF6FF',
-                      color: isDark ? '#93C5FD' : '#2563EB',
+                      backgroundColor: isDark ? 'rgba(56,189,248,0.18)' : '#EFF6FF',
+                      color: isDark ? '#38BDF8' : '#2563EB',
                       padding: '2px 8px',
                       borderRadius: '12px'
                     }}>
@@ -8753,12 +8776,12 @@ ENGAGEMENT COORDINATION
                     </span>
                   </div>
 
-                  <div style={{ fontSize: '12.5px', fontWeight: '600', color: isDark ? '#38BDF8' : '#0284C7' }}>
+                  <div style={{ fontSize: '12.5px', fontWeight: '700', color: isDark ? '#38BDF8' : '#0284C7', textShadow: isDark ? '0 0 10px rgba(56,189,248,0.3)' : 'none' }}>
                     {hub.city} · {hub.tz}
                   </div>
 
-                  <div style={{ fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B', backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#F8FAFC', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #1E293B' : '1px solid #F1F5F9' }}>
-                    <strong>Cloud Edge:</strong> {hub.cloud}
+                  <div style={{ fontSize: '12px', color: isDark ? '#CBD5E1' : '#64748B', backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : '#F8FAFC', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #1E293B' : '1px solid #F1F5F9' }}>
+                    <strong style={{ color: isDark ? '#F1F5F9' : '#0F172A' }}>Cloud Edge:</strong> {hub.cloud}
                   </div>
 
                   <p style={{ margin: 'auto 0 0 0', fontSize: '13px', color: isDark ? '#CBD5E1' : '#475569', lineHeight: '1.5' }}>
@@ -9018,20 +9041,21 @@ ENGAGEMENT COORDINATION
           {/* Client ROI & Cost Savings Calculator */}
           <div style={{
             marginTop: '56px',
-            backgroundColor: isDark ? '#111827' : '#FFFFFF',
-            border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+            backgroundColor: isDark ? 'rgba(17, 24, 39, 0.85)' : '#FFFFFF',
+            backdropFilter: 'blur(12px)',
+            border: isDark ? '1px solid rgba(56, 189, 248, 0.22)' : '1px solid #E2E8F0',
             borderRadius: '20px',
             padding: '36px',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.06)'
+            boxShadow: isDark ? '0 8px 30px rgba(0,0,0,0.45)' : '0 8px 30px rgba(0,0,0,0.06)'
           }}>
             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px', textShadow: isDark ? '0 0 12px rgba(56, 189, 248, 0.4)' : 'none' }}>
                 Cost Efficiency Model
               </span>
               <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
                 Calculate Your Cost & Time Savings
               </h3>
-              <p style={{ fontSize: '14px', color: isDark ? '#94A3B8' : '#64748B', maxWidth: '540px', margin: '8px auto 0 auto' }}>
+              <p style={{ fontSize: '14.5px', color: isDark ? '#CBD5E1' : '#64748B', maxWidth: '540px', margin: '8px auto 0 auto', lineHeight: '1.6' }}>
                 Compare the real total cost of in-house recruitment and payroll overhead versus our dedicated sprint teams.
               </p>
             </div>
@@ -9049,7 +9073,7 @@ ENGAGEMENT COORDINATION
                     <label style={{ fontSize: '13.5px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A' }}>
                       Engineers Needed:
                     </label>
-                    <span style={{ fontSize: '14px', fontWeight: '800', color: '#2563EB' }}>
+                    <span style={{ fontSize: '14px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB' }}>
                       {roiTeamSize} {roiTeamSize === 1 ? 'Engineer' : 'Engineers'}
                     </span>
                   </div>
@@ -9060,9 +9084,9 @@ ENGAGEMENT COORDINATION
                     step="1"
                     value={roiTeamSize}
                     onChange={(e) => setRoiTeamSize(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: '#2563EB', cursor: 'pointer' }}
+                    style={{ width: '100%', accentColor: '#38BDF8', cursor: 'pointer' }}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#94A3B8', marginTop: '4px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: isDark ? '#CBD5E1' : '#64748B', marginTop: '4px' }}>
                     <span>1 (Focused MVP)</span>
                     <span>3 (Full Squad)</span>
                     <span>6 (Scale-up)</span>
@@ -9074,7 +9098,7 @@ ENGAGEMENT COORDINATION
                     <label style={{ fontSize: '13.5px', fontWeight: '700', color: isDark ? '#F1F5F9' : '#0F172A' }}>
                       Project Horizon:
                     </label>
-                    <span style={{ fontSize: '14px', fontWeight: '800', color: '#2563EB' }}>
+                    <span style={{ fontSize: '14px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB' }}>
                       {roiDuration} Months
                     </span>
                   </div>
@@ -9085,9 +9109,9 @@ ENGAGEMENT COORDINATION
                     step="1"
                     value={roiDuration}
                     onChange={(e) => setRoiDuration(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: '#2563EB', cursor: 'pointer' }}
+                    style={{ width: '100%', accentColor: '#38BDF8', cursor: 'pointer' }}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#94A3B8', marginTop: '4px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: isDark ? '#CBD5E1' : '#64748B', marginTop: '4px' }}>
                     <span>3 Months</span>
                     <span>6 Months</span>
                     <span>12 Months</span>
@@ -9099,7 +9123,7 @@ ENGAGEMENT COORDINATION
                   borderRadius: '12px',
                   padding: '14px 16px',
                   fontSize: '12.5px',
-                  color: isDark ? '#94A3B8' : '#64748B',
+                  color: isDark ? '#CBD5E1' : '#64748B',
                   lineHeight: '1.5'
                 }}>
                   💡 <em>In-house estimate factors in recruitment agency fees (15%), workstation/benefits (20%), and 8 weeks recruitment lag time.</em>
@@ -9108,8 +9132,8 @@ ENGAGEMENT COORDINATION
 
               {/* Savings Results Card */}
               <div style={{
-                backgroundColor: isDark ? '#0A0F1D' : '#EFF6FF',
-                border: isDark ? '1px solid #1E293B' : '1px solid #BFDBFE',
+                backgroundColor: isDark ? 'rgba(15, 23, 42, 0.9)' : '#EFF6FF',
+                border: isDark ? '1px solid rgba(56, 189, 248, 0.25)' : '1px solid #BFDBFE',
                 borderRadius: '16px',
                 padding: '28px',
                 display: 'flex',
@@ -9117,10 +9141,10 @@ ENGAGEMENT COORDINATION
                 gap: '16px'
               }}>
                 <div>
-                  <span style={{ fontSize: '11.5px', fontWeight: '700', textTransform: 'uppercase', color: '#2563EB' }}>
+                  <span style={{ fontSize: '11.5px', fontWeight: '700', textTransform: 'uppercase', color: isDark ? '#38BDF8' : '#2563EB', letterSpacing: '0.6px' }}>
                     Estimated Net Cost Saved
                   </span>
-                  <div style={{ fontSize: '32px', fontWeight: '900', color: '#10B981', margin: '4px 0' }}>
+                  <div style={{ fontSize: '32px', fontWeight: '900', color: '#10B981', margin: '4px 0', textShadow: isDark ? '0 0 16px rgba(16, 185, 129, 0.35)' : 'none' }}>
                     {(() => {
                       const rawINR = roiTeamSize * roiDuration * 80000;
                       if (estCurrency === 'INR') return `₹${(rawINR / 100000).toFixed(1)} Lakhs+`;
@@ -9130,14 +9154,14 @@ ENGAGEMENT COORDINATION
                       return `$${Math.round(rawINR / 85).toLocaleString()}+`;
                     })()}
                   </div>
-                  <span style={{ fontSize: '12px', fontWeight: '600', color: isDark ? '#94A3B8' : '#475569' }}>
+                  <span style={{ fontSize: '12px', fontWeight: '600', color: isDark ? '#CBD5E1' : '#475569' }}>
                     (~41% overall savings vs. in-house hiring overhead)
                   </span>
                 </div>
 
                 <div style={{ borderTop: isDark ? '1px solid #1E293B' : '1px solid #DBEAFE', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ fontSize: '13px', color: isDark ? '#CBD5E1' : '#334155' }}>Recruitment Time Saved:</span>
-                  <strong style={{ fontSize: '13px', color: '#2563EB' }}>~8 to 10 Weeks</strong>
+                  <strong style={{ fontSize: '13px', color: isDark ? '#38BDF8' : '#2563EB' }}>~8 to 10 Weeks</strong>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -9296,9 +9320,9 @@ ENGAGEMENT COORDINATION
             <button
               onClick={() => setSecurityModalOpen(true)}
               style={{
-                backgroundColor: isDark ? '#111827' : '#EFF6FF',
-                border: isDark ? '1px solid #1E293B' : '1px solid #BFDBFE',
-                color: '#2563EB',
+                backgroundColor: isDark ? 'rgba(17, 24, 39, 0.85)' : '#EFF6FF',
+                border: isDark ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid #BFDBFE',
+                color: isDark ? '#38BDF8' : '#2563EB',
                 padding: '12px 26px',
                 borderRadius: '30px',
                 fontSize: '14px',
@@ -9307,7 +9331,7 @@ ENGAGEMENT COORDINATION
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 14px rgba(37,99,235,0.08)',
+                boxShadow: isDark ? '0 0 20px rgba(56, 189, 248, 0.2)' : '0 4px 14px rgba(37,99,235,0.08)',
                 transition: 'transform 0.15s ease'
               }}
             >
@@ -9319,20 +9343,21 @@ ENGAGEMENT COORDINATION
           {/* Interactive Codebase & Cloud Health Audit Scorecard */}
           <div style={{
             marginTop: '48px',
-            backgroundColor: isDark ? '#111827' : '#FFFFFF',
-            border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+            backgroundColor: isDark ? 'rgba(17, 24, 39, 0.85)' : '#FFFFFF',
+            backdropFilter: 'blur(12px)',
+            border: isDark ? '1px solid rgba(56, 189, 248, 0.22)' : '1px solid #E2E8F0',
             borderRadius: '20px',
             padding: '36px',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.06)'
+            boxShadow: isDark ? '0 8px 30px rgba(0,0,0,0.45)' : '0 8px 30px rgba(0,0,0,0.06)'
           }}>
             <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <span style={{ fontSize: '11px', fontWeight: '800', color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textTransform: 'uppercase', letterSpacing: '0.8px', textShadow: isDark ? '0 0 12px rgba(56, 189, 248, 0.4)' : 'none' }}>
                 Technical Self-Assessment
               </span>
               <h3 style={{ fontSize: '24px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', margin: '6px 0 0 0' }}>
                 Codebase & Cloud Architecture Health Audit
               </h3>
-              <p style={{ fontSize: '14px', color: isDark ? '#94A3B8' : '#64748B', maxWidth: '640px', margin: '8px auto 0 auto' }}>
+              <p style={{ fontSize: '14.5px', color: isDark ? '#CBD5E1' : '#64748B', maxWidth: '640px', margin: '8px auto 0 auto', lineHeight: '1.6' }}>
                 Evaluate your engineering stability, CI/CD automation, and cloud security posture in 60 seconds to identify vulnerabilities before scaling.
               </p>
             </div>
@@ -9611,7 +9636,7 @@ ENGAGEMENT COORDINATION
             return (
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-                  <span style={{ fontSize: '13px', color: isDark ? '#94A3B8' : '#64748B' }}>
+                  <span style={{ fontSize: '13px', color: isDark ? '#CBD5E1' : '#64748B' }}>
                     Showing {filteredFaqs.length} {filteredFaqs.length === 1 ? 'question' : 'questions'}
                   </span>
                   <button
@@ -9623,8 +9648,8 @@ ENGAGEMENT COORDINATION
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#2563EB',
-                      fontWeight: '600',
+                      color: isDark ? '#38BDF8' : '#2563EB',
+                      fontWeight: '700',
                       fontSize: '13px',
                       cursor: 'pointer',
                       padding: '4px 8px',
@@ -9748,14 +9773,16 @@ ENGAGEMENT COORDINATION
 
               {/* Global Remote Delivery Hub & Timezone Alignment */}
               <div style={{
-                backgroundColor: isDark ? '#111827' : '#F8FAFC',
-                border: isDark ? '1px solid #1E293B' : '1px solid #E2E8F0',
+                backgroundColor: isDark ? 'rgba(17, 24, 39, 0.85)' : '#F8FAFC',
+                backdropFilter: 'blur(12px)',
+                border: isDark ? '1px solid rgba(56, 189, 248, 0.22)' : '1px solid #E2E8F0',
                 borderRadius: '12px',
                 padding: '16px',
-                marginTop: '14px'
+                marginTop: '14px',
+                boxShadow: isDark ? '0 8px 30px rgba(0,0,0,0.35)' : 'none'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '800', color: '#2563EB' }}>
+                  <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '800', color: isDark ? '#38BDF8' : '#2563EB', textShadow: isDark ? '0 0 10px rgba(56,189,248,0.35)' : 'none' }}>
                     Global Remote Delivery Hub
                   </span>
                   <span style={{ fontSize: '11px', backgroundColor: '#DCFCE7', color: '#166534', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
@@ -9766,26 +9793,26 @@ ENGAGEMENT COORDINATION
                 <div style={{ fontSize: '13.5px', color: isDark ? '#F1F5F9' : '#0F172A', fontWeight: '700', marginBottom: '3px' }}>
                   HQ: Telangana, India (IST • UTC+5:30)
                 </div>
-                <div style={{ fontSize: '12px', color: isDark ? '#94A3B8' : '#64748B', marginBottom: '12px', lineHeight: '1.4' }}>
+                <div style={{ fontSize: '12px', color: isDark ? '#CBD5E1' : '#64748B', marginBottom: '12px', lineHeight: '1.4' }}>
                   Dedicated daily overlap windows for real-time standups, sprint reviews, and direct Slack/Teams collaboration:
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
                   <div style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #334155' : '1px solid #E2E8F0' }}>
                     <div style={{ fontSize: '11.5px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#1E293B' }}>🇺🇸 US (EST / PST)</div>
-                    <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: '600', marginTop: '2px' }}>3.5h – 4h Sync Window</div>
+                    <div style={{ fontSize: '11px', color: isDark ? '#38BDF8' : '#2563EB', fontWeight: '700', marginTop: '2px' }}>3.5h – 4h Sync Window</div>
                   </div>
                   <div style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #334155' : '1px solid #E2E8F0' }}>
                     <div style={{ fontSize: '11.5px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#1E293B' }}>🇬🇧 UK / Europe</div>
-                    <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: '600', marginTop: '2px' }}>4.5h – 5h Sync Window</div>
+                    <div style={{ fontSize: '11px', color: isDark ? '#38BDF8' : '#2563EB', fontWeight: '700', marginTop: '2px' }}>4.5h – 5h Sync Window</div>
                   </div>
                   <div style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #334155' : '1px solid #E2E8F0' }}>
                     <div style={{ fontSize: '11.5px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#1E293B' }}>🇦🇪 UAE / Middle East</div>
-                    <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: '600', marginTop: '2px' }}>6.5h Full Working Overlap</div>
+                    <div style={{ fontSize: '11px', color: isDark ? '#38BDF8' : '#2563EB', fontWeight: '700', marginTop: '2px' }}>6.5h Full Working Overlap</div>
                   </div>
                   <div style={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', padding: '8px 10px', borderRadius: '8px', border: isDark ? '1px solid #334155' : '1px solid #E2E8F0' }}>
                     <div style={{ fontSize: '11.5px', fontWeight: '700', color: isDark ? '#CBD5E1' : '#1E293B' }}>🇸🇬 Singapore / APAC</div>
-                    <div style={{ fontSize: '11px', color: '#2563EB', fontWeight: '600', marginTop: '2px' }}>7h Direct Day Overlap</div>
+                    <div style={{ fontSize: '11px', color: isDark ? '#38BDF8' : '#2563EB', fontWeight: '700', marginTop: '2px' }}>7h Direct Day Overlap</div>
                   </div>
                 </div>
               </div>
@@ -12308,13 +12335,21 @@ function getStyles(isDark) {
       backdropFilter: 'blur(8px)',
       borderBottom: '1px solid #1E293B'
     },
+    heroOverline: {
+      ...base.heroOverline,
+      color: '#38BDF8',
+      fontWeight: '800',
+      letterSpacing: '1.5px',
+      textShadow: '0 0 16px rgba(56, 189, 248, 0.45)'
+    },
     heroTitle: {
       ...base.heroTitle,
       color: '#FFFFFF'
     },
     heroSubtitle: {
       ...base.heroSubtitle,
-      color: '#94A3B8'
+      color: '#F1F5F9',
+      textShadow: '0 1px 4px rgba(0, 0, 0, 0.8)'
     },
     heroPill: {
       ...base.heroPill,
@@ -12340,19 +12375,44 @@ function getStyles(isDark) {
       backdropFilter: 'blur(10px)',
       borderBottom: '1px solid rgba(30, 41, 59, 0.6)'
     },
+    sectionEyebrow: {
+      ...base.sectionEyebrow,
+      color: '#38BDF8',
+      fontWeight: '800',
+      letterSpacing: '1.2px',
+      textShadow: '0 0 14px rgba(56, 189, 248, 0.4)'
+    },
+    sectionEyebrowCyan: {
+      ...base.sectionEyebrowCyan,
+      color: '#38BDF8',
+      fontWeight: '800',
+      letterSpacing: '1.2px',
+      textShadow: '0 0 14px rgba(56, 189, 248, 0.4)'
+    },
     sectionTitle: {
       ...base.sectionTitle,
       color: '#FFFFFF'
     },
     sectionSubtitle: {
       ...base.sectionSubtitle,
-      color: '#94A3B8'
+      color: '#CBD5E1',
+      fontSize: '16px',
+      lineHeight: '1.65',
+      textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)'
+    },
+    sectionSubtitleDark: {
+      ...base.sectionSubtitleDark,
+      color: '#CBD5E1',
+      fontSize: '16px',
+      lineHeight: '1.65',
+      textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)'
     },
     serviceCard: {
       ...base.serviceCard,
-      backgroundColor: 'rgba(17, 24, 39, 0.68)',
-      backdropFilter: 'blur(8px)',
-      border: '1px solid rgba(31, 41, 55, 0.8)'
+      backgroundColor: 'rgba(17, 24, 39, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.22)',
+      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.45)'
     },
     serviceName: {
       ...base.serviceName,
@@ -12360,11 +12420,12 @@ function getStyles(isDark) {
     },
     serviceDesc: {
       ...base.serviceDesc,
-      color: '#94A3B8'
+      color: '#CBD5E1',
+      lineHeight: '1.6'
     },
     bulletItem: {
       ...base.bulletItem,
-      color: '#CBD5E1'
+      color: '#E2E8F0'
     },
     appTab: {
       ...base.appTab,
@@ -12374,8 +12435,9 @@ function getStyles(isDark) {
     },
     buildingControlsCol: {
       ...base.buildingControlsCol,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.22)'
     },
     controlsHeading: {
       ...base.controlsHeading,
@@ -12387,8 +12449,9 @@ function getStyles(isDark) {
     },
     solutionCard: {
       ...base.solutionCard,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.22)'
     },
     solutionTitle: {
       ...base.solutionTitle,
@@ -12396,7 +12459,8 @@ function getStyles(isDark) {
     },
     solutionDesc: {
       ...base.solutionDesc,
-      color: '#94A3B8'
+      color: '#CBD5E1',
+      lineHeight: '1.6'
     },
     chipTool: {
       ...base.chipTool,
@@ -12406,8 +12470,9 @@ function getStyles(isDark) {
     },
     ringCarouselBox: {
       ...base.ringCarouselBox,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.22)'
     },
     conceptTitle: {
       ...base.conceptTitle,
@@ -12415,18 +12480,20 @@ function getStyles(isDark) {
     },
     conceptDesc: {
       ...base.conceptDesc,
-      color: '#94A3B8'
+      color: '#CBD5E1',
+      lineHeight: '1.6'
     },
     ringTab: {
       ...base.ringTab,
       backgroundColor: '#1E293B',
       border: '1px solid #334155',
-      color: '#94A3B8'
+      color: '#CBD5E1'
     },
     processCard: {
       ...base.processCard,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.22)'
     },
     processStepTitle: {
       ...base.processStepTitle,
@@ -12434,7 +12501,8 @@ function getStyles(isDark) {
     },
     processStepDesc: {
       ...base.processStepDesc,
-      color: '#94A3B8'
+      color: '#CBD5E1',
+      lineHeight: '1.6'
     },
     estTypeBtn: {
       ...base.estTypeBtn,
@@ -12458,22 +12526,88 @@ function getStyles(isDark) {
     },
     estResultCard: {
       ...base.estResultCard,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.88)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.22)',
+      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.5)'
+    },
+    resultLabel: {
+      ...base.resultLabel,
+      color: '#38BDF8',
+      fontWeight: '800'
+    },
+    phaseLabels: {
+      ...base.phaseLabels,
+      color: '#CBD5E1'
+    },
+    estNotice: {
+      ...base.estNotice,
+      color: '#CBD5E1'
+    },
+    timelineBigNumber: {
+      ...base.timelineBigNumber,
+      color: '#38BDF8',
+      textShadow: '0 0 20px rgba(56, 189, 248, 0.45)'
     },
     teamDescription: {
       ...base.teamDescription,
       color: '#FFFFFF'
     },
+    studioPillarCard: {
+      ...base.studioPillarCard,
+      backgroundColor: 'rgba(17, 24, 39, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.2)'
+    },
+    pillarTitle: {
+      ...base.pillarTitle,
+      color: '#38BDF8'
+    },
+    pillarText: {
+      ...base.pillarText,
+      color: '#CBD5E1',
+      lineHeight: '1.6'
+    },
+    flipCardsSubtitle: {
+      ...base.flipCardsSubtitle,
+      color: '#CBD5E1'
+    },
+    flipCardFront: {
+      ...base.flipCardFront,
+      backgroundColor: 'rgba(17, 24, 39, 0.88)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.22)'
+    },
+    cardFrontTitle: {
+      ...base.cardFrontTitle,
+      color: '#FFFFFF'
+    },
+    cardFrontDesc: {
+      ...base.cardFrontDesc,
+      color: '#CBD5E1',
+      lineHeight: '1.6'
+    },
+    sideCtaTitle: {
+      ...base.sideCtaTitle,
+      color: '#FFFFFF'
+    },
+    sideCtaDesc: {
+      ...base.sideCtaDesc,
+      color: '#CBD5E1',
+      lineHeight: '1.6'
+    },
     supportCard: {
       ...base.supportCard,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.82)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.2)'
     },
     supportCardPopular: {
       ...base.supportCardPopular,
-      backgroundColor: '#111827',
-      border: '2px solid #2563EB'
+      backgroundColor: 'rgba(17, 24, 39, 0.92)',
+      backdropFilter: 'blur(12px)',
+      border: '2px solid #38BDF8',
+      boxShadow: '0 0 24px rgba(56, 189, 248, 0.25)'
     },
     planName: {
       ...base.planName,
@@ -12499,8 +12633,9 @@ function getStyles(isDark) {
     },
     faqAccordionItem: {
       ...base.faqAccordionItem,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.82)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.18)'
     },
     faqQText: {
       ...base.faqQText,
@@ -12508,7 +12643,8 @@ function getStyles(isDark) {
     },
     faqAText: {
       ...base.faqAText,
-      color: '#CBD5E1'
+      color: '#CBD5E1',
+      lineHeight: '1.65'
     },
     faqAnswerBox: {
       ...base.faqAnswerBox,
@@ -12520,13 +12656,15 @@ function getStyles(isDark) {
     },
     instantWhatsappBox: {
       ...base.instantWhatsappBox,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.2)'
     },
     contactFormSide: {
       ...base.contactFormSide,
-      backgroundColor: '#111827',
-      border: '1px solid #1F2937'
+      backgroundColor: 'rgba(17, 24, 39, 0.85)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(56, 189, 248, 0.2)'
     },
     fieldLabel: {
       ...base.fieldLabel,
@@ -12568,8 +12706,9 @@ function getStyles(isDark) {
     },
     commandModalCard: {
       ...base.commandModalCard,
-      backgroundColor: '#111827',
-      border: '1px solid #374151'
+      backgroundColor: 'rgba(17, 24, 39, 0.95)',
+      backdropFilter: 'blur(16px)',
+      border: '1px solid rgba(56, 189, 248, 0.3)'
     },
     commandSearchRow: {
       ...base.commandSearchRow,
@@ -12582,7 +12721,7 @@ function getStyles(isDark) {
     commandEscHint: {
       ...base.commandEscHint,
       backgroundColor: '#1E293B',
-      color: '#94A3B8'
+      color: '#CBD5E1'
     },
     commandItemTitle: {
       ...base.commandItemTitle,
@@ -12590,7 +12729,7 @@ function getStyles(isDark) {
     },
     commandItemDesc: {
       ...base.commandItemDesc,
-      color: '#94A3B8'
+      color: '#CBD5E1'
     }
   };
 };
