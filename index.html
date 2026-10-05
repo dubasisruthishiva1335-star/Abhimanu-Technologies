@@ -142,6 +142,21 @@
         animation: floatSlow 4s ease-in-out infinite;
       }
 
+      @keyframes marquee {
+        0% { transform: translateX(0%); }
+        100% { transform: translateX(-50%); }
+      }
+
+      .animate-marquee {
+        display: flex;
+        width: 200%;
+        animation: marquee 28s linear infinite;
+      }
+
+      .animate-marquee:hover {
+        animation-play-state: paused;
+      }
+
       .shimmer-text {
         background: linear-gradient(90deg, #F5E6C8 0%, #FFF2CC 25%, #D4AF37 50%, #FFF2CC 75%, #F5E6C8 100%);
         background-size: 200% auto;

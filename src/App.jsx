@@ -329,6 +329,7 @@ export default function App() {
   const [calculatorModalOpen, setCalculatorModalOpen] = useState(false);
   const [blueprintInspectorOpen, setBlueprintInspectorOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
+  const [activeProjectTab, setActiveProjectTab] = useState('ALL');
 
   // Per-Sq.Ft Architecture Calculator State
   const [sqft, setSqft] = useState(2500);
@@ -572,6 +573,39 @@ export default function App() {
         </div>
       </section>
 
+      {/* 2.1 LIVE ANIMATED INFO TICKER MARQUEE */}
+      <div className="w-full overflow-hidden bg-black/75 border-y border-yellow-500/25 py-3.5 relative backdrop-blur-md z-10 shadow-lg shadow-black/60">
+        <div className="animate-marquee whitespace-nowrap text-xs font-semibold tracking-wider text-yellow-300/90 flex gap-10 items-center">
+          <span className="flex items-center gap-2"><span>🔥</span> 150+ AutoCAD Architectural Plans Built</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>⚡</span> 24–48hr First Milestone Delivery</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>📐</span> 100% Raw Editable .DWG & Revit Ownership</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>🔄</span> 2 Free Plan Revisions Guaranteed</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>🤖</span> 3-Sec AI WhatsApp Lead Qualifier Bot</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>👷</span> 100+ Vetted Civil & Dev Engineers Pool</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>📍</span> Hyderabad • Telangana • Global Remote</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>🔥</span> 150+ AutoCAD Architectural Plans Built</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>⚡</span> 24–48hr First Milestone Delivery</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>📐</span> 100% Raw Editable .DWG & Revit Ownership</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>🔄</span> 2 Free Plan Revisions Guaranteed</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>🤖</span> 3-Sec AI WhatsApp Lead Qualifier Bot</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>👷</span> 100+ Vetted Civil & Dev Engineers Pool</span>
+          <span className="text-yellow-500/40">•</span>
+          <span className="flex items-center gap-2"><span>📍</span> Hyderabad • Telangana • Global Remote</span>
+        </div>
+      </div>
+
       {/* 2.5 INTERACTIVE 3D WEBGL STUDIO & VISUAL MODEL CARDS */}
       <section id="3d-studio" className="px-6 md:px-16 py-20 bg-gradient-to-b from-[#08080a]/80 via-[#0d0d12]/70 to-[#08080a]/80 backdrop-blur-[2px] relative border-t border-white/5">
         <div className="max-w-6xl mx-auto">
@@ -686,18 +720,21 @@ export default function App() {
             {HOW_IT_WORKS_STEPS.map((s, idx) => (
               <div
                 key={idx}
-                className="relative rounded-3xl p-8 bg-black/60 border border-white/10 hover:border-yellow-500/40 transition duration-300 flex flex-col justify-between"
+                className="group relative rounded-3xl p-8 bg-black/60 border border-white/10 hover:border-yellow-500/50 hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
               >
+                {/* Animated Glowing Top Border Beam */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
                 <div>
                   <div className="flex justify-between items-center mb-6">
-                    <span className="text-4xl font-black font-['Space_Grotesk'] text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-600">
+                    <span className="text-4xl font-black font-['Space_Grotesk'] text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-600 group-hover:scale-110 transition-transform">
                       {s.step}
                     </span>
                     <span className="text-[10px] uppercase tracking-widest font-semibold px-3 py-1 rounded-full border border-yellow-500/30 text-yellow-400 bg-yellow-500/10">
                       {s.tag}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold font-['Space_Grotesk'] text-white">{s.title}</h3>
+                  <h3 className="text-xl font-bold font-['Space_Grotesk'] text-white group-hover:text-yellow-300 transition-colors">{s.title}</h3>
                   <p className="text-xs text-gray-400 leading-relaxed mt-3">{s.desc}</p>
                 </div>
                 <div className="mt-8 pt-4 border-t border-white/5 text-[11px] text-yellow-500/80 font-medium">
@@ -714,7 +751,7 @@ export default function App() {
       {/* 4. WORK SECTION: BUILDINGS & SOFTWARE WE BUILT */}
       <section id="work" className="px-6 md:px-16 py-24 relative">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
             <div>
               <p className="text-[11px] tracking-[0.4em] text-yellow-500 font-semibold uppercase">PORTFOLIO TRACK RECORD</p>
               <h2 className="text-3xl md:text-5xl font-bold font-['Space_Grotesk'] mt-2">Buildings & Software We Built</h2>
@@ -724,17 +761,37 @@ export default function App() {
             </p>
           </div>
 
+          {/* Animated Category Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-2 mb-10 border-b border-white/10 pb-4">
+            {['ALL', 'ARCHITECTURE', 'IT + ARCH', 'BIM & STRUCTURAL', 'FREELANCE'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveProjectTab(tab)}
+                className={`px-4 py-2 rounded-full text-xs font-bold tracking-wider transition-all duration-300 ${
+                  activeProjectTab === tab
+                    ? 'bg-yellow-400 text-black shadow-lg shadow-yellow-500/20 scale-105'
+                    : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/5'
+                }`}
+              >
+                {tab === 'ALL' ? '● ALL PROJECTS (6)' : tab}
+              </button>
+            ))}
+          </div>
+
           <div className="grid md:grid-cols-3 gap-6">
-            {PROJECTS.map((p, idx) => (
+            {PROJECTS.filter((p) => activeProjectTab === 'ALL' || p.tag.includes(activeProjectTab)).map((p, idx) => (
               <TiltCard
                 key={idx}
-                className={`rounded-2xl border border-white/10 bg-gradient-to-br ${p.bgGrad} p-6 flex flex-col justify-between hover:border-yellow-500/40 transition duration-300 min-h-[260px]`}
+                className={`group relative rounded-2xl border border-white/10 bg-gradient-to-br ${p.bgGrad} p-6 flex flex-col justify-between hover:border-yellow-500/50 hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] transition-all duration-300 min-h-[260px]`}
               >
+                {/* Animated Glowing Top Border Beam */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
                 <div>
                   <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-widest border ${p.tagColor} mb-4`}>
                     {p.tag}
                   </span>
-                  <h4 className="font-bold text-xl font-['Space_Grotesk'] text-white">{p.title}</h4>
+                  <h4 className="font-bold text-xl font-['Space_Grotesk'] text-white group-hover:text-yellow-300 transition-colors">{p.title}</h4>
                   <p className="text-xs text-yellow-400/90 font-medium mt-1">{p.specs}</p>
                 </div>
                 <p className="text-xs text-gray-400 leading-relaxed mt-4">{p.desc}</p>
@@ -960,24 +1017,24 @@ export default function App() {
 
           {/* Guarantees Strip */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 text-center">
-              <span className="text-2xl block mb-1">⚡</span>
-              <div className="text-xs font-bold text-white">24-48hr Turnaround</div>
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 hover:border-yellow-500/50 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] hover:-translate-y-1 transition-all duration-300 text-center group">
+              <span className="text-2xl block mb-1 group-hover:scale-110 transition-transform">⚡</span>
+              <div className="text-xs font-bold text-white group-hover:text-yellow-300 transition-colors">24-48hr Turnaround</div>
               <div className="text-[10px] text-gray-400 mt-0.5">Rapid 2D/3D delivery</div>
             </div>
-            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 text-center">
-              <span className="text-2xl block mb-1">📐</span>
-              <div className="text-xs font-bold text-white">GHMC Sanction Ready</div>
-              <div className="text-[10px] text-gray-400 mt-0.5">TS-bPASS compliant</div>
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 hover:border-yellow-500/50 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] hover:-translate-y-1 transition-all duration-300 text-center group">
+              <span className="text-2xl block mb-1 group-hover:scale-110 transition-transform">📐</span>
+              <div className="text-xs font-bold text-white group-hover:text-yellow-300 transition-colors">Municipal Sanction Ready</div>
+              <div className="text-[10px] text-gray-400 mt-0.5">100% Bylaws Compliant</div>
             </div>
-            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 text-center">
-              <span className="text-2xl block mb-1">🔄</span>
-              <div className="text-xs font-bold text-white">2 Free Revisions</div>
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 hover:border-yellow-500/50 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] hover:-translate-y-1 transition-all duration-300 text-center group">
+              <span className="text-2xl block mb-1 group-hover:scale-110 transition-transform">🔄</span>
+              <div className="text-xs font-bold text-white group-hover:text-yellow-300 transition-colors">2 Free Revisions</div>
               <div className="text-[10px] text-gray-400 mt-0.5">Guaranteed satisfaction</div>
             </div>
-            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 text-center">
-              <span className="text-2xl block mb-1">🤝</span>
-              <div className="text-xs font-bold text-white">48hr Replacement</div>
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 hover:border-yellow-500/50 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] hover:-translate-y-1 transition-all duration-300 text-center group">
+              <span className="text-2xl block mb-1 group-hover:scale-110 transition-transform">🤝</span>
+              <div className="text-xs font-bold text-white group-hover:text-yellow-300 transition-colors">48hr Replacement</div>
               <div className="text-[10px] text-gray-400 mt-0.5">Vetted engineer pledge</div>
             </div>
           </div>
@@ -1019,10 +1076,13 @@ export default function App() {
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-12">
           {/* Left Column: Office & WhatsApp */}
           <div className="flex-1">
-            <span className="text-[10px] tracking-[0.3em] text-yellow-500 font-bold uppercase">CONNECT DIRECTLY</span>
+            <div className="inline-flex items-center gap-2 border border-green-500/40 bg-green-500/10 rounded-full px-3.5 py-1 text-[11px] text-green-400 font-semibold mb-3">
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+              <span>DIRECTORS ONLINE • 2-HOUR CALLBACK PLEDGE</span>
+            </div>
             <h2 className="text-4xl md:text-5xl font-bold font-['Space_Grotesk'] mt-2">
               Let's Build Your<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5E6C8] via-[#E6C07A] to-[#D4AF37]">
+              <span className="shimmer-text">
                 Next Project.
               </span>
             </h2>
