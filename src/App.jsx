@@ -7003,17 +7003,17 @@ ENGAGEMENT COORDINATION
 
           {(() => {
             const nodes = [
-              { id: 'cdn',       label: 'Global CDN',          icon: '🌍', x: '50%',  y: '5%',  color: '#10B981', detail: 'Cloudflare Workers · 300+ PoPs · <10ms TTFB globally' },
-              { id: 'lb',        label: 'Load Balancer',       icon: '⚖️', x: '50%',  y: '20%', color: '#38BDF8', detail: 'NGINX + HAProxy · Round-robin + health checks · TLS termination' },
-              { id: 'api-a',     label: 'API Node A',          icon: '⚙️', x: '25%',  y: '38%', color: '#6366F1', detail: 'Node.js 20 LTS · Express · 512MB RAM · Auto-scale to 12 replicas' },
-              { id: 'api-b',     label: 'API Node B',          icon: '⚙️', x: '75%',  y: '38%', color: '#6366F1', detail: 'Node.js 20 LTS · Express · 512MB RAM · Blue-green deployment' },
-              { id: 'ws',        label: 'WebSocket Hub',       icon: '📡', x: '50%',  y: '38%', color: '#F59E0B', detail: 'Socket.io · Redis Pub/Sub adapter · 50K concurrent connections' },
-              { id: 'cache',     label: 'Redis Cache',         icon: '⚡', x: '15%',  y: '58%', color: '#EF4444', detail: 'Redis 7 Cluster · 99.99% availability · LRU eviction · AOF persistence' },
-              { id: 'queue',     label: 'Task Queue',          icon: '📥', x: '38%',  y: '60%', color: '#8B5CF6', detail: 'BullMQ + Redis · Retry policies · Dead-letter queue · Priority lanes' },
-              { id: 'db-pri',    label: 'DB Primary',          icon: '🗄️', x: '63%',  y: '60%', color: '#2563EB', detail: 'PostgreSQL 16 · WAL streaming · PITR backups · <5ms write latency' },
-              { id: 'db-rep',    label: 'DB Replica',          icon: '🗄️', x: '85%',  y: '58%', color: '#1D4ED8', detail: 'PostgreSQL 16 Read Replica · Async replication · Handles 80% of reads' },
-              { id: 'storage',   label: 'Object Storage',      icon: '🪣', x: '28%',  y: '80%', color: '#0284C7', detail: 'S3-compatible · Lifecycle policies · Server-side encryption · CDN-linked' },
-              { id: 'monitor',   label: 'Observability',       icon: '📊', x: '72%',  y: '80%', color: '#059669', detail: 'Prometheus + Grafana · OpenTelemetry traces · PagerDuty alerting' },
+              { id: 'cdn',       label: 'Global CDN',          icon: '🌍', x: '50%',  y: '5%',  color: '#10B981', detail: 'Anycast Global Edge CDN · 300+ PoPs · Sub-10ms TTFB · Automated TLS edge certs' },
+              { id: 'lb',        label: 'Load Balancer',       icon: '⚖️', x: '50%',  y: '20%', color: '#38BDF8', detail: 'Abhimanyu L7 Director · Round-robin + least-conn + IP-hash · Health checks · Circuit breaker failover' },
+              { id: 'api-a',     label: 'API Node A',          icon: '⚙️', x: '25%',  y: '38%', color: '#6366F1', detail: 'Node.js Express Primary Worker (Port 5001) · REST APIs (/api/contact, /api/estimate) · Rate-limited' },
+              { id: 'api-b',     label: 'API Node B',          icon: '⚙️', x: '75%',  y: '38%', color: '#6366F1', detail: 'Node.js Express Replica Worker (Port 5002/5003) · Zero-downtime rolling deploys · Active health probe' },
+              { id: 'ws',        label: 'WebSocket Hub',       icon: '📡', x: '50%',  y: '38%', color: '#F59E0B', detail: 'Socket.io · Redis Pub/Sub adapter · 50K concurrent real-time telemetry streams' },
+              { id: 'cache',     label: 'Redis Cache',         icon: '⚡', x: '15%',  y: '58%', color: '#EF4444', detail: 'Redis 7 Cluster · In-memory session store & query caching · Sub-millisecond response' },
+              { id: 'queue',     label: 'Task Queue',          icon: '📥', x: '38%',  y: '60%', color: '#8B5CF6', detail: 'BullMQ + Redis · Async SLA delivery · Dead-letter queue · Background workers' },
+              { id: 'db-pri',    label: 'DB Primary',          icon: '🗄️', x: '63%',  y: '60%', color: '#38BDF8', detail: 'PostgreSQL 16 Primary RDBMS · WAL streaming · PITR backups · ACID transactional guarantees' },
+              { id: 'db-rep',    label: 'DB Replica',          icon: '🗄️', x: '85%',  y: '58%', color: '#60A5FA', detail: 'PostgreSQL 16 Read Replica · Async streaming replication · Offloads 85% of query reads' },
+              { id: 'storage',   label: 'Object Storage',      icon: '🪣', x: '28%',  y: '80%', color: '#0284C7', detail: 'S3-compatible bucket · Lifecycle management · Server-side encryption · Edge asset distribution' },
+              { id: 'monitor',   label: 'Observability',       icon: '📊', x: '72%',  y: '80%', color: '#059669', detail: 'OpenTelemetry + Prometheus metrics · Real-time cluster health & APM alerting' },
             ];
 
             const edges = [
