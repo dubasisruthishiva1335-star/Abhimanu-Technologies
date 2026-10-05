@@ -123,12 +123,35 @@
         50% { transform: translateY(-8px); }
       }
 
+      @keyframes goldShimmer {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      @keyframes pulseGlow {
+        0%, 100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), inset 0 0 10px rgba(212, 175, 55, 0.05); }
+        50% { box-shadow: 0 0 35px rgba(212, 175, 55, 0.45), inset 0 0 20px rgba(212, 175, 55, 0.15); }
+      }
+
       .animate-fadeIn {
         animation: fadeIn 0.25s ease-out forwards;
       }
 
       .animate-float {
         animation: floatSlow 4s ease-in-out infinite;
+      }
+
+      .shimmer-text {
+        background: linear-gradient(90deg, #F5E6C8 0%, #FFF2CC 25%, #D4AF37 50%, #FFF2CC 75%, #F5E6C8 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: goldShimmer 4s ease infinite;
+      }
+
+      .highlight-glow {
+        animation: pulseGlow 3s ease-in-out infinite;
       }
     </style>
   </head>

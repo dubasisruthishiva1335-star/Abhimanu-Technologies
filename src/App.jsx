@@ -4,6 +4,7 @@ import CadBlueprintInspector from './components/CadBlueprintInspector.jsx';
 import TiltCard from './components/TiltCard.jsx';
 import FloatingContactOrb from './components/FloatingContactOrb.jsx';
 import FullWebsite3DBackground from './components/FullWebsite3DBackground.jsx';
+import Interactive3DModelCards from './components/Interactive3DModelCards.jsx';
 
 // --- DATA DEFINITIONS ---
 
@@ -515,7 +516,7 @@ export default function App() {
             <h1 className="text-4xl sm:text-6xl lg:text-[76px] font-bold leading-[1.0] font-['Space_Grotesk'] tracking-tight">
               We Break The<br />
               Chakravyuha Of<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5E6C8] via-[#E6C07A] to-[#D4AF37]">
+              <span className="shimmer-text">
                 Design & Code.
               </span>
             </h1>
@@ -527,7 +528,7 @@ export default function App() {
             <div className="mt-8 flex flex-wrap gap-4 items-center">
               <a
                 href="#contact"
-                className="bg-[#E6C07A] hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-bold text-sm tracking-wide transition shadow-lg shadow-yellow-500/20"
+                className="highlight-glow bg-[#E6C07A] hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-bold text-sm tracking-wide transition shadow-lg shadow-yellow-500/20"
               >
                 Start Project at ₹5000 →
               </a>
@@ -554,24 +555,24 @@ export default function App() {
             </div>
 
             <div className="mt-12 grid grid-cols-3 gap-6 max-w-lg border-t border-white/10 pt-8">
-              <div>
-                <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">150+</div>
-                <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Building Plans</div>
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 hover:border-yellow-500/40 transition group">
+                <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400 group-hover:text-yellow-300 transition">150+</div>
+                <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">Building Plans</div>
               </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">40+</div>
-                <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Software Built</div>
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 hover:border-yellow-500/40 transition group">
+                <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400 group-hover:text-yellow-300 transition">40+</div>
+                <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">Software Built</div>
               </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400">100+</div>
-                <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Engineers</div>
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 hover:border-yellow-500/40 transition group">
+                <div className="text-3xl md:text-4xl font-bold font-['Space_Grotesk'] text-yellow-400 group-hover:text-yellow-300 transition">100+</div>
+                <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">Engineers</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2.5 INTERACTIVE 3D WEBGL STUDIO */}
+      {/* 2.5 INTERACTIVE 3D WEBGL STUDIO & VISUAL MODEL CARDS */}
       <section id="3d-studio" className="px-6 md:px-16 py-20 bg-gradient-to-b from-[#08080a]/80 via-[#0d0d12]/70 to-[#08080a]/80 backdrop-blur-[2px] relative border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -601,6 +602,11 @@ export default function App() {
 
           {/* 3D WebGL Three.js Component */}
           <ThreeHologramViewer />
+
+          {/* 3D Visual Preview Model Cards */}
+          <div className="mt-20 pt-16 border-t border-white/10">
+            <Interactive3DModelCards />
+          </div>
         </div>
       </section>
 
@@ -619,18 +625,21 @@ export default function App() {
             {CHAKRAS.map((c) => (
               <TiltCard
                 key={c.id}
-                className={`rounded-[24px] p-8 transition duration-300 flex flex-col justify-between ${
+                className={`group relative rounded-[26px] p-8 transition-all duration-300 flex flex-col justify-between ${
                   c.highlight
-                    ? 'border border-yellow-500/50 bg-gradient-to-b from-yellow-500/[0.08] to-black/60 shadow-xl shadow-yellow-500/10'
-                    : 'border border-white/10 bg-black/60 hover:border-yellow-500/30'
+                    ? 'border-2 border-yellow-500/60 bg-gradient-to-b from-yellow-500/[0.12] via-black/80 to-black/90 shadow-2xl shadow-yellow-500/20'
+                    : 'border border-white/10 bg-black/70 hover:border-yellow-500/40 hover:shadow-[0_0_30px_rgba(212,175,55,0.15)]'
                 }`}
               >
+                {/* Animated Glowing Top Border Beam */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-3xl mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-3xl mb-6 shadow-inner group-hover:scale-105 transition-transform">
                     {c.icon}
                   </div>
                   <span className="text-[10px] text-yellow-400 font-bold tracking-[0.25em] uppercase block">{c.number}</span>
-                  <h3 className="font-bold text-2xl font-['Space_Grotesk'] mt-1 text-white">{c.title}</h3>
+                  <h3 className="font-bold text-2xl font-['Space_Grotesk'] mt-1 text-white group-hover:text-yellow-300 transition-colors">{c.title}</h3>
                   <p className="text-yellow-400/90 text-sm mt-0.5 font-medium">{c.subtitle}</p>
                   <p className="text-gray-400 text-sm mt-4 leading-relaxed">{c.desc}</p>
 
