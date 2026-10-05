@@ -2,8 +2,12 @@
   "rewrites": [
     { "source": "/sri-yantra", "destination": "/sri-yantra.html" },
     { "source": "/sri-yantra.html", "destination": "/sri-yantra.html" },
+    { "source": "/chakravyuha", "destination": "/chakravyuha.html" },
+    { "source": "/chakravyuha.html", "destination": "/chakravyuha.html" },
+    { "source": "/cad-it", "destination": "/cad-it.html" },
+    { "source": "/cad-it.html", "destination": "/cad-it.html" },
     { "source": "/api/:path*", "destination": "/api/:path*" },
-    { "source": "/((?!api/|sri-yantra).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|sri-yantra|chakravyuha|cad-it).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

@@ -229,6 +229,30 @@ module "ecs_app_cluster" {
 
 const SERVICES = [
   {
+    id: 'architecture-cad-bim',
+    title: 'Chakra 01: Architecture CAD & BIM',
+    category: 'Architecture & Civil',
+    subtitle: 'Precision 2D floor plans, 3D elevations, Revit BIM, structural drafts, venture layouts & GHMC approvals.',
+    bullets: ['AutoCAD, Revit, Civil 3D, 3ds Max', 'From ₹15/sq.ft · 24hr delivery', 'Venture layouts & GHMC approvals'],
+    badge: 'CHAKRA 01'
+  },
+  {
+    id: 'it-software-ai',
+    title: 'Chakra 02: IT Division & AI Software',
+    category: 'Engineering & Apps',
+    subtitle: 'High-speed web platforms, Real Estate CRM, AI agents, WhatsApp automation, and cloud backends.',
+    bullets: ['React, Node.js, Python & AI', 'From ₹50k/project · ₹10k/mo SaaS', 'Working demo in 24 hours'],
+    badge: 'CHAKRA 02'
+  },
+  {
+    id: 'freelance-hub',
+    title: 'Chakra 03: Elite Freelance Hub',
+    category: 'On-Demand Talent',
+    subtitle: 'On-demand certified civil draftsmen, BIM modelers, and full-stack software engineers without long-term overhead.',
+    bullets: ['60+ CAD draftsmen & 40+ developers', '₹25,000/mo dedicated engineer', '20% platform fee · 48hr replacement'],
+    badge: 'CHAKRA 03'
+  },
+  {
     id: 'mobile-apps',
     title: 'Mobile app development',
     category: 'Engineering & Apps',
@@ -484,6 +508,36 @@ const INDUSTRY_TOOLS = [
 ];
 
 const SAMPLE_CONCEPTS = [
+  {
+    title: '200 Villas Venture - Shadnagar',
+    tag: 'Architecture & Civil',
+    category: 'Architecture & BIM',
+    desc: '120-acre master venture layout with 200 luxury villa designs, structural BIM, road networking, and GHMC municipal approval clearance.',
+    stack: ['AutoCAD', 'Revit BIM', 'Civil 3D', '3ds Max', 'GHMC Rules'],
+    architecture: 'Precision 2D/3D CAD models, structural analysis, and GIS venture layout boundaries.',
+    metrics: '100% GHMC approval clearance within 30 days.',
+    modules: ['Master Venture Layout', 'Villa Elevations', 'MEP & Drainage', '3D Walkthrough']
+  },
+  {
+    title: 'Real Estate AI CRM Suite',
+    tag: 'IT + Architecture',
+    category: 'AI & Software',
+    desc: 'Automated CRM for builders and developers: inbound leads from ads automatically routed to WhatsApp and site visit bookings.',
+    stack: ['React', 'Node.js', 'WhatsApp Business API', 'PostgreSQL', 'AI Agents'],
+    architecture: 'Event-driven microservices with webhook ingestion and automated WhatsApp conversational flows.',
+    metrics: '4.8x higher lead-to-site-visit conversion rate.',
+    modules: ['WhatsApp Lead Auto-responder', 'Site Visit Calendar', 'Broker Commission Tracker', 'Floor Plan Dispatch']
+  },
+  {
+    title: '100 Engineers On-Demand',
+    tag: 'Freelance Network',
+    category: 'On-Demand Talent',
+    desc: 'Vetted network of 60+ AutoCAD draftsmen and 40+ full-stack software engineers deployed across enterprise projects.',
+    stack: ['AutoCAD', 'Revit', 'React', 'Node.js', 'Python'],
+    architecture: 'Direct SLA contract matching with 48-hour talent replacement guarantee.',
+    metrics: 'Over 150+ building plans and 40+ software projects delivered.',
+    modules: ['CAD Drafting Desk', 'BIM Coordination', 'Full-Stack Sprints', 'Dedicated Monthly Engineers']
+  },
   {
     title: 'BIM Cloud Collaborator',
     tag: 'AEC & Construction',
@@ -3039,6 +3093,29 @@ function FuturisticCommandSidebar({
                 <span>🔱 Launch Fullscreen IMAX 432Hz Portal</span>
                 <span>↗</span>
               </a>
+
+              {/* Standalone Chakravyuha IT + CAD Mode Shortcut */}
+              <a
+                href="/chakravyuha.html"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px 14px',
+                  background: 'linear-gradient(90deg, rgba(212, 175, 55, 0.2) 0%, rgba(20, 20, 25, 0.9) 100%)',
+                  border: '1px solid rgba(212, 175, 55, 0.5)',
+                  borderRadius: '10px',
+                  color: '#FFD700',
+                  textDecoration: 'none',
+                  fontSize: '11.5px',
+                  fontWeight: '800',
+                  marginTop: '8px',
+                  boxShadow: '0 0 16px rgba(212, 175, 55, 0.2)'
+                }}
+              >
+                <span>⚡ Chakravyuha IT + AutoCAD Mode</span>
+                <span>↗</span>
+              </a>
             </div>
           )}
 
@@ -3503,49 +3580,49 @@ function LiveCRDTSimulator() {
 // --- MULTILINGUAL LOCALIZATION DICTIONARY ---
 const LANG_DICT = {
   en: {
-    heroOverline: 'APPS · MAINTENANCE · IT SERVICES · 3D',
-    heroBuild: 'We build',
-    heroTagline: '— apps, maintenance, IT services and 3D.',
-    estimateBtn: 'Estimate your project',
+    heroOverline: '● CHAKRAVYUHA BREAKER · ARCHITECTURE CAD/BIM · IT & AI · HYDERABAD · SINCE 2024',
+    heroBuild: 'We Break The',
+    heroTagline: '— AutoCAD Architecture, BIM, AI Software & On-Demand Engineers.',
+    estimateBtn: 'Start Project at ₹5000 →',
     tryStudioBtn: 'Try the 3D Studio',
     navServices: 'Services',
     navStudio: '3D Studio',
     navTech: 'Tech Stack',
     navWork: 'Work',
     navInsights: 'Insights',
-    navEstimate: 'Estimator',
+    navEstimate: 'Pricing & Estimator',
     navContact: 'Contact',
     talkBtn: "Let's Talk →",
     caseStudiesBtn: '🏆 Case Studies Reel'
   },
   te: {
-    heroOverline: 'యాప్స్ · మెయింటెనెన్స్ · ఐటి సర్వీసెస్ · 3D',
-    heroBuild: 'మేము నిర్మిస్తాము',
-    heroTagline: '— యాప్‌లు, నిర్వహణ, ఐటీ సేవలు మరియు 3D.',
-    estimateBtn: 'ప్రాజెక్ట్ అంచనా వేయండి',
+    heroOverline: '● చక్రవ్యూహ బ్రేకర్ · ఆర్కిటెక్చర్ CAD/BIM · ఐటి & AI · హైదరాబాద్',
+    heroBuild: 'మేము బ్రేక్ చేస్తాము',
+    heroTagline: '— చక్రవ్యూహం: ఆర్కిటెక్చర్ CAD, BIM మరియు IT సాఫ్ట్‌వేర్.',
+    estimateBtn: '₹5000 వద్ద ప్రాజెక్ట్ ప్రారంభించండి →',
     tryStudioBtn: '3D స్టూడియోను ప్రయత్నించండి',
     navServices: 'సేవలు',
     navStudio: '3D స్టూడియో',
     navTech: 'టెక్నాలజీ',
     navWork: 'ప్రాజెక్ట్‌లు',
     navInsights: 'అంతర్దృష్టులు',
-    navEstimate: 'అంచనా',
+    navEstimate: 'ధరల అంచనా',
     navContact: 'సంప్రదించండి',
     talkBtn: 'మనం మాట్లాడుకుందాం →',
     caseStudiesBtn: '🏆 కేస్ స్టడీస్ రీల్'
   },
   hi: {
-    heroOverline: 'ऐप्स · रखरखाव · आईटी सेवाएं · 3D',
-    heroBuild: 'हम निर्माण करते हैं',
-    heroTagline: '— ऐप्स, रखरखाव, आईटी सेवाएं और 3D।',
-    estimateBtn: 'अपने प्रोजेक्ट का अनुमान लगाएं',
+    heroOverline: '● चक्रव्यूह ब्रेकर · आर्किटेक्चर CAD/BIM · आईटी और AI · हैदराबाद',
+    heroBuild: 'हम भेदते हैं',
+    heroTagline: '— चक्रव्यूह: आर्किटेक्चर CAD, BIM और आईटी सॉफ्टवेयर का।',
+    estimateBtn: '₹5000 से प्रोजेक्ट शुरू करें →',
     tryStudioBtn: '3D स्टूडियो आज़माएं',
     navServices: 'सेवाएं',
     navStudio: '3D स्टूडियो',
     navTech: 'तकनीक',
     navWork: 'कार्य',
     navInsights: 'इनसाइट्स',
-    navEstimate: 'अनुमानक',
+    navEstimate: 'मूल्य और अनुमानक',
     navContact: 'संपर्क',
     talkBtn: 'बातचीत शुरू करें →',
     caseStudiesBtn: '🏆 केस स्टडीज रील'
@@ -4249,7 +4326,12 @@ export default function App() {
   const cloudSandboxNode = useState(null);
 
   // Hero Typing Animation State
-  const TYPING_PHRASES = ['web applications', 'mobile apps', '3D experiences', 'IT systems'];
+  const TYPING_PHRASES = [
+    'Design & Code.',
+    'AutoCAD & BIM Architecture.',
+    'IT Software & Real Estate CRM.',
+    'Elite Freelance Engineers.'
+  ];
   const [typingPhrase, setTypingPhrase] = useState('');
   const [typingPhraseIdx, setTypingPhraseIdx] = useState(0);
   const [typingDeleting, setTypingDeleting] = useState(false);
@@ -6262,6 +6344,32 @@ ENGAGEMENT COORDINATION
               {soundEnabled ? '🔊' : '🔇'}
             </button>
 
+            {/* Chakravyuha CAD/IT Mode Shortcut */}
+            <a
+              href="/chakravyuha.html"
+              className="desktop-only-btn"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '6px 12px',
+                borderRadius: '16px',
+                border: '1px solid rgba(212, 175, 55, 0.45)',
+                background: 'rgba(212, 175, 55, 0.12)',
+                color: '#F5E6C8',
+                fontSize: '11px',
+                fontWeight: '800',
+                letterSpacing: '0.4px',
+                textDecoration: 'none',
+                boxShadow: '0 0 14px rgba(212, 175, 55, 0.15)',
+                transition: 'all 0.2s ease'
+              }}
+              title="Open Standalone Chakravyuha IT + AutoCAD Architecture Landing Page"
+            >
+              <span>⚡</span>
+              <span>CAD/IT ↗</span>
+            </a>
+
             {/* Futuristic Sidebar HUD Trigger */}
             <button
               onClick={() => {
@@ -6328,26 +6436,26 @@ ENGAGEMENT COORDINATION
           <div className="hero-grid" style={styles.heroGrid}>
             <div style={styles.heroTextCol}>
               <div style={styles.heroOverline}>
-                {LANG_DICT[currentLang]?.heroOverline || 'APPS · MAINTENANCE · IT SERVICES · 3D'}
+                {LANG_DICT[currentLang]?.heroOverline || '● CHAKRAVYUHA BREAKER · ARCHITECTURE CAD/BIM · IT & AI · HYDERABAD · SINCE 2024'}
               </div>
 
               <h1 className="hero-title" style={styles.heroTitle}>
-                {LANG_DICT[currentLang]?.heroBuild || 'We build'}{' '}
+                {LANG_DICT[currentLang]?.heroBuild || 'We Break The'}{' '}
                 <span style={{
-                  color: isDark ? '#38BDF8' : '#2563EB',
+                  color: '#FFD700',
                   background: isDark
-                    ? 'linear-gradient(135deg, #38BDF8 0%, #60A5FA 60%, #FFD700 100%)'
+                    ? 'linear-gradient(135deg, #F5E6C8 0%, #D4AF37 45%, #38BDF8 100%)'
                     : 'linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  textShadow: isDark ? '0 0 30px rgba(56, 189, 248, 0.45)' : 'none',
+                  textShadow: isDark ? '0 0 35px rgba(212, 175, 55, 0.45)' : 'none',
                   display: 'inline',
                   fontWeight: '900'
                 }}>
                   {typingPhrase}
-                  <span className="typing-cursor" style={{ color: '#38BDF8', WebkitTextFillColor: '#38BDF8' }}>|</span>
+                  <span className="typing-cursor" style={{ color: '#FFD700', WebkitTextFillColor: '#FFD700' }}>|</span>
                 </span>
-                {' '}{LANG_DICT[currentLang]?.heroTagline || '— apps, maintenance, IT services and 3D.'}
+                {' '}{LANG_DICT[currentLang]?.heroTagline || '— AutoCAD Architecture, BIM, AI Software & Elite Freelance Engineers.'}
               </h1>
 
               <p className="hero-subtitle" style={{
@@ -6357,20 +6465,37 @@ ENGAGEMENT COORDINATION
                 lineHeight: '1.7',
                 textShadow: isDark ? '0 1px 4px rgba(0,0,0,0.8)' : 'none'
               }}>
-                Abhimanyu Technologies is a software company for businesses that want dependable apps and standout visuals. We design and develop web and mobile applications, maintain them after launch, deliver IT services, and create 3D animation and interactive 3D experiences.
+                Abhimanyu Technologies is Hyderabad's first hybrid: <strong>AutoCAD Architecture + BIM + IT Software + Elite Freelance Engineers</strong>. Like Abhimanyu knew the entrance to the Chakravyuha, we know the complete blueprint from foundation drawings to cloud code.
               </p>
 
               <div style={styles.heroCtaRow}>
                 <a href="#estimate" onClick={(e) => scrollTo(e, 'estimate')} style={styles.primaryCta}>
-                  {LANG_DICT[currentLang]?.estimateBtn || 'Estimate your project'}
+                  {LANG_DICT[currentLang]?.estimateBtn || 'Start Project at ₹5000 →'}
                 </a>
-                <a href="#studio" onClick={(e) => scrollTo(e, 'studio')} style={styles.secondaryCta}>
-                  {LANG_DICT[currentLang]?.tryStudioBtn || 'Try the 3D Studio'}
+                <a
+                  href="/chakravyuha.html"
+                  style={{
+                    ...styles.secondaryCta,
+                    border: '1px solid rgba(212, 175, 55, 0.5)',
+                    background: 'rgba(212, 175, 55, 0.12)',
+                    color: '#FFD700',
+                    boxShadow: '0 0 16px rgba(212, 175, 55, 0.18)'
+                  }}
+                >
+                  ⚡ Chakravyuha CAD/IT Mode ↗
+                </a>
+                <a href="#work" onClick={(e) => scrollTo(e, 'work')} style={styles.secondaryCta}>
+                  See 150+ Plans Built 🏛️
                 </a>
               </div>
 
               <div style={styles.heroPillRow}>
-                {['Web apps', 'Mobile apps', 'Cloud', 'UI/UX', '3D animation', '24/7 support'].map((item, idx) => (
+                {[
+                  '🏛️ Chakra 01: AutoCAD & BIM',
+                  '💻 Chakra 02: IT Software & AI',
+                  '👷 Chakra 03: 100+ Engineers',
+                  '📍 Plot 45, Kukatpally, Hyderabad'
+                ].map((item, idx) => (
                   <span key={idx} style={styles.heroPill}>{item}</span>
                 ))}
               </div>
@@ -6401,8 +6526,8 @@ ENGAGEMENT COORDINATION
                   <div style={{ fontSize: '13px', fontWeight: '800', color: '#F8FAFC', letterSpacing: '0.2px' }}>
                     Abhimanyu Technologies
                   </div>
-                  <div style={{ fontSize: '10px', color: '#94A3B8', marginTop: '2px' }}>
-                    Software Engineering Studio ↗
+                  <div style={{ fontSize: '10px', color: '#FFD700', marginTop: '2px', fontWeight: '700' }}>
+                    Chakravyuha Breaker · CAD + IT ↗
                   </div>
                 </div>
 
@@ -7872,7 +7997,7 @@ ENGAGEMENT COORDINATION
                 <span>{LANG_DICT[currentLang]?.caseStudiesBtn || '🏆 Case Studies Reel'}</span>
               </button>
 
-              {['All', '3D & WebGL', 'Mobile & Offline', 'Backend & IoT', 'Web Platforms'].map((cat) => {
+              {['All', 'Architecture & BIM', 'AI & Software', 'On-Demand Talent', '3D & WebGL', 'Mobile & Offline', 'Backend & IoT'].map((cat) => {
                 const active = conceptFilter === cat;
                 return (
                   <button
@@ -8831,15 +8956,188 @@ ENGAGEMENT COORDINATION
         </div>
       </section>
 
-      {/* --- PROJECT ESTIMATOR --- */}
+      {/* --- PROJECT ESTIMATOR & TRANSPARENT PRICING --- */}
       <section id="estimate" style={styles.sectionLight}>
         <div style={styles.container}>
           <div style={styles.sectionHeader}>
-            <span style={styles.sectionEyebrow}>Project estimator</span>
-            <h2 style={styles.sectionTitle}>See a realistic timeline in thirty seconds.</h2>
+            <span style={styles.sectionEyebrow}>Simple Pricing · No Chakravyuha</span>
+            <h2 style={styles.sectionTitle}>Transparent Rates & Instant Scoping</h2>
             <p style={styles.sectionSubtitle}>
-              Choose what you want to build. The estimate updates as you click, and you can send it with your enquiry.
+              Predictable packages engineered for builders, consultants, and tech founders. Guaranteed milestone deliverables and direct SLA support.
             </p>
+          </div>
+
+          {/* 3 Chakras Transparent Pricing Packages */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '20px',
+            marginBottom: '40px'
+          }}>
+            {/* Card 1: Per Drawing */}
+            <div style={{
+              background: isDark ? 'rgba(15, 23, 42, 0.85)' : '#FFFFFF',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+              borderRadius: '20px',
+              padding: '26px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)'
+            }}>
+              <div>
+                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#94A3B8', fontWeight: '800' }}>
+                  CHAKRA 01 · STARTER
+                </span>
+                <h3 style={{ fontSize: '22px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', marginTop: '6px', marginBottom: '8px' }}>
+                  Per Drawing Plan
+                </h3>
+                <div style={{ fontSize: '34px', fontWeight: '900', color: '#FFD700', marginBottom: '14px' }}>
+                  ₹5,000 <span style={{ fontSize: '14px', fontWeight: '500', color: '#94A3B8' }}>/ drawing</span>
+                </div>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '13px', color: isDark ? '#CBD5E1' : '#475569', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> 1 2D Floor Plan + Front Elevation</li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> AutoCAD DWG + High-Res PDF</li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> 2 Comprehensive Revisions Included</li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> 24–48 Hour Guaranteed Delivery</li>
+                </ul>
+              </div>
+              <button
+                onClick={(e) => {
+                  setEstBuildingType('AutoCAD Architecture & BIM');
+                  scrollTo(e, 'contact');
+                }}
+                style={{
+                  marginTop: '22px',
+                  padding: '12px 18px',
+                  borderRadius: '14px',
+                  border: '1px solid rgba(212, 175, 55, 0.45)',
+                  background: 'rgba(212, 175, 55, 0.12)',
+                  color: '#FFD700',
+                  fontWeight: '700',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Order Drawing Plan (₹5,000) →
+              </button>
+            </div>
+
+            {/* Card 2: Dedicated Monthly Engineer (Best Value) */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.22) 0%, rgba(15, 23, 42, 0.95) 100%)',
+              border: '2px solid rgba(212, 175, 55, 0.75)',
+              borderRadius: '20px',
+              padding: '26px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: '0 0 35px rgba(212, 175, 55, 0.25)',
+              position: 'relative'
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '-12px',
+                right: '20px',
+                background: '#FFD700',
+                color: '#000000',
+                fontSize: '10px',
+                fontWeight: '900',
+                padding: '4px 12px',
+                borderRadius: '12px',
+                letterSpacing: '0.05em'
+              }}>
+                ⭐ BEST VALUE
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#FFD700', fontWeight: '800' }}>
+                  CHAKRA 03 · DEDICATED TALENT
+                </span>
+                <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#FFFFFF', marginTop: '6px', marginBottom: '8px' }}>
+                  Monthly Dedicated Engineer
+                </h3>
+                <div style={{ fontSize: '34px', fontWeight: '900', color: '#FFD700', marginBottom: '14px' }}>
+                  ₹25,000 <span style={{ fontSize: '14px', fontWeight: '500', color: '#CBD5E1' }}>/ month</span>
+                </div>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '13px', color: '#F1F5F9', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> Dedicated CAD/BIM or Software Dev</li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> 8 Hours / Day • 6 Days / Week</li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> Unlimited Drawings & Plan Iterations</li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> Direct WhatsApp & Standup Support</li>
+                </ul>
+              </div>
+              <button
+                onClick={(e) => {
+                  setEstBuildingType('Dedicated Freelance Engineer');
+                  scrollTo(e, 'contact');
+                }}
+                style={{
+                  marginTop: '22px',
+                  padding: '13px 20px',
+                  borderRadius: '14px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #FFD700, #E6C07A)',
+                  color: '#000000',
+                  fontWeight: '800',
+                  fontSize: '13.5px',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 18px rgba(212, 175, 55, 0.45)'
+                }}
+              >
+                Hire Dedicated Engineer (₹25k/mo) →
+              </button>
+            </div>
+
+            {/* Card 3: Enterprise IT + Architecture */}
+            <div style={{
+              background: isDark ? 'rgba(15, 23, 42, 0.85)' : '#FFFFFF',
+              border: '1px solid rgba(56, 189, 248, 0.35)',
+              borderRadius: '20px',
+              padding: '26px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)'
+            }}>
+              <div>
+                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#38BDF8', fontWeight: '800' }}>
+                  CHAKRA 02 · FULL SUITE
+                </span>
+                <h3 style={{ fontSize: '22px', fontWeight: '800', color: isDark ? '#FFFFFF' : '#0F172A', marginTop: '6px', marginBottom: '8px' }}>
+                  IT + Architecture Combo
+                </h3>
+                <div style={{ fontSize: '34px', fontWeight: '900', color: '#38BDF8', marginBottom: '14px' }}>
+                  Custom <span style={{ fontSize: '14px', fontWeight: '500', color: '#94A3B8' }}>/ scope</span>
+                </div>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '13px', color: isDark ? '#CBD5E1' : '#475569', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> Complete Software + Drawing Package</li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> AI Automation & Real Estate CRM</li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> Venture Management SaaS & Portals</li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span style={{ color: '#10B981' }}>✓</span> Dedicated Cloud & DevOps Support</li>
+                </ul>
+              </div>
+              <button
+                onClick={(e) => {
+                  setEstBuildingType('Combo: Building Plans + Custom Software');
+                  scrollTo(e, 'contact');
+                }}
+                style={{
+                  marginTop: '22px',
+                  padding: '12px 18px',
+                  borderRadius: '14px',
+                  border: '1px solid rgba(56, 189, 248, 0.45)',
+                  background: 'rgba(56, 189, 248, 0.12)',
+                  color: '#38BDF8',
+                  fontWeight: '700',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Talk to Founder for Custom Scope →
+              </button>
+            </div>
           </div>
 
           <div className="estimator-grid" style={styles.estimatorGrid}>
@@ -8849,6 +9147,8 @@ ENGAGEMENT COORDINATION
                 <h4 style={styles.estLabel}>What are you building?</h4>
                 <div style={styles.estTypeSelectGrid}>
                   {[
+                    'AutoCAD Architecture & BIM',
+                    'Dedicated Freelance Engineer',
                     'Mobile app development',
                     'Web application development',
                     'Application maintenance',
@@ -9747,22 +10047,22 @@ ENGAGEMENT COORDINATION
             {/* Direct Info List */}
             <div style={styles.contactInfoSide}>
               <div style={styles.contactInfoRow}>
-                <strong>New projects</strong>
-                <a href="mailto:hello@abhimanyutech.example" style={styles.contactInfoLink}>
-                  hello@abhimanyutech.example
+                <strong>New projects & CAD inquiries</strong>
+                <a href="mailto:hello@abhimanyutech.in" style={styles.contactInfoLink}>
+                  hello@abhimanyutech.in
                 </a>
               </div>
 
               <div style={styles.contactInfoRow}>
-                <strong>Support for existing clients</strong>
-                <a href="mailto:support@abhimanyutech.example" style={styles.contactInfoLink}>
-                  support@abhimanyutech.example
+                <strong>Support & client desk</strong>
+                <a href="mailto:hello@abhimanyutech.in" style={styles.contactInfoLink}>
+                  hello@abhimanyutech.in
                 </a>
               </div>
 
               <div style={styles.contactInfoRow}>
-                <strong>Office</strong>
-                <span style={styles.contactAddress}>Telangana, India</span>
+                <strong>Office HQ</strong>
+                <span style={styles.contactAddress}>Plot 45, Kukatpally, Hyderabad, Telangana, India</span>
               </div>
 
               <div style={styles.instantWhatsappBox}>
@@ -10034,8 +10334,12 @@ ENGAGEMENT COORDINATION
                       onChange={(e) => setContactData({ ...contactData, serviceNeed: e.target.value })}
                       style={styles.fieldSelect}
                     >
-                      <option value="Mobile app development">Mobile app development</option>
+                      <option value="Chakra 01: Architecture CAD/BIM">Chakra 01: Architecture CAD / BIM (2D Plans, 3D Elevations, GHMC Approvals)</option>
+                      <option value="Chakra 02: IT Software & AI">Chakra 02: IT Software & AI Agents (Web, SaaS, Real Estate CRM)</option>
+                      <option value="Chakra 03: Dedicated Freelance Engineer">Chakra 03: Hire Dedicated Freelance Engineer (₹25k/mo)</option>
+                      <option value="Combo: Building Plans + Custom Software">Combo: Building Plans + Custom Builder Software Suite</option>
                       <option value="Web application development">Web application development</option>
+                      <option value="Mobile app development">Mobile app development</option>
                       <option value="Application maintenance">Application maintenance</option>
                       <option value="IT services and consulting">IT services and consulting</option>
                       <option value="Cloud and DevOps">Cloud and DevOps</option>

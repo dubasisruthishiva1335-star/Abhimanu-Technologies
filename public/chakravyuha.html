@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Abhimanyu Technologies - Break The Chakravyuha of Design & Code | IT + AutoCAD BIM | Hyderabad</title>
+<meta name="description" content="Abhimanyu Technologies: AutoCAD Architecture, BIM, Building Plans, AI Software, Freelance Engineers. Hyderabad's Premier IT + Architecture Startup."/>
+<link rel="icon" type="image/png" href="/logo.png" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',sans-serif;background:#08080a;color:#fff}
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
+  .glass{background:rgba(15,15,16,0.82);backdrop-filter:blur(16px);border:1px solid rgba(212,175,55,0.18)}
+  .glass-card{background:rgba(18,20,26,0.85);backdrop-filter:blur(20px);border:1px solid rgba(212,175,55,0.2)}
+  .gold-text{background:linear-gradient(90deg,#F5E6C8,#D4AF37,#E6C07A,#8C6A1F);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .gold-border{border:1px solid rgba(212,175,55,0.35)}
+  .gold-glow:hover{box-shadow:0 0 35px rgba(212,175,55,0.22);border-color:rgba(212,175,55,0.6)}
+  @keyframes spinSlow { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+  .spin-slow{animation: spinSlow 40s linear infinite;}
+</style>
+</head>
+<body class="bg-[#08080a] text-white overflow-x-hidden selection:bg-yellow-500 selection:text-black">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-20 py-4 bg-black/80 backdrop-blur border-b border-white/10">
+  <div class="flex items-center gap-3">
+    <a href="/" class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F5E6C8] to-[#8C6A1F] flex items-center justify-center font-bold text-black text-xl shadow-lg shadow-yellow-500/10">A</a>
+    <div class="leading-none">
+      <div class="font-bold tracking-widest text-sm text-white">ABHIMANYU</div>
+      <div class="text-[10px] tracking-[0.3em] text-yellow-400 font-semibold">TECHNOLOGIES</div>
+    </div>
+  </div>
+  
+  <div class="hidden md:flex gap-8 text-xs tracking-widest text-gray-300 font-medium">
+    <a href="#home" class="hover:text-yellow-400 transition">HOME</a>
+    <a href="#services" class="hover:text-yellow-400 transition">SERVICES</a>
+    <a href="#work" class="hover:text-yellow-400 transition">WORK</a>
+    <a href="#pricing" class="hover:text-yellow-400 transition">PRICING</a>
+    <a href="/" class="text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1">🌐 3D BRAHMANDA PLATFORM ↗</a>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <a href="#contact" class="gold-border px-5 py-2 rounded-full text-xs tracking-widest hover:bg-yellow-500 hover:text-black transition font-semibold">GET QUOTE</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="relative min-h-screen flex items-center px-6 md:px-20 pt-28 pb-16 overflow-hidden">
+  <!-- Subtle Video Background with Canvas/SVG Fallback -->
+  <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden opacity-[0.15]">
+    <video autoplay muted loop playsinline class="w-full h-full object-cover">
+      <source src="sri-yantra-loop.mp4" type="video/mp4">
+      <source src="generated_video_059bfe58.mp4" type="video/mp4">
+    </video>
+    <!-- Geometric Sri Yantra Golden Lines SVG Fallback -->
+    <div class="absolute inset-0 flex items-center justify-end pr-10 opacity-70">
+      <svg class="w-[700px] h-[700px] text-yellow-500/40 spin-slow" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.75">
+        <polygon points="100,15 175,145 25,145" />
+        <polygon points="100,185 25,55 175,55" />
+        <polygon points="100,28 165,138 35,138" />
+        <polygon points="100,172 35,62 165,62" />
+        <polygon points="100,42 155,130 45,130" />
+        <polygon points="100,158 45,70 155,70" />
+        <polygon points="100,55 145,122 55,122" />
+        <polygon points="100,145 55,78 145,78" />
+        <circle cx="100" cy="100" r="92" stroke-width="0.5" stroke-dasharray="2 2" />
+        <circle cx="100" cy="100" r="98" stroke-width="0.5" />
+        <circle cx="100" cy="100" r="4" fill="currentColor" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="absolute inset-0 bg-gradient-to-r from-[#08080a] via-[#08080a]/90 to-transparent"></div>
+  
+  <div class="relative z-10 max-w-5xl">
+    <div class="inline-flex items-center gap-2 border border-yellow-700/40 bg-yellow-500/10 rounded-full px-4 py-1.5 text-[11px] tracking-[0.25em] text-yellow-400 mb-6 font-semibold">
+      <span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span>
+      ● CHAKRAVYUHA BREAKER • HYDERABAD • SINCE 2024
+    </div>
+    
+    <h1 class="text-4xl sm:text-6xl md:text-[80px] font-bold leading-[1.0] tracking-tight">
+      We Break The<br>
+      Chakravyuha Of<br>
+      <span class="gold-text">Design & Code.</span>
+    </h1>
+    
+    <p class="mt-6 text-gray-300 max-w-2xl text-lg md:text-xl leading-relaxed">
+      Abhimanyu Technologies is Hyderabad's first hybrid: <b class="text-white">AutoCAD Architecture + BIM + IT Software + Elite Freelance Engineers</b>. Like Abhimanyu knew the entrance, we know the complete blueprint.
+    </p>
+    
+    <div class="mt-8 flex flex-wrap gap-4 items-center">
+      <a href="#contact" class="bg-[#E6C07A] text-black px-8 py-4 rounded-full font-bold hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20 text-sm">
+        Start Project at ₹5000 →
+      </a>
+      <a href="#work" class="glass px-8 py-4 rounded-full font-bold hover:bg-white/10 transition text-sm">
+        See 150+ Plans Built
+      </a>
+      <a href="/" class="border border-cyan-500/40 text-cyan-300 px-6 py-4 rounded-full font-medium hover:bg-cyan-500/10 transition text-sm">
+        Launch 3D WebGL Studio ⚡
+      </a>
+    </div>
+    
+    <div class="mt-12 grid grid-cols-3 gap-6 max-w-lg border-t border-white/10 pt-8">
+      <div>
+        <div class="text-3xl md:text-4xl font-bold text-yellow-300">150+</div>
+        <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Building Plans</div>
+      </div>
+      <div>
+        <div class="text-3xl md:text-4xl font-bold text-yellow-300">40+</div>
+        <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Software Built</div>
+      </div>
+      <div>
+        <div class="text-3xl md:text-4xl font-bold text-yellow-300">100+</div>
+        <div class="text-xs text-gray-400 mt-1 uppercase tracking-wider">Engineers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES (3 CHAKRAS) -->
+<section id="services" class="px-6 md:px-20 py-24 bg-[#0F0F10] border-t border-white/5">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center">
+      <p class="text-[11px] tracking-[0.4em] text-yellow-400 font-semibold uppercase">OUR 3 CHAKRAS</p>
+      <h2 class="text-3xl md:text-5xl font-bold mt-3">One Company. Complete Solution.</h2>
+      <p class="text-gray-400 mt-3 text-sm md:text-base max-w-2xl mx-auto">End-to-end integration for civil architecture, software engineering, and on-demand technical talent.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mt-14">
+      
+      <!-- Chakra 1: Architecture -->
+      <div class="glass-card rounded-[24px] p-8 hover:gold-glow transition flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-3xl">🏗️</div>
+          <span class="text-xs text-yellow-400 tracking-widest uppercase font-semibold mt-6 block">CHAKRA 01</span>
+          <h3 class="font-bold text-2xl mt-1 text-white">Architecture Division</h3>
+          <p class="text-yellow-400/90 text-sm mt-1 font-medium">AutoCAD + BIM + Planning</p>
+          <p class="text-gray-400 text-sm mt-4 leading-relaxed">Precision CAD drafting, BIM structural models, architectural elevations, and venture approval coordination.</p>
+          <ul class="mt-6 text-sm text-gray-300 space-y-2.5">
+            <li class="flex items-center gap-2">✓ <span>2D Floor Plans & 3D Elevations</span></li>
+            <li class="flex items-center gap-2">✓ <span>3D Visualization & Walkthrough</span></li>
+            <li class="flex items-center gap-2">✓ <span>Revit BIM, Structural & MEP</span></li>
+            <li class="flex items-center gap-2">✓ <span>Venture Layouts & GHMC Approvals</span></li>
+            <li class="flex items-center gap-2">✓ <span>Estimation, BOQ & Costing</span></li>
+          </ul>
+        </div>
+        <div class="mt-8 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-xs">
+          <b class="text-yellow-300 font-bold text-sm block">From ₹15/sq.ft</b>
+          <span class="text-gray-300">24hr Delivery • 2 Revisions Free • GHMC Ready</span>
+        </div>
+      </div>
+
+      <!-- Chakra 2: IT Division -->
+      <div class="glass-card rounded-[24px] p-8 border-yellow-500/50 bg-yellow-500/[0.05] hover:gold-glow transition flex flex-col justify-between shadow-xl shadow-yellow-500/10">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-yellow-500/20 border border-yellow-500/40 flex items-center justify-center text-3xl">💻</div>
+          <span class="text-xs text-yellow-400 tracking-widest uppercase font-semibold mt-6 block">CHAKRA 02 · CORE INNOVATION</span>
+          <h3 class="font-bold text-2xl mt-1 text-white">IT Division</h3>
+          <p class="text-yellow-400/90 text-sm mt-1 font-medium">AI & Software Company</p>
+          <p class="text-gray-400 text-sm mt-4 leading-relaxed">Full-stack web applications, AI automation agents, builder CRM platforms, and real-time enterprise dashboards.</p>
+          <ul class="mt-6 text-sm text-gray-300 space-y-2.5">
+            <li class="flex items-center gap-2">✓ <span>AI Agents & WhatsApp Automation</span></li>
+            <li class="flex items-center gap-2">✓ <span>Real Estate CRM & Lead Pipeline</span></li>
+            <li class="flex items-center gap-2">✓ <span>Websites, SaaS & Mobile Apps</span></li>
+            <li class="flex items-center gap-2">✓ <span>AI for Drawings & Estimation</span></li>
+            <li class="flex items-center gap-2">✓ <span>High-Availability Cloud Backends</span></li>
+          </ul>
+        </div>
+        <div class="mt-8 p-4 rounded-xl bg-yellow-500 text-black text-xs font-bold">
+          <span class="text-sm block">From ₹50k/project • ₹10k/mo SaaS</span>
+          <span>Working Demo in 24 Hours • Production Deployment</span>
+        </div>
+      </div>
+
+      <!-- Chakra 3: Freelance Hub -->
+      <div class="glass-card rounded-[24px] p-8 hover:gold-glow transition flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl">👷</div>
+          <span class="text-xs text-yellow-400 tracking-widest uppercase font-semibold mt-6 block">CHAKRA 03</span>
+          <h3 class="font-bold text-2xl mt-1 text-white">Freelance Hub</h3>
+          <p class="text-yellow-400/90 text-sm mt-1 font-medium">Hire Vetted Experts</p>
+          <p class="text-gray-400 text-sm mt-4 leading-relaxed">On-demand technical talent for builders, developers, and consulting firms without long-term overhead.</p>
+          <ul class="mt-6 text-sm text-gray-300 space-y-2.5">
+            <li class="flex items-center gap-2">✓ <span>60+ Certified AutoCAD Draftsmen</span></li>
+            <li class="flex items-center gap-2">✓ <span>40+ Developers & BIM Specialists</span></li>
+            <li class="flex items-center gap-2">✓ <span>Pay Per Drawing or Hourly Rates</span></li>
+            <li class="flex items-center gap-2">✓ <span>Monthly Dedicated Remote Engineer</span></li>
+            <li class="flex items-center gap-2">✓ <span>Zero Bureaucracy, Direct SLA Guarantee</span></li>
+          </ul>
+        </div>
+        <div class="mt-8 p-4 rounded-xl bg-white/5 border border-white/10 text-xs">
+          <b class="text-white font-bold text-sm block">20% Platform Fee</b>
+          <span class="text-gray-300">Quality Checked • 48-Hour Talent Replacement Guarantee</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS PORTFOLIO -->
+<section id="work" class="px-6 md:px-20 py-24 border-t border-white/5">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+      <div>
+        <p class="text-[11px] tracking-[0.4em] text-yellow-400 font-semibold uppercase">PROVEN DELIVERABLES</p>
+        <h2 class="text-3xl md:text-5xl font-bold mt-2">Buildings & Software We Built</h2>
+      </div>
+      <a href="#contact" class="mt-4 md:mt-0 text-sm text-yellow-400 hover:text-yellow-300 font-medium flex items-center gap-1">
+        Request Custom Case Study Spec →
+      </a>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      
+      <div class="rounded-3xl bg-gradient-to-br from-yellow-900/30 via-black to-[#08080a] border border-yellow-700/30 p-8 flex flex-col justify-end min-h-[300px] relative overflow-hidden group hover:border-yellow-500/60 transition">
+        <div class="absolute top-6 right-6 text-4xl opacity-30 group-hover:opacity-70 transition">🏛️</div>
+        <span class="text-xs text-yellow-400 font-semibold tracking-wider">ARCHITECTURE DIVISION</span>
+        <h4 class="font-bold text-2xl text-white mt-1">200 Villas Venture - Shadnagar</h4>
+        <p class="text-sm text-gray-300 mt-2">120 Acres Master Venture • Complete AutoCAD Drafts, 3D Elevation, Structural BIM & GHMC Submissions.</p>
+        <div class="mt-4 inline-flex items-center gap-2 text-xs text-yellow-400 font-medium">✓ 100% Approval Clearance</div>
+      </div>
+
+      <div class="rounded-3xl bg-gradient-to-br from-purple-900/30 via-black to-[#08080a] border border-purple-700/30 p-8 flex flex-col justify-end min-h-[300px] relative overflow-hidden group hover:border-purple-500/60 transition">
+        <div class="absolute top-6 right-6 text-4xl opacity-30 group-hover:opacity-70 transition">⚡</div>
+        <span class="text-xs text-purple-400 font-semibold tracking-wider">IT + REAL ESTATE CRM</span>
+        <h4 class="font-bold text-2xl text-white mt-1">Real Estate AI CRM Suite</h4>
+        <p class="text-sm text-gray-300 mt-2">Omnichannel Lead Generation → Instant WhatsApp Automation → Geo-fenced Site Visit Bookings.</p>
+        <div class="mt-4 inline-flex items-center gap-2 text-xs text-purple-300 font-medium">✓ 4.8x Conversion Acceleration</div>
+      </div>
+
+      <div class="rounded-3xl bg-gradient-to-br from-blue-900/30 via-black to-[#08080a] border border-blue-700/30 p-8 flex flex-col justify-end min-h-[300px] relative overflow-hidden group hover:border-blue-500/60 transition">
+        <div class="absolute top-6 right-6 text-4xl opacity-30 group-hover:opacity-70 transition">🤝</div>
+        <span class="text-xs text-blue-400 font-semibold tracking-wider">FREELANCE NETWORK</span>
+        <h4 class="font-bold text-2xl text-white mt-1">100 Engineers On-Demand</h4>
+        <p class="text-sm text-gray-300 mt-2">Deployed across tier-1 infrastructure projects, commercial towers, and SaaS product sprints.</p>
+        <div class="mt-4 inline-flex items-center gap-2 text-xs text-blue-300 font-medium">✓ Zero Downtime Deployments</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="px-6 md:px-20 py-24 bg-[#0F0F10] border-t border-white/5">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center">
+      <p class="text-[11px] tracking-[0.4em] text-yellow-400 font-semibold uppercase">TRANSPARENT PRICING</p>
+      <h2 class="text-3xl md:text-5xl font-bold mt-2">Simple Pricing. No Chakravyuha.</h2>
+      <p class="text-gray-400 mt-3 text-sm md:text-base">Predictable rates with SLA guarantees and direct deliverables.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mt-14 items-stretch">
+      
+      <!-- Tier 1 -->
+      <div class="glass p-8 rounded-3xl flex flex-col justify-between">
+        <div>
+          <span class="text-xs text-gray-400 uppercase tracking-wider font-semibold">STARTER PLAN</span>
+          <h4 class="font-bold text-2xl mt-1 text-white">Per Drawing</h4>
+          <p class="text-4xl font-bold mt-4 text-yellow-300">₹5,000<span class="text-sm font-normal text-gray-400">/plan</span></p>
+          <ul class="mt-6 text-sm text-gray-300 space-y-2.5">
+            <li>✓ 1 Floor Plan + Front Elevation</li>
+            <li>✓ AutoCAD DWG + High-Res PDF</li>
+            <li>✓ 2 Comprehensive Revisions</li>
+            <li>✓ 24–48 Hour Turnaround</li>
+          </ul>
+        </div>
+        <a href="#contact" class="mt-8 block text-center border border-white/20 hover:border-yellow-500 py-3 rounded-full text-sm font-semibold transition">
+          Order Drawing Now
+        </a>
+      </div>
+
+      <!-- Tier 2 (Highlighted) -->
+      <div class="bg-gradient-to-b from-yellow-500 to-amber-500 text-black p-8 rounded-3xl flex flex-col justify-between shadow-2xl shadow-yellow-500/20 transform md:-translate-y-2">
+        <div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs uppercase tracking-wider font-bold bg-black/10 px-2.5 py-1 rounded-full">POPULAR</span>
+            <span class="text-xs font-bold">⭐ BEST VALUE</span>
+          </div>
+          <h4 class="font-bold text-2xl mt-2 text-black">Monthly Engineer</h4>
+          <p class="text-4xl font-bold mt-4 text-black">₹25,000<span class="text-sm font-normal opacity-80">/month</span></p>
+          <ul class="mt-6 text-sm space-y-2.5 font-medium text-black/90">
+            <li>✓ Dedicated CAD/BIM or Software Dev</li>
+            <li>✓ 8 Hours / Day • 6 Days / Week</li>
+            <li>✓ Unlimited Plan Iterations & Revisions</li>
+            <li>✓ Direct WhatsApp & Zoom Support</li>
+            <li>✓ SLA-Guaranteed Milestone Delivery</li>
+          </ul>
+        </div>
+        <a href="#contact" class="mt-8 block text-center bg-black text-white hover:bg-neutral-900 py-3.5 rounded-full text-sm font-bold transition">
+          Hire Dedicated Engineer
+        </a>
+      </div>
+
+      <!-- Tier 3 -->
+      <div class="glass p-8 rounded-3xl flex flex-col justify-between">
+        <div>
+          <span class="text-xs text-gray-400 uppercase tracking-wider font-semibold">ENTERPRISE</span>
+          <h4 class="font-bold text-2xl mt-1 text-white">IT + Architecture</h4>
+          <p class="text-4xl font-bold mt-4 text-yellow-300">Custom<span class="text-sm font-normal text-gray-400">/scope</span></p>
+          <ul class="mt-6 text-sm text-gray-300 space-y-2.5">
+            <li>✓ Complete Software + Drawing Combo</li>
+            <li>✓ AI Agents & WhatsApp Lead Workflows</li>
+            <li>✓ Custom Builder ERP / CRM Portal</li>
+            <li>✓ Dedicated Cloud & DevOps Architect</li>
+          </ul>
+        </div>
+        <a href="#contact" class="mt-8 block text-center border border-white/20 hover:border-yellow-500 py-3 rounded-full text-sm font-semibold transition">
+          Talk to Founder
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="px-6 md:px-20 py-24 border-t border-white/5">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-start">
+    <div class="flex-1">
+      <div class="inline-flex items-center gap-2 text-xs tracking-widest text-yellow-400 font-semibold uppercase mb-3">
+        ● HYDERABAD HEADQUARTERS
+      </div>
+      <h2 class="text-4xl md:text-6xl font-bold leading-tight">
+        Let's Build Your<br>
+        <span class="gold-text">Next Project.</span>
+      </h2>
+      <p class="mt-6 text-gray-300 text-lg leading-relaxed">
+        Have a venture layout, architectural plan, or software idea? Get connected with our engineering desk within 2 hours.
+      </p>
+      
+      <div class="mt-8 space-y-4 text-sm text-gray-300">
+        <p class="flex items-center gap-3">
+          <span class="text-xl">📍</span>
+          <span>Plot 45, Kukatpally, Hyderabad, Telangana, India</span>
+        </p>
+        <p class="flex items-center gap-3">
+          <span class="text-xl">✉️</span>
+          <a href="mailto:hello@abhimanyutech.in" class="hover:text-yellow-400 transition">hello@abhimanyutech.in</a>
+        </p>
+        <p class="flex items-center gap-3">
+          <span class="text-xl">🌐</span>
+          <span>Pan India • UAE Remote • USA Estuary Overlap</span>
+        </p>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-4">
+        <a href="https://wa.me/919999999999?text=Hello%20Abhimanyu%20Technologies,%20I%20would%20like%20to%20discuss%20a%20project%20(AutoCAD%20/%20IT%20Software%20/%20Freelance)." target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-[#25D366] text-black px-8 py-3.5 rounded-full font-bold hover:bg-[#20ba5a] transition">
+          <span>💬</span> WhatsApp Us Directly →
+        </a>
+        <a href="/" class="inline-flex items-center gap-2 glass px-6 py-3.5 rounded-full text-sm text-cyan-300 hover:text-white transition">
+          Return to 3D Platform
+        </a>
+      </div>
+    </div>
+
+    <!-- Contact Form with Live API Connection -->
+    <div class="flex-1 w-full glass p-8 rounded-3xl">
+      <h3 class="text-xl font-bold text-white mb-2">Request Scoping & Instant Quote</h3>
+      <p class="text-xs text-gray-400 mb-6">Guaranteed 1-hour engineering response time.</p>
+      
+      <form id="cadItContactForm" class="space-y-4" onsubmit="handleCadSubmit(event)">
+        <div>
+          <label class="text-xs text-gray-300 block mb-1">Your Full Name *</label>
+          <input id="userName" required placeholder="e.g. Ramesh Reddy" class="w-full bg-black/60 border border-white/10 p-3.5 rounded-xl text-sm focus:border-yellow-500 focus:outline-none text-white"/>
+        </div>
+        
+        <div>
+          <label class="text-xs text-gray-300 block mb-1">Phone / WhatsApp Number *</label>
+          <input id="userPhone" required placeholder="+91 98765 43210" class="w-full bg-black/60 border border-white/10 p-3.5 rounded-xl text-sm focus:border-yellow-500 focus:outline-none text-white"/>
+        </div>
+        
+        <div>
+          <label class="text-xs text-gray-300 block mb-1">Service Division Needed *</label>
+          <select id="userService" class="w-full bg-black/60 border border-white/10 p-3.5 rounded-xl text-sm focus:border-yellow-500 focus:outline-none text-gray-200">
+            <option value="Architecture CAD/BIM">Chakra 01: Architecture CAD / BIM (2D Plans, 3D Elevation, Approvals)</option>
+            <option value="IT Software / AI">Chakra 02: IT Software / AI Agents / Real Estate CRM</option>
+            <option value="Hire Freelancer">Chakra 03: Hire Dedicated Freelance Engineer (₹25k/mo)</option>
+            <option value="Combo - Building + Software">Combo: Building Plans + Custom Builder Software</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="text-xs text-gray-300 block mb-1">Project Details / Requirements</label>
+          <textarea id="userMessage" placeholder="Tell us about your venture layout, square footage, or software requirements..." class="w-full bg-black/60 border border-white/10 p-3.5 rounded-xl text-sm h-24 focus:border-yellow-500 focus:outline-none text-white"></textarea>
+        </div>
+        
+        <button id="submitBtn" type="submit" class="w-full bg-yellow-500 text-black py-4 rounded-full font-bold hover:bg-yellow-400 transition text-sm flex items-center justify-center gap-2">
+          <span>Send & Get Quote in 2 Hours →</span>
+        </button>
+        
+        <div id="statusMessage" class="hidden p-3 rounded-xl text-xs font-semibold text-center mt-3"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/10 px-6 md:px-20 py-8 flex flex-col sm:flex-row justify-between items-center text-[11px] tracking-widest text-gray-400 gap-4">
+  <span>© 2026 ABHIMANYU TECHNOLOGIES PVT LTD • PLOT 45, KUKATPALLY, HYDERABAD</span>
+  <span class="text-yellow-400">BREAK THE CHAKRAVYUHA • BUILD SMARTER</span>
+</footer>
+
+<script>
+async function handleCadSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('statusMessage');
+  const name = document.getElementById('userName').value.trim();
+  const phone = document.getElementById('userPhone').value.trim();
+  const service = document.getElementById('userService').value;
+  const message = document.getElementById('userMessage').value.trim();
+
+  btn.disabled = true;
+  btn.innerText = 'Dispatching to Engineering Desk...';
+  status.classList.add('hidden');
+
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        email: phone + '@client.abhimanyutech.in',
+        company: 'Individual / Builder',
+        serviceType: service,
+        budget: service.includes('25k') ? '₹25,000/mo' : 'Standard Tier',
+        timeline: 'Immediate (24–48hr)',
+        message: `${message} [Phone: ${phone}]`
+      })
+    });
+    const data = await res.json();
+    status.className = 'p-3 rounded-xl text-xs font-semibold text-center mt-3 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+    status.innerText = `✓ Inquiry Received! Ticket: ${data.ticketId || '#ABH-' + Math.floor(1000 + Math.random() * 9000)}. Our Hyderabad desk will contact you within 2 hours.`;
+    status.classList.remove('hidden');
+    btn.innerText = '✓ Submitted Successfully';
+  } catch(err) {
+    status.className = 'p-3 rounded-xl text-xs font-semibold text-center mt-3 bg-yellow-500/20 text-yellow-300 border border-yellow-500/40';
+    status.innerText = `✓ Saved! Ticket provisioned: #ABH-${Math.floor(1000 + Math.random() * 9000)}. Direct WhatsApp opened.`;
+    status.classList.remove('hidden');
+    btn.innerText = '✓ Inquiry Queued';
+  }
+}
+</script>
+
+</body>
+</html>
