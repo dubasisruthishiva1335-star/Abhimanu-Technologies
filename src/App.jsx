@@ -2555,9 +2555,10 @@ function FloatingDotsScrollSidebar({ activeSection, scrollTo, scrollProgress, pl
 
   const dots = [
     { id: 'top', label: 'Hero & 3D Core', icon: '🔱' },
+    { id: 'tech-stack', label: 'Architecture', icon: '🧭' },
+    { id: 'cloud-sandbox', label: 'Cloud Sandbox', icon: '☁️' },
     { id: 'services', label: 'Engineering Services', icon: '⚡' },
     { id: 'studio', label: '3D WebGL Studio', icon: '🌐' },
-    { id: 'tech-stack', label: 'Architecture', icon: '🧭' },
     { id: 'industries', label: 'Enterprise Industries', icon: '🏢' },
     { id: 'work', label: 'Selected Work', icon: '🏆' },
     { id: 'insights', label: 'Security & CRDT', icon: '🛡️' },
@@ -3412,9 +3413,10 @@ function FuturisticCommandSidebar({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                 {[
                   { id: 'top', label: 'Hero Core', icon: '🏛️' },
+                  { id: 'tech-stack', label: 'Architecture', icon: '🧭' },
+                  { id: 'cloud-sandbox', label: 'Cloud Sandbox', icon: '☁️' },
                   { id: 'services', label: 'Services', icon: '⚡' },
                   { id: 'studio', label: '3D Studio', icon: '🌐' },
-                  { id: 'tech-stack', label: 'Architecture', icon: '🧭' },
                   { id: 'industries', label: 'Industries', icon: '🏢' },
                   { id: 'work', label: 'Selected Work', icon: '🏆' },
                   { id: 'insights', label: 'Security & CRDT', icon: '🛡️' },
@@ -4424,7 +4426,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    const sectionIds = ['top', 'services', 'studio', 'tech-stack', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
+    const sectionIds = ['top', 'tech-stack', 'cloud-sandbox', 'services', 'studio', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
     const observers = [];
     sectionIds.forEach((id) => {
       const el = document.getElementById(id);
@@ -4470,7 +4472,7 @@ export default function App() {
 
   // Mobile swipe gesture: swipe up/down to advance/retreat sections
   useEffect(() => {
-    const SECTION_ORDER = ['top', 'services', 'studio', 'tech-stack', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
+    const SECTION_ORDER = ['top', 'tech-stack', 'cloud-sandbox', 'services', 'studio', 'industries', 'work', 'insights', 'estimate', 'support', 'faq', 'contact'];
     let touchStartY = null;
     let touchStartX = null;
     const SWIPE_THRESHOLD = 52;
@@ -6400,6 +6402,7 @@ ENGAGEMENT COORDINATION
               { id: 'services', label: LANG_DICT[currentLang]?.navServices || 'Services' },
               { id: 'studio', label: LANG_DICT[currentLang]?.navStudio || '3D Studio' },
               { id: 'tech-stack', label: LANG_DICT[currentLang]?.navTech || 'Architecture' },
+              { id: 'cloud-sandbox', label: 'Sandbox' },
               { id: 'industries', label: 'Industries' },
               { id: 'work', label: LANG_DICT[currentLang]?.navWork || 'Work' },
               { id: 'insights', label: LANG_DICT[currentLang]?.navInsights || 'Insights' },
