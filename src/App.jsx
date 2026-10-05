@@ -413,9 +413,11 @@ export default function App() {
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-4 bg-black/85 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-3">
           <a href="#home" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500 via-amber-400 to-yellow-600 flex items-center justify-center font-bold text-black font-['Space_Grotesk'] text-base shadow-lg shadow-yellow-500/20 group-hover:scale-105 transition">
-              AT
-            </div>
+            <img
+              src="/abhimanyu-emblem-transparent.png"
+              alt="Abhimanyu Technologies Logo"
+              className="w-10 h-10 object-contain filter drop-shadow-[0_0_12px_rgba(212,175,55,0.45)] group-hover:scale-105 transition"
+            />
             <div className="leading-tight">
               <span className="text-lg md:text-xl font-bold tracking-wide font-['Space_Grotesk'] text-white">ABHIMANYU</span>
               <span className="text-yellow-400 font-bold tracking-wider text-xs md:text-sm block">TECHNOLOGIES</span>
@@ -498,23 +500,8 @@ export default function App() {
 
       {/* 2. HERO SECTION */}
       <section id="home" className="relative min-h-screen flex items-center px-6 md:px-16 pt-32 pb-20 overflow-hidden">
-        {/* Subtle Video Background Loop */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute top-0 right-0 w-full lg:w-[60%] h-full object-cover opacity-[0.14] pointer-events-none"
-        >
-          <source src="sri-yantra-loop.mp4" type="video/mp4" />
-          <source src="generated_video_059bfe58.mp4" type="video/mp4" />
-        </video>
-
-        {/* Dynamic Canvas Sri Yantra Sacred Geometry */}
-        <SriYantraCanvas />
-
-        {/* Gradient Overlay for Pristine Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#08080a] via-[#08080a]/90 to-transparent pointer-events-none"></div>
+        {/* Clean Luxury Obsidian Background with Subtle Warm Light */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-yellow-500/[0.04] rounded-full blur-[140px] pointer-events-none"></div>
 
         <div className="relative z-10 max-w-5xl mx-auto w-full">
           <div>
