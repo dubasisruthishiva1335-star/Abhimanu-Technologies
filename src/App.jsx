@@ -5,7 +5,6 @@ import TiltCard from './components/TiltCard.jsx';
 import FloatingContactOrb from './components/FloatingContactOrb.jsx';
 import FullWebsite3DBackground from './components/FullWebsite3DBackground.jsx';
 import Interactive3DModelCards from './components/Interactive3DModelCards.jsx';
-import BuilderTestimonials from './components/BuilderTestimonials.jsx';
 
 // --- DATA DEFINITIONS ---
 
@@ -444,7 +443,6 @@ export default function App() {
           <a href="#services" className="hover:text-yellow-400 transition">SERVICES</a>
           <a href="#how-it-works" className="hover:text-yellow-400 transition">PROCESS</a>
           <a href="#work" className="hover:text-yellow-400 transition">WORK</a>
-          <a href="#testimonials" className="hover:text-yellow-400 transition">REVIEWS</a>
           <a href="#pricing" className="hover:text-yellow-400 transition">PRICING</a>
           <a href="#faq" className="hover:text-yellow-400 transition">FAQ</a>
           <a href="#contact" className="hover:text-yellow-400 transition">CONTACT</a>
@@ -500,7 +498,6 @@ export default function App() {
           <a href="#services" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">SERVICES (3 CHAKRAS)</a>
           <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">HOW IT WORKS</a>
           <a href="#work" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">WORK PORTFOLIO</a>
-          <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">BUILDER REVIEWS</a>
           <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">PRICING & CALCULATOR</a>
           <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">FREQUENT QUESTIONS</a>
           <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-yellow-400">CONTACT & GET QUOTE</a>
@@ -805,9 +802,6 @@ export default function App() {
           </div>
         </div>
       </section>
-
-      {/* 4.7 CLIENT & BUILDER VERIFIED TESTIMONIALS */}
-      <BuilderTestimonials />
 
       {/* 5. PRICING SECTION: SIMPLE PRICING & PER-SQ.FT CALCULATOR */}
       <section id="pricing" className="px-6 md:px-16 py-24 bg-[#0F0F10]/75 backdrop-blur-[2px] relative border-t border-white/5">
