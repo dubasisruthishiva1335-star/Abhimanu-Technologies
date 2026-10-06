@@ -364,6 +364,29 @@ export default function App() {
       setClusterLoading(false);
     }
   };
+
+  // Global Keyboard Shortcuts (Esc to close modals, Alt+A for Founder Portal, Alt+W for Bot Simulator)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setCalculatorModalOpen(false);
+        setBlueprintInspectorOpen(false);
+        setClusterModalOpen(false);
+        setBotSimulatorOpen(false);
+        setAdminPortalOpen(false);
+        setMobileMenuOpen(false);
+      } else if ((e.altKey && e.key.toLowerCase() === 'a') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a')) {
+        e.preventDefault();
+        setAdminPortalOpen((prev) => !prev);
+      } else if ((e.altKey && e.key.toLowerCase() === 'w') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'w')) {
+        e.preventDefault();
+        setBotSimulatorOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const [activeProjectTab, setActiveProjectTab] = useState('ALL');
 
   // Per-Sq.Ft Architecture Calculator State
