@@ -7,6 +7,8 @@ import FullWebsite3DBackground from './components/FullWebsite3DBackground.jsx';
 import Interactive3DModelCards from './components/Interactive3DModelCards.jsx';
 import WhatsAppBotSimulator from './components/WhatsAppBotSimulator.jsx';
 import ClientInquiryAdminPortal from './components/ClientInquiryAdminPortal.jsx';
+import VastuCompassCustomizer from './components/VastuCompassCustomizer.jsx';
+import { TRANSLATIONS } from './data/translations.js';
 
 // --- DATA DEFINITIONS ---
 
@@ -335,7 +337,17 @@ export default function App() {
   const [clusterLoading, setClusterLoading] = useState(false);
   const [botSimulatorOpen, setBotSimulatorOpen] = useState(false);
   const [adminPortalOpen, setAdminPortalOpen] = useState(false);
+  const [vastuModalOpen, setVastuModalOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
+
+  // Localization State
+  const [lang, setLang] = useState(() => localStorage.getItem('abh_lang') || 'en');
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+  const changeLanguage = (newLang) => {
+    setLang(newLang);
+    localStorage.setItem('abh_lang', newLang);
+  };
 
   const fetchClusterStatus = async () => {
     setClusterLoading(true);
@@ -365,7 +377,7 @@ export default function App() {
     }
   };
 
-  // Global Keyboard Shortcuts (Esc to close modals, Alt+A for Founder Portal, Alt+W for Bot Simulator)
+  // Global Keyboard Shortcuts (Esc to close modals, Alt+A for Founder Portal, Alt+W for Bot Simulator, Alt+V for Vastu)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -374,6 +386,7 @@ export default function App() {
         setClusterModalOpen(false);
         setBotSimulatorOpen(false);
         setAdminPortalOpen(false);
+        setVastuModalOpen(false);
         setMobileMenuOpen(false);
       } else if ((e.altKey && e.key.toLowerCase() === 'a') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a')) {
         e.preventDefault();
@@ -381,6 +394,9 @@ export default function App() {
       } else if ((e.altKey && e.key.toLowerCase() === 'w') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'w')) {
         e.preventDefault();
         setBotSimulatorOpen((prev) => !prev);
+      } else if ((e.altKey && e.key.toLowerCase() === 'v') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'v')) {
+        e.preventDefault();
+        setVastuModalOpen((prev) => !prev);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -492,34 +508,60 @@ export default function App() {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center gap-6 text-xs font-semibold tracking-widest text-gray-300">
-          <a href="#home" className="hover:text-yellow-400 transition">HOME</a>
+        <div className="hidden lg:flex items-center gap-5 text-xs font-semibold tracking-widest text-gray-300">
+          <a href="#home" className="hover:text-yellow-400 transition">{t.nav.home}</a>
           <a href="#3d-studio" className="hover:text-yellow-400 transition flex items-center gap-1.5 text-yellow-300">
             <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping"></span>
             3D STUDIO
           </a>
-          <a href="#services" className="hover:text-yellow-400 transition">SERVICES</a>
+          <a href="#services" className="hover:text-yellow-400 transition">{t.nav.services}</a>
           <a href="#how-it-works" className="hover:text-yellow-400 transition">PROCESS</a>
-          <a href="#work" className="hover:text-yellow-400 transition">WORK</a>
-          <a href="#pricing" className="hover:text-yellow-400 transition">PRICING</a>
-          <a href="#faq" className="hover:text-yellow-400 transition">FAQ</a>
-          <a href="#contact" className="hover:text-yellow-400 transition">CONTACT</a>
+          <a href="#work" className="hover:text-yellow-400 transition">{t.nav.work}</a>
+          <a href="#pricing" className="hover:text-yellow-400 transition">{t.nav.pricing}</a>
+          <a href="#faq" className="hover:text-yellow-400 transition">{t.nav.faq}</a>
         </div>
 
-        {/* CTA Button & Mobile Toggle */}
-        <div className="flex items-center gap-2.5">
+        {/* CTA Button, Language Switcher & Mobile Toggle */}
+        <div className="flex items-center gap-2">
+          {/* Vastu Compass Button */}
           <button
-            onClick={() => setBlueprintInspectorOpen(true)}
-            className="hidden xl:flex items-center gap-1.5 border border-yellow-500/30 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 px-3.5 py-2 rounded-full text-xs font-medium transition"
+            onClick={() => setVastuModalOpen(true)}
+            className="hidden md:flex items-center gap-1.5 border border-yellow-500/30 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 px-3 py-1.5 rounded-full text-xs font-medium transition cursor-pointer"
+            title="Interactive 3D Vastu Compass"
           >
-            <span>📐</span>
-            <span>Inspect CAD</span>
+            <span>🧭</span>
+            <span>Vastu</span>
           </button>
+
+          {/* Language Switcher Pill */}
+          <div className="flex items-center bg-black/60 border border-white/15 rounded-full p-0.5 text-[11px] font-bold">
+            <button
+              onClick={() => changeLanguage('en')}
+              className={`px-2 py-1 rounded-full transition ${lang === 'en' ? 'bg-yellow-500 text-black' : 'text-gray-400 hover:text-white'}`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => changeLanguage('te')}
+              className={`px-2 py-1 rounded-full transition ${lang === 'te' ? 'bg-yellow-500 text-black' : 'text-gray-400 hover:text-white'}`}
+              title="తెలుగు"
+            >
+              తె
+            </button>
+            <button
+              onClick={() => changeLanguage('hi')}
+              className={`px-2 py-1 rounded-full transition ${lang === 'hi' ? 'bg-yellow-500 text-black' : 'text-gray-400 hover:text-white'}`}
+              title="हिन्दी"
+            >
+              हि
+            </button>
+          </div>
+
           <a
             href="#contact"
-            className="hidden sm:inline-block border border-yellow-500/50 bg-yellow-500/10 hover:bg-yellow-400 hover:text-black text-yellow-300 px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition shadow-sm"
+            className="hidden sm:inline-block border border-yellow-500/50 bg-yellow-500/10 hover:bg-yellow-400 hover:text-black text-yellow-300 px-4 py-2 rounded-full text-xs font-bold tracking-wider transition shadow-sm"
           >
-            GET QUOTE →
+            {t.nav.getQuote} →
           </a>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -539,11 +581,45 @@ export default function App() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl pt-24 px-6 lg:hidden flex flex-col gap-5 overflow-y-auto pb-10">
-          <a href="#home" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">HOME</a>
+        <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl pt-24 px-6 lg:hidden flex flex-col gap-4 overflow-y-auto pb-10">
+          {/* Mobile Language Switcher */}
+          <div className="flex items-center gap-2 pb-3 border-b border-white/10">
+            <span className="text-xs text-gray-400">Language:</span>
+            <div className="flex items-center bg-black/60 border border-white/15 rounded-full p-1 text-xs font-bold">
+              <button
+                onClick={() => changeLanguage('en')}
+                className={`px-3 py-1 rounded-full transition ${lang === 'en' ? 'bg-yellow-500 text-black' : 'text-gray-400'}`}
+              >
+                English
+              </button>
+              <button
+                onClick={() => changeLanguage('te')}
+                className={`px-3 py-1 rounded-full transition ${lang === 'te' ? 'bg-yellow-500 text-black' : 'text-gray-400'}`}
+              >
+                తెలుగు
+              </button>
+              <button
+                onClick={() => changeLanguage('hi')}
+                className={`px-3 py-1 rounded-full transition ${lang === 'hi' ? 'bg-yellow-500 text-black' : 'text-gray-400'}`}
+              >
+                हिन्दी
+              </button>
+            </div>
+          </div>
+
+          <a href="#home" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">{t.nav.home}</a>
           <a href="#3d-studio" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-yellow-300 flex items-center gap-2">
             <span>⚡</span> 3D WEBGL STUDIO
           </a>
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              setVastuModalOpen(true);
+            }}
+            className="text-left text-lg font-bold text-yellow-300 flex items-center gap-2"
+          >
+            <span>🧭</span> 3D VASTU COMPASS
+          </button>
           <button
             onClick={() => {
               setMobileMenuOpen(false);
@@ -553,12 +629,12 @@ export default function App() {
           >
             <span>📐</span> INSPECT CAD BLUEPRINT
           </button>
-          <a href="#services" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">SERVICES (3 CHAKRAS)</a>
+          <a href="#services" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">{t.nav.services} (3 CHAKRAS)</a>
           <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">HOW IT WORKS</a>
-          <a href="#work" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">WORK PORTFOLIO</a>
-          <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">PRICING & CALCULATOR</a>
-          <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">FREQUENT QUESTIONS</a>
-          <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-yellow-400">CONTACT & GET QUOTE</a>
+          <a href="#work" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">{t.nav.work}</a>
+          <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">{t.nav.pricing}</a>
+          <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-gray-200">{t.nav.faq}</a>
+          <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-yellow-400">{t.nav.getQuote}</a>
         </div>
       )}
 
@@ -571,19 +647,19 @@ export default function App() {
           <div>
             <div className="inline-flex items-center gap-2 border border-yellow-600/40 bg-yellow-500/10 rounded-full px-4 py-1.5 text-[11px] tracking-[0.25em] text-yellow-400 mb-6 font-semibold">
               <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-              ● CHAKRAVYUHA BREAKER • HYDERABAD • SINCE 2024
+              {t.hero.badge}
             </div>
 
             <h1 className="text-4xl sm:text-6xl lg:text-[76px] font-bold leading-[1.0] font-['Space_Grotesk'] tracking-tight">
-              We Break The<br />
-              Chakravyuha Of<br />
+              {t.hero.title1}<br />
+              {t.hero.title2}<br />
               <span className="shimmer-text">
-                Design & Code.
+                {t.hero.title3}
               </span>
             </h1>
 
             <p className="mt-6 text-gray-300 text-base md:text-xl max-w-2xl leading-relaxed">
-              Abhimanyu Technologies is Hyderabad's first hybrid: <b className="text-white font-semibold">AutoCAD Architecture + BIM + AI Software + Elite Freelance Engineers</b>. From building plans to AI agents, we know the way in and out.
+              {t.hero.desc}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4 items-center">
@@ -591,13 +667,13 @@ export default function App() {
                 href="#contact"
                 className="highlight-glow bg-[#E6C07A] hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-bold text-sm tracking-wide transition shadow-lg shadow-yellow-500/20"
               >
-                Start Project at ₹5000 →
+                {t.hero.ctaProject}
               </a>
               <a
                 href="#work"
                 className="bg-white/5 hover:bg-white/10 border border-white/15 px-8 py-4 rounded-full font-bold text-sm text-gray-200 transition"
               >
-                See 150+ Plans Built
+                {t.hero.ctaWork}
               </a>
               <button
                 onClick={() => setCalculatorModalOpen(true)}
@@ -1519,6 +1595,7 @@ export default function App() {
         onOpenInspector={() => setBlueprintInspectorOpen(true)}
         onOpenCalculator={() => setCalculatorModalOpen(true)}
         onOpenBotSimulator={() => setBotSimulatorOpen(true)}
+        onOpenVastu={() => setVastuModalOpen(true)}
       />
 
       {/* --- MODAL: INTERACTIVE WHATSAPP BOT SIMULATOR --- */}
@@ -1531,6 +1608,13 @@ export default function App() {
       <ClientInquiryAdminPortal
         isOpen={adminPortalOpen}
         onClose={() => setAdminPortalOpen(false)}
+      />
+
+      {/* --- MODAL: 3D VASTU COMPASS & LAYOUT CUSTOMIZER --- */}
+      <VastuCompassCustomizer
+        isOpen={vastuModalOpen}
+        onClose={() => setVastuModalOpen(false)}
+        onApplyToForm={(text) => setFormMessage(text)}
       />
     </div>
   );

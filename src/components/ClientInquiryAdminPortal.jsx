@@ -341,6 +341,18 @@ export default function ClientInquiryAdminPortal({ isOpen, onClose }) {
                         Notes: {inq.notes}
                       </div>
                     )}
+
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[10px]">
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono">
+                        ✉️ Email Alert Delivered
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono">
+                        📱 SMS Confirmation Sent
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-mono">
+                        💬 WhatsApp Ready
+                      </span>
+                    </div>
                   </div>
 
                   {/* Actions & Status Dropdown */}

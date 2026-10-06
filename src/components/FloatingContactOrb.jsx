@@ -4,7 +4,7 @@ import React, { useState } from 'react';
  * 3D Floating Contact & WhatsApp Speed Dial Orb
  * Provides immediate instant access to WhatsApp, phone calls, and interactive tools.
  */
-export default function FloatingContactOrb({ onOpenInspector, onOpenCalculator, onOpenBotSimulator }) {
+export default function FloatingContactOrb({ onOpenInspector, onOpenCalculator, onOpenBotSimulator, onOpenVastu }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -23,6 +23,19 @@ export default function FloatingContactOrb({ onOpenInspector, onOpenCalculator, 
               className="flex items-center gap-2.5 bg-gradient-to-r from-purple-900/90 to-black hover:from-purple-800 hover:to-neutral-900 text-purple-300 border border-purple-500/50 px-4 py-2.5 rounded-full text-xs font-bold transition shadow-xl backdrop-blur-md"
             >
               <span>🤖 Try 3-Sec WhatsApp Bot Live</span>
+            </button>
+          )}
+
+          {/* Action 0.5: 3D Vastu Compass */}
+          {onOpenVastu && (
+            <button
+              onClick={() => {
+                onOpenVastu();
+                setIsOpen(false);
+              }}
+              className="flex items-center gap-2.5 bg-black/90 hover:bg-yellow-500 hover:text-black text-yellow-300 border border-yellow-500/40 px-4 py-2.5 rounded-full text-xs font-bold transition shadow-xl backdrop-blur-md"
+            >
+              <span>🧭 16-Zone Vastu Compass</span>
             </button>
           )}
 
