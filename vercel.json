@@ -6,8 +6,10 @@
     { "source": "/chakravyuha.html", "destination": "/chakravyuha.html" },
     { "source": "/cad-it", "destination": "/cad-it.html" },
     { "source": "/cad-it.html", "destination": "/cad-it.html" },
+    { "source": "/lb-status", "destination": "/api/lb-status" },
+    { "source": "/cluster-status", "destination": "/api/lb-status" },
     { "source": "/api/:path*", "destination": "/api/:path*" },
-    { "source": "/((?!api/|sri-yantra|chakravyuha|cad-it).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|sri-yantra|chakravyuha|cad-it|lb-status|cluster-status).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

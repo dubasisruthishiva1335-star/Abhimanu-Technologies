@@ -64,6 +64,32 @@ export function createApp(workerId = 'worker-primary') {
   app.get('/api/health', handleHealthCheck);
   app.get('/api/telemetry', handleGetTelemetry);
 
+  // Cluster & Load Balancer Status API
+  app.get(['/api/cluster/status', '/api/lb-status', '/api/load-balancer/status'], (req, res) => {
+    return res.json({
+      success: true,
+      service: 'Abhimanyu Technologies Backend Worker',
+      workerId,
+      status: 'HEALTHY',
+      timestamp: new Date().toISOString(),
+      clusterArchitecture: {
+        loadBalancer: {
+          type: 'Layer 7 High-Availability Director',
+          algorithms: ['round-robin', 'least-connections', 'ip-hash'],
+          activeAlgorithm: process.env.LB_ALGORITHM || 'round-robin',
+          healthCheckEndpoint: '/api/health',
+          retryEnabled: true,
+          circuitBreakerThreshold: 2
+        },
+        workerPool: [
+          { id: 'worker-1', port: 5001, role: 'Compute & API' },
+          { id: 'worker-2', port: 5002, role: 'Compute & API' },
+          { id: 'worker-3', port: 5003, role: 'Compute & API' }
+        ]
+      }
+    });
+  });
+
   app.post('/api/contact', handleContactSubmit);
   app.get('/api/contact', handleGetContacts);
 

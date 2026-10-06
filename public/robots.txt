@@ -1,4 +1,18 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
 
 Sitemap: https://abhimanu-technologies.vercel.app/sitemap.xml
+Host: https://abhimanu-technologies.vercel.app
