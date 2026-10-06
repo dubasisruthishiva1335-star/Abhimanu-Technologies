@@ -583,14 +583,41 @@ export default function FullWebsite3DBackground() {
 
       renderer.render(scene, camera);
     };
+
+    // Pause rendering loop when document is not visible to conserve battery & GPU
+    let isTabVisible = !document.hidden;
+    const onVisibilityChange = () => {
+      isTabVisible = !document.hidden;
+      if (isTabVisible && !animId) {
+        animate();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
     animate();
 
-    // Cleanup
+    // Cleanup & Deep Three.js Memory Deallocation
     return () => {
       cancelAnimationFrame(animId);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', onResize);
+
+      // Deep dispose all geometries and materials across scene graph
+      scene.traverse((object) => {
+        if (object.geometry) {
+          object.geometry.dispose();
+        }
+        if (object.material) {
+          if (Array.isArray(object.material)) {
+            object.material.forEach((mat) => mat.dispose());
+          } else {
+            object.material.dispose();
+          }
+        }
+      });
+
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }

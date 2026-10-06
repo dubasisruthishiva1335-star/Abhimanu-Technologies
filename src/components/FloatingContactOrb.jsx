@@ -4,7 +4,7 @@ import React, { useState } from 'react';
  * 3D Floating Contact & WhatsApp Speed Dial Orb
  * Provides immediate instant access to WhatsApp, phone calls, and interactive tools.
  */
-export default function FloatingContactOrb({ onOpenInspector, onOpenCalculator }) {
+export default function FloatingContactOrb({ onOpenInspector, onOpenCalculator, onOpenBotSimulator }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -13,6 +13,19 @@ export default function FloatingContactOrb({ onOpenInspector, onOpenCalculator }
       {/* Expanded Quick Action Speed-Dial Menu */}
       {isOpen && (
         <div className="flex flex-col items-end gap-2.5 mb-2 animate-fadeIn">
+          {/* Action 0: 3-Second WhatsApp Bot Simulator */}
+          {onOpenBotSimulator && (
+            <button
+              onClick={() => {
+                onOpenBotSimulator();
+                setIsOpen(false);
+              }}
+              className="flex items-center gap-2.5 bg-gradient-to-r from-purple-900/90 to-black hover:from-purple-800 hover:to-neutral-900 text-purple-300 border border-purple-500/50 px-4 py-2.5 rounded-full text-xs font-bold transition shadow-xl backdrop-blur-md"
+            >
+              <span>🤖 Try 3-Sec WhatsApp Bot Live</span>
+            </button>
+          )}
+
           {/* Action 1: CAD Blueprint Inspector */}
           <button
             onClick={() => {
@@ -37,22 +50,22 @@ export default function FloatingContactOrb({ onOpenInspector, onOpenCalculator }
 
           {/* Action 3: Direct WhatsApp */}
           <a
-            href="https://wa.me/919999999999?text=Hello%20Abhimanyu%20Technologies%2C%20I%20would%20like%20to%20discuss%20an%20AutoCAD%20Architecture%20or%20IT%20project."
+            href="https://wa.me/919989028452?text=Hello%20Abhimanyu%20Technologies%2C%20I%20would%20like%20to%20discuss%20an%20AutoCAD%20Architecture%20or%20IT%20project."
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-full text-xs font-bold transition shadow-xl"
           >
             <span className="text-base">💬</span>
-            <span>Chat on WhatsApp (2hr SLA)</span>
+            <span>Chat on WhatsApp (+91 99890 28452)</span>
           </a>
 
           {/* Action 4: Direct Phone Call */}
           <a
-            href="tel:+919999999999"
+            href="tel:+919989028452"
             className="flex items-center gap-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 px-4 py-2 rounded-full text-xs font-semibold transition shadow-xl backdrop-blur-md"
           >
             <span>📞</span>
-            <span>Call: +91 99999 99999</span>
+            <span>Call: +91 99890 28452</span>
           </a>
         </div>
       )}

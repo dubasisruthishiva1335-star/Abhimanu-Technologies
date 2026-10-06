@@ -5,6 +5,8 @@ import TiltCard from './components/TiltCard.jsx';
 import FloatingContactOrb from './components/FloatingContactOrb.jsx';
 import FullWebsite3DBackground from './components/FullWebsite3DBackground.jsx';
 import Interactive3DModelCards from './components/Interactive3DModelCards.jsx';
+import WhatsAppBotSimulator from './components/WhatsAppBotSimulator.jsx';
+import ClientInquiryAdminPortal from './components/ClientInquiryAdminPortal.jsx';
 
 // --- DATA DEFINITIONS ---
 
@@ -331,6 +333,8 @@ export default function App() {
   const [clusterModalOpen, setClusterModalOpen] = useState(false);
   const [clusterData, setClusterData] = useState(null);
   const [clusterLoading, setClusterLoading] = useState(false);
+  const [botSimulatorOpen, setBotSimulatorOpen] = useState(false);
+  const [adminPortalOpen, setAdminPortalOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   const fetchClusterStatus = async () => {
@@ -725,9 +729,17 @@ export default function App() {
                     <div className="text-base font-bold font-['Space_Grotesk'] text-yellow-300">{c.pricing}</div>
                     <div className="text-gray-300 mt-1">{c.badge}</div>
                   </div>
+                  {c.id === 'it' && (
+                    <button
+                      onClick={() => setBotSimulatorOpen(true)}
+                      className="mt-3 w-full py-2.5 px-3 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-300 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                    >
+                      <span>🤖</span> Test 3-Second WhatsApp Bot Live →
+                    </button>
+                  )}
                   <a
                     href="#contact"
-                    className="mt-4 block text-center text-xs font-semibold tracking-wider text-yellow-400 hover:text-yellow-300 transition"
+                    className="mt-3 block text-center text-xs font-semibold tracking-wider text-yellow-400 hover:text-yellow-300 transition"
                   >
                     Inquire about {c.title} →
                   </a>
@@ -1277,19 +1289,30 @@ export default function App() {
           <span>© 2026 ABHIMANYU TECHNOLOGIES PVT LTD. All Rights Reserved.</span>
         </div>
 
-        {/* Live Load Balancer & Cluster Indicator */}
-        <button
-          onClick={() => {
-            setClusterModalOpen(true);
-            fetchClusterStatus();
-          }}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono hover:bg-emerald-500/20 hover:border-emerald-500/50 transition cursor-pointer shadow-sm shadow-emerald-500/10"
-          title="Inspect Layer 7 Load Balancer & Backend Cluster Architecture"
-        >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="font-semibold">L7 Load Balancer</span>
-          <span className="text-gray-400">• 3 Nodes Active</span>
-        </button>
+        {/* Live Cluster Pill & Founder Portal Buttons */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              setClusterModalOpen(true);
+              fetchClusterStatus();
+            }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono hover:bg-emerald-500/20 hover:border-emerald-500/50 transition cursor-pointer shadow-sm shadow-emerald-500/10"
+            title="Inspect Layer 7 Load Balancer & Backend Cluster Architecture"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className="font-semibold">L7 Load Balancer</span>
+            <span className="text-gray-400">• 3 Nodes</span>
+          </button>
+
+          <button
+            onClick={() => setAdminPortalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[11px] font-mono hover:bg-yellow-500/20 hover:border-yellow-500/50 transition cursor-pointer"
+            title="Secure Client Inquiries & Real-Time Quote Portal"
+          >
+            <span>🔒</span>
+            <span>Founder Portal</span>
+          </button>
+        </div>
 
         <div className="tracking-widest text-[10px] text-yellow-500/80 uppercase">
           BREAK THE CHAKRAVYUHA • BUILD SMARTER
@@ -1472,6 +1495,19 @@ export default function App() {
       <FloatingContactOrb
         onOpenInspector={() => setBlueprintInspectorOpen(true)}
         onOpenCalculator={() => setCalculatorModalOpen(true)}
+        onOpenBotSimulator={() => setBotSimulatorOpen(true)}
+      />
+
+      {/* --- MODAL: INTERACTIVE WHATSAPP BOT SIMULATOR --- */}
+      <WhatsAppBotSimulator
+        isOpen={botSimulatorOpen}
+        onClose={() => setBotSimulatorOpen(false)}
+      />
+
+      {/* --- MODAL: CLIENT INQUIRY ADMIN PORTAL & QUOTE GENERATOR --- */}
+      <ClientInquiryAdminPortal
+        isOpen={adminPortalOpen}
+        onClose={() => setAdminPortalOpen(false)}
       />
     </div>
   );

@@ -12,8 +12,44 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      success: true,
+      inquiries: [
+        {
+          ticketId: 'ABH-9842',
+          client: { name: 'Kalyan Chakravarthy', contact: '+919849012345' },
+          scope: { service: 'Architecture CAD/BIM', details: 'G+12 Commercial Tech Tower (Miyapur, 45,000 sq.ft)', budget: 'As per quotation' },
+          status: 'IN PRODUCTION',
+          timestamp: '2026-10-06T14:32:00Z'
+        },
+        {
+          ticketId: 'ABH-7621',
+          client: { name: 'Ananya Deshmukh', contact: '+919988776655' },
+          scope: { service: 'IT Division', details: 'Real Estate Meta Ad WhatsApp CRM & AI Bot', budget: '₹60,000' },
+          status: 'QUOTED',
+          timestamp: '2026-10-06T11:15:00Z'
+        },
+        {
+          ticketId: 'ABH-5419',
+          client: { name: 'Vikramaditya Varma', contact: '+919876543210' },
+          scope: { service: 'Freelance Hub', details: 'Dedicated Senior Revit BIM Modeler (Monthly Retainer)', budget: '₹25,000/mo' },
+          status: 'CLOSED',
+          timestamp: '2026-10-05T18:20:00Z'
+        },
+        {
+          ticketId: 'ABH-3382',
+          client: { name: 'Srikanth Reddy', contact: '+919944332211' },
+          scope: { service: 'Architecture CAD/BIM', details: '120-Acre Master Gated Community (Shadnagar)', budget: '₹450,000' },
+          status: 'IN REVIEW',
+          timestamp: '2026-10-05T09:45:00Z'
+        }
+      ]
+    });
+  }
+
   if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, error: 'Method Not Allowed. Use POST.' });
+    return res.status(405).json({ success: false, error: 'Method Not Allowed. Use GET or POST.' });
   }
 
   try {
